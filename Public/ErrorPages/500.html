@@ -4,74 +4,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>500 - Feuerwehr Waldems Reichenbach</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #a72920;
-            color: #ffffff;
-        }
-        .container {
-            text-align: center;
-            max-width: 600px;
-            padding: 20px;
-            background-color: #ffffff;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            color: #333;
-        }
-        h1 {
-            color: #a72920;
-        }
-        .buttons {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px; /* Abstand zwischen den Buttons */
-            margin-top: 20px; /* Abstand vom Text zu den Buttons */
-        }
-        .btn {
-            width: 100%; /* Setzt eine feste Breite für alle Buttons */
-            padding: 10px 20px;
-            background-color: #a72920;
-            color: #fff;
-            text-decoration: none;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
-            box-sizing: border-box; /* Stellt sicher, dass padding und border in der Breite inkludiert sind */
-        }
-        .btn:hover {
-            background-color: #8f1f1b;
-        }
-        .social-buttons {
-            display: flex;
-            justify-content: space-between;
-            width: 100%; /* Stellt sicher, dass die Social-Media-Buttons die volle Breite nutzen */
-        }
-        .social-buttons a {
-            flex-grow: 1; /* Erlaubt den Buttons, zu wachsen und den verfügbaren Raum auszufüllen */
-        }
-        .social-buttons a:not(:last-child) {
-            margin-right: 10px; /* Fügt Abstand zwischen den Social-Media-Buttons hinzu */
-        }
-    </style>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap">
+    <link rel="stylesheet" href="error-styles.css">
 </head>
 <body>
-<div class="container">
-    <h1>500 - Interner Serverfehler</h1>
-    <p>Entschuldigung, es gab ein Problem mit dem Server. Bitte versuche es später noch einmal oder gehe zu einer der folgenden Seiten:</p>
-    <div class="buttons">
-        <a href="https://feuerwehr-waldems-reichenbach.de" class="btn">Zurück zur Startseite</a>
-        <div class="social-buttons">
-            <a href="https://www.instagram.com/feuerwehrreichenbach/" target="_blank" class="btn">Zu Instagram</a>
-            <a href="https://www.facebook.com/groups/163127135137/" target="_blank" class="btn">Zu Facebook</a>
+    <div class="error-container">
+        <div class="error-code">500</div>
+        <h1 class="error-title">Interner Serverfehler</h1>
+        <p class="error-message">Entschuldigung, es gab ein Problem mit dem Server. Unsere digitale Feuerwehr ist bereits im Einsatz! Bitte versuche es später noch einmal oder gehe zu einer der folgenden Seiten:</p>
+        
+        <div class="buttons-container">
+            <a href="https://feuerwehr-waldems-reichenbach.de" class="btn btn-home">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+                Zurück zur Startseite
+            </a>
+            
+            <div class="social-buttons">
+                <a href="https://www.instagram.com/feuerwehrreichenbach/" target="_blank" class="btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                    </svg>
+                    Instagram
+                </a>
+                <a href="https://www.facebook.com/groups/163127135137/" target="_blank" class="btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                    </svg>
+                    Facebook
+                </a>
+            </div>
         </div>
     </div>
-</div>
+    
+    <script src="error-animations.js"></script>
 </body>
 </html>
