@@ -1,3 +1,4 @@
 *.ini
 .htaccess
 .htpasswd
+*.ps1
