@@ -1,6 +1,6 @@
 <?php
 // Anzahl der Verzeichnisse, um zum Stammverzeichnis zurückzugehen
-$stepsBack = 2;
+$stepsBack = 3;
 // Dynamisch den Pfad zum Stammverzeichnis berechnen
 $basePath = __DIR__;
 for ($i = 0; $i < $stepsBack; $i++) {
