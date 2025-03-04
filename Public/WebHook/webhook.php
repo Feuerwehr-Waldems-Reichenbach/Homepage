@@ -1,5 +1,14 @@
 <?php
-include '/mnt/rid/08/69/543220869/htdocs/Private/Database/db_connect.php';
+// Anzahl der Verzeichnisse, um zum Stammverzeichnis zurückzugehen
+$stepsBack = 2;
+// Dynamisch den Pfad zum Stammverzeichnis berechnen
+$basePath = __DIR__;
+for ($i = 0; $i < $stepsBack; $i++) {
+    $basePath = dirname($basePath);
+}
+define('BASE_PATH', $basePath);
+
+include BASE_PATH . '/Private/Database/db_connect.php';
 
 // Alle GET-Parameter sammeln und standardmäßig auf 'Unbekannt' setzen, falls nicht vorhanden
 $stichwort = $_GET['stichwort'] ?? 'Unbekannt';

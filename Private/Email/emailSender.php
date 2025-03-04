@@ -1,16 +1,21 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+// Stammverzeichnis definieren
+$stepsBack = 2;
+$basePath = __DIR__;
+for ($i = 0; $i < $stepsBack; $i++) {
+    $basePath = dirname($basePath);
+}
+define('BASE_PATH', $basePath);
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-require '/mnt/rid/08/69/543220869/htdocs/Private/Email/phpmailer/src/Exception.php';
-require '/mnt/rid/08/69/543220869/htdocs/Private/Email/phpmailer/src/PHPMailer.php';
-require '/mnt/rid/08/69/543220869/htdocs/Private/Email/phpmailer/src/SMTP.php';
+require BASE_PATH . '/Private/Email/phpmailer/src/Exception.php';
+require BASE_PATH . '/Private/Email/phpmailer/src/PHPMailer.php';
+require BASE_PATH . '/Private/Email/phpmailer/src/SMTP.php';
 
 function getSMTPConfig() {
-    $config = parse_ini_file('/mnt/rid/08/69/543220869/htdocs/Private/Initializations/smtpEmail_Config.ini');
+    $config = parse_ini_file(BASE_PATH . '/Private/Initializations/smtpEmail_Config.ini');
     if ($config === false) {
         throw new Exception("Fehler beim Einlesen der Konfigurationsdatei.");
     }
@@ -18,7 +23,7 @@ function getSMTPConfig() {
 }
 
 function getEmailSignature() {
-    $signature = file_get_contents('/mnt/rid/08/69/543220869/htdocs/Private/Email/signatur/emailSignature.html');
+    $signature = file_get_contents(BASE_PATH . '/Private/Email/signatur/emailSignature.html');
     if ($signature === false) {
         throw new Exception("Fehler beim Einlesen der Signaturdatei.");
     }
@@ -26,11 +31,11 @@ function getEmailSignature() {
 }
 
 function sendEmail($to, $subject, $body) {
-    $mail = new PHPMailer(true);
-    $smtpConfig = getSMTPConfig();
-    $signature = getEmailSignature();
-    
     try {
+        $mail = new PHPMailer(true);
+        $smtpConfig = getSMTPConfig();
+        $signature = getEmailSignature();
+
         // Server settings
         $mail->isSMTP();
         $mail->Host = $smtpConfig['Host'];
@@ -49,7 +54,7 @@ function sendEmail($to, $subject, $body) {
         $mail->addAddress($to);
 
         // Attachments
-        $mail->addEmbeddedImage('/mnt/rid/08/69/543220869/htdocs/Private/Email/signatur/logo.png', 'logo');
+        $mail->addEmbeddedImage(BASE_PATH . '/Private/Email/signatur/logo.png', 'logo');
 
         // Content
         $mail->isHTML(true);
@@ -57,9 +62,17 @@ function sendEmail($to, $subject, $body) {
         $mail->Body = $body . $signature;
 
         $mail->send();
-        return true;
+        return [
+            'success' => true,
+            'message' => 'E-Mail wurde erfolgreich versendet'
+        ];
     } catch (Exception $e) {
-        return "Die E-Mail konnte nicht gesendet werden. Fehler: {$mail->ErrorInfo}";
+        error_log("E-Mail-Versand fehlgeschlagen: " . $mail->ErrorInfo);
+        return [
+            'success' => false,
+            'message' => 'E-Mail konnte nicht gesendet werden',
+            'error' => $mail->ErrorInfo
+        ];
     }
 }
 ?>

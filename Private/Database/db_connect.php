@@ -1,15 +1,15 @@
 <?php
 
-// Anzahl der Verzeichnisse, um zum Stammverzeichnis zurückgehen
-$stepsBack = 2; 
-
+// Anzahl der Verzeichnisse, um zum Stammverzeichnis zurückzugehen
+$stepsBack = 2;
 // Dynamisch den Pfad zum Stammverzeichnis berechnen
 $basePath = __DIR__;
 for ($i = 0; $i < $stepsBack; $i++) {
     $basePath = dirname($basePath);
 }
+define('BASE_PATH', $basePath);
 
-$configPath = $basePath . '/Private/Initializations/db_config.ini';
+$configPath = BASE_PATH . '/Private/Initializations/db_config.ini';
 
 // Datei einlesen
 $config = parse_ini_file($configPath);
