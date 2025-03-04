@@ -1,6 +1,18 @@
 <?php
 
-$config = parse_ini_file('/mnt/rid/08/69/543220869/htdocs/Private/Initializations/db_config.ini');
+// Anzahl der Verzeichnisse, um zum Stammverzeichnis zurückgehen
+$stepsBack = 2; 
+
+// Dynamisch den Pfad zum Stammverzeichnis berechnen
+$basePath = __DIR__;
+for ($i = 0; $i < $stepsBack; $i++) {
+    $basePath = dirname($basePath);
+}
+
+$configPath = $basePath . '/Private/Initializations/db_config.ini';
+
+// Datei einlesen
+$config = parse_ini_file($configPath);
 
 if ($config === false) {
     throw new Exception("Fehler beim Laden der Konfigurationsdatei.");
