@@ -6,9 +6,9 @@ $basePath = __DIR__;
 for ($i = 0; $i < $stepsBack; $i++) {
     $basePath = dirname($basePath);
 }
-define('BASE_PATH', $basePath);
+define('BASE_PATH_DB', $basePath);
 
-include BASE_PATH . '/Private/Database/db_connect.php';
+include BASE_PATH_DB . '/Private/Database/db_connect.php';
 
 // Alle GET-Parameter sammeln und standardmäßig auf 'Unbekannt' setzen, falls nicht vorhanden
 $stichwort = $_GET['stichwort'] ?? 'Unbekannt';
