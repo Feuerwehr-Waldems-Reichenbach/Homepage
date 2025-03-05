@@ -7,9 +7,9 @@ $basePath = __DIR__;
 for ($i = 0; $i < $stepsBack; $i++) {
     $basePath = dirname($basePath);
 }
-define('BASE_PATH', $basePath);
+define('BASE_PATH_DB', $basePath);
 
-$configPath = BASE_PATH . '/Private/Initializations/db_config.ini';
+$configPath = BASE_PATH_DB . '/Private/Initializations/db_config.ini';
 
 // Datei einlesen
 $config = parse_ini_file($configPath);
