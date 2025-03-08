@@ -3,3 +3,4 @@
 .htpasswd
 *.ps1
 sampleSnipets
+/vendor

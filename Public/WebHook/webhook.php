@@ -1,14 +1,18 @@
 <?php
+
 // Anzahl der Verzeichnisse, um zum Stammverzeichnis zurückzugehen
 $stepsBack = 2;
-// Dynamisch den Pfad zum Stammverzeichnis berechnen
 $basePath = __DIR__;
 for ($i = 0; $i < $stepsBack; $i++) {
     $basePath = dirname($basePath);
 }
-define('BASE_PATH', $basePath);
+define('BASE_PATH_DB', $basePath);
 
-include BASE_PATH . '/Private/Database/db_connect.php';
+require_once BASE_PATH_DB . '/Private/Database/Database.php';
+
+// Datenbankverbindung abrufen
+$db = Database::getInstance();
+$conn = $db->getConnection();
 
 // Alle GET-Parameter sammeln und standardmäßig auf 'Unbekannt' setzen, falls nicht vorhanden
 $stichwort = $_GET['stichwort'] ?? 'Unbekannt';
@@ -21,13 +25,14 @@ $alarmgruppen = $_GET['alarmgruppen'] ?? 'Unbekannt';
 $beendet = isset($_GET['beendet']) ? $_GET['beendet'] : 0;
 
 $datum = date("Y-m-d H:i:s"); // Aktuelles Datum und Uhrzeit
-$einheit = $alarmgruppen; // 'Einheit' wird als Alarmgruppen gesetzt
+$einheit = $alarmgruppen;
 $stichwort = !empty($stichwortuebersetzung) ? $stichwortuebersetzung : $stichwort;
 
-echo "Webhook empfangen\n\n";
+echo "Webhook empfangen: ";
 
 // Ort basierend auf der Adresse festlegen
-function checkOrt($adresse, $ort, $text) {
+function checkOrt($adresse, $ort, $text)
+{
     return strpos($adresse, $text) !== false ? $ort : null;
 }
 
@@ -49,65 +54,46 @@ if (empty($einheit)) {
     $einheit = "Feuerwehr Reichenbach";
 }
 
-// Überprüfen, ob der Eintrag bereits existiert
-$sqlCheck = "SELECT * FROM `Einsatz` WHERE `EinsatzID` = ?";
-$stmtCheck = $conn->prepare($sqlCheck);
-if ($stmtCheck === false) {
-    die("MySQL prepare error: " . $conn->error);
-}
-$stmtCheck->bind_param("s", $einsatzID);
-$stmtCheck->execute();
-$resultCheck = $stmtCheck->get_result();
+try {
+    // Überprüfen, ob der Eintrag bereits existiert
+    $sqlCheck = "SELECT COUNT(*) FROM `Einsatz` WHERE `EinsatzID` = ?";
+    $stmtCheck = $conn->prepare($sqlCheck);
+    $stmtCheck->execute([$einsatzID]);
+    $exists = $stmtCheck->fetchColumn();
 
-if ($resultCheck->num_rows > 0) {
-    // Einsatz existiert bereits, aktualisieren
-    if ($beendet == 1) {
-        $sqlUpdate = "UPDATE `Einsatz` SET `Anzeigen` = true, `Endzeit` = ? WHERE `EinsatzID` = ?";
-        $stmtUpdate = $conn->prepare($sqlUpdate);
-        if ($stmtUpdate === false) {
-            die("MySQL prepare error: " . $conn->error);
-        }
-        $stmtUpdate->bind_param("ss", $datum, $einsatzID);
-        if ($stmtUpdate->execute()) {
-            echo "Einsatz erfolgreich aktualisiert.";
+    if ($exists) {
+        // Einsatz existiert bereits, aktualisieren
+        if ($beendet == 1) {
+            $sqlUpdate = "UPDATE `Einsatz` SET `Anzeigen` = true, `Endzeit` = ? WHERE `EinsatzID` = ?";
+            $stmtUpdate = $conn->prepare($sqlUpdate);
+            if ($stmtUpdate->execute([$datum, $einsatzID])) {
+                echo "Einsatz erfolgreich aktualisiert.";
+            } else {
+                echo "Fehler beim Aktualisieren: " . implode(", ", $stmtUpdate->errorInfo());
+            }
         } else {
-            echo "Fehler beim Aktualisieren: " . $stmtUpdate->error;
+            echo "Einsatz existiert bereits und ist noch nicht beendet.";
         }
-        $stmtUpdate->close();
     } else {
-        echo "Einsatz existiert bereits und ist noch nicht beendet.";
-    }
-} else {
-    // Neuer Einsatz, einfügen
-    $sqlInsert = "INSERT INTO `Einsatz` (`ID`, `Datum`, `Sachverhalt`, `Stichwort`, `Ort`, `Einheit`, `EinsatzID`) VALUES (NULL, ?, ?, ?, ?, ?, ?)";
-    $stmtInsert = $conn->prepare($sqlInsert);
-    if ($stmtInsert === false) {
-        die("MySQL prepare error: " . $conn->error);
-    }
-    $stmtInsert->bind_param("ssssss", $datum, $sachverhalt, $stichwort, $ort, $einheit, $einsatzID);
+        // Neuer Einsatz, einfügen
+        $sqlInsert = "INSERT INTO `Einsatz` (`ID`, `Datum`, `Sachverhalt`, `Stichwort`, `Ort`, `Einheit`, `EinsatzID`) 
+                      VALUES (NULL, ?, ?, ?, ?, ?, ?)";
+        $stmtInsert = $conn->prepare($sqlInsert);
 
-    // Überprüfen, ob mehr als eine Variable den Wert 'Unbekannt' hat
-    $unbekanntCount = 0;
-    foreach ([$datum, $sachverhalt, $stichwort, $ort, $einheit] as $value) {
-        if ($value === 'Unbekannt') {
-            $unbekanntCount++;
-        }
-    }
+        // Überprüfen, ob mehr als eine Variable den Wert 'Unbekannt' hat
+        $unbekanntCount = count(array_filter([$datum, $sachverhalt, $stichwort, $ort, $einheit], fn($v) => $v === 'Unbekannt'));
 
-    if ($unbekanntCount >= 2) {
-        echo "Fehler: Zu viele unbekannte Werte.";
-    } else {
-        // Ausführen des Statements
-        if ($stmtInsert->execute()) {
-            echo "Einsatz erfolgreich eingetragen.";
+        if ($unbekanntCount >= 2) {
+            echo "Fehler: Zu viele unbekannte Werte.";
         } else {
-            echo "Fehler beim Einfügen: " . $stmtInsert->error;
+            if ($stmtInsert->execute([$datum, $sachverhalt, $stichwort, $ort, $einheit, $einsatzID])) {
+                echo "Einsatz erfolgreich eingetragen.";
+            } else {
+                echo "Fehler beim Einfügen: " . implode(", ", $stmtInsert->errorInfo());
+            }
         }
     }
-    $stmtInsert->close();
+} catch (PDOException $e) {
+    echo "Fehler bei der Datenbankabfrage: " . $e->getMessage();
 }
-
-$stmtCheck->close();
-$conn->close();
-
 ?>

@@ -5,17 +5,17 @@ $basePath = __DIR__;
 for ($i = 0; $i < $stepsBack; $i++) {
     $basePath = dirname($basePath);
 }
-define('BASE_PATH', $basePath);
+define('BASE_PATH_DB', $basePath);
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-require BASE_PATH . '/Private/Email/phpmailer/src/Exception.php';
-require BASE_PATH . '/Private/Email/phpmailer/src/PHPMailer.php';
-require BASE_PATH . '/Private/Email/phpmailer/src/SMTP.php';
+require BASE_PATH_DB . '/Private/Email/phpmailer/src/Exception.php';
+require BASE_PATH_DB . '/Private/Email/phpmailer/src/PHPMailer.php';
+require BASE_PATH_DB . '/Private/Email/phpmailer/src/SMTP.php';
 
 function getSMTPConfig() {
-    $config = parse_ini_file(BASE_PATH . '/Private/Initializations/smtpEmail_Config.ini');
+    $config = parse_ini_file(BASE_PATH_DB . '/Private/Initializations/smtpEmail_Config.ini');
     if ($config === false) {
         throw new Exception("Fehler beim Einlesen der Konfigurationsdatei.");
     }
@@ -23,7 +23,7 @@ function getSMTPConfig() {
 }
 
 function getEmailSignature() {
-    $signature = file_get_contents(BASE_PATH . '/Private/Email/signatur/emailSignature.html');
+    $signature = file_get_contents(BASE_PATH_DB . '/Private/Email/signatur/emailSignature.html');
     if ($signature === false) {
         throw new Exception("Fehler beim Einlesen der Signaturdatei.");
     }
@@ -54,7 +54,7 @@ function sendEmail($to, $subject, $body) {
         $mail->addAddress($to);
 
         // Attachments
-        $mail->addEmbeddedImage(BASE_PATH . '/Private/Email/signatur/logo.png', 'logo');
+        $mail->addEmbeddedImage(BASE_PATH_DB . '/Private/Email/signatur/logo.png', 'logo');
 
         // Content
         $mail->isHTML(true);
