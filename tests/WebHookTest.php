@@ -123,6 +123,72 @@ class WebHookTest extends TestCase
         // Aufräumen
         $this->cleanupDatabase();
     }
+    
+    public function testKategorieFeuer()
+    {
+        fwrite(STDOUT, "\n📡 Überprüfe Kategorisierung für Feuer-Einsatz...");
+        
+        // Einsatz mit Feuer-Stichwort einfügen
+        $response = $this->sendFeuerWebhook();
+        
+        // Prüfen, ob die Kategorie korrekt gesetzt wurde
+        $db = Database::getInstance();
+        $conn = $db->getConnection();
+        
+        $stmt = $conn->prepare("SELECT Kategorie FROM `Einsatz` WHERE `EinsatzID` = ?");
+        $stmt->execute([$this->einsatzID]);
+        $kategorie = $stmt->fetchColumn();
+        
+        $this->assertEquals('Feuer', $kategorie, "\n❌ Fehler: Die Kategorie wurde nicht korrekt als 'Feuer' erkannt!");
+        fwrite(STDOUT, "\n✅ Einsatz wurde korrekt als 'Feuer' kategorisiert.\n");
+        
+        // Aufräumen
+        $this->cleanupDatabase();
+    }
+    
+    public function testKategorieTechnischeHilfeleistung()
+    {
+        fwrite(STDOUT, "\n📡 Überprüfe Kategorisierung für Technische Hilfeleistung...");
+        
+        // Einsatz mit TH-Stichwort einfügen
+        $response = $this->sendTHWebhook();
+        
+        // Prüfen, ob die Kategorie korrekt gesetzt wurde
+        $db = Database::getInstance();
+        $conn = $db->getConnection();
+        
+        $stmt = $conn->prepare("SELECT Kategorie FROM `Einsatz` WHERE `EinsatzID` = ?");
+        $stmt->execute([$this->einsatzID]);
+        $kategorie = $stmt->fetchColumn();
+        
+        $this->assertEquals('Technische Hilfeleistung', $kategorie, "\n❌ Fehler: Die Kategorie wurde nicht korrekt als 'Technische Hilfeleistung' erkannt!");
+        fwrite(STDOUT, "\n✅ Einsatz wurde korrekt als 'Technische Hilfeleistung' kategorisiert.\n");
+        
+        // Aufräumen
+        $this->cleanupDatabase();
+    }
+    
+    public function testKategorieMedizinisch()
+    {
+        fwrite(STDOUT, "\n📡 Überprüfe Kategorisierung für Medizinischen Einsatz...");
+        
+        // Einsatz mit medizinischem Stichwort einfügen
+        $response = $this->sendMedizinWebhook();
+        
+        // Prüfen, ob die Kategorie korrekt gesetzt wurde
+        $db = Database::getInstance();
+        $conn = $db->getConnection();
+        
+        $stmt = $conn->prepare("SELECT Kategorie FROM `Einsatz` WHERE `EinsatzID` = ?");
+        $stmt->execute([$this->einsatzID]);
+        $kategorie = $stmt->fetchColumn();
+        
+        $this->assertEquals('Medizinisch', $kategorie, "\n❌ Fehler: Die Kategorie wurde nicht korrekt als 'Medizinisch' erkannt!");
+        fwrite(STDOUT, "\n✅ Einsatz wurde korrekt als 'Medizinisch' kategorisiert.\n");
+        
+        // Aufräumen
+        $this->cleanupDatabase();
+    }
 
     // Neue private Hilfsmethoden für die Tests
     
@@ -223,6 +289,68 @@ class WebHookTest extends TestCase
         fwrite(STDOUT, "\n ☐ Webhook-Antwort: $response");
     }
 
+    private function sendFeuerWebhook()
+    {
+        $testData = [
+            "kategorie" => "Feuer",
+            "stichwort" => "F2",
+            "stichwortuebersetzung" => "[F2] Feuer mittel",
+            "standort" => "Feuerwehr Musterstadt",
+            "sachverhalt" => "Brennt Wohnhaus",
+            "adresse" => "Musterstraße 1, 12345 Musterstadt - Musterstadtteil",
+            "einsatzID" => $this->einsatzID,
+            "ric" => "Test 1-46-1, Test 1-30-1, Test 1-11-1",
+            "alarmgruppen" => "Alarmgruppe 1, Alarmgruppe 2",
+            "infogruppen" => "Infogruppe 1, Infogruppe 2",
+            "fahrzeuge" => "Musterstadt 1-46-1, Musterstadt 1-30-1"
+        ];
+
+        $response = $this->sendRequest($testData);
+        fwrite(STDOUT, "\n☐ Webhook-Antwort: $response");
+        return $response;
+    }
+    
+    private function sendTHWebhook()
+    {
+        $testData = [
+            "kategorie" => "Technische Hilfeleistung",
+            "stichwort" => "H1",
+            "stichwortuebersetzung" => "[H1] Hilfeleistung klein",
+            "standort" => "Feuerwehr Musterstadt",
+            "sachverhalt" => "Ölspur nach Verkehrsunfall",
+            "adresse" => "Musterstraße 1, 12345 Musterstadt - Musterstadtteil",
+            "einsatzID" => $this->einsatzID,
+            "ric" => "Test 1-46-1, Test 1-30-1, Test 1-11-1",
+            "alarmgruppen" => "Alarmgruppe 1, Alarmgruppe 2",
+            "infogruppen" => "Infogruppe 1, Infogruppe 2",
+            "fahrzeuge" => "Musterstadt 1-46-1, Musterstadt 1-30-1"
+        ];
+
+        $response = $this->sendRequest($testData);
+        fwrite(STDOUT, "\n☐ Webhook-Antwort: $response");
+        return $response;
+    }
+    
+    private function sendMedizinWebhook()
+    {
+        $testData = [
+            "kategorie" => "Medizinisch",
+            "stichwort" => "RD1",
+            "stichwortuebersetzung" => "[RD1] Rettungsdienst",
+            "standort" => "Feuerwehr Musterstadt",
+            "sachverhalt" => "Person mit Herzinfarkt",
+            "adresse" => "Musterstraße 1, 12345 Musterstadt - Musterstadtteil",
+            "einsatzID" => $this->einsatzID,
+            "ric" => "Test 1-46-1, Test 1-30-1, Test 1-11-1",
+            "alarmgruppen" => "Alarmgruppe 1, Alarmgruppe 2",
+            "infogruppen" => "Infogruppe 1, Infogruppe 2",
+            "fahrzeuge" => "Musterstadt 1-46-1, Musterstadt 1-30-1"
+        ];
+
+        $response = $this->sendRequest($testData);
+        fwrite(STDOUT, "\n☐ Webhook-Antwort: $response");
+        return $response;
+    }
 
     private function sendRequest($data)
     {
