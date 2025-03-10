@@ -7,7 +7,7 @@
  */
 
 // Gemeinsame Funktionen einbinden
-require_once __DIR__ . '/helpers.php';
+require_once __DIR__ . '/Helpers/helpers.php';
 
 // HTTP-Header für Webhook-Antwort setzen
 header('Content-Type: text/plain; charset=utf-8');
