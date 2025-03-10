@@ -9,8 +9,7 @@ class WebHookTest extends TestCase
 {
     private $url = "http://localhost/WebHook/webhook.php";
     private $einsatzID = "99999";
-
-
+    private $authKey = "wY7QQdbcL8gMo"; // Authentifizierungsschlüssel für Tests
 
     public function testWebhookInsert()
     {
@@ -189,12 +188,36 @@ class WebHookTest extends TestCase
         // Aufräumen
         $this->cleanupDatabase();
     }
+    
+    // Neue Tests für die Authentifizierung
+    
+    public function testWebhookMissingAuthKey()
+    {
+        fwrite(STDOUT, "\n📡 Überprüfe Webhook-Anfrage ohne Authentifizierungsschlüssel...");
+        $response = $this->sendMissingAuthKeyWebhook();
+        
+        $this->assertStringContainsString("Fehler: Kein Authentifizierungsschlüssel angegeben", $response, 
+            "\n❌ Fehler: Webhook sollte einen Fehler zurückgeben, wenn kein Authentifizierungsschlüssel angegeben ist!");
+        fwrite(STDOUT, "\n✅ Webhook gibt korrekt einen Fehler zurück, wenn kein Authentifizierungsschlüssel angegeben ist.\n");
+    }
+    
+    public function testWebhookInvalidAuthKey()
+    {
+        fwrite(STDOUT, "\n📡 Überprüfe Webhook-Anfrage mit ungültigem Authentifizierungsschlüssel...");
+        $response = $this->sendInvalidAuthKeyWebhook();
+        
+        $this->assertStringContainsString("Fehler: Ungültiger Authentifizierungsschlüssel", $response, 
+            "\n❌ Fehler: Webhook sollte einen Fehler zurückgeben, wenn der Authentifizierungsschlüssel ungültig ist!");
+        fwrite(STDOUT, "\n✅ Webhook gibt korrekt einen Fehler zurück, wenn der Authentifizierungsschlüssel ungültig ist.\n");
+    }
+    
 
     // Neue private Hilfsmethoden für die Tests
     
     private function sendMissingEinsatzIDWebhook()
     {
         $testData = [
+            "auth_key" => $this->authKey, // Authentifizierungsschlüssel hinzufügen
             "kategorie" => "Feuer",
             "stichwort" => "F1",
             "stichwortuebersetzung" => "[F1] Feuer klein",
@@ -216,6 +239,7 @@ class WebHookTest extends TestCase
     private function sendTooManyUnknownValuesWebhook()
     {
         $testData = [
+            "auth_key" => $this->authKey, // Authentifizierungsschlüssel hinzufügen
             "einsatzID" => $this->einsatzID
             // Alle anderen Werte fehlen absichtlich, um viele "Unbekannt"-Werte zu erzeugen
         ];
@@ -228,6 +252,7 @@ class WebHookTest extends TestCase
     private function sendInvalidBeendetValueWebhook()
     {
         $testData = [
+            "auth_key" => $this->authKey, // Authentifizierungsschlüssel hinzufügen
             "beendet" => "ungültig", // Ungültiger Wert für beendet
             "kategorie" => "Feuer",
             "stichwort" => "F1",
@@ -250,6 +275,7 @@ class WebHookTest extends TestCase
     private function InsertCorrectWebhook()
     {
         $testData = [
+            "auth_key" => $this->authKey, // Authentifizierungsschlüssel hinzufügen
             "kategorie" => "Feuer",
             "stichwort" => "F1",
             "stichwortuebersetzung" => "[F1] Feuer klein",
@@ -271,6 +297,7 @@ class WebHookTest extends TestCase
     private function UpdateCorrectWebhook()
     {
         $testData = [
+            "auth_key" => $this->authKey, // Authentifizierungsschlüssel hinzufügen
             "beendet" => 1,
             "kategorie" => "Feuer",
             "stichwort" => "F1",
@@ -287,11 +314,13 @@ class WebHookTest extends TestCase
         
         $response = $this->sendRequest($testData);
         fwrite(STDOUT, "\n ☐ Webhook-Antwort: $response");
+        return $response;
     }
 
     private function sendFeuerWebhook()
     {
         $testData = [
+            "auth_key" => $this->authKey, // Authentifizierungsschlüssel hinzufügen
             "kategorie" => "Feuer",
             "stichwort" => "F2",
             "stichwortuebersetzung" => "[F2] Feuer mittel",
@@ -306,13 +335,14 @@ class WebHookTest extends TestCase
         ];
 
         $response = $this->sendRequest($testData);
-        fwrite(STDOUT, "\n☐ Webhook-Antwort: $response");
+        fwrite(STDOUT, "\n ☐ Webhook-Antwort: $response");
         return $response;
     }
     
     private function sendTHWebhook()
     {
         $testData = [
+            "auth_key" => $this->authKey, // Authentifizierungsschlüssel hinzufügen
             "kategorie" => "Technische Hilfeleistung",
             "stichwort" => "H1",
             "stichwortuebersetzung" => "[H1] Hilfeleistung klein",
@@ -327,13 +357,14 @@ class WebHookTest extends TestCase
         ];
 
         $response = $this->sendRequest($testData);
-        fwrite(STDOUT, "\n☐ Webhook-Antwort: $response");
+        fwrite(STDOUT, "\n ☐ Webhook-Antwort: $response");
         return $response;
     }
     
     private function sendMedizinWebhook()
     {
         $testData = [
+            "auth_key" => $this->authKey, // Authentifizierungsschlüssel hinzufügen
             "kategorie" => "Medizinisch",
             "stichwort" => "RD1",
             "stichwortuebersetzung" => "[RD1] Rettungsdienst",
@@ -348,7 +379,53 @@ class WebHookTest extends TestCase
         ];
 
         $response = $this->sendRequest($testData);
-        fwrite(STDOUT, "\n☐ Webhook-Antwort: $response");
+        fwrite(STDOUT, "\n ☐ Webhook-Antwort: $response");
+        return $response;
+    }
+    
+    // Neue Methoden für die Authentifizierungstests
+    
+    private function sendMissingAuthKeyWebhook()
+    {
+        $testData = [
+            // Kein auth_key
+            "kategorie" => "Feuer",
+            "stichwort" => "F1",
+            "stichwortuebersetzung" => "[F1] Feuer klein",
+            "standort" => "Feuerwehr Musterstadt",
+            "sachverhalt" => "Brennt Mülleimer",
+            "adresse" => "Musterstraße 1, 12345 Musterstadt - Musterstadtteil",
+            "einsatzID" => $this->einsatzID,
+            "ric" => "Test 1-46-1, Test 1-30-1, Test 1-11-1",
+            "alarmgruppen" => "Alarmgruppe 1, Alarmgruppe 2",
+            "infogruppen" => "Infogruppe 1, Infogruppe 2",
+            "fahrzeuge" => "Musterstadt 1-46-1, Musterstadt 1-30-1"
+        ];
+
+        $response = $this->sendRequest($testData);
+        fwrite(STDOUT, "\n ☐ Webhook-Antwort: $response");
+        return $response;
+    }
+    
+    private function sendInvalidAuthKeyWebhook()
+    {
+        $testData = [
+            "auth_key" => "ungueltigerSchluessel123", // Ungültiger Schlüssel
+            "kategorie" => "Feuer",
+            "stichwort" => "F1",
+            "stichwortuebersetzung" => "[F1] Feuer klein",
+            "standort" => "Feuerwehr Musterstadt",
+            "sachverhalt" => "Brennt Mülleimer",
+            "adresse" => "Musterstraße 1, 12345 Musterstadt - Musterstadtteil",
+            "einsatzID" => $this->einsatzID,
+            "ric" => "Test 1-46-1, Test 1-30-1, Test 1-11-1",
+            "alarmgruppen" => "Alarmgruppe 1, Alarmgruppe 2",
+            "infogruppen" => "Infogruppe 1, Infogruppe 2",
+            "fahrzeuge" => "Musterstadt 1-46-1, Musterstadt 1-30-1"
+        ];
+
+        $response = $this->sendRequest($testData);
+        fwrite(STDOUT, "\n ☐ Webhook-Antwort: $response");
         return $response;
     }
 

@@ -15,6 +15,21 @@ define('BASE_PATH_DB', $basePath);
 require_once BASE_PATH_DB . '/Private/Database/Database.php';
 
 /**
+ * Überprüft, ob ein Authentifizierungsschlüssel gültig ist
+ * 
+ * @param PDO $conn Die Datenbankverbindung
+ * @param string $authKey Der zu überprüfende Authentifizierungsschlüssel
+ * @return bool True, wenn der Schlüssel gültig ist, sonst False
+ */
+function isValidAuthKey($conn, $authKey)
+{
+    $sql = "SELECT COUNT(*) FROM `authentifizierungsschluessel` WHERE `auth_key` = ? AND `active` = 1";
+    $stmt = $conn->prepare($sql);
+    $stmt->execute([$authKey]);
+    return $stmt->fetchColumn() > 0;
+}
+
+/**
  * Ermittelt den Ort basierend auf der Adresse
  * 
  * @param string $adresse Die Adresse aus dem Webhook

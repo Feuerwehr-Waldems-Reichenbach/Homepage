@@ -4,6 +4,9 @@
  * 
  * Empfängt Einsatzdaten über GET-Parameter und speichert sie in der Datenbank.
  * Unterstützt das Einfügen neuer Einsätze und das Aktualisieren bestehender Einsätze.
+ * 
+ * Webhook bei alarmierung: https://feuerwehr-waldems-reichenbach.de/WebHook/webhook.php?auth_key=cNPhKETT/6hL&kategorie={Kategorie}&stichwort={Stichwort}&stichwortuebersetzung={Stichwortübersetzung}&standort={Standort}&sachverhalt={Sachverhalt}&adresse={Adresse}&einsatzID={Einsatz-ID}&ric={RIC}&alarmgruppen={Alarmgruppen}&infogruppen={Infogruppen}&fahrzeuge={Fahrzeuge}
+ * Webhook bei Einsatzende: https://feuerwehr-waldems-reichenbach.de/WebHook/webhook.php?auth_key=cNPhKETT/6hL&beendet=1&kategorie={Kategorie}&stichwort={Stichwort}&stichwortuebersetzung={Stichwortübersetzung}&standort={Standort}&sachverhalt={Sachverhalt}&adresse={Adresse}&einsatzID={Einsatz-ID}&ric={RIC}&alarmgruppen={Alarmgruppen}&infogruppen={Infogruppen}&fahrzeuge={Fahrzeuge}
  */
 
 // Gemeinsame Funktionen einbinden
@@ -12,9 +15,22 @@ require_once __DIR__ . '/Helpers/helpers.php';
 // HTTP-Header für Webhook-Antwort setzen
 header('Content-Type: text/plain; charset=utf-8');
 
+// Prüfen, ob ein Authentifizierungsschlüssel mitgesendet wurde
+if (!isset($_GET['auth_key']) || empty($_GET['auth_key'])) {
+    echo "Fehler: Kein Authentifizierungsschlüssel angegeben.";
+    exit;
+}
+
 // DB-Verbindung herstellen
 $db = Database::getInstance();
 $conn = $db->getConnection();
+
+// Authentifizierungsschlüssel überprüfen
+$authKey = $_GET['auth_key'];
+if (!isValidAuthKey($conn, $authKey)) {
+    echo "Fehler: Ungültiger Authentifizierungsschlüssel.";
+    exit;
+}
 
 // Alle GET-Parameter sammeln und standardmäßig auf 'Unbekannt' setzen, falls nicht vorhanden
 $params = [
