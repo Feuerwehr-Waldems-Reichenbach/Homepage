@@ -95,5 +95,34 @@ class DatabaseTest extends TestCase
             ]
         ];
     }
+    
+    public function testAuthKeyTableStructure()
+    {
+        fwrite(STDOUT, "\n📡 Überprüfe die Struktur der Authentifizierungsschlüssel-Tabelle...\n");
+        
+        $db = Database::getInstance();
+        $conn = $db->getConnection();
+        
+        // Prüfen, ob die Spalte 'active' vom Typ TINYINT(1) ist (für Boolean-Werte)
+        $stmt = $conn->query("SHOW COLUMNS FROM authentifizierungsschluessel WHERE Field = 'active'");
+        $column = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        $this->assertNotFalse($column, "❌ Spalte 'active' existiert nicht in der Tabelle 'authentifizierungsschluessel'!");
+        $this->assertStringContainsString('tinyint', strtolower($column['Type']), "❌ Spalte 'active' ist nicht vom Typ TINYINT!");
+        fwrite(STDOUT, "✅ Spalte 'active' hat den korrekten Datentyp.\n");
+        
+        // Prüfen, ob die Spalte 'auth_key' einen ausreichenden Datentyp für Schlüssel hat
+        $stmt = $conn->query("SHOW COLUMNS FROM authentifizierungsschluessel WHERE Field = 'auth_key'");
+        $column = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        $this->assertNotFalse($column, "❌ Spalte 'auth_key' existiert nicht in der Tabelle 'authentifizierungsschluessel'!");
+        $this->assertTrue(
+            strpos(strtolower($column['Type']), 'varchar') !== false || 
+            strpos(strtolower($column['Type']), 'char') !== false || 
+            strpos(strtolower($column['Type']), 'text') !== false,
+            "❌ Spalte 'auth_key' hat keinen geeigneten Datentyp für Zeichenketten!"
+        );
+        fwrite(STDOUT, "✅ Spalte 'auth_key' hat einen geeigneten Datentyp.\n");
+    }
 }
 ?>

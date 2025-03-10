@@ -5,8 +5,8 @@
  * Empfängt Einsatzdaten über GET-Parameter und speichert sie in der Datenbank.
  * Unterstützt das Einfügen neuer Einsätze und das Aktualisieren bestehender Einsätze.
  * 
- * Webhook bei alarmierung: https://feuerwehr-waldems-reichenbach.de/WebHook/webhook.php?auth_key=cNPhKETT/6hL&kategorie={Kategorie}&stichwort={Stichwort}&stichwortuebersetzung={Stichwortübersetzung}&standort={Standort}&sachverhalt={Sachverhalt}&adresse={Adresse}&einsatzID={Einsatz-ID}&ric={RIC}&alarmgruppen={Alarmgruppen}&infogruppen={Infogruppen}&fahrzeuge={Fahrzeuge}
- * Webhook bei Einsatzende: https://feuerwehr-waldems-reichenbach.de/WebHook/webhook.php?auth_key=cNPhKETT/6hL&beendet=1&kategorie={Kategorie}&stichwort={Stichwort}&stichwortuebersetzung={Stichwortübersetzung}&standort={Standort}&sachverhalt={Sachverhalt}&adresse={Adresse}&einsatzID={Einsatz-ID}&ric={RIC}&alarmgruppen={Alarmgruppen}&infogruppen={Infogruppen}&fahrzeuge={Fahrzeuge}
+ * Webhook bei alarmierung: https://feuerwehr-waldems-reichenbach.de/WebHook/webhook.php?auth_key=KEY&kategorie={Kategorie}&stichwort={Stichwort}&stichwortuebersetzung={Stichwortübersetzung}&standort={Standort}&sachverhalt={Sachverhalt}&adresse={Adresse}&einsatzID={Einsatz-ID}&ric={RIC}&alarmgruppen={Alarmgruppen}&infogruppen={Infogruppen}&fahrzeuge={Fahrzeuge}
+ * Webhook bei Einsatzende: https://feuerwehr-waldems-reichenbach.de/WebHook/webhook.php?auth_key=KEY&beendet=1&kategorie={Kategorie}&stichwort={Stichwort}&stichwortuebersetzung={Stichwortübersetzung}&standort={Standort}&sachverhalt={Sachverhalt}&adresse={Adresse}&einsatzID={Einsatz-ID}&ric={RIC}&alarmgruppen={Alarmgruppen}&infogruppen={Infogruppen}&fahrzeuge={Fahrzeuge}
  */
 
 // Gemeinsame Funktionen einbinden
