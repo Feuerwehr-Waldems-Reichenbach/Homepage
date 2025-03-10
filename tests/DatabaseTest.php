@@ -33,7 +33,7 @@ class DatabaseTest extends TestCase
     {
         fwrite(STDOUT, "\n📡 Überprüfe, ob alle Tabellen in der Datenbank existieren...\n");
 
-        $expectedTables = ['bookings', 'einsatz', 'neuigkeiten', 'popup', 'users'];
+        $expectedTables = ['bookings', 'einsatz', 'neuigkeiten', 'popup', 'users', 'authentifizierungsschluessel'];
 
         $db = Database::getInstance();
         $conn = $db->getConnection();
@@ -75,7 +75,7 @@ class DatabaseTest extends TestCase
             ],
             'einsatz' => [
                 'einsatz', 
-                ['ID', 'EinsatzID', 'Anzeigen', 'Datum', 'Endzeit', 'Sachverhalt', 'Stichwort', 'Ort', 'Einheit']
+                ['ID', 'EinsatzID', 'Anzeigen', 'Datum', 'Endzeit', 'Sachverhalt', 'Stichwort', 'Ort', 'Einheit', 'Kategorie']
             ],
             'neuigkeiten' => [
                 'neuigkeiten', 
@@ -88,6 +88,10 @@ class DatabaseTest extends TestCase
             'users' => [
                 'users', 
                 ['id', 'name', 'email', 'password', 'is_admin', 'created_at']
+            ],
+            'authentifizierungsschluessel' => [
+                'authentifizierungsschluessel',
+                ['id', 'Bezeichnung', 'auth_key', 'active']
             ]
         ];
     }
