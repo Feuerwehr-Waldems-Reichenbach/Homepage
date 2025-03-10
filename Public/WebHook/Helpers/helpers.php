@@ -6,7 +6,7 @@
  */
 
 // Pfad zur Datenbank-Klasse
-$stepsBack = 2;
+$stepsBack = 3;
 $basePath = __DIR__;
 for ($i = 0; $i < $stepsBack; $i++) {
     $basePath = dirname($basePath);
