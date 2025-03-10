@@ -9,7 +9,81 @@ class WebHookTest extends TestCase
 {
     private $url = "http://localhost/WebHook/webhook.php";
     private $einsatzID = "99999";
-    private $authKey = "wY7QQdbcL8gMo"; // Authentifizierungsschlüssel für Tests
+    private $authKey; // Will be generated dynamically
+
+    protected function setUp(): void
+    {
+        // Generate a random authentication key for this test run
+        $this->authKey = bin2hex(random_bytes(8)); // 16 characters random key
+        
+        // Ensure the key exists in the database
+        $this->ensureAuthKeyInDatabase();
+    }
+    
+    protected function tearDown(): void
+    {
+        // Clean up the test authentication key after tests
+        $this->removeAuthKeyFromDatabase();
+    }
+    
+    /**
+     * Ensures that the test authentication key exists in the database
+     */
+    private function ensureAuthKeyInDatabase()
+    {
+        fwrite(STDOUT, "\n📡 Erstelle einen zufälligen Authentifizierungsschlüssel für die Tests...");
+        
+        $db = Database::getInstance();
+        $conn = $db->getConnection();
+        
+        // Prüfen, ob der Schlüssel bereits existiert (sollte nicht der Fall sein, da zufällig)
+        $stmt = $conn->prepare("SELECT COUNT(*) FROM `authentifizierungsschluessel` WHERE `auth_key` = ?");
+        $stmt->execute([$this->authKey]);
+        $count = $stmt->fetchColumn();
+        
+        if ($count == 0) {
+            // Schlüssel einfügen
+            $stmt = $conn->prepare("INSERT INTO `authentifizierungsschluessel` (`Bezeichnung`, `auth_key`, `active`) VALUES (?, ?, 1)");
+            $stmt->execute(["Temporärer Test-Schlüssel für PHPUnit", $this->authKey]);
+            
+            // Prüfen, ob der Einfügevorgang erfolgreich war
+            $stmt = $conn->prepare("SELECT COUNT(*) FROM `authentifizierungsschluessel` WHERE `auth_key` = ?");
+            $stmt->execute([$this->authKey]);
+            $count = $stmt->fetchColumn();
+            
+            if ($count != 1) {
+                throw new Exception("Der Test-Authentifizierungsschlüssel konnte nicht in die Datenbank eingefügt werden!");
+            }
+            
+            fwrite(STDOUT, "\n✅ Zufälliger Test-Authentifizierungsschlüssel ({$this->authKey}) erfolgreich in die Datenbank eingefügt.\n");
+        }
+    }
+    
+    /**
+     * Removes the test authentication key from the database
+     */
+    private function removeAuthKeyFromDatabase()
+    {
+        fwrite(STDOUT, "\n📡 Entferne den temporären Authentifizierungsschlüssel aus der Datenbank...");
+        
+        $db = Database::getInstance();
+        $conn = $db->getConnection();
+        
+        // Schlüssel löschen
+        $stmt = $conn->prepare("DELETE FROM `authentifizierungsschluessel` WHERE `auth_key` = ?");
+        $stmt->execute([$this->authKey]);
+        
+        // Prüfen, ob der Löschvorgang erfolgreich war
+        $stmt = $conn->prepare("SELECT COUNT(*) FROM `authentifizierungsschluessel` WHERE `auth_key` = ?");
+        $stmt->execute([$this->authKey]);
+        $count = $stmt->fetchColumn();
+        
+        if ($count != 0) {
+            fwrite(STDOUT, "\n⚠️ Der temporäre Test-Authentifizierungsschlüssel konnte nicht aus der Datenbank entfernt werden.\n");
+        } else {
+            fwrite(STDOUT, "\n✅ Temporärer Test-Authentifizierungsschlüssel erfolgreich aus der Datenbank entfernt.\n");
+        }
+    }
 
     public function testWebhookInsert()
     {
@@ -189,7 +263,7 @@ class WebHookTest extends TestCase
         $this->cleanupDatabase();
     }
     
-    // Neue Tests für die Authentifizierung
+    // Tests für die Authentifizierung
     
     public function testWebhookMissingAuthKey()
     {
@@ -211,13 +285,12 @@ class WebHookTest extends TestCase
         fwrite(STDOUT, "\n✅ Webhook gibt korrekt einen Fehler zurück, wenn der Authentifizierungsschlüssel ungültig ist.\n");
     }
     
-
-    // Neue private Hilfsmethoden für die Tests
+    // Private Hilfsmethoden für die Tests
     
     private function sendMissingEinsatzIDWebhook()
     {
         $testData = [
-            "auth_key" => $this->authKey, // Authentifizierungsschlüssel hinzufügen
+            "auth_key" => $this->authKey,
             "kategorie" => "Feuer",
             "stichwort" => "F1",
             "stichwortuebersetzung" => "[F1] Feuer klein",
@@ -239,7 +312,7 @@ class WebHookTest extends TestCase
     private function sendTooManyUnknownValuesWebhook()
     {
         $testData = [
-            "auth_key" => $this->authKey, // Authentifizierungsschlüssel hinzufügen
+            "auth_key" => $this->authKey,
             "einsatzID" => $this->einsatzID
             // Alle anderen Werte fehlen absichtlich, um viele "Unbekannt"-Werte zu erzeugen
         ];
@@ -252,7 +325,7 @@ class WebHookTest extends TestCase
     private function sendInvalidBeendetValueWebhook()
     {
         $testData = [
-            "auth_key" => $this->authKey, // Authentifizierungsschlüssel hinzufügen
+            "auth_key" => $this->authKey,
             "beendet" => "ungültig", // Ungültiger Wert für beendet
             "kategorie" => "Feuer",
             "stichwort" => "F1",
@@ -275,7 +348,7 @@ class WebHookTest extends TestCase
     private function InsertCorrectWebhook()
     {
         $testData = [
-            "auth_key" => $this->authKey, // Authentifizierungsschlüssel hinzufügen
+            "auth_key" => $this->authKey,
             "kategorie" => "Feuer",
             "stichwort" => "F1",
             "stichwortuebersetzung" => "[F1] Feuer klein",
@@ -297,7 +370,7 @@ class WebHookTest extends TestCase
     private function UpdateCorrectWebhook()
     {
         $testData = [
-            "auth_key" => $this->authKey, // Authentifizierungsschlüssel hinzufügen
+            "auth_key" => $this->authKey,
             "beendet" => 1,
             "kategorie" => "Feuer",
             "stichwort" => "F1",
@@ -320,7 +393,7 @@ class WebHookTest extends TestCase
     private function sendFeuerWebhook()
     {
         $testData = [
-            "auth_key" => $this->authKey, // Authentifizierungsschlüssel hinzufügen
+            "auth_key" => $this->authKey,
             "kategorie" => "Feuer",
             "stichwort" => "F2",
             "stichwortuebersetzung" => "[F2] Feuer mittel",
@@ -342,7 +415,7 @@ class WebHookTest extends TestCase
     private function sendTHWebhook()
     {
         $testData = [
-            "auth_key" => $this->authKey, // Authentifizierungsschlüssel hinzufügen
+            "auth_key" => $this->authKey,
             "kategorie" => "Technische Hilfeleistung",
             "stichwort" => "H1",
             "stichwortuebersetzung" => "[H1] Hilfeleistung klein",
@@ -364,7 +437,7 @@ class WebHookTest extends TestCase
     private function sendMedizinWebhook()
     {
         $testData = [
-            "auth_key" => $this->authKey, // Authentifizierungsschlüssel hinzufügen
+            "auth_key" => $this->authKey,
             "kategorie" => "Medizinisch",
             "stichwort" => "RD1",
             "stichwortuebersetzung" => "[RD1] Rettungsdienst",
@@ -383,7 +456,7 @@ class WebHookTest extends TestCase
         return $response;
     }
     
-    // Neue Methoden für die Authentifizierungstests
+    // Methoden für die Authentifizierungstests
     
     private function sendMissingAuthKeyWebhook()
     {
