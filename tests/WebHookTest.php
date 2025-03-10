@@ -12,12 +12,11 @@ class WebHookTest extends TestCase
 
 
 
-    public function testCorrectWebhookFunctionality()
+    public function testWebhookInsert()
     {
         fwrite(STDOUT, "\n📡 Überprüfe Webhook-Anfrage zur Erstellung eines korrekten Einsatzes...");
         $this->InsertCorrectWebhook();
-         
-        // Überprüfung, ob der Eintrag wirklich in der Datenbank existiert
+    
         $db = Database::getInstance();
         $conn = $db->getConnection();
     
@@ -26,23 +25,161 @@ class WebHookTest extends TestCase
         $count = $stmt->fetchColumn();
     
         $this->assertEquals(1, $count, "\n❌ Fehler: Eintrag wurde nicht in die Datenbank eingefügt!");
-        fwrite(STDOUT, "\n✅ Einsatz erfolgreich in Datenbank eingetragen.");
+        fwrite(STDOUT, "\n✅ Einsatz erfolgreich in Datenbank eingetragen.\n");
+    }
     
-
+    public function testWebhookUpdate()
+    {
+        fwrite(STDOUT, "\n📡 Versuche Einsatz zu beenden");
         $this->UpdateCorrectWebhook();
     
-        // Überprüfung, ob das Feld `Endzeit` nun gesetzt ist (zeigt, dass der Einsatz beendet wurde)
+        $db = Database::getInstance();
+        $conn = $db->getConnection();
+    
         $stmt = $conn->prepare("SELECT Endzeit FROM `Einsatz` WHERE `EinsatzID` = ?");
         $stmt->execute([$this->einsatzID]);
         $endzeit = $stmt->fetchColumn();
     
         $this->assertNotNull($endzeit, "\n❌ Fehler: Der Einsatz wurde nicht als beendet markiert!");
-        fwrite(STDOUT, "\n✅ Einsatz erfolgreich als beendet markiert.");
+        fwrite(STDOUT, "\n✅ Einsatz erfolgreich als beendet markiert.\n");
+    }
     
-        // Cleanup nach erfolgreichem Test
+    public function testWebhookCleanup()
+    {
+        fwrite(STDOUT, "\n📡 Versuche Test-Datensatz aus der Datenbank zu entfernen");
+        $this->cleanupDatabase();
+    
+        $db = Database::getInstance();
+        $conn = $db->getConnection();
+    
+        $stmt = $conn->prepare("SELECT COUNT(*) FROM `Einsatz` WHERE `EinsatzID` = ?");
+        $stmt->execute([$this->einsatzID]);
+        $count = $stmt->fetchColumn();
+    
+        $this->assertEquals(0, $count, "\n❌ Fehler: Eintrag wurde nicht gelöscht!");
+        fwrite(STDOUT, "\n✅ Test-Datenbankeintrag erfolgreich entfernt.\n");
+    }
+    
+    public function testWebhookMissingEinsatzID()
+    {
+        fwrite(STDOUT, "\n📡 Überprüfe Webhook-Anfrage ohne EinsatzID...");
+        $response = $this->sendMissingEinsatzIDWebhook();
+        
+        $this->assertStringContainsString("Fehler", $response, "\n❌ Fehler: Webhook sollte einen Fehler zurückgeben, wenn die EinsatzID fehlt!");
+        fwrite(STDOUT, "\n✅ Webhook gibt korrekt einen Fehler zurück, wenn die EinsatzID fehlt.\n");
+    }
+    
+    public function testWebhookTooManyUnknownValues()
+    {
+        fwrite(STDOUT, "\n📡 Überprüfe Webhook-Anfrage mit zu vielen unbekannten Werten...");
+        $response = $this->sendTooManyUnknownValuesWebhook();
+        
+        $this->assertStringContainsString("Fehler: Zu viele unbekannte Werte", $response, "\n❌ Fehler: Webhook sollte einen Fehler zurückgeben, wenn zu viele Werte unbekannt sind!");
+        fwrite(STDOUT, "\n✅ Webhook gibt korrekt einen Fehler zurück, wenn zu viele Werte unbekannt sind.\n");
+    }
+    
+    public function testWebhookDuplicateInsert()
+    {
+        fwrite(STDOUT, "\n📡 Überprüfe Webhook-Anfrage mit doppeltem Einsatz (ohne beendet-Flag)...");
+        
+        // Ersten Einsatz einfügen
+        $this->InsertCorrectWebhook();
+        
+        // Versuchen, den gleichen Einsatz nochmal einzufügen
+        $response = $this->InsertCorrectWebhook();
+        
+        $this->assertStringContainsString("existiert bereits", $response, "\n❌ Fehler: Webhook sollte erkennen, dass der Einsatz bereits existiert!");
+        fwrite(STDOUT, "\n✅ Webhook erkennt korrekt, dass der Einsatz bereits existiert.\n");
+        
+        // Aufräumen
         $this->cleanupDatabase();
     }
     
+    public function testWebhookInvalidBeendetValue()
+    {
+        fwrite(STDOUT, "\n📡 Überprüfe Webhook-Anfrage mit ungültigem beendet-Wert...");
+        
+        // Erst einen Einsatz einfügen
+        $this->InsertCorrectWebhook();
+        
+        // Versuchen, mit ungültigem beendet-Wert zu aktualisieren
+        $response = $this->sendInvalidBeendetValueWebhook();
+        
+        // Der Webhook sollte den Einsatz nicht als beendet markieren
+        $db = Database::getInstance();
+        $conn = $db->getConnection();
+        
+        $stmt = $conn->prepare("SELECT Endzeit FROM `Einsatz` WHERE `EinsatzID` = ?");
+        $stmt->execute([$this->einsatzID]);
+        $endzeit = $stmt->fetchColumn();
+        
+        // Akzeptiere entweder NULL oder '0000-00-00 00:00:00' als "nicht beendet"
+        $this->assertTrue(
+            $endzeit === null || $endzeit === '0000-00-00 00:00:00', 
+            "\n❌ Fehler: Der Einsatz wurde fälschlicherweise als beendet markiert! Endzeit: " . $endzeit
+        );
+        fwrite(STDOUT, "\n✅ Webhook markiert den Einsatz nicht als beendet, wenn der beendet-Wert ungültig ist.\n");
+        
+        // Aufräumen
+        $this->cleanupDatabase();
+    }
+
+    // Neue private Hilfsmethoden für die Tests
+    
+    private function sendMissingEinsatzIDWebhook()
+    {
+        $testData = [
+            "kategorie" => "Feuer",
+            "stichwort" => "F1",
+            "stichwortuebersetzung" => "[F1] Feuer klein",
+            "standort" => "Feuerwehr Musterstadt",
+            "sachverhalt" => "Brennt Mülleimer",
+            "adresse" => "Musterstraße 1, 12345 Musterstadt - Musterstadtteil",
+            // EinsatzID fehlt absichtlich
+            "ric" => "Test 1-46-1, Test 1-30-1, Test 1-11-1",
+            "alarmgruppen" => "Alarmgruppe 1, Alarmgruppe 2",
+            "infogruppen" => "Infogruppe 1, Infogruppe 2",
+            "fahrzeuge" => "Musterstadt 1-46-1, Musterstadt 1-30-1"
+        ];
+
+        $response = $this->sendRequest($testData);
+        fwrite(STDOUT, "\n ☐ Webhook-Antwort: $response");
+        return $response;
+    }
+    
+    private function sendTooManyUnknownValuesWebhook()
+    {
+        $testData = [
+            "einsatzID" => $this->einsatzID
+            // Alle anderen Werte fehlen absichtlich, um viele "Unbekannt"-Werte zu erzeugen
+        ];
+
+        $response = $this->sendRequest($testData);
+        fwrite(STDOUT, "\n ☐ Webhook-Antwort: $response");
+        return $response;
+    }
+    
+    private function sendInvalidBeendetValueWebhook()
+    {
+        $testData = [
+            "beendet" => "ungültig", // Ungültiger Wert für beendet
+            "kategorie" => "Feuer",
+            "stichwort" => "F1",
+            "stichwortuebersetzung" => "[F1] Feuer klein",
+            "standort" => "Feuerwehr Musterstadt",
+            "sachverhalt" => "Brennt Mülleimer",
+            "adresse" => "Musterstraße 1, 12345 Musterstadt - Musterstadtteil",
+            "einsatzID" => $this->einsatzID,
+            "ric" => "Test 1-46-1, Test 1-30-1, Test 1-11-1",
+            "alarmgruppen" => "Alarmgruppe 1, Alarmgruppe 2",
+            "infogruppen" => "Infogruppe 1, Infogruppe 2",
+            "fahrzeuge" => "Musterstadt 1-46-1, Musterstadt 1-30-1"
+        ];
+        
+        $response = $this->sendRequest($testData);
+        fwrite(STDOUT, "\n ☐ Webhook-Antwort: $response");
+        return $response;
+    }
 
     private function InsertCorrectWebhook()
     {
@@ -61,7 +198,8 @@ class WebHookTest extends TestCase
         ];
 
         $response = $this->sendRequest($testData);
-        fwrite(STDOUT, "\n✅ Webhook-Antwort: $response");
+        fwrite(STDOUT, "\n ☐ Webhook-Antwort: $response");
+        return $response;
     }
 
     private function UpdateCorrectWebhook()
@@ -81,9 +219,8 @@ class WebHookTest extends TestCase
             "fahrzeuge" => "Musterstadt 1-46-1, Musterstadt 1-30-1"
         ];
         
-        fwrite(STDOUT, "\n✅ Aktualisiere Webhook-Anfrage zur Beendung des Einsatzes");
         $response = $this->sendRequest($testData);
-        fwrite(STDOUT, "\n✅ Webhook-Antwort: $response");
+        fwrite(STDOUT, "\n ☐ Webhook-Antwort: $response");
     }
 
 
@@ -108,9 +245,7 @@ class WebHookTest extends TestCase
 
         // Eintrag löschen
         $stmtDelete = $conn->prepare("DELETE FROM `Einsatz` WHERE `EinsatzID` = ?");
-        $stmtDelete->execute([$this->einsatzID]);
-
-        fwrite(STDOUT, "\n✅ Test-Datenbankeintrag entfernt.");
+        $stmtDelete->execute([$this->einsatzID]);  
     }
 }
 ?>
