@@ -1,10 +1,6 @@
-Hier die vollständig kombinierte, detaillierte Beschreibung der Anwendung, die sowohl visuell ansprechend als auch funktional optimal aufgebaut ist, um ein modernes, stabiles, sicheres und benutzerfreundliches System zu gewährleisten:
+# 🌲 **Grillhütten-Reservierungssystem – Feuerwehr Waldems Reichenbach**
 
----
-
-# 🌲 **Grillhütten-Reservierungssystem – Feuerwehr Waldems-Reichenbach**
-
-Das Grillhütten-Reservierungssystem ist ein integriertes, modulares und modernes Online-Buchungssystem zur komfortablen Reservierung der Grillhütte in Waldems-Reichenbach. Es basiert technisch auf **PHP, HTML, CSS, JavaScript** und **MySQL** und ist nahtlos in eine bestehende Webseite integriert.
+Das Grillhütten-Reservierungssystem ist ein integriertes, modulares und modernes Online-Buchungssystem zur komfortablen Reservierung der Grillhütte in Waldems Reichenbach. Es basiert technisch auf **PHP, HTML, CSS, JavaScript** und **MySQL** und ist nahtlos in eine bestehende Webseite integriert.
 
 Es vereint klassische Buchungslogik mit einer modernen, klaren Oberfläche, die im Design das Branding der Freiwilligen Feuerwehr Reichenbach widerspiegelt. Im Zentrum steht dabei die Nutzerfreundlichkeit sowie die einfache Verwaltung durch die Feuerwehr.
 
@@ -35,7 +31,6 @@ Es vereint klassische Buchungslogik mit einer modernen, klaren Oberfläche, die 
 - **Footer (fix):**
   - Kontakt zur Feuerwehr Reichenbach
   - Impressum, Datenschutz
-  - Gemeinde-/Feuerwehr-Wappen
 
 - **Kalender & Interaktive Elemente:**
   - Dynamischer Kalender (FullCalendar.js)
@@ -50,12 +45,13 @@ Es vereint klassische Buchungslogik mit einer modernen, klaren Oberfläche, die 
 
 **Optisch:**
 - Modernes minimalistisches Design, Feuerwehr-Farben (`#A72920`) im Vordergrund
-- Hero-Image der Grillhütte prominent sichtbar
+- Schlichter Hintergrund 
 - Kalender zentral, Login-/Registrierungsoption oben rechts klar erkennbar
 
 **Funktionell:**
 - Schnelle Übersicht der Verfügbarkeit im Kalender
 - Klick auf freie Tage fordert Nutzer zum Login oder zur Registrierung auf
+- Seite soll nicht scrollbar sein, alle Elemente sind gut erreichbar plaziert
 
 ---
 
@@ -63,11 +59,13 @@ Es vereint klassische Buchungslogik mit einer modernen, klaren Oberfläche, die 
 
 **Optisch:**
 - Kompakte, intuitive Formulare
-- Klar abgegrenzte Felder: Name, E-Mail-Adresse, Passwort
+- Klar abgegrenzte Felder: Name, E-Mail-Adresse, Telefonnummer (optional) , Passwort
 
 **Funktionell:**
 - Registrierung nur mit E-Mail-Verifikation
 - Verschlüsselte Speicherung von Passwörtern (bcrypt)
+-einfache vor Überprüfung der ausgefüllten Felder auf Korrektheit
+- Email kann nicht 2 mal benutzt werden
 
 ---
 
@@ -82,7 +80,10 @@ Es vereint klassische Buchungslogik mit einer modernen, klaren Oberfläche, die 
 - Automatische Prüfung und Blockierung belegter Tage
 - Status „ausstehend“ nach Erstellung
 - Nutzer erhält Zusammenfassung und Bestätigung per E-Mail
-
+- 2 termine werden zur Auswahl benötigt, Start und Ende, es kann auch nur 1 Tag ausgewählt werden. 
+- System bemerkt automatisch start und Ende, auf Basis des Datums
+- bei Auswahl werden alle mit inbegriffen Tage deutlich markiert
+- falls bei einem Tag nur bis zu einer bestimmten Uhrzeit die Reservierung möglich ist, kann auch nur bis zu der Uhrzeit ausgewählt werden. 
 ---
 
 ### 🔸 **Reservierungsübersicht (Benutzerbereich)**
@@ -132,6 +133,7 @@ Es vereint klassische Buchungslogik mit einer modernen, klaren Oberfläche, die 
 - Bestätigung oder Ablehnung inklusive persönlicher Admin-Nachricht
 - Automatische Benachrichtigung der Nutzer
 - Automatische Löschung ausstehender Reservierungen nach 10 Tagen
+- Möglichkeit zur Erstellung und Zuweisung von Reservierungen
 
 ---
 
@@ -142,7 +144,7 @@ Es vereint klassische Buchungslogik mit einer modernen, klaren Oberfläche, die 
 - Admin-Nutzer farblich hervorgehoben
 
 **Funktionell:**
-- Nutzerinformationen bearbeiten, löschen oder Rechte ändern
+- Nutzerinformationen bearbeiten, löschen oder Rechte ändern, und anlegen neuer Benutzer. 
 
 ---
 
@@ -157,15 +159,16 @@ Es vereint klassische Buchungslogik mit einer modernen, klaren Oberfläche, die 
 
 ### 🔸 **Backend (PHP/MySQL):**
 - MVC-orientierte Architektur (Controller-Model-View)
-- Bestehende Datenbankverbindung integriert
-- Nutzung vorhandener Mail-Komponenten (PHPMailer)
+- Bestehende Datenbankverbindung integriert (Database.php) 
+- Nutzung der emailSender.php
 - Prepared Statements verhindern SQL-Injection
 
 ### 🔸 **Frontend (HTML/CSS/JS):**
-- Responsives, mobiles Design (Mobile First)
+- Responsives, mobiles Design
 - Klar strukturiertes CSS mit modularem Aufbau
 - Dynamische Inhalte via AJAX/Fetch API (z.B. Kalender)
 - Direkte Clientseitige Validierung (Usability)
+- und serverseitige Validierung für optimale Sicherheit 
 
 ---
 
@@ -187,32 +190,27 @@ Es vereint klassische Buchungslogik mit einer modernen, klaren Oberfläche, die 
 ## 🚀 **Benutzerfreundlichkeit & UX-Highlights**
 
 - Modale Dialoge für angenehme Nutzerführung
-- Animationen (hover, klick) erhöhen Interaktivität und modernes Feeling
+- Animationen (hover, klick) erhöhen Interaktivität und modernes aber seriöses Feeling
 - Klare und transparente Statuskommunikation
-
----
-
-## 🏕️ **Lokale Identität & Lokalisierung**
-
-- Logo der Feuerwehr Reichenbach stets sichtbar
-- Lokale Sprachbezüge („Grillplatz buchen“, „Verwaltet von Feuerwehr Reichenbach“)
-- Möglichkeit zur Blockierung interner Tage (Übungen, Feste etc.)
-
----
 
 ## 📌 **Typischer Ablauf (zusammengefasst)**
 
 1. Nutzer sieht verfügbaren Termin.
 2. Registrierung & E-Mail-Verifikation.
 3. Auswahl und Reservierung (mit Anmerkung).
-4. Admin prüft Reservierung, sendet Nachricht.
-5. Nutzer erhält Bestätigung/Ablehnung per Mail.
+4. Admin prüft Reservierung, und bestätigt
+5. System sendet Bestätigungs Email an Nutzer 
+
 
 ---
 
 ## ✅ **Fazit**
 
 Das Grillhütten-Reservierungssystem kombiniert ein modernes, visuell ansprechendes Design mit einer sicheren, intuitiven und stabilen technischen Grundlage. Die Feuerwehr Waldems-Reichenbach erhält ein effizientes, wartungsfreundliches und benutzerfreundliches Verwaltungssystem, das gleichzeitig für die Öffentlichkeit leicht verständlich und attraktiv ist. Die modulare Struktur ermöglicht zukünftige Erweiterungen jederzeit unkompliziert und nahtlos.
+
+
+Projektstruktur zur Integration
+Nutze folgende angepasste Struktur innerhalb des Ordners /Grillhuette, basierend auf deiner aktuellen Struktur:
 
 
 
@@ -224,13 +222,7 @@ Homepage/
 │   ├── Database/
 │   │   └── Database.php            # Bereits bestehende DB-Verbindung nutzen
 │   ├── Email/                      # Bereits vorhandener E-Mail-Versand
-│   │   ├── phpmailer/
-│   │   ├── signatur/
-│   │   └── emailSender.php
-│   └── Initializations/            # Konfigurationen nutzen
-│       ├── db_config.ini
-│       ├── smtpEmail_Config.ini
-│       └── connectapi_config.ini
+│      └── emailSender.php
 │
 ├── Public/
 │   └── Grillhuette/                # Integration hier erfolgt modular
@@ -286,30 +278,39 @@ Homepage/
 
 Datenbankintegration: 
 CREATE TABLE gh_users (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(100),
-  email VARCHAR(100) UNIQUE,
-  password VARCHAR(255),
-  email_verified BOOLEAN DEFAULT FALSE,
-  verification_token VARCHAR(255),
-  is_admin BOOLEAN DEFAULT FALSE,
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    email_verified BOOLEAN DEFAULT FALSE,
+    verification_token VARCHAR(255),
+    is_admin BOOLEAN DEFAULT FALSE,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 CREATE TABLE gh_reservations (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  user_id INT,
-  start_date DATE,
-  end_date DATE,
-  preferred_time TIME DEFAULT '12:00',
-  user_note TEXT,                                   -- Anmerkung/Nachricht des Benutzers bei Reservierung
-  admin_message VARCHAR(500),                       -- Admin-Nachricht an Benutzer (bei Bestätigung)
-  status ENUM('pending', 'confirmed', 'declined') DEFAULT 'pending',
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  confirmed_at DATETIME DEFAULT NULL,               -- Zeitpunkt der Bestätigung durch Admin
-  FOREIGN KEY (user_id) REFERENCES gh_users(id) ON DELETE CASCADE
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
+    start_time TIME DEFAULT '12:00',
+    end_time TIME DEFAULT '22:00',
+    user_note TEXT,
+    admin_message VARCHAR(500),
+    status ENUM('pending', 'confirmed', 'declined') DEFAULT 'pending',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    confirmed_at DATETIME DEFAULT NULL,
+    FOREIGN KEY (user_id) REFERENCES gh_users(id) ON DELETE CASCADE
 );
 
-
+CREATE TABLE gh_password_resets (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    token VARCHAR(255) NOT NULL UNIQUE,
+    expires_at DATETIME NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES gh_users(id) ON DELETE CASCADE
+);
 
 
