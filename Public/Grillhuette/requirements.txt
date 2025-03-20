@@ -221,8 +221,9 @@ Homepage/
 ├── Private/
 │   ├── Database/
 │   │   └── Database.php            # Bereits bestehende DB-Verbindung nutzen
-│   ├── Email/                      # Bereits vorhandener E-Mail-Versand
-│      └── emailSender.php
+│   │   └── dbs12777311.sql         
+│   ├── Email/                      
+│      └── emailSender.php          # Bereits vorhandener E-Mail-Versand
 │
 ├── Public/
 │   └── Grillhuette/                # Integration hier erfolgt modular
