@@ -88,6 +88,7 @@ require_once 'includes/header.php';
                     <div class="row">
                         <?php 
                         $hasActiveReservations = false;
+                        $activeCount = 1;
                         foreach ($userReservations as $res): 
                             // Nur aktuelle (nicht stornierte) und zukünftige Reservierungen anzeigen
                             if ($res['status'] !== 'canceled' && strtotime($res['end_datetime']) >= time()):
@@ -97,6 +98,7 @@ require_once 'includes/header.php';
                                 <div class="card h-100">
                                     <div class="card-header d-flex justify-content-between align-items-center">
                                         <span>
+                                            <h5>Reservierung <?php echo $activeCount; ?></h5>
                                             <?php echo date('d.m.Y H:i', strtotime($res['start_datetime'])); ?> - 
                                             <?php echo date('d.m.Y H:i', strtotime($res['end_datetime'])); ?>
                                         </span>
@@ -150,6 +152,7 @@ require_once 'includes/header.php';
                             </div>
                         <?php 
                             endif;
+                            $activeCount++;
                         endforeach; 
                         
                         if (!$hasActiveReservations):
@@ -172,6 +175,7 @@ require_once 'includes/header.php';
                     <div class="row">
                         <?php 
                         $hasPastReservations = false;
+                        $pastCount = 1;
                         foreach ($userReservations as $res): 
                             // Nur vergangene oder stornierte Reservierungen anzeigen
                             if ($res['status'] === 'canceled' || strtotime($res['end_datetime']) < time()):
@@ -181,6 +185,7 @@ require_once 'includes/header.php';
                                 <div class="card h-100">
                                     <div class="card-header d-flex justify-content-between align-items-center">
                                         <span>
+                                            <h5>Reservierung <?php echo $pastCount; ?></h5>
                                             <?php echo date('d.m.Y H:i', strtotime($res['start_datetime'])); ?> - 
                                             <?php echo date('d.m.Y H:i', strtotime($res['end_datetime'])); ?>
                                         </span>
@@ -221,6 +226,7 @@ require_once 'includes/header.php';
                             </div>
                         <?php 
                             endif;
+                            $pastCount++;
                         endforeach; 
                         
                         if (!$hasPastReservations):
