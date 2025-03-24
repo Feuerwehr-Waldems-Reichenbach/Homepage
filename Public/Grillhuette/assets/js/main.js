@@ -193,10 +193,14 @@ function renderCalendar(month, year) {
     // Load day statuses via AJAX
     loadDayStatuses(month + 1, year);
     
-    // Add click event to days for selection
+    // Add click event to days for selection - only for future dates
     const dayElements = calendarContainer.querySelectorAll('.day:not(.other-month)');
     dayElements.forEach(day => {
         day.addEventListener('click', function() {
+            // Check if the day is selectable
+            if (!isSelectable(this)) {
+                return;
+            }
             selectDay(this);
         });
     });
@@ -242,10 +246,26 @@ function loadDayStatuses(month, year) {
 function updateDayStatuses(statusData) {
     if (!statusData) return;
     
-    // First set all days to 'free' by default
+    // Get today's date for comparison
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Reset time part for comparison
+    
+    // First set all days to 'free' by default and mark past days
     document.querySelectorAll('.day[data-date]').forEach(dayElement => {
-        dayElement.classList.remove('pending', 'booked');
+        const dateStr = dayElement.dataset.date;
+        const date = new Date(dateStr);
+        
+        // Remove all status classes except other-month
+        dayElement.classList.remove('free', 'pending', 'booked', 'past');
+        
+        // Add free by default
         dayElement.classList.add('free');
+        
+        // If it's a past date, mark it as such
+        if (date < today) {
+            dayElement.classList.add('past');
+            dayElement.classList.remove('free'); // A past day is not free for booking
+        }
     });
     
     // Then update with statuses from the server
@@ -254,12 +274,42 @@ function updateDayStatuses(statusData) {
         const dayElement = document.querySelector(`.day[data-date="${date}"]`);
         
         if (dayElement) {
-            // Remove all status classes
-            dayElement.classList.remove('free', 'pending', 'booked');
-            // Add the new status class
-            dayElement.classList.add(status);
+            // For non-past days, update status
+            if (!dayElement.classList.contains('past')) {
+                // Remove status classes but keep past if it's set
+                dayElement.classList.remove('free', 'pending', 'booked');
+                // Add the new status class
+                dayElement.classList.add(status);
+            }
         }
     });
+}
+
+// Check if a day is selectable (must be free or today or future)
+function isSelectable(dayElement) {
+    // Get date from dataset
+    const dateStr = dayElement.dataset.date;
+    const date = new Date(dateStr);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Reset time part for proper comparison
+    
+    // Check if it's a past date (before today)
+    if (date < today) {
+        console.log('Date is in the past and not selectable:', dateStr);
+        return false;
+    }
+    
+    // Check if the day has booked or pending status
+    if (dayElement.classList.contains('booked') || dayElement.classList.contains('pending')) {
+        // For dates with pending or booked status, we might need an extra check
+        // to see if the time slot is partially available
+        // This would require additional logic with backend communication
+        console.log('Date is not free:', dateStr);
+        return false;
+    }
+    
+    // The day is in the future or today and is free
+    return true;
 }
 
 // Handle day selection in the calendar
@@ -340,16 +390,52 @@ function highlightDateRange(startDate, endDate) {
     
     // Loop through all days in the range
     const current = new Date(start);
+    let allDaysInRangeAreSelectable = true;
+    
     while (current <= end) {
         const formattedDate = formatDate(current);
         const dayElement = document.querySelector(`.day[data-date="${formattedDate}"]`);
         
         if (dayElement) {
+            // Check if this day is selectable
+            if (!isSelectable(dayElement) && formattedDate !== startDate && formattedDate !== endDate) {
+                // If we encounter a non-selectable day in the range, we have a problem
+                allDaysInRangeAreSelectable = false;
+                console.warn(`Date range contains unavailable day: ${formattedDate}`);
+                
+                // We'll still highlight what we can up to this point
+                dayElement.classList.add('selected');
+                break;
+            }
+            
             dayElement.classList.add('selected');
         }
         
         // Move to the next day
         current.setDate(current.getDate() + 1);
+    }
+    
+    // If the range contains unavailable days, show a warning to the user
+    if (!allDaysInRangeAreSelectable) {
+        alert('Achtung: Der ausgewählte Zeitraum enthält Tage, die nicht verfügbar sind. ' +
+              'Bitte wählen Sie einen anderen Zeitraum aus.');
+        
+        // Reset the selection
+        document.querySelectorAll('.day.selected').forEach(el => {
+            el.classList.remove('selected');
+        });
+        
+        // Select only the start date
+        const startDayElement = document.querySelector(`.day[data-date="${startDate}"]`);
+        if (startDayElement) {
+            startDayElement.classList.add('selected');
+        }
+        
+        // Clear the end date
+        const endDateInput = document.getElementById('end_date');
+        if (endDateInput) {
+            endDateInput.value = '';
+        }
     }
 }
 
@@ -381,6 +467,26 @@ function setupReservationSelection() {
             event.preventDefault();
             alert('Bitte wählen Sie ein Enddatum aus.');
             return false;
+        }
+        
+        // Validate that all days in the range are available
+        const start = new Date(startDate.value);
+        const end = new Date(endDate.value);
+        const current = new Date(start);
+        
+        while (current <= end) {
+            const formattedDate = formatDate(current);
+            const dayElement = document.querySelector(`.day[data-date="${formattedDate}"]`);
+            
+            if (dayElement && !isSelectable(dayElement)) {
+                // Found a non-selectable day in the range
+                event.preventDefault();
+                alert('Der ausgewählte Zeitraum enthält Tage, die nicht verfügbar sind. Bitte wählen Sie einen anderen Zeitraum aus.');
+                return false;
+            }
+            
+            // Move to the next day
+            current.setDate(current.getDate() + 1);
         }
         
         return true;
