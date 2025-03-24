@@ -43,6 +43,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['toggle_admin'])) {
     }
 }
 
+// Verifikationsstatus ändern
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['toggle_verification'])) {
+    // CSRF-Token überprüfen
+    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+        $_SESSION['flash_message'] = 'Ungültige Anfrage. Bitte versuchen Sie es erneut.';
+        $_SESSION['flash_type'] = 'danger';
+    } else {
+        $userId = isset($_POST['user_id']) ? intval($_POST['user_id']) : 0;
+        
+        $result = $user->toggleVerification($userId);
+        
+        $_SESSION['flash_message'] = $result['message'];
+        $_SESSION['flash_type'] = $result['success'] ? 'success' : 'danger';
+        
+        // Bei Erfolg die Benutzer neu laden
+        if ($result['success']) {
+            $allUsers = $user->getAllUsers();
+        }
+    }
+}
+
 // Neuen Benutzer erstellen
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_user'])) {
     // CSRF-Token überprüfen
@@ -56,6 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_user'])) {
         $phone = isset($_POST['phone']) ? trim($_POST['phone']) : '';
         $password = isset($_POST['password']) ? $_POST['password'] : '';
         $isAdmin = isset($_POST['is_admin']) ? 1 : 0;
+        $isVerified = isset($_POST['is_verified']) ? 1 : 0;
         
         // Validierung
         $errors = [];
@@ -81,7 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_user'])) {
         }
         
         if (empty($errors)) {
-            $result = $user->createUserByAdmin($email, $password, $firstName, $lastName, $phone, $isAdmin);
+            $result = $user->createUserByAdmin($email, $password, $firstName, $lastName, $phone, $isAdmin, $isVerified);
             
             $_SESSION['flash_message'] = $result['message'];
             $_SESSION['flash_type'] = $result['success'] ? 'success' : 'danger';
@@ -110,6 +132,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_user'])) {
         $lastName = isset($_POST['last_name']) ? trim($_POST['last_name']) : '';
         $phone = isset($_POST['phone']) ? trim($_POST['phone']) : '';
         $isAdmin = isset($_POST['is_admin']) ? 1 : 0;
+        $isVerified = isset($_POST['is_verified']) ? 1 : 0;
         $newPassword = isset($_POST['new_password']) ? $_POST['new_password'] : '';
         
         // Validierung
@@ -140,7 +163,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_user'])) {
         }
         
         if (empty($errors)) {
-            $result = $user->updateUser($userId, $email, $firstName, $lastName, $phone, $isAdmin, $newPassword);
+            $result = $user->updateUser($userId, $email, $firstName, $lastName, $phone, $isAdmin, $newPassword, $isVerified);
             
             $_SESSION['flash_message'] = $result['message'];
             $_SESSION['flash_type'] = $result['success'] ? 'success' : 'danger';
@@ -251,49 +274,20 @@ require_once 'includes/header.php';
                                         </td>
                                         <td><?php echo date('d.m.Y H:i', strtotime($userItem['created_at'])); ?></td>
                                         <td>
-                                            <form method="post" action="admin_users.php">
-                                                <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
-                                                <input type="hidden" name="user_id" value="<?php echo $userItem['id']; ?>">
-                                                
-                                                <?php if ($userItem['id'] !== $_SESSION['user_id']): ?>
-                                                    <?php if ($userItem['is_admin']): ?>
-                                                        <button type="submit" name="toggle_admin" class="btn btn-warning btn-sm" onclick="return confirm('Sind Sie sicher, dass Sie die Administrator-Rechte entziehen möchten?');">
-                                                            Admin-Rechte entziehen
-                                                        </button>
-                                                    <?php else: ?>
-                                                        <button type="submit" name="toggle_admin" class="btn btn-primary btn-sm">
-                                                            Zum Admin machen
-                                                        </button>
-                                                    <?php endif; ?>
-                                                <?php else: ?>
-                                                    <span class="text-muted">Ihr Konto</span>
-                                                <?php endif; ?>
-                                            </form>
-                                            <div class="mt-2">
-                                                <button type="button" 
-                                                        class="btn btn-info btn-sm" 
-                                                        data-bs-toggle="modal" 
-                                                        data-bs-target="#editUserModal"
-                                                        data-id="<?php echo $userItem['id']; ?>"
-                                                        data-email="<?php echo escape($userItem['email']); ?>"
-                                                        data-first-name="<?php echo escape($userItem['first_name']); ?>"
-                                                        data-last-name="<?php echo escape($userItem['last_name']); ?>"
-                                                        data-phone="<?php echo escape($userItem['phone']); ?>"
-                                                        data-is-admin="<?php echo $userItem['is_admin']; ?>"
-                                                        onclick="prepareEditUserModal(this)">
-                                                    <i class="bi bi-pencil"></i> Bearbeiten
-                                                </button>
-                                                
-                                                <?php if ($userItem['id'] !== $_SESSION['user_id']): ?>
-                                                    <form method="post" action="admin_users.php" class="d-inline" onsubmit="return confirm('Sind Sie sicher, dass Sie diesen Benutzer löschen möchten? Alle Daten und Reservierungen dieses Benutzers werden unwiderruflich gelöscht!');">
-                                                        <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
-                                                        <input type="hidden" name="user_id" value="<?php echo $userItem['id']; ?>">
-                                                        <button type="submit" name="delete_user" class="btn btn-danger btn-sm">
-                                                            <i class="bi bi-trash"></i> Löschen
-                                                        </button>
-                                                    </form>
-                                                <?php endif; ?>
-                                            </div>
+                                            <button type="button" 
+                                                    class="btn btn-info btn-sm" 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#editUserModal"
+                                                    data-id="<?php echo $userItem['id']; ?>"
+                                                    data-email="<?php echo escape($userItem['email']); ?>"
+                                                    data-first-name="<?php echo escape($userItem['first_name']); ?>"
+                                                    data-last-name="<?php echo escape($userItem['last_name']); ?>"
+                                                    data-phone="<?php echo escape($userItem['phone']); ?>"
+                                                    data-is-admin="<?php echo $userItem['is_admin']; ?>"
+                                                    data-is-verified="<?php echo $userItem['is_verified']; ?>"
+                                                    onclick="prepareEditUserModal(this)">
+                                                <i class="bi bi-pencil"></i> Bearbeiten
+                                            </button>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -359,6 +353,16 @@ require_once 'includes/header.php';
                             </div>
                         </div>
                     </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3 d-flex align-items-start">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="is_verified" name="is_verified" checked>
+                                <label class="form-check-label" for="is_verified">Benutzer verifiziert</label>
+                                <div class="form-text">Wenn aktiviert, kann sich der Benutzer sofort einloggen ohne E-Mail-Bestätigung.</div>
+                            </div>
+                        </div>
+                    </div>
                 </form>
             </div>
             <div class="modal-footer">
@@ -414,24 +418,43 @@ require_once 'includes/header.php';
                             <div class="form-text">Lassen Sie dieses Feld leer, um das Passwort nicht zu ändern. Andernfalls mindestens 8 Zeichen.</div>
                         </div>
                         
-                        <div class="col-md-6 mb-3 d-flex align-items-end">
-                            <div class="form-check mt-4">
+                        <div class="col-md-6 mb-3 d-flex flex-column justify-content-around">
+                            <div class="form-check">
                                 <input type="checkbox" class="form-check-input" id="edit_is_admin" name="is_admin">
                                 <label class="form-check-label" for="edit_is_admin">Administrator-Berechtigungen</label>
+                            </div>
+                            <div class="form-check mt-2">
+                                <input type="checkbox" class="form-check-input" id="edit_is_verified" name="is_verified">
+                                <label class="form-check-label" for="edit_is_verified">Benutzer verifiziert</label>
+                                <div class="form-text">Wenn aktiviert, kann sich der Benutzer einloggen ohne E-Mail-Bestätigung.</div>
                             </div>
                         </div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Abbrechen</button>
-                <button type="button" class="btn btn-primary" onclick="document.getElementById('editUserForm').submit();">Änderungen speichern</button>
+                <div class="d-flex justify-content-between w-100">
+                    <div>
+                        <button type="button" id="deleteUserBtn" class="btn btn-danger" onclick="confirmDelete()">Benutzer löschen</button>
+                    </div>
+                    <div>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Abbrechen</button>
+                        <button type="button" class="btn btn-primary" onclick="document.getElementById('editUserForm').submit();">Änderungen speichern</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- JavaScript für die Formularvorausfüllung -->
+<!-- Formular zum Löschen eines Benutzers (wird via JavaScript abgesendet) -->
+<form method="post" action="admin_users.php" id="deleteUserForm" style="display: none;">
+    <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
+    <input type="hidden" name="delete_user" value="1">
+    <input type="hidden" name="user_id" id="delete_user_id">
+</form>
+
+<!-- JavaScript für die Formularvorausfüllung und das Löschen -->
 <script>
 function prepareEditUserModal(button) {
     // Daten aus dem Button-Attributen auslesen
@@ -441,6 +464,7 @@ function prepareEditUserModal(button) {
     const lastName = button.getAttribute('data-last-name');
     const phone = button.getAttribute('data-phone');
     const isAdmin = button.getAttribute('data-is-admin') === '1';
+    const isVerified = button.getAttribute('data-is-verified') === '1';
     
     // Formularfelder ausfüllen
     document.getElementById('edit_user_id').value = userId;
@@ -449,6 +473,24 @@ function prepareEditUserModal(button) {
     document.getElementById('edit_last_name').value = lastName;
     document.getElementById('edit_phone').value = phone || '';
     document.getElementById('edit_is_admin').checked = isAdmin;
+    document.getElementById('edit_is_verified').checked = isVerified;
     document.getElementById('edit_new_password').value = '';
+    document.getElementById('delete_user_id').value = userId;
+    
+    // Eigenes Konto kann nicht gelöscht werden
+    const sessionUserId = <?php echo $_SESSION['user_id']; ?>;
+    if (userId == sessionUserId) {
+        document.getElementById('deleteUserBtn').disabled = true;
+        document.getElementById('deleteUserBtn').title = 'Sie können Ihr eigenes Konto nicht löschen';
+    } else {
+        document.getElementById('deleteUserBtn').disabled = false;
+        document.getElementById('deleteUserBtn').title = '';
+    }
+}
+
+function confirmDelete() {
+    if (confirm('Sind Sie sicher, dass Sie diesen Benutzer löschen möchten? Alle Daten und Reservierungen dieses Benutzers werden unwiderruflich gelöscht!')) {
+        document.getElementById('deleteUserForm').submit();
+    }
 }
 </script> 

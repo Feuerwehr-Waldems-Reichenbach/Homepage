@@ -424,7 +424,7 @@ class User {
         }
     }
 
-    public function createUserByAdmin($email, $password, $firstName, $lastName, $phone = null, $isAdmin = 0) {
+    public function createUserByAdmin($email, $password, $firstName, $lastName, $phone = null, $isAdmin = 0, $isVerified = 1) {
         try {
             // Prüfen, ob E-Mail bereits existiert
             $stmt = $this->db->prepare("SELECT id FROM users WHERE email = ?");
@@ -439,12 +439,12 @@ class User {
             // Passwort hashen
             $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
             
-            // Benutzer anlegen (direkt verifiziert)
+            // Benutzer anlegen (mit dem angegebenen Verifikationsstatus)
             $stmt = $this->db->prepare("
                 INSERT INTO users (email, password, first_name, last_name, phone, is_verified, is_admin) 
-                VALUES (?, ?, ?, ?, ?, 1, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
             ");
-            $stmt->execute([$email, $hashedPassword, $firstName, $lastName, $phone, $isAdmin]);
+            $stmt->execute([$email, $hashedPassword, $firstName, $lastName, $phone, $isVerified, $isAdmin]);
             
             return [
                 'success' => true,
@@ -520,7 +520,7 @@ class User {
         }
     }
     
-    public function updateUser($userId, $email, $firstName, $lastName, $phone = null, $isAdmin = 0, $newPassword = null) {
+    public function updateUser($userId, $email, $firstName, $lastName, $phone = null, $isAdmin = 0, $newPassword = null, $isVerified = 1) {
         try {
             // Prüfen, ob der Benutzer existiert
             $stmt = $this->db->prepare("SELECT * FROM users WHERE id = ?");
@@ -547,8 +547,8 @@ class User {
             }
             
             // SQL-Statement vorbereiten
-            $sql = "UPDATE users SET email = ?, first_name = ?, last_name = ?, phone = ?, is_admin = ?";
-            $params = [$email, $firstName, $lastName, $phone, $isAdmin];
+            $sql = "UPDATE users SET email = ?, first_name = ?, last_name = ?, phone = ?, is_admin = ?, is_verified = ?";
+            $params = [$email, $firstName, $lastName, $phone, $isAdmin, $isVerified];
             
             // Passwort aktualisieren, wenn ein neues angegeben wurde
             if (!empty($newPassword)) {
@@ -573,6 +573,40 @@ class User {
             return [
                 'success' => false,
                 'message' => 'Fehler beim Aktualisieren des Benutzers: ' . $e->getMessage()
+            ];
+        }
+    }
+
+    public function toggleVerification($userId) {
+        try {
+            // Benutzer-ID prüfen
+            $stmt = $this->db->prepare("SELECT id, is_verified, email, first_name, last_name FROM users WHERE id = ?");
+            $stmt->execute([$userId]);
+            
+            if ($stmt->rowCount() === 0) {
+                return [
+                    'success' => false,
+                    'message' => 'Benutzer nicht gefunden.'
+                ];
+            }
+            
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+            $newStatus = $user['is_verified'] ? 0 : 1;
+            $statusText = $newStatus ? 'verifiziert' : 'unverifiziert';
+            
+            // Status ändern
+            $stmt = $this->db->prepare("UPDATE users SET is_verified = ?, verification_token = NULL WHERE id = ?");
+            $stmt->execute([$newStatus, $userId]);
+            
+            return [
+                'success' => true,
+                'message' => 'Der Benutzer ' . $user['first_name'] . ' ' . $user['last_name'] . ' wurde erfolgreich als ' . $statusText . ' markiert.'
+            ];
+            
+        } catch (PDOException $e) {
+            return [
+                'success' => false,
+                'message' => 'Fehler beim Ändern des Verifikationsstatus: ' . $e->getMessage()
             ];
         }
     }
