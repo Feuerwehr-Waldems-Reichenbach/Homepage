@@ -2,13 +2,6 @@
 require_once 'includes/config.php';
 require_once 'includes/Reservation.php';
 
-// Nur AJAX-Anfragen zulassen
-$isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
-if (!$isAjax && !isset($_GET['debug'])) {
-    http_response_code(403);
-    die('Direkter Zugriff nicht erlaubt');
-}
-
 // Monat und Jahr aus der Anfrage holen
 $month = isset($_GET['month']) ? intval($_GET['month']) : date('n');
 $year = isset($_GET['year']) ? intval($_GET['year']) : date('Y');

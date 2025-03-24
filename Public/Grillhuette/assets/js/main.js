@@ -168,11 +168,8 @@ function renderCalendar(month, year) {
                 // Format date string for dataset
                 const formattedDate = `${year}-${(month + 1).toString().padStart(2, '0')}-${date.toString().padStart(2, '0')}`;
                 
-                // Get day status (free, pending, booked) - this will be populated by AJAX
-                let dayClass = 'free'; // default
-                
-                // Create the day cell with status class
-                table += `<td class="day ${dayClass} ${isToday ? 'today' : ''}" data-date="${formattedDate}">
+                // Create the day cell without any status class initially
+                table += `<td class="day ${isToday ? 'today' : ''}" data-date="${formattedDate}">
                     <span class="date-number">${date}</span>
                 </td>`;
                 
@@ -210,21 +207,26 @@ function loadDayStatuses(month, year) {
     // Format month with leading zero if needed
     const formattedMonth = month.toString().padStart(2, '0');
     
+    console.log(`Loading calendar data for ${year}-${formattedMonth}`);
+    
     // Create AJAX request
     const xhr = new XMLHttpRequest();
-    xhr.open('GET', `get_calendar_data.php?month=${formattedMonth}&year=${year}`, true);
+    // Get base URL from current path
+    const basePath = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
+    xhr.open('GET', `${basePath}get_calendar_data.php?month=${formattedMonth}&year=${year}`, true);
     
     xhr.onload = function() {
         if (this.status === 200) {
             try {
                 const response = JSON.parse(this.responseText);
+                console.log('Calendar data received:', response);
                 if (response.success) {
                     updateDayStatuses(response.data);
                 } else {
                     console.error('Error loading calendar data:', response.message);
                 }
             } catch (e) {
-                console.error('Error parsing calendar data:', e);
+                console.error('Error parsing calendar data:', e, this.responseText);
             }
         }
     };
@@ -240,6 +242,13 @@ function loadDayStatuses(month, year) {
 function updateDayStatuses(statusData) {
     if (!statusData) return;
     
+    // First set all days to 'free' by default
+    document.querySelectorAll('.day[data-date]').forEach(dayElement => {
+        dayElement.classList.remove('pending', 'booked');
+        dayElement.classList.add('free');
+    });
+    
+    // Then update with statuses from the server
     Object.keys(statusData).forEach(date => {
         const status = statusData[date];
         const dayElement = document.querySelector(`.day[data-date="${date}"]`);
