@@ -163,59 +163,11 @@ require_once 'includes/header.php';
     <div class="col-md-12">
         <h1 class="mb-4">Reservierungen verwalten</h1>
         
-        <div class="card mb-4">
-            <div class="card-header">
-                <h3>Neue Reservierung erstellen</h3>
-            </div>
-            <div class="card-body">
-                <form method="post" action="admin_reservations.php<?php echo $statusFilter !== 'all' ? '?status=' . $statusFilter : ''; ?>">
-                    <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
-                    <input type="hidden" name="create_reservation" value="1">
-                    
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <label for="user_id" class="form-label">Benutzer</label>
-                            <select class="form-select" id="user_id" name="user_id" required>
-                                <option value="">-- Benutzer auswählen --</option>
-                                <?php foreach ($allUsers as $singleUser): ?>
-                                    <option value="<?php echo $singleUser['id']; ?>">
-                                        <?php echo escape($singleUser['first_name'] . ' ' . $singleUser['last_name'] . ' (' . $singleUser['email'] . ')'); ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                        
-                        <div class="col-md-4 mb-3">
-                            <label for="start_date" class="form-label">Startdatum</label>
-                            <input type="text" class="form-control date-picker" id="start_date" name="start_date" required>
-                        </div>
-                        
-                        <div class="col-md-4 mb-3">
-                            <label for="end_date" class="form-label">Enddatum</label>
-                            <input type="text" class="form-control date-picker" id="end_date" name="end_date" required>
-                        </div>
-                    </div>
-                    
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <label for="start_time" class="form-label">Startzeit</label>
-                            <input type="text" class="form-control time-picker" id="start_time" name="start_time" value="12:00" required>
-                        </div>
-                        
-                        <div class="col-md-4 mb-3">
-                            <label for="end_time" class="form-label">Endzeit</label>
-                            <input type="text" class="form-control time-picker" id="end_time" name="end_time" value="12:00" required>
-                        </div>
-                        
-                        <div class="col-md-4 mb-3">
-                            <label for="admin_message" class="form-label">Nachricht an den Benutzer (optional)</label>
-                            <textarea class="form-control" id="admin_message" name="admin_message" rows="1"></textarea>
-                        </div>
-                    </div>
-                    
-                    <button type="submit" class="btn btn-primary">Reservierung erstellen</button>
-                </form>
-            </div>
+        <!-- Button zum Öffnen des Modals -->
+        <div class="mb-4">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newReservationModal">
+                <i class="bi bi-plus-circle"></i> Neue Reservierung erstellen
+            </button>
         </div>
         
         <div class="card">
@@ -334,4 +286,67 @@ require_once 'includes/header.php';
     </div>
 </div>
 
-<?php require_once 'includes/footer.php'; ?> 
+<?php require_once 'includes/footer.php'; ?>
+
+<!-- Modal für neue Reservierung -->
+<div class="modal fade" id="newReservationModal" tabindex="-1" aria-labelledby="newReservationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="newReservationModalLabel">Neue Reservierung erstellen</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="admin_reservations.php<?php echo $statusFilter !== 'all' ? '?status=' . $statusFilter : ''; ?>" id="createReservationForm">
+                    <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
+                    <input type="hidden" name="create_reservation" value="1">
+                    
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="user_id" class="form-label">Benutzer</label>
+                            <select class="form-select" id="user_id" name="user_id" required>
+                                <option value="">-- Benutzer auswählen --</option>
+                                <?php foreach ($allUsers as $singleUser): ?>
+                                    <option value="<?php echo $singleUser['id']; ?>">
+                                        <?php echo escape($singleUser['first_name'] . ' ' . $singleUser['last_name'] . ' (' . $singleUser['email'] . ')'); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <label for="start_date" class="form-label">Startdatum</label>
+                            <input type="text" class="form-control date-picker" id="start_date" name="start_date" required>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <label for="end_date" class="form-label">Enddatum</label>
+                            <input type="text" class="form-control date-picker" id="end_date" name="end_date" required>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="start_time" class="form-label">Startzeit</label>
+                            <input type="text" class="form-control time-picker" id="start_time" name="start_time" value="12:00" required>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <label for="end_time" class="form-label">Endzeit</label>
+                            <input type="text" class="form-control time-picker" id="end_time" name="end_time" value="12:00" required>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <label for="admin_message" class="form-label">Nachricht an den Benutzer (optional)</label>
+                            <textarea class="form-control" id="admin_message" name="admin_message" rows="1"></textarea>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Abbrechen</button>
+                <button type="button" class="btn btn-primary" onclick="document.getElementById('createReservationForm').submit();">Reservierung erstellen</button>
+            </div>
+        </div>
+    </div>
+</div> 

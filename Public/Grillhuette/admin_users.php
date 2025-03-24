@@ -108,57 +108,11 @@ require_once 'includes/header.php';
     <div class="col-md-12">
         <h1 class="mb-4">Benutzer verwalten</h1>
         
-        <div class="card mb-4">
-            <div class="card-header">
-                <h3>Neuen Benutzer erstellen</h3>
-            </div>
-            <div class="card-body">
-                <form method="post" action="admin_users.php">
-                    <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
-                    <input type="hidden" name="create_user" value="1">
-                    
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="first_name" class="form-label">Vorname</label>
-                            <input type="text" class="form-control" id="first_name" name="first_name" required>
-                        </div>
-                        
-                        <div class="col-md-6 mb-3">
-                            <label for="last_name" class="form-label">Nachname</label>
-                            <input type="text" class="form-control" id="last_name" name="last_name" required>
-                        </div>
-                    </div>
-                    
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="email" class="form-label">E-Mail-Adresse</label>
-                            <input type="email" class="form-control" id="email" name="email" required>
-                        </div>
-                        
-                        <div class="col-md-6 mb-3">
-                            <label for="phone" class="form-label">Telefonnummer (optional)</label>
-                            <input type="tel" class="form-control" id="phone" name="phone">
-                        </div>
-                    </div>
-                    
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="password" class="form-label">Passwort</label>
-                            <input type="password" class="form-control" id="password" name="password" required>
-                            <div class="form-text">Mindestens 8 Zeichen.</div>
-                        </div>
-                        
-                        <div class="col-md-6 mb-3 d-flex align-items-end">
-                            <div class="form-check mt-4">
-                                <input type="checkbox" class="form-check-input" id="is_admin" name="is_admin">
-                                <label class="form-check-label" for="is_admin">Administrator-Berechtigungen</label>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <button type="submit" class="btn btn-primary">Benutzer erstellen</button>
-                </form>
-            </div>
+        <!-- Button zum Öffnen des Modals -->
+        <div class="mb-4">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newUserModal">
+                <i class="bi bi-plus-circle"></i> Neuen Benutzer erstellen
+            </button>
         </div>
         
         <div class="card">
@@ -234,4 +188,65 @@ require_once 'includes/header.php';
     </div>
 </div>
 
-<?php require_once 'includes/footer.php'; ?> 
+<?php require_once 'includes/footer.php'; ?>
+
+<!-- Modal für neuen Benutzer -->
+<div class="modal fade" id="newUserModal" tabindex="-1" aria-labelledby="newUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="newUserModalLabel">Neuen Benutzer erstellen</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="admin_users.php" id="createUserForm">
+                    <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
+                    <input type="hidden" name="create_user" value="1">
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="first_name" class="form-label">Vorname</label>
+                            <input type="text" class="form-control" id="first_name" name="first_name" required>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="last_name" class="form-label">Nachname</label>
+                            <input type="text" class="form-control" id="last_name" name="last_name" required>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="email" class="form-label">E-Mail-Adresse</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="phone" class="form-label">Telefonnummer (optional)</label>
+                            <input type="tel" class="form-control" id="phone" name="phone">
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="password" class="form-label">Passwort</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                            <div class="form-text">Mindestens 8 Zeichen.</div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3 d-flex align-items-end">
+                            <div class="form-check mt-4">
+                                <input type="checkbox" class="form-check-input" id="is_admin" name="is_admin">
+                                <label class="form-check-label" for="is_admin">Administrator-Berechtigungen</label>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Abbrechen</button>
+                <button type="button" class="btn btn-primary" onclick="document.getElementById('createUserForm').submit();">Benutzer erstellen</button>
+            </div>
+        </div>
+    </div>
+</div> 
