@@ -458,5 +458,66 @@ class User {
             ];
         }
     }
+    
+    public function deleteUser($userId) {
+        try {
+            // Prüfen, ob der Benutzer existiert
+            $stmt = $this->db->prepare("SELECT * FROM users WHERE id = ?");
+            $stmt->execute([$userId]);
+            
+            if ($stmt->rowCount() == 0) {
+                return [
+                    'success' => false,
+                    'message' => 'Benutzer nicht gefunden.'
+                ];
+            }
+            
+            // Passwort-Reset-Tokens löschen
+            $stmt = $this->db->prepare("DELETE FROM password_reset WHERE user_id = ?");
+            $stmt->execute([$userId]);
+            
+            // Benutzer löschen
+            $stmt = $this->db->prepare("DELETE FROM users WHERE id = ?");
+            $stmt->execute([$userId]);
+            
+            return [
+                'success' => true,
+                'message' => 'Benutzer erfolgreich gelöscht.'
+            ];
+            
+        } catch (PDOException $e) {
+            return [
+                'success' => false,
+                'message' => 'Fehler beim Löschen des Benutzers: ' . $e->getMessage()
+            ];
+        }
+    }
+    
+    public function authenticate($email, $password) {
+        try {
+            $stmt = $this->db->prepare("SELECT * FROM users WHERE email = ?");
+            $stmt->execute([$email]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if (!$user || !password_verify($password, $user['password'])) {
+                return [
+                    'success' => false,
+                    'message' => 'Ungültige E-Mail-Adresse oder Passwort.'
+                ];
+            }
+            
+            return [
+                'success' => true,
+                'message' => 'Authentifizierung erfolgreich.',
+                'user_id' => $user['id']
+            ];
+            
+        } catch (PDOException $e) {
+            return [
+                'success' => false,
+                'message' => 'Fehler bei der Authentifizierung: ' . $e->getMessage()
+            ];
+        }
+    }
 }
 ?> 

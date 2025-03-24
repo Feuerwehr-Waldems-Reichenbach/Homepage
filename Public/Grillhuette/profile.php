@@ -202,6 +202,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $errors[] = 'Fehler beim Senden der E-Mail: ' . $result['message'];
             }
         }
+        
+        // Profil löschen
+        if (isset($_POST['delete_profile'])) {
+            $password = isset($_POST['delete_password']) ? $_POST['delete_password'] : '';
+            
+            // Validierung
+            if (empty($password)) {
+                $errors[] = 'Bitte geben Sie Ihr Passwort ein, um Ihr Profil zu löschen.';
+            } else {
+                // Benutzer-Authentifizierung überprüfen
+                $auth = $user->authenticate($userData['email'], $password);
+                
+                if ($auth['success']) {
+                    // Reservierungen löschen
+                    require_once 'includes/Reservation.php';
+                    $reservation = new Reservation();
+                    $reservation->deleteByUserId($_SESSION['user_id']);
+                    
+                    // Benutzer löschen
+                    $result = $user->deleteUser($_SESSION['user_id']);
+                    
+                    if ($result['success']) {
+                        // Abmelden und zur Startseite umleiten
+                        session_unset();
+                        session_destroy();
+                        
+                        $_SESSION['flash_message'] = 'Ihr Profil und alle zugehörigen Daten wurden erfolgreich gelöscht.';
+                        $_SESSION['flash_type'] = 'success';
+                        
+                        header('Location: index.php');
+                        exit;
+                    } else {
+                        $errors[] = 'Fehler beim Löschen des Profils: ' . $result['message'];
+                    }
+                } else {
+                    $errors[] = 'Falsches Passwort. Bitte versuchen Sie es erneut.';
+                }
+            }
+        }
     }
 }
 
@@ -251,9 +290,9 @@ require_once 'includes/header.php';
         <?php endif; ?>
         
         <div class="row">
-            <div class="col-md-6 mb-4">
+            <div class="col-md-6">
                 <!-- Profildaten -->
-                <div class="card">
+                <div class="card mb-4">
                     <div class="card-header">
                         <h3>Persönliche Daten</h3>
                     </div>
@@ -278,6 +317,37 @@ require_once 'includes/header.php';
                             </div>
                             
                             <button type="submit" class="btn btn-primary">Aktualisieren</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Passwort ändern -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Passwort ändern</h3>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" action="profile.php">
+                            <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
+                            <input type="hidden" name="update_password" value="1">
+                            
+                            <div class="mb-3">
+                                <label for="current_password" class="form-label">Aktuelles Passwort</label>
+                                <input type="password" class="form-control" id="current_password" name="current_password" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="new_password" class="form-label">Neues Passwort</label>
+                                <input type="password" class="form-control" id="new_password" name="new_password" required>
+                                <div class="form-text">Mindestens 8 Zeichen.</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="confirm_password" class="form-label">Neues Passwort bestätigen</label>
+                                <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">Passwort ändern</button>
                         </form>
                     </div>
                 </div>
@@ -315,54 +385,48 @@ require_once 'includes/header.php';
                     </div>
                 </div>
                 
-                <!-- Passwort ändern -->
-                <div class="card">
+                <!-- Daten exportieren -->
+                <div class="card mb-4">
                     <div class="card-header">
-                        <h3>Passwort ändern</h3>
+                        <h3>Meine Daten exportieren</h3>
                     </div>
                     <div class="card-body">
-                        <form method="post" action="profile.php">
-                            <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
-                            <input type="hidden" name="update_password" value="1">
-                            
-                            <div class="mb-3">
-                                <label for="current_password" class="form-label">Aktuelles Passwort</label>
-                                <input type="password" class="form-control" id="current_password" name="current_password" required>
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label for="new_password" class="form-label">Neues Passwort</label>
-                                <input type="password" class="form-control" id="new_password" name="new_password" required>
-                                <div class="form-text">Mindestens 8 Zeichen.</div>
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label for="confirm_password" class="form-label">Neues Passwort bestätigen</label>
-                                <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
-                            </div>
-                            
-                            <button type="submit" class="btn btn-primary">Passwort ändern</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="row mt-4">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h3>Datenschutz & Datenauskunft</h3>
-                    </div>
-                    <div class="card-body">
-                        <p>Gemäß der Datenschutz-Grundverordnung (DSGVO) haben Sie das Recht, Auskunft über Ihre gespeicherten personenbezogenen Daten zu erhalten.</p>
-                        <p>Klicken Sie auf den Button unten, um sich eine Zusammenfassung aller über Sie gespeicherten Daten per E-Mail zukommen zu lassen.</p>
+                        <p>Gemäß der Datenschutz-Grundverordnung (DSGVO) haben Sie das Recht, Auskunft über Ihre gespeicherten Daten zu erhalten.</p>
                         
                         <form method="post" action="profile.php">
                             <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
-                            <button type="submit" name="send_user_data" class="btn btn-info">
-                                <i class="bi bi-envelope"></i> Meine Daten per E-Mail erhalten
-                            </button>
+                            <div class="d-grid">
+                                <button type="submit" name="send_user_data" class="btn btn-primary">
+                                    <i class="bi bi-envelope"></i> Meine Daten per E-Mail erhalten
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Profil löschen -->
+                <div class="card">
+                    <div class="card-header bg-danger text-white">
+                        <h3>Profil löschen</h3>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-danger"><strong>Warnung:</strong> Diese Aktion kann nicht rückgängig gemacht werden. Alle Ihre Daten und Reservierungen werden dauerhaft gelöscht.</p>
+                        
+                        <form method="post" action="profile.php" onsubmit="return confirm('Sind Sie sicher, dass Sie Ihr Profil und alle zugehörigen Daten löschen möchten? Diese Aktion kann NICHT rückgängig gemacht werden!');">
+                            <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
+                            <input type="hidden" name="delete_profile" value="1">
+                            
+                            <div class="mb-3">
+                                <label for="delete_password" class="form-label">Passwort zur Bestätigung</label>
+                                <input type="password" class="form-control" id="delete_password" name="delete_password" required>
+                                <div class="form-text">Zur Bestätigung Ihrer Identität benötigen wir Ihr aktuelles Passwort.</div>
+                            </div>
+                            
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="bi bi-trash"></i> Mein Profil unwiderruflich löschen
+                                </button>
+                            </div>
                         </form>
                     </div>
                 </div>

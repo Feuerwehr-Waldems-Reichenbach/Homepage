@@ -461,8 +461,26 @@ class Reservation {
             }
             
             return 'free'; // Sollte nicht erreicht werden, aber als Fallback
+            
         } catch (PDOException $e) {
             return 'error'; // Fehlerfall
+        }
+    }
+    
+    public function deleteByUserId($userId) {
+        try {
+            $stmt = $this->db->prepare("DELETE FROM reservations WHERE user_id = ?");
+            $stmt->execute([$userId]);
+            
+            return [
+                'success' => true,
+                'message' => 'Alle Reservierungen des Benutzers wurden gelöscht.'
+            ];
+        } catch (PDOException $e) {
+            return [
+                'success' => false,
+                'message' => 'Fehler beim Löschen der Reservierungen: ' . $e->getMessage()
+            ];
         }
     }
 }
