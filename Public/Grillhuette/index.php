@@ -26,39 +26,6 @@ if (isset($_GET['month']) && isset($_GET['year'])) {
     <div class="col-md-12">
         <h1 class="mb-4">Grillhütte Reservierungssystem</h1>
         
-        <div class="card mb-4">
-            <div class="card-body">
-                <p>Willkommen im Reservierungssystem der Grillhütte Reichenbach. Hier können Sie freie Termine einsehen und eine Reservierung vornehmen.</p>
-                
-                <div class="row">
-                    <div class="col-md-4 mb-3">
-                        <div class="d-flex align-items-center">
-                            <div class="me-2" style="width: 20px; height: 20px; background-color: #d4edda; border-radius: 3px;"></div>
-                            <span>Frei</span>
-                        </div>
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <div class="d-flex align-items-center">
-                            <div class="me-2" style="width: 20px; height: 20px; background-color: #fff3cd; border-radius: 3px;"></div>
-                            <span>Anfrage in Bearbeitung</span>
-                        </div>
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <div class="d-flex align-items-center">
-                            <div class="me-2" style="width: 20px; height: 20px; background-color: #f8d7da; border-radius: 3px;"></div>
-                            <span>Belegt</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <?php if (!isset($_SESSION['user_id'])): ?>
-                    <div class="alert alert-info">
-                        Um eine Reservierung vorzunehmen, müssen Sie sich <a href="login.php">anmelden</a> oder <a href="register.php">registrieren</a>.
-                    </div>
-                <?php endif; ?>
-            </div>
-        </div>
-        
         <!-- Neues Layout: Kalender (70%) und Eingabefelder (30%) nebeneinander -->
         <div class="row">
             <!-- Kalender Container (70%) -->
@@ -87,6 +54,40 @@ if (isset($_GET['month']) && isset($_GET['year'])) {
                         <input type="hidden" id="month" name="month" value="<?php echo $currentMonth; ?>">
                         <input type="hidden" id="year" name="year" value="<?php echo $currentYear; ?>">
                     </form>
+                </div>
+                
+                <!-- Willkommenskarte unter dem Kalender -->
+                <div class="card mb-4 mt-4">
+                    <div class="card-body">
+                        <p>Willkommen im Reservierungssystem der Grillhütte Reichenbach. Hier können Sie freie Termine einsehen und eine Reservierung vornehmen.</p>
+                        
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <div class="d-flex align-items-center">
+                                    <div class="me-2" style="width: 20px; height: 20px; background-color: #d4edda; border-radius: 3px;"></div>
+                                    <span>Frei</span>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="d-flex align-items-center">
+                                    <div class="me-2" style="width: 20px; height: 20px; background-color: #fff3cd; border-radius: 3px;"></div>
+                                    <span>Anfrage in Bearbeitung</span>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="d-flex align-items-center">
+                                    <div class="me-2" style="width: 20px; height: 20px; background-color: #f8d7da; border-radius: 3px;"></div>
+                                    <span>Belegt</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <?php if (!isset($_SESSION['user_id'])): ?>
+                            <div class="alert alert-info">
+                                Um eine Reservierung vorzunehmen, müssen Sie sich <a href="login.php">anmelden</a> oder <a href="register.php">registrieren</a>.
+                            </div>
+                        <?php endif; ?>
+                    </div>
                 </div>
             </div>
             
