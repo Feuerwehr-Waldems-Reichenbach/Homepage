@@ -519,5 +519,62 @@ class User {
             ];
         }
     }
+    
+    public function updateUser($userId, $email, $firstName, $lastName, $phone = null, $isAdmin = 0, $newPassword = null) {
+        try {
+            // Prüfen, ob der Benutzer existiert
+            $stmt = $this->db->prepare("SELECT * FROM users WHERE id = ?");
+            $stmt->execute([$userId]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if (!$user) {
+                return [
+                    'success' => false,
+                    'message' => 'Benutzer nicht gefunden.'
+                ];
+            }
+            
+            // Prüfen, ob die E-Mail bereits von einem anderen Benutzer verwendet wird
+            if ($email !== $user['email']) {
+                $stmt = $this->db->prepare("SELECT id FROM users WHERE email = ? AND id != ?");
+                $stmt->execute([$email, $userId]);
+                if ($stmt->rowCount() > 0) {
+                    return [
+                        'success' => false,
+                        'message' => 'Diese E-Mail-Adresse wird bereits verwendet.'
+                    ];
+                }
+            }
+            
+            // SQL-Statement vorbereiten
+            $sql = "UPDATE users SET email = ?, first_name = ?, last_name = ?, phone = ?, is_admin = ?";
+            $params = [$email, $firstName, $lastName, $phone, $isAdmin];
+            
+            // Passwort aktualisieren, wenn ein neues angegeben wurde
+            if (!empty($newPassword)) {
+                $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+                $sql .= ", password = ?";
+                $params[] = $hashedPassword;
+            }
+            
+            $sql .= " WHERE id = ?";
+            $params[] = $userId;
+            
+            // Update ausführen
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
+            
+            return [
+                'success' => true,
+                'message' => 'Benutzer erfolgreich aktualisiert.'
+            ];
+            
+        } catch (PDOException $e) {
+            return [
+                'success' => false,
+                'message' => 'Fehler beim Aktualisieren des Benutzers: ' . $e->getMessage()
+            ];
+        }
+    }
 }
 ?> 

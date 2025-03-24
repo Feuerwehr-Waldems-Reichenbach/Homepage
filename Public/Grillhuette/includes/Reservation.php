@@ -483,5 +483,120 @@ class Reservation {
             ];
         }
     }
+
+    public function updateReservation($id, $userId, $startDatetime, $endDatetime, $adminMessage = null, $status = 'pending') {
+        try {
+            // Überprüfen, ob die Reservierung existiert
+            $stmt = $this->db->prepare("SELECT id FROM reservations WHERE id = ?");
+            $stmt->execute([$id]);
+            
+            if ($stmt->rowCount() == 0) {
+                return [
+                    'success' => false,
+                    'message' => 'Reservierung nicht gefunden.'
+                ];
+            }
+            
+            // Reservierung aktualisieren
+            $stmt = $this->db->prepare("
+                UPDATE reservations 
+                SET user_id = ?, start_datetime = ?, end_datetime = ?, admin_message = ?, status = ? 
+                WHERE id = ?
+            ");
+            $stmt->execute([$userId, $startDatetime, $endDatetime, $adminMessage, $status, $id]);
+            
+            // Benutzer-Informationen abrufen
+            $userStmt = $this->db->prepare("SELECT email, first_name, last_name FROM users WHERE id = ?");
+            $userStmt->execute([$userId]);
+            $user = $userStmt->fetch(PDO::FETCH_ASSOC);
+            
+            // E-Mail an den Benutzer senden
+            if ($user) {
+                $statusText = '';
+                switch ($status) {
+                    case 'pending':
+                        $statusText = 'ausstehend';
+                        break;
+                    case 'confirmed':
+                        $statusText = 'bestätigt';
+                        break;
+                    case 'canceled':
+                        $statusText = 'storniert';
+                        break;
+                    default:
+                        $statusText = $status;
+                }
+                
+                $subject = 'Ihre Reservierungsdetails wurden aktualisiert';
+                $body = '
+                    <h2>Hallo ' . $user['first_name'] . ' ' . $user['last_name'] . ',</h2>
+                    <p>Ihre Reservierung für die Grillhütte wurde aktualisiert.</p>
+                    <p><strong>Neuer Zeitraum:</strong> ' . date('d.m.Y H:i', strtotime($startDatetime)) . ' bis ' . date('d.m.Y H:i', strtotime($endDatetime)) . '</p>
+                    <p><strong>Status:</strong> ' . $statusText . '</p>
+                ';
+                
+                if (!empty($adminMessage)) {
+                    $body .= '<p><strong>Nachricht vom Administrator:</strong><br>' . nl2br($adminMessage) . '</p>';
+                }
+                
+                sendEmail($user['email'], $subject, $body);
+            }
+            
+            return [
+                'success' => true,
+                'message' => 'Reservierung erfolgreich aktualisiert.'
+            ];
+            
+        } catch (PDOException $e) {
+            return [
+                'success' => false,
+                'message' => 'Fehler beim Aktualisieren der Reservierung: ' . $e->getMessage()
+            ];
+        }
+    }
+    
+    public function deleteReservation($id) {
+        try {
+            // Überprüfen, ob die Reservierung existiert
+            $stmt = $this->db->prepare("SELECT r.*, u.email, u.first_name, u.last_name FROM reservations r LEFT JOIN users u ON r.user_id = u.id WHERE r.id = ?");
+            $stmt->execute([$id]);
+            
+            if ($stmt->rowCount() == 0) {
+                return [
+                    'success' => false,
+                    'message' => 'Reservierung nicht gefunden.'
+                ];
+            }
+            
+            $reservation = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            // Reservierung löschen
+            $stmt = $this->db->prepare("DELETE FROM reservations WHERE id = ?");
+            $stmt->execute([$id]);
+            
+            // E-Mail an den Benutzer senden
+            if ($reservation['email']) {
+                $subject = 'Ihre Reservierung wurde gelöscht';
+                $body = '
+                    <h2>Hallo ' . $reservation['first_name'] . ' ' . $reservation['last_name'] . ',</h2>
+                    <p>Ihre Reservierung für die Grillhütte für den Zeitraum ' . date('d.m.Y H:i', strtotime($reservation['start_datetime'])) . ' bis ' . date('d.m.Y H:i', strtotime($reservation['end_datetime'])) . ' wurde gelöscht.</p>
+                    <p>Bei Fragen wenden Sie sich bitte an den Administrator.</p>
+                ';
+                
+                sendEmail($reservation['email'], $subject, $body);
+            }
+            
+            return [
+                'success' => true,
+                'message' => 'Reservierung erfolgreich gelöscht.'
+            ];
+            
+        } catch (PDOException $e) {
+            return [
+                'success' => false,
+                'message' => 'Fehler beim Löschen der Reservierung: ' . $e->getMessage()
+            ];
+        }
+    }
 }
 ?> 

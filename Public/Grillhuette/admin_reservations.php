@@ -152,6 +152,98 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_admin_message']))
     }
 }
 
+// Reservierung bearbeiten
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_reservation'])) {
+    // CSRF-Token überprüfen
+    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+        $_SESSION['flash_message'] = 'Ungültige Anfrage. Bitte versuchen Sie es erneut.';
+        $_SESSION['flash_type'] = 'danger';
+    } else {
+        $reservationId = isset($_POST['reservation_id']) ? intval($_POST['reservation_id']) : 0;
+        $userId = isset($_POST['user_id']) ? intval($_POST['user_id']) : 0;
+        $startDate = isset($_POST['start_date']) ? trim($_POST['start_date']) : '';
+        $endDate = isset($_POST['end_date']) ? trim($_POST['end_date']) : '';
+        $startTime = isset($_POST['start_time']) ? trim($_POST['start_time']) : '12:00';
+        $endTime = isset($_POST['end_time']) ? trim($_POST['end_time']) : '12:00';
+        $adminMessage = isset($_POST['admin_message']) ? trim($_POST['admin_message']) : '';
+        $status = isset($_POST['status']) ? trim($_POST['status']) : 'pending';
+        
+        // Validierung
+        $errors = [];
+        
+        if (empty($userId)) {
+            $errors[] = 'Bitte wählen Sie einen Benutzer aus.';
+        }
+        
+        if (empty($startDate) || empty($endDate)) {
+            $errors[] = 'Bitte wählen Sie ein Start- und Enddatum aus.';
+        }
+        
+        if (!preg_match('/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/', $startTime) || 
+            !preg_match('/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/', $endTime)) {
+            $errors[] = 'Bitte geben Sie gültige Uhrzeiten ein (Format: HH:MM).';
+        }
+        
+        if (!in_array($status, ['pending', 'confirmed', 'canceled'])) {
+            $errors[] = 'Ungültiger Status.';
+        }
+        
+        if (empty($errors)) {
+            // Start- und Enddatum mit Uhrzeit kombinieren
+            $startDatetime = $startDate . ' ' . $startTime . ':00';
+            $endDatetime = $endDate . ' ' . $endTime . ':00';
+            
+            // Überprüfen, ob das Enddatum nach dem Startdatum liegt
+            if (strtotime($endDatetime) <= strtotime($startDatetime)) {
+                $_SESSION['flash_message'] = 'Das Enddatum muss nach dem Startdatum liegen.';
+                $_SESSION['flash_type'] = 'danger';
+            } else {
+                $result = $reservation->updateReservation($reservationId, $userId, $startDatetime, $endDatetime, $adminMessage, $status);
+                
+                $_SESSION['flash_message'] = $result['message'];
+                $_SESSION['flash_type'] = $result['success'] ? 'success' : 'danger';
+                
+                // Bei Erfolg die Reservierungen neu laden
+                if ($result['success']) {
+                    if ($statusFilter === 'all') {
+                        $allReservations = $reservation->getAll();
+                    } else {
+                        $allReservations = $reservation->getAllByStatus($statusFilter);
+                    }
+                }
+            }
+        } else {
+            $_SESSION['flash_message'] = implode('<br>', $errors);
+            $_SESSION['flash_type'] = 'danger';
+        }
+    }
+}
+
+// Reservierung löschen
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_reservation'])) {
+    // CSRF-Token überprüfen
+    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+        $_SESSION['flash_message'] = 'Ungültige Anfrage. Bitte versuchen Sie es erneut.';
+        $_SESSION['flash_type'] = 'danger';
+    } else {
+        $reservationId = isset($_POST['reservation_id']) ? intval($_POST['reservation_id']) : 0;
+        
+        $result = $reservation->deleteReservation($reservationId);
+        
+        $_SESSION['flash_message'] = $result['message'];
+        $_SESSION['flash_type'] = $result['success'] ? 'success' : 'danger';
+        
+        // Bei Erfolg die Reservierungen neu laden
+        if ($result['success']) {
+            if ($statusFilter === 'all') {
+                $allReservations = $reservation->getAll();
+            } else {
+                $allReservations = $reservation->getAllByStatus($statusFilter);
+            }
+        }
+    }
+}
+
 // Titel für die Seite
 $pageTitle = 'Reservierungen verwalten';
 
@@ -274,6 +366,30 @@ require_once 'includes/header.php';
                                                     <?php endif; ?>
                                                 </div>
                                             </form>
+                                            <div class="btn-group">
+                                                <button type="button" 
+                                                        class="btn btn-primary btn-sm" 
+                                                        data-bs-toggle="modal" 
+                                                        data-bs-target="#editReservationModal"
+                                                        data-id="<?php echo $res['id']; ?>"
+                                                        data-user-id="<?php echo $res['user_id']; ?>"
+                                                        data-start="<?php echo date('Y-m-d', strtotime($res['start_datetime'])); ?>"
+                                                        data-start-time="<?php echo date('H:i', strtotime($res['start_datetime'])); ?>"
+                                                        data-end="<?php echo date('Y-m-d', strtotime($res['end_datetime'])); ?>"
+                                                        data-end-time="<?php echo date('H:i', strtotime($res['end_datetime'])); ?>"
+                                                        data-message="<?php echo escape($res['admin_message']); ?>"
+                                                        data-status="<?php echo $res['status']; ?>"
+                                                        onclick="prepareEditModal(this)">
+                                                    <i class="bi bi-pencil"></i> Bearbeiten
+                                                </button>
+                                                <form method="post" action="admin_reservations.php<?php echo $statusFilter !== 'all' ? '?status=' . $statusFilter : ''; ?>" class="d-inline" onsubmit="return confirm('Sind Sie sicher, dass Sie diese Reservierung löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.');">
+                                                    <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
+                                                    <input type="hidden" name="reservation_id" value="<?php echo $res['id']; ?>">
+                                                    <button type="submit" name="delete_reservation" class="btn btn-danger btn-sm">
+                                                        <i class="bi bi-trash"></i> Löschen
+                                                    </button>
+                                                </form>
+                                            </div>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -349,4 +465,186 @@ require_once 'includes/header.php';
             </div>
         </div>
     </div>
-</div> 
+</div>
+
+<!-- Modal zum Bearbeiten einer Reservierung -->
+<div class="modal fade" id="editReservationModal" tabindex="-1" aria-labelledby="editReservationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editReservationModalLabel">Reservierung bearbeiten</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="admin_reservations.php<?php echo $statusFilter !== 'all' ? '?status=' . $statusFilter : ''; ?>" id="editReservationForm">
+                    <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
+                    <input type="hidden" name="edit_reservation" value="1">
+                    <input type="hidden" name="reservation_id" id="edit_reservation_id">
+                    
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="edit_user_id" class="form-label">Benutzer</label>
+                            <select class="form-select" id="edit_user_id" name="user_id" required>
+                                <option value="">-- Benutzer auswählen --</option>
+                                <?php foreach ($allUsers as $singleUser): ?>
+                                    <option value="<?php echo $singleUser['id']; ?>">
+                                        <?php echo escape($singleUser['first_name'] . ' ' . $singleUser['last_name'] . ' (' . $singleUser['email'] . ')'); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <label for="edit_start_date" class="form-label">Startdatum</label>
+                            <input type="text" class="form-control date-picker" id="edit_start_date" name="start_date" required>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <label for="edit_end_date" class="form-label">Enddatum</label>
+                            <input type="text" class="form-control date-picker" id="edit_end_date" name="end_date" required>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="edit_start_time" class="form-label">Startzeit</label>
+                            <input type="text" class="form-control time-picker" id="edit_start_time" name="start_time" required>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <label for="edit_end_time" class="form-label">Endzeit</label>
+                            <input type="text" class="form-control time-picker" id="edit_end_time" name="end_time" required>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <label for="edit_status" class="form-label">Status</label>
+                            <select class="form-select" id="edit_status" name="status" required>
+                                <option value="pending">Ausstehend</option>
+                                <option value="confirmed">Bestätigt</option>
+                                <option value="canceled">Storniert</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="edit_admin_message" class="form-label">Nachricht an den Benutzer (optional)</label>
+                        <textarea class="form-control" id="edit_admin_message" name="admin_message" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Abbrechen</button>
+                <button type="button" class="btn btn-primary" onclick="document.getElementById('editReservationForm').submit();">Änderungen speichern</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript für die Formularvorausfüllung -->
+<script>
+// Diese Funktion wird aufgerufen, wenn der "Bearbeiten"-Button geklickt wird
+function prepareEditModal(button) {
+    // Daten aus den Button-Attributen auslesen
+    const reservationId = button.getAttribute('data-id');
+    const userId = button.getAttribute('data-user-id');
+    const startDate = button.getAttribute('data-start');
+    const startTime = button.getAttribute('data-start-time');
+    const endDate = button.getAttribute('data-end');
+    const endTime = button.getAttribute('data-end-time');
+    const adminMessage = button.getAttribute('data-message');
+    const status = button.getAttribute('data-status');
+    
+    // Formularfelder ausfüllen
+    document.getElementById('edit_reservation_id').value = reservationId;
+    document.getElementById('edit_user_id').value = userId;
+    document.getElementById('edit_start_date').value = startDate;
+    document.getElementById('edit_start_time').value = startTime;
+    document.getElementById('edit_end_date').value = endDate;
+    document.getElementById('edit_end_time').value = endTime;
+    document.getElementById('edit_admin_message').value = adminMessage;
+    document.getElementById('edit_status').value = status;
+    
+    // Logging für Debug-Zwecke
+    console.log('Reservierung bearbeiten:', {
+        id: reservationId,
+        userId: userId,
+        startDate: startDate,
+        startTime: startTime,
+        endDate: endDate,
+        endTime: endTime,
+        status: status
+    });
+}
+
+// Initialisierung beim Laden des Modals
+document.addEventListener('DOMContentLoaded', function() {
+    // Event-Listener für das Öffnen des Edit-Modals
+    const editModal = document.getElementById('editReservationModal');
+    if (editModal) {
+        editModal.addEventListener('shown.bs.modal', function () {
+            // Überprüfen der Werte nach dem Öffnen des Modals
+            const startDateField = document.getElementById('edit_start_date');
+            const startTimeField = document.getElementById('edit_start_time');
+            const endDateField = document.getElementById('edit_end_date');
+            const endTimeField = document.getElementById('edit_end_time');
+            
+            console.log('Modal geöffnet mit Werten:', {
+                startDate: startDateField.value,
+                startTime: startTimeField.value,
+                endDate: endDateField.value,
+                endTime: endTimeField.value
+            });
+            
+            // Flatpickr-Instanzen zerstören, falls sie bereits existieren
+            if (startDateField._flatpickr) startDateField._flatpickr.destroy();
+            if (startTimeField._flatpickr) startTimeField._flatpickr.destroy();
+            if (endDateField._flatpickr) endDateField._flatpickr.destroy();
+            if (endTimeField._flatpickr) endTimeField._flatpickr.destroy();
+            
+            // Date picker für Startdatum und Enddatum
+            flatpickr('#edit_start_date', {
+                locale: "de",
+                dateFormat: "Y-m-d",
+                altInput: true,
+                altFormat: "j. F Y",
+                minDate: "today",
+                disableMobile: "true",
+                defaultDate: startDateField.value
+            });
+            
+            flatpickr('#edit_end_date', {
+                locale: "de",
+                dateFormat: "Y-m-d",
+                altInput: true,
+                altFormat: "j. F Y",
+                minDate: "today",
+                disableMobile: "true",
+                defaultDate: endDateField.value
+            });
+            
+            // Time picker für Startzeit und Endzeit
+            flatpickr('#edit_start_time', {
+                locale: "de",
+                enableTime: true,
+                noCalendar: true,
+                dateFormat: "H:i",
+                time_24hr: true,
+                minuteIncrement: 30,
+                disableMobile: "true",
+                defaultDate: startTimeField.value ? `2000-01-01T${startTimeField.value}` : null
+            });
+            
+            flatpickr('#edit_end_time', {
+                locale: "de",
+                enableTime: true,
+                noCalendar: true,
+                dateFormat: "H:i",
+                time_24hr: true,
+                minuteIncrement: 30,
+                disableMobile: "true",
+                defaultDate: endTimeField.value ? `2000-01-01T${endTimeField.value}` : null
+            });
+        });
+    }
+});
+</script> 

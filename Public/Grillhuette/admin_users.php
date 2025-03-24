@@ -97,6 +97,99 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_user'])) {
     }
 }
 
+// Benutzer bearbeiten
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_user'])) {
+    // CSRF-Token überprüfen
+    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+        $_SESSION['flash_message'] = 'Ungültige Anfrage. Bitte versuchen Sie es erneut.';
+        $_SESSION['flash_type'] = 'danger';
+    } else {
+        $userId = isset($_POST['user_id']) ? intval($_POST['user_id']) : 0;
+        $email = isset($_POST['email']) ? trim($_POST['email']) : '';
+        $firstName = isset($_POST['first_name']) ? trim($_POST['first_name']) : '';
+        $lastName = isset($_POST['last_name']) ? trim($_POST['last_name']) : '';
+        $phone = isset($_POST['phone']) ? trim($_POST['phone']) : '';
+        $isAdmin = isset($_POST['is_admin']) ? 1 : 0;
+        $newPassword = isset($_POST['new_password']) ? $_POST['new_password'] : '';
+        
+        // Validierung
+        $errors = [];
+        
+        if (empty($email)) {
+            $errors[] = 'Bitte geben Sie eine E-Mail-Adresse ein.';
+        } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $errors[] = 'Bitte geben Sie eine gültige E-Mail-Adresse ein.';
+        }
+        
+        if (empty($firstName)) {
+            $errors[] = 'Bitte geben Sie einen Vornamen ein.';
+        }
+        
+        if (empty($lastName)) {
+            $errors[] = 'Bitte geben Sie einen Nachnamen ein.';
+        }
+        
+        // Passwort nur überprüfen, wenn es geändert werden soll
+        if (!empty($newPassword) && strlen($newPassword) < 8) {
+            $errors[] = 'Das neue Passwort muss mindestens 8 Zeichen lang sein.';
+        }
+        
+        // Verhindern, dass ein Admin sich selbst die Rechte entzieht
+        if ($userId === $_SESSION['user_id'] && $_SESSION['is_admin'] && !$isAdmin) {
+            $errors[] = 'Sie können Ihren eigenen Administrator-Status nicht ändern.';
+        }
+        
+        if (empty($errors)) {
+            $result = $user->updateUser($userId, $email, $firstName, $lastName, $phone, $isAdmin, $newPassword);
+            
+            $_SESSION['flash_message'] = $result['message'];
+            $_SESSION['flash_type'] = $result['success'] ? 'success' : 'danger';
+            
+            // Bei Erfolg die Benutzer neu laden
+            if ($result['success']) {
+                $allUsers = $user->getAllUsers();
+                
+                // Session aktualisieren, wenn der eigene Benutzer aktualisiert wurde
+                if ($userId === $_SESSION['user_id']) {
+                    $_SESSION['user_email'] = $email;
+                    $_SESSION['user_name'] = $firstName . ' ' . $lastName;
+                    $_SESSION['is_admin'] = $isAdmin;
+                }
+            }
+        } else {
+            $_SESSION['flash_message'] = implode('<br>', $errors);
+            $_SESSION['flash_type'] = 'danger';
+        }
+    }
+}
+
+// Benutzer löschen
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_user'])) {
+    // CSRF-Token überprüfen
+    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+        $_SESSION['flash_message'] = 'Ungültige Anfrage. Bitte versuchen Sie es erneut.';
+        $_SESSION['flash_type'] = 'danger';
+    } else {
+        $userId = isset($_POST['user_id']) ? intval($_POST['user_id']) : 0;
+        
+        // Verhindern, dass ein Admin sich selbst löscht
+        if ($userId === $_SESSION['user_id']) {
+            $_SESSION['flash_message'] = 'Sie können Ihr eigenes Konto nicht löschen.';
+            $_SESSION['flash_type'] = 'danger';
+        } else {
+            $result = $user->deleteUser($userId);
+            
+            $_SESSION['flash_message'] = $result['message'];
+            $_SESSION['flash_type'] = $result['success'] ? 'success' : 'danger';
+            
+            // Bei Erfolg die Benutzer neu laden
+            if ($result['success']) {
+                $allUsers = $user->getAllUsers();
+            }
+        }
+    }
+}
+
 // Titel für die Seite
 $pageTitle = 'Benutzer verwalten';
 
@@ -176,6 +269,31 @@ require_once 'includes/header.php';
                                                     <span class="text-muted">Ihr Konto</span>
                                                 <?php endif; ?>
                                             </form>
+                                            <div class="mt-2">
+                                                <button type="button" 
+                                                        class="btn btn-info btn-sm" 
+                                                        data-bs-toggle="modal" 
+                                                        data-bs-target="#editUserModal"
+                                                        data-id="<?php echo $userItem['id']; ?>"
+                                                        data-email="<?php echo escape($userItem['email']); ?>"
+                                                        data-first-name="<?php echo escape($userItem['first_name']); ?>"
+                                                        data-last-name="<?php echo escape($userItem['last_name']); ?>"
+                                                        data-phone="<?php echo escape($userItem['phone']); ?>"
+                                                        data-is-admin="<?php echo $userItem['is_admin']; ?>"
+                                                        onclick="prepareEditUserModal(this)">
+                                                    <i class="bi bi-pencil"></i> Bearbeiten
+                                                </button>
+                                                
+                                                <?php if ($userItem['id'] !== $_SESSION['user_id']): ?>
+                                                    <form method="post" action="admin_users.php" class="d-inline" onsubmit="return confirm('Sind Sie sicher, dass Sie diesen Benutzer löschen möchten? Alle Daten und Reservierungen dieses Benutzers werden unwiderruflich gelöscht!');">
+                                                        <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
+                                                        <input type="hidden" name="user_id" value="<?php echo $userItem['id']; ?>">
+                                                        <button type="submit" name="delete_user" class="btn btn-danger btn-sm">
+                                                            <i class="bi bi-trash"></i> Löschen
+                                                        </button>
+                                                    </form>
+                                                <?php endif; ?>
+                                            </div>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -249,4 +367,88 @@ require_once 'includes/header.php';
             </div>
         </div>
     </div>
-</div> 
+</div>
+
+<!-- Modal zum Bearbeiten eines Benutzers -->
+<div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editUserModalLabel">Benutzer bearbeiten</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="admin_users.php" id="editUserForm">
+                    <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
+                    <input type="hidden" name="edit_user" value="1">
+                    <input type="hidden" name="user_id" id="edit_user_id">
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="edit_first_name" class="form-label">Vorname</label>
+                            <input type="text" class="form-control" id="edit_first_name" name="first_name" required>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="edit_last_name" class="form-label">Nachname</label>
+                            <input type="text" class="form-control" id="edit_last_name" name="last_name" required>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="edit_email" class="form-label">E-Mail-Adresse</label>
+                            <input type="email" class="form-control" id="edit_email" name="email" required>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="edit_phone" class="form-label">Telefonnummer (optional)</label>
+                            <input type="tel" class="form-control" id="edit_phone" name="phone">
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="edit_new_password" class="form-label">Neues Passwort (optional)</label>
+                            <input type="password" class="form-control" id="edit_new_password" name="new_password">
+                            <div class="form-text">Lassen Sie dieses Feld leer, um das Passwort nicht zu ändern. Andernfalls mindestens 8 Zeichen.</div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3 d-flex align-items-end">
+                            <div class="form-check mt-4">
+                                <input type="checkbox" class="form-check-input" id="edit_is_admin" name="is_admin">
+                                <label class="form-check-label" for="edit_is_admin">Administrator-Berechtigungen</label>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Abbrechen</button>
+                <button type="button" class="btn btn-primary" onclick="document.getElementById('editUserForm').submit();">Änderungen speichern</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript für die Formularvorausfüllung -->
+<script>
+function prepareEditUserModal(button) {
+    // Daten aus dem Button-Attributen auslesen
+    const userId = button.getAttribute('data-id');
+    const email = button.getAttribute('data-email');
+    const firstName = button.getAttribute('data-first-name');
+    const lastName = button.getAttribute('data-last-name');
+    const phone = button.getAttribute('data-phone');
+    const isAdmin = button.getAttribute('data-is-admin') === '1';
+    
+    // Formularfelder ausfüllen
+    document.getElementById('edit_user_id').value = userId;
+    document.getElementById('edit_email').value = email;
+    document.getElementById('edit_first_name').value = firstName;
+    document.getElementById('edit_last_name').value = lastName;
+    document.getElementById('edit_phone').value = phone || '';
+    document.getElementById('edit_is_admin').checked = isAdmin;
+    document.getElementById('edit_new_password').value = '';
+}
+</script> 
