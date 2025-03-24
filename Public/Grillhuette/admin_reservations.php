@@ -351,8 +351,8 @@ require_once 'includes/header.php';
                                                     data-start-time="<?php echo date('H:i', strtotime($res['start_datetime'])); ?>"
                                                     data-end="<?php echo date('Y-m-d', strtotime($res['end_datetime'])); ?>"
                                                     data-end-time="<?php echo date('H:i', strtotime($res['end_datetime'])); ?>"
-                                                    data-message="<?php echo escape($res['admin_message']); ?>"
-                                                    data-user-message="<?php echo escape($res['user_message']); ?>"
+                                                    data-message="<?php echo escape($res['admin_message'] ?? ''); ?>"
+                                                    data-user-message="<?php echo escape($res['user_message'] ?? ''); ?>"
                                                     data-status="<?php echo $res['status']; ?>"
                                                     onclick="prepareEditModal(this)">
                                                 <i class="bi bi-pencil"></i> Bearbeiten
