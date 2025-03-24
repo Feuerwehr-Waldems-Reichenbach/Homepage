@@ -123,6 +123,85 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             }
         }
+        
+        // Daten per E-Mail senden
+        if (isset($_POST['send_user_data'])) {
+            require_once BASE_PATH . '/Private/Email/emailSender.php';
+            
+            // Reservierungen des Benutzers abrufen
+            require_once 'includes/Reservation.php';
+            $reservation = new Reservation();
+            $userReservations = $reservation->getByUserId($_SESSION['user_id']);
+            
+            // HTML für die E-Mail erstellen
+            $emailBody = '<h2>Ihre gespeicherten Daten</h2>';
+            
+            // Persönliche Daten
+            $emailBody .= '<h3>Persönliche Informationen</h3>';
+            $emailBody .= '<table style="border-collapse: collapse; width: 100%; margin-bottom: 20px;">';
+            $emailBody .= '<tr><td style="padding: 8px; border: 1px solid #ddd; width: 30%;"><strong>Name:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">' . escape($userData['first_name'] . ' ' . $userData['last_name']) . '</td></tr>';
+            $emailBody .= '<tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>E-Mail:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">' . escape($userData['email']) . '</td></tr>';
+            $emailBody .= '<tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Telefon:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">' . escape($userData['phone'] ?: '-') . '</td></tr>';
+            $emailBody .= '<tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Registriert am:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">' . ($userData['created_at'] ? date('d.m.Y H:i', strtotime($userData['created_at'])) : '-') . '</td></tr>';
+            $emailBody .= '<tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Status:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">' . ($userData['is_verified'] ? 'Verifiziert' : 'Nicht verifiziert') . '</td></tr>';
+            $emailBody .= '<tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Rolle:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">' . ($userData['is_admin'] ? 'Administrator' : 'Benutzer') . '</td></tr>';
+            $emailBody .= '</table>';
+            
+            // Reservierungen
+            if (!empty($userReservations)) {
+                $emailBody .= '<h3>Ihre Reservierungen</h3>';
+                $emailBody .= '<table style="border-collapse: collapse; width: 100%;">';
+                $emailBody .= '<tr style="background-color: #f2f2f2;">';
+                $emailBody .= '<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Zeitraum</th>';
+                $emailBody .= '<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Status</th>';
+                $emailBody .= '<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Ihre Nachricht</th>';
+                $emailBody .= '<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Admin-Nachricht</th>';
+                $emailBody .= '</tr>';
+                
+                foreach ($userReservations as $res) {
+                    $statusText = '';
+                    switch ($res['status']) {
+                        case 'pending':
+                            $statusText = 'Ausstehend';
+                            break;
+                        case 'confirmed':
+                            $statusText = 'Bestätigt';
+                            break;
+                        case 'canceled':
+                            $statusText = 'Storniert';
+                            break;
+                        default:
+                            $statusText = ucfirst($res['status']);
+                    }
+                    
+                    $emailBody .= '<tr>';
+                    $emailBody .= '<td style="padding: 8px; border: 1px solid #ddd;">' . date('d.m.Y H:i', strtotime($res['start_datetime'])) . ' - ' . date('d.m.Y H:i', strtotime($res['end_datetime'])) . '</td>';
+                    $emailBody .= '<td style="padding: 8px; border: 1px solid #ddd;">' . $statusText . '</td>';
+                    $emailBody .= '<td style="padding: 8px; border: 1px solid #ddd;">' . (empty($res['user_message']) ? '-' : nl2br(escape($res['user_message']))) . '</td>';
+                    $emailBody .= '<td style="padding: 8px; border: 1px solid #ddd;">' . (empty($res['admin_message']) ? '-' : nl2br(escape($res['admin_message']))) . '</td>';
+                    $emailBody .= '</tr>';
+                }
+                
+                $emailBody .= '</table>';
+            } else {
+                $emailBody .= '<h3>Ihre Reservierungen</h3>';
+                $emailBody .= '<p>Sie haben bisher keine Reservierungen vorgenommen.</p>';
+            }
+            
+            // Datenschutzhinweis
+            $emailBody .= '<p style="margin-top: 20px; padding: 10px; background-color: #f8f9fa; border-radius: 4px;">Dies ist eine Zusammenfassung der über Sie gespeicherten Daten. Gemäß DSGVO haben Sie das Recht, Ihre Daten zu korrigieren oder zu löschen. Bei Fragen wenden Sie sich bitte an den Administrator.</p>';
+            
+            // E-Mail senden
+            $subject = 'Ihre gespeicherten Daten bei der Grillhütte Reichenbach';
+            $result = sendEmail($userData['email'], $subject, $emailBody);
+            
+            if ($result['success']) {
+                $_SESSION['flash_message'] = 'Eine E-Mail mit Ihren gespeicherten Daten wurde an Ihre E-Mail-Adresse gesendet.';
+                $_SESSION['flash_type'] = 'success';
+            } else {
+                $errors[] = 'Fehler beim Senden der E-Mail: ' . $result['message'];
+            }
+        }
     }
 }
 
@@ -263,6 +342,27 @@ require_once 'includes/header.php';
                             </div>
                             
                             <button type="submit" class="btn btn-primary">Passwort ändern</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Datenschutz & Datenauskunft</h3>
+                    </div>
+                    <div class="card-body">
+                        <p>Gemäß der Datenschutz-Grundverordnung (DSGVO) haben Sie das Recht, Auskunft über Ihre gespeicherten personenbezogenen Daten zu erhalten.</p>
+                        <p>Klicken Sie auf den Button unten, um sich eine Zusammenfassung aller über Sie gespeicherten Daten per E-Mail zukommen zu lassen.</p>
+                        
+                        <form method="post" action="profile.php">
+                            <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
+                            <button type="submit" name="send_user_data" class="btn btn-info">
+                                <i class="bi bi-envelope"></i> Meine Daten per E-Mail erhalten
+                            </button>
                         </form>
                     </div>
                 </div>

@@ -373,7 +373,7 @@ class User {
 
     public function getUserById($userId) {
         try {
-            $stmt = $this->db->prepare("SELECT id, email, first_name, last_name, phone, is_admin, is_verified FROM users WHERE id = ?");
+            $stmt = $this->db->prepare("SELECT id, email, first_name, last_name, phone, is_admin, is_verified, created_at FROM users WHERE id = ?");
             $stmt->execute([$userId]);
             return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
