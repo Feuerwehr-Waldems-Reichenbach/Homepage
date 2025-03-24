@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_status'])) {
         $_SESSION['flash_type'] = 'danger';
     } else {
         $reservationId = isset($_POST['reservation_id']) ? intval($_POST['reservation_id']) : 0;
-        $newStatus = isset($_POST['status']) ? $_POST['status'] : '';
+        $newStatus = isset($_POST['update_status']) ? $_POST['update_status'] : '';
         $adminMessage = isset($_POST['admin_message']) ? trim($_POST['admin_message']) : '';
         
         if (empty($newStatus) || !in_array($newStatus, ['pending', 'confirmed', 'canceled'])) {
