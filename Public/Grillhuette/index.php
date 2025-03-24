@@ -80,13 +80,7 @@ if (isset($_GET['month']) && isset($_GET['year'])) {
                                     <span>Belegt</span>
                                 </div>
                             </div>
-                        </div>
-                        
-                        <?php if (!isset($_SESSION['user_id'])): ?>
-                            <div class="alert alert-info">
-                                Um eine Reservierung vorzunehmen, müssen Sie sich <a href="login.php">anmelden</a> oder <a href="register.php">registrieren</a>.
-                            </div>
-                        <?php endif; ?>
+                        </div>             
                     </div>
                 </div>
             </div>
@@ -130,6 +124,22 @@ if (isset($_GET['month']) && isset($_GET['year'])) {
                 <?php elseif (isset($_SESSION['user_id']) && !$_SESSION['is_verified']): ?>
                     <div class="alert alert-warning">
                         Bitte bestätigen Sie Ihre E-Mail-Adresse, um eine Reservierung vornehmen zu können.
+                    </div>
+                <?php else: ?>
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="mb-0">Reservierung</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="alert alert-info mb-4">
+                                <p>Um eine Reservierung vornehmen zu können, müssen Sie angemeldet sein und Ihre E-Mail-Adresse bestätigt haben.</p>
+                            </div>
+                            
+                            <div class="d-grid gap-2">
+                                <a href="login.php" class="btn btn-primary">Anmelden</a>
+                                <a href="register.php" class="btn btn-outline-primary">Registrieren</a>
+                            </div>
+                        </div>
                     </div>
                 <?php endif; ?>
             </div>
