@@ -325,71 +325,38 @@ require_once 'includes/header.php';
                                             <?php if (!empty($res['user_message'])): ?>
                                                 <div class="message-box user-message mb-2 p-2">
                                                     <strong>Benutzernachricht:</strong><br>
-                                                    <?php echo nl2br(escape($res['user_message'])); ?>
+                                                    <?php echo nl2br(escape(substr($res['user_message'], 0, 50) . (strlen($res['user_message']) > 50 ? '...' : ''))); ?>
                                                 </div>
+                                            <?php else: ?>
+                                                <div class="text-muted">Keine Benutzernachricht</div>
                                             <?php endif; ?>
                                             
                                             <?php if (!empty($res['admin_message'])): ?>
                                                 <div class="message-box admin-message mb-2 p-2">
                                                     <strong>Admin-Nachricht:</strong><br>
-                                                    <?php echo nl2br(escape($res['admin_message'])); ?>
+                                                    <?php echo nl2br(escape(substr($res['admin_message'], 0, 50) . (strlen($res['admin_message']) > 50 ? '...' : ''))); ?>
                                                 </div>
+                                            <?php else: ?>
+                                                <div class="text-muted">Keine Admin-Nachricht</div>
                                             <?php endif; ?>
-                                            
-                                            <form method="post" action="admin_reservations.php<?php echo $statusFilter !== 'all' ? '?status=' . $statusFilter : ''; ?>" class="mt-2">
-                                                <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
-                                                <input type="hidden" name="reservation_id" value="<?php echo $res['id']; ?>">
-                                                
-                                                <div class="input-group">
-                                                    <input type="text" class="form-control form-control-sm" name="admin_message" placeholder="Nachricht hinzufügen/bearbeiten" value="<?php echo escape($res['admin_message']); ?>">
-                                                    <button type="submit" name="add_admin_message" class="btn btn-outline-secondary btn-sm">Speichern</button>
-                                                </div>
-                                            </form>
                                         </td>
                                         <td>
-                                            <form method="post" action="admin_reservations.php<?php echo $statusFilter !== 'all' ? '?status=' . $statusFilter : ''; ?>">
-                                                <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
-                                                <input type="hidden" name="reservation_id" value="<?php echo $res['id']; ?>">
-                                                <input type="hidden" name="admin_message" value="<?php echo escape($res['admin_message']); ?>">
-                                                
-                                                <div class="btn-group mb-2">
-                                                    <?php if ($res['status'] !== 'confirmed'): ?>
-                                                        <button type="submit" name="update_status" value="confirmed" class="btn btn-success btn-sm">Bestätigen</button>
-                                                    <?php endif; ?>
-                                                    
-                                                    <?php if ($res['status'] !== 'pending'): ?>
-                                                        <button type="submit" name="update_status" value="pending" class="btn btn-warning btn-sm">Zurücksetzen</button>
-                                                    <?php endif; ?>
-                                                    
-                                                    <?php if ($res['status'] !== 'canceled'): ?>
-                                                        <button type="submit" name="update_status" value="canceled" class="btn btn-danger btn-sm" onclick="return confirm('Sind Sie sicher, dass Sie diese Reservierung stornieren möchten?');">Stornieren</button>
-                                                    <?php endif; ?>
-                                                </div>
-                                            </form>
-                                            <div class="btn-group">
-                                                <button type="button" 
-                                                        class="btn btn-primary btn-sm" 
-                                                        data-bs-toggle="modal" 
-                                                        data-bs-target="#editReservationModal"
-                                                        data-id="<?php echo $res['id']; ?>"
-                                                        data-user-id="<?php echo $res['user_id']; ?>"
-                                                        data-start="<?php echo date('Y-m-d', strtotime($res['start_datetime'])); ?>"
-                                                        data-start-time="<?php echo date('H:i', strtotime($res['start_datetime'])); ?>"
-                                                        data-end="<?php echo date('Y-m-d', strtotime($res['end_datetime'])); ?>"
-                                                        data-end-time="<?php echo date('H:i', strtotime($res['end_datetime'])); ?>"
-                                                        data-message="<?php echo escape($res['admin_message']); ?>"
-                                                        data-status="<?php echo $res['status']; ?>"
-                                                        onclick="prepareEditModal(this)">
-                                                    <i class="bi bi-pencil"></i> Bearbeiten
-                                                </button>
-                                                <form method="post" action="admin_reservations.php<?php echo $statusFilter !== 'all' ? '?status=' . $statusFilter : ''; ?>" class="d-inline" onsubmit="return confirm('Sind Sie sicher, dass Sie diese Reservierung löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.');">
-                                                    <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
-                                                    <input type="hidden" name="reservation_id" value="<?php echo $res['id']; ?>">
-                                                    <button type="submit" name="delete_reservation" class="btn btn-danger btn-sm">
-                                                        <i class="bi bi-trash"></i> Löschen
-                                                    </button>
-                                                </form>
-                                            </div>
+                                            <button type="button" 
+                                                    class="btn btn-primary btn-sm" 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#editReservationModal"
+                                                    data-id="<?php echo $res['id']; ?>"
+                                                    data-user-id="<?php echo $res['user_id']; ?>"
+                                                    data-start="<?php echo date('Y-m-d', strtotime($res['start_datetime'])); ?>"
+                                                    data-start-time="<?php echo date('H:i', strtotime($res['start_datetime'])); ?>"
+                                                    data-end="<?php echo date('Y-m-d', strtotime($res['end_datetime'])); ?>"
+                                                    data-end-time="<?php echo date('H:i', strtotime($res['end_datetime'])); ?>"
+                                                    data-message="<?php echo escape($res['admin_message']); ?>"
+                                                    data-user-message="<?php echo escape($res['user_message']); ?>"
+                                                    data-status="<?php echo $res['status']; ?>"
+                                                    onclick="prepareEditModal(this)">
+                                                <i class="bi bi-pencil"></i> Bearbeiten
+                                            </button>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -525,20 +492,41 @@ require_once 'includes/header.php';
                             </select>
                         </div>
                     </div>
-                    
-                    <div class="mb-3">
-                        <label for="edit_admin_message" class="form-label">Nachricht an den Benutzer (optional)</label>
-                        <textarea class="form-control" id="edit_admin_message" name="admin_message" rows="3"></textarea>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="edit_user_message_display" class="form-label">Nachricht vom Benutzer</label>
+                            <textarea class="form-control" id="edit_user_message_display" rows="3" readonly></textarea>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="edit_admin_message" class="form-label">Nachricht an den Benutzer</label>
+                            <textarea class="form-control" id="edit_admin_message" name="admin_message" rows="3"></textarea>
+                        </div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Abbrechen</button>
-                <button type="button" class="btn btn-primary" onclick="document.getElementById('editReservationForm').submit();">Änderungen speichern</button>
+                <div class="d-flex justify-content-between w-100">
+                    <div>
+                        <button type="button" id="deleteReservationBtn" class="btn btn-danger" onclick="confirmDeleteReservation()">Reservierung löschen</button>
+                    </div>
+                    <div>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Abbrechen</button>
+                        <button type="button" class="btn btn-primary" onclick="document.getElementById('editReservationForm').submit();">Änderungen speichern</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Formular zum Löschen einer Reservierung (wird via JavaScript abgesendet) -->
+<form method="post" action="admin_reservations.php<?php echo $statusFilter !== 'all' ? '?status=' . $statusFilter : ''; ?>" id="deleteReservationForm" style="display: none;">
+    <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
+    <input type="hidden" name="delete_reservation" value="1">
+    <input type="hidden" name="reservation_id" id="delete_reservation_id">
+</form>
 
 <!-- JavaScript für die Formularvorausfüllung -->
 <script>
@@ -552,28 +540,26 @@ function prepareEditModal(button) {
     const endDate = button.getAttribute('data-end');
     const endTime = button.getAttribute('data-end-time');
     const adminMessage = button.getAttribute('data-message');
+    const userMessage = button.getAttribute('data-user-message');
     const status = button.getAttribute('data-status');
     
     // Formularfelder ausfüllen
     document.getElementById('edit_reservation_id').value = reservationId;
+    document.getElementById('delete_reservation_id').value = reservationId;
     document.getElementById('edit_user_id').value = userId;
     document.getElementById('edit_start_date').value = startDate;
     document.getElementById('edit_start_time').value = startTime;
     document.getElementById('edit_end_date').value = endDate;
     document.getElementById('edit_end_time').value = endTime;
     document.getElementById('edit_admin_message').value = adminMessage;
+    document.getElementById('edit_user_message_display').value = userMessage;
     document.getElementById('edit_status').value = status;
-    
-    // Logging für Debug-Zwecke
-    console.log('Reservierung bearbeiten:', {
-        id: reservationId,
-        userId: userId,
-        startDate: startDate,
-        startTime: startTime,
-        endDate: endDate,
-        endTime: endTime,
-        status: status
-    });
+}
+
+function confirmDeleteReservation() {
+    if (confirm('Sind Sie sicher, dass Sie diese Reservierung löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.')) {
+        document.getElementById('deleteReservationForm').submit();
+    }
 }
 
 // Initialisierung beim Laden des Modals
@@ -582,18 +568,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const editModal = document.getElementById('editReservationModal');
     if (editModal) {
         editModal.addEventListener('shown.bs.modal', function () {
-            // Überprüfen der Werte nach dem Öffnen des Modals
+            // Felder abrufen
             const startDateField = document.getElementById('edit_start_date');
             const startTimeField = document.getElementById('edit_start_time');
             const endDateField = document.getElementById('edit_end_date');
             const endTimeField = document.getElementById('edit_end_time');
-            
-            console.log('Modal geöffnet mit Werten:', {
-                startDate: startDateField.value,
-                startTime: startTimeField.value,
-                endDate: endDateField.value,
-                endTime: endTimeField.value
-            });
             
             // Flatpickr-Instanzen zerstören, falls sie bereits existieren
             if (startDateField._flatpickr) startDateField._flatpickr.destroy();
