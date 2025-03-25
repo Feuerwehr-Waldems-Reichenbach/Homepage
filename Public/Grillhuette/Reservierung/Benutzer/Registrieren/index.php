@@ -1,10 +1,10 @@
 <?php
-require_once 'includes/config.php';
-require_once 'includes/User.php';
+require_once '../../includes/config.php';
+require_once '../../includes/User.php';
 
 // Wenn der Benutzer bereits angemeldet ist, weiterleiten
 if (isset($_SESSION['user_id'])) {
-    header('Location: index.php');
+    header('Location: ' . getRelativePath('home'));
     exit;
 }
 
@@ -72,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($result['success']) {
                 $_SESSION['flash_message'] = $result['message'];
                 $_SESSION['flash_type'] = isset($result['warning']) ? 'warning' : 'success';
-                header('Location: login.php');
+                header('Location: ' . getRelativePath('Benutzer/Anmelden'));
                 exit;
             } else {
                 $errors[] = $result['message'];
@@ -85,7 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $pageTitle = 'Registrieren';
 
 // Header einbinden
-require_once 'includes/header.php';
+require_once '../../includes/header.php';
 ?>
 
 <div class="row justify-content-center">
@@ -105,7 +105,7 @@ require_once 'includes/header.php';
                     </div>
                 <?php endif; ?>
                 
-                <form method="post" action="register.php">
+                <form method="post">
                     <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
                     
                     <div class="row">
@@ -153,10 +153,10 @@ require_once 'includes/header.php';
                 </form>
             </div>
             <div class="card-footer text-center">
-                Bereits registriert? <a href="login.php">Hier anmelden</a>
+                Bereits registriert? <a href="<?php echo getRelativePath('Benutzer/Anmelden'); ?>">Hier anmelden</a>
             </div>
         </div>
     </div>
 </div>
 
-<?php require_once 'includes/footer.php'; ?> 
+<?php require_once '../../includes/footer.php'; ?> 

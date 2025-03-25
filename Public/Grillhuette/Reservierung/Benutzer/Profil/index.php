@@ -1,13 +1,13 @@
 <?php
-require_once 'includes/config.php';
-require_once 'includes/User.php';
+require_once '../../includes/config.php';
+require_once '../../includes/User.php';
 
 // Nur für angemeldete Benutzer zugänglich
 if (!isset($_SESSION['user_id'])) {
     $_SESSION['flash_message'] = 'Bitte melden Sie sich an, um auf Ihr Profil zuzugreifen.';
     $_SESSION['flash_type'] = 'warning';
-    $_SESSION['redirect_after_login'] = 'profile.php';
-    header('Location: login.php');
+    $_SESSION['redirect_after_login'] = getRelativePath('Benutzer/Profil');
+    header('Location: ' . getRelativePath('Benutzer/Anmelden'));
     exit;
 }
 
@@ -18,7 +18,7 @@ $userData = $user->getUserById($_SESSION['user_id']);
 if (!$userData) {
     $_SESSION['flash_message'] = 'Benutzer nicht gefunden.';
     $_SESSION['flash_type'] = 'danger';
-    header('Location: index.php');
+    header('Location: ' . getRelativePath('home'));
     exit;
 }
 
@@ -129,7 +129,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             require_once BASE_PATH . '/Private/Email/emailSender.php';
             
             // Reservierungen des Benutzers abrufen
-            require_once 'includes/Reservation.php';
+            require_once '../../includes/Reservation.php';
             $reservation = new Reservation();
             $userReservations = $reservation->getByUserId($_SESSION['user_id']);
             
@@ -216,7 +216,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 
                 if ($auth['success']) {
                     // Reservierungen löschen
-                    require_once 'includes/Reservation.php';
+                    require_once '../../includes/Reservation.php';
                     $reservation = new Reservation();
                     $reservation->deleteByUserId($_SESSION['user_id']);
                     
@@ -231,7 +231,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         $_SESSION['flash_message'] = 'Ihr Profil und alle zugehörigen Daten wurden erfolgreich gelöscht.';
                         $_SESSION['flash_type'] = 'success';
                         
-                        header('Location: index.php');
+                        header('Location: ' . getRelativePath('home'));
                         exit;
                     } else {
                         $errors[] = 'Fehler beim Löschen des Profils: ' . $result['message'];
@@ -248,7 +248,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $pageTitle = 'Mein Profil';
 
 // Header einbinden
-require_once 'includes/header.php';
+require_once '../../includes/header.php';
 ?>
 
 <div class="row">
@@ -277,7 +277,7 @@ require_once 'includes/header.php';
                 Sie werden nun abgemeldet. Bitte melden Sie sich nach der Bestätigung Ihrer neuen E-Mail-Adresse wieder an.
                 <script>
                     setTimeout(function() {
-                        window.location.href = 'logout.php';
+                        window.location.href = '<?php echo getRelativePath('Benutzer/Abmelden'); ?>';
                     }, 5000);
                 </script>
             </div>
@@ -297,7 +297,7 @@ require_once 'includes/header.php';
                         <h3>Persönliche Daten</h3>
                     </div>
                     <div class="card-body">
-                        <form method="post" action="profile.php">
+                        <form method="post">
                             <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
                             <input type="hidden" name="update_profile" value="1">
                             
@@ -327,7 +327,7 @@ require_once 'includes/header.php';
                         <h3>Passwort ändern</h3>
                     </div>
                     <div class="card-body">
-                        <form method="post" action="profile.php">
+                        <form method="post">
                             <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
                             <input type="hidden" name="update_password" value="1">
                             
@@ -365,7 +365,7 @@ require_once 'includes/header.php';
                             <input type="email" class="form-control" value="<?php echo escape($userData['email']); ?>" disabled>
                         </div>
                         
-                        <form method="post" action="profile.php">
+                        <form method="post">
                             <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
                             <input type="hidden" name="update_email" value="1">
                             
@@ -393,7 +393,7 @@ require_once 'includes/header.php';
                     <div class="card-body">
                         <p>Gemäß der Datenschutz-Grundverordnung (DSGVO) haben Sie das Recht, Auskunft über Ihre gespeicherten Daten zu erhalten.</p>
                         
-                        <form method="post" action="profile.php">
+                        <form method="post">
                             <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
                             <div class="d-grid">
                                 <button type="submit" name="send_user_data" class="btn btn-primary">
@@ -412,7 +412,7 @@ require_once 'includes/header.php';
                     <div class="card-body">
                         <p class="text-danger"><strong>Warnung:</strong> Diese Aktion kann nicht rückgängig gemacht werden. Alle Ihre Daten und Reservierungen werden dauerhaft gelöscht.</p>
                         
-                        <form method="post" action="profile.php" onsubmit="return confirm('Sind Sie sicher, dass Sie Ihr Profil und alle zugehörigen Daten löschen möchten? Diese Aktion kann NICHT rückgängig gemacht werden!');">
+                        <form method="post" onsubmit="return confirm('Sind Sie sicher, dass Sie Ihr Profil und alle zugehörigen Daten löschen möchten? Diese Aktion kann NICHT rückgängig gemacht werden!');">
                             <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
                             <input type="hidden" name="delete_profile" value="1">
                             
@@ -435,4 +435,4 @@ require_once 'includes/header.php';
     </div>
 </div>
 
-<?php require_once 'includes/footer.php'; ?> 
+<?php require_once '../../includes/footer.php'; ?> 

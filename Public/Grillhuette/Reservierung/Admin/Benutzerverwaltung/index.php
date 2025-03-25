@@ -1,12 +1,12 @@
 <?php
-require_once 'includes/config.php';
-require_once 'includes/User.php';
+require_once '../../includes/config.php';
+require_once '../../includes/User.php';
 
 // Nur für angemeldete Administratoren zugänglich
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['is_admin']) || !$_SESSION['is_admin']) {
     $_SESSION['flash_message'] = 'Sie haben keine Berechtigung, auf diese Seite zuzugreifen.';
     $_SESSION['flash_type'] = 'danger';
-    header('Location: index.php');
+    header('Location: ' . getRelativePath('home'));
     exit;
 }
 
@@ -217,7 +217,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_user'])) {
 $pageTitle = 'Benutzer verwalten';
 
 // Header einbinden
-require_once 'includes/header.php';
+require_once '../../includes/header.php';
 ?>
 
 <div class="row">
@@ -300,7 +300,7 @@ require_once 'includes/header.php';
     </div>
 </div>
 
-<?php require_once 'includes/footer.php'; ?>
+<?php require_once '../../includes/footer.php'; ?>
 
 <!-- Modal für neuen Benutzer -->
 <div class="modal fade" id="newUserModal" tabindex="-1" aria-labelledby="newUserModalLabel" aria-hidden="true">
@@ -311,7 +311,7 @@ require_once 'includes/header.php';
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
             </div>
             <div class="modal-body">
-                <form method="post" action="admin_users.php" id="createUserForm">
+                <form method="post" id="createUserForm">
                     <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
                     <input type="hidden" name="create_user" value="1">
                     
@@ -382,7 +382,7 @@ require_once 'includes/header.php';
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
             </div>
             <div class="modal-body">
-                <form method="post" action="admin_users.php" id="editUserForm">
+                <form method="post" id="editUserForm">
                     <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
                     <input type="hidden" name="edit_user" value="1">
                     <input type="hidden" name="user_id" id="edit_user_id">
@@ -448,7 +448,7 @@ require_once 'includes/header.php';
 </div>
 
 <!-- Formular zum Löschen eines Benutzers (wird via JavaScript abgesendet) -->
-<form method="post" action="admin_users.php" id="deleteUserForm" style="display: none;">
+<form method="post" id="deleteUserForm" style="display: none;">
     <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
     <input type="hidden" name="delete_user" value="1">
     <input type="hidden" name="user_id" id="delete_user_id">

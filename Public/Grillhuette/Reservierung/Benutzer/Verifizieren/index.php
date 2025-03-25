@@ -1,6 +1,6 @@
 <?php
-require_once 'includes/config.php';
-require_once 'includes/User.php';
+require_once '../../includes/config.php';
+require_once '../../includes/User.php';
 
 // Token aus der URL holen
 $token = isset($_GET['token']) ? trim($_GET['token']) : '';
@@ -9,7 +9,7 @@ $token = isset($_GET['token']) ? trim($_GET['token']) : '';
 if (empty($token)) {
     $_SESSION['flash_message'] = 'Ungültiger Verifikationslink.';
     $_SESSION['flash_type'] = 'danger';
-    header('Location: login.php');
+    header('Location: ' . getRelativePath('Benutzer/Anmelden'));
     exit;
 }
 
@@ -21,6 +21,6 @@ $_SESSION['flash_message'] = $result['message'];
 $_SESSION['flash_type'] = $result['success'] ? 'success' : 'danger';
 
 // Weiterleitung zur Login-Seite
-header('Location: login.php');
+header('Location: ' . getRelativePath('Benutzer/Anmelden'));
 exit;
 ?> 

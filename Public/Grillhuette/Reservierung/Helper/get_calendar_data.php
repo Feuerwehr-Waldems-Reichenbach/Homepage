@@ -1,6 +1,6 @@
 <?php
-require_once 'includes/config.php';
-require_once 'includes/Reservation.php';
+require_once '../includes/config.php';
+require_once '../includes/Reservation.php';
 
 // Monat und Jahr aus der Anfrage holen
 $month = isset($_GET['month']) ? intval($_GET['month']) : date('n');

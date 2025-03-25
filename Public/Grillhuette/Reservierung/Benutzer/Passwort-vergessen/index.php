@@ -1,10 +1,10 @@
 <?php
-require_once 'includes/config.php';
-require_once 'includes/User.php';
+require_once '../../includes/config.php';
+require_once '../../includes/User.php';
 
 // Wenn der Benutzer bereits angemeldet ist, weiterleiten
 if (isset($_SESSION['user_id'])) {
-    header('Location: index.php');
+    header('Location: ' . getRelativePath('home'));
     exit;
 }
 
@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $pageTitle = 'Passwort vergessen';
 
 // Header einbinden
-require_once 'includes/header.php';
+require_once '../../includes/header.php';
 ?>
 
 <div class="row justify-content-center">
@@ -61,7 +61,7 @@ require_once 'includes/header.php';
                         Eine E-Mail mit Anweisungen zum Zurücksetzen Ihres Passworts wurde an die angegebene Adresse gesendet.
                     </div>
                     <p class="text-center mt-3">
-                        <a href="login.php" class="btn btn-primary">Zurück zum Login</a>
+                        <a href="<?php echo getRelativePath('Benutzer/Anmelden'); ?>" class="btn btn-primary">Zurück zum Login</a>
                     </p>
                 <?php else: ?>
                     <?php if (!empty($errors)): ?>
@@ -76,7 +76,7 @@ require_once 'includes/header.php';
                     
                     <p>Geben Sie Ihre E-Mail-Adresse ein, um einen Link zum Zurücksetzen Ihres Passworts zu erhalten.</p>
                     
-                    <form method="post" action="forgot_password.php">
+                    <form method="post">
                         <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
                         
                         <div class="mb-3">
@@ -86,7 +86,7 @@ require_once 'includes/header.php';
                         
                         <div class="d-flex justify-content-between align-items-center">
                             <button type="submit" class="btn btn-primary">Passwort zurücksetzen</button>
-                            <a href="login.php">Zurück zum Login</a>
+                            <a href="<?php echo getRelativePath('Benutzer/Anmelden'); ?>">Zurück zum Login</a>
                         </div>
                     </form>
                 <?php endif; ?>
@@ -95,4 +95,4 @@ require_once 'includes/header.php';
     </div>
 </div>
 
-<?php require_once 'includes/footer.php'; ?> 
+<?php require_once '../../includes/footer.php'; ?> 

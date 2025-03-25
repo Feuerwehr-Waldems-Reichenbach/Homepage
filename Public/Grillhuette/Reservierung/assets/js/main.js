@@ -215,9 +215,8 @@ function loadDayStatuses(month, year) {
     
     // Create AJAX request
     const xhr = new XMLHttpRequest();
-    // Get base URL from current path
-    const basePath = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
-    xhr.open('GET', `${basePath}get_calendar_data.php?month=${formattedMonth}&year=${year}`, true);
+    // Statt die Basis-URL selbst zu berechnen, verwenden wir den Pfad zur Helper-Datei
+    xhr.open('GET', `Helper/get_calendar_data.php?month=${formattedMonth}&year=${year}`, true);
     
     xhr.onload = function() {
         if (this.status === 200) {

@@ -1,14 +1,14 @@
 <?php
-require_once 'includes/config.php';
-require_once 'includes/User.php';
-require_once 'includes/Reservation.php';
+require_once '../../includes/config.php';
+require_once '../../includes/User.php';
+require_once '../../includes/Reservation.php';
 
 // Nur für angemeldete Benutzer zugänglich
 if (!isset($_SESSION['user_id'])) {
     $_SESSION['flash_message'] = 'Bitte melden Sie sich an, um Ihre Reservierungen zu sehen.';
     $_SESSION['flash_type'] = 'warning';
-    $_SESSION['redirect_after_login'] = 'my_reservations.php';
-    header('Location: login.php');
+    $_SESSION['redirect_after_login'] = getRelativePath('Benutzer/Meine-Reservierungen');
+    header('Location: ' . getRelativePath('Benutzer/Anmelden'));
     exit;
 }
 
@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cancel_reservation'])
 $pageTitle = 'Meine Reservierungen';
 
 // Header einbinden
-require_once 'includes/header.php';
+require_once '../../includes/header.php';
 ?>
 
 <div class="row">
@@ -77,7 +77,7 @@ require_once 'includes/header.php';
         
         <?php if (empty($userReservations)): ?>
             <div class="alert alert-info">
-                Sie haben noch keine Reservierungen. <a href="index.php">Jetzt reservieren</a>
+                Sie haben noch keine Reservierungen. <a href="<?php echo getRelativePath('home'); ?>">Jetzt reservieren</a>
             </div>
         <?php else: ?>
             <div class="card mb-4">
@@ -132,7 +132,7 @@ require_once 'includes/header.php';
                                             </div>
                                         <?php endif; ?>
                                         
-                                        <form method="post" action="my_reservations.php" class="mb-3">
+                                        <form method="post" class="mb-3">
                                             <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
                                             <input type="hidden" name="reservation_id" value="<?php echo $res['id']; ?>">
                                             
@@ -159,7 +159,7 @@ require_once 'includes/header.php';
                         ?>
                             <div class="col-12">
                                 <div class="alert alert-info">
-                                    Sie haben keine aktiven oder zukünftigen Reservierungen. <a href="index.php">Jetzt reservieren</a>
+                                    Sie haben keine aktiven oder zukünftigen Reservierungen. <a href="<?php echo getRelativePath('home'); ?>">Jetzt reservieren</a>
                                 </div>
                             </div>
                         <?php endif; ?>
@@ -244,4 +244,4 @@ require_once 'includes/header.php';
     </div>
 </div>
 
-<?php require_once 'includes/footer.php'; ?> 
+<?php require_once '../../includes/footer.php'; ?> 

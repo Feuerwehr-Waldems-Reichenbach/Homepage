@@ -1,13 +1,13 @@
 <?php
-require_once 'includes/config.php';
-require_once 'includes/User.php';
-require_once 'includes/Reservation.php';
+require_once '../../includes/config.php';
+require_once '../../includes/User.php';
+require_once '../../includes/Reservation.php';
 
 // Nur für angemeldete Administratoren zugänglich
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['is_admin']) || !$_SESSION['is_admin']) {
     $_SESSION['flash_message'] = 'Sie haben keine Berechtigung, auf diese Seite zuzugreifen.';
     $_SESSION['flash_type'] = 'danger';
-    header('Location: index.php');
+    header('Location: ' . getRelativePath('home'));
     exit;
 }
 
@@ -248,7 +248,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_reservation'])
 $pageTitle = 'Reservierungen verwalten';
 
 // Header einbinden
-require_once 'includes/header.php';
+require_once '../../includes/header.php';
 ?>
 
 <div class="row">
@@ -369,7 +369,7 @@ require_once 'includes/header.php';
     </div>
 </div>
 
-<?php require_once 'includes/footer.php'; ?>
+<?php require_once '../../includes/footer.php'; ?>
 
 <!-- Modal für neue Reservierung -->
 <div class="modal fade" id="newReservationModal" tabindex="-1" aria-labelledby="newReservationModalLabel" aria-hidden="true">

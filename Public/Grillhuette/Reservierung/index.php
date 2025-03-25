@@ -93,7 +93,7 @@ if (isset($_GET['month']) && isset($_GET['year'])) {
                             <h4 class="mb-0">Neue Reservierung</h4>
                         </div>
                         <div class="card-body">
-                            <form id="reservationForm" method="post" action="create_reservation.php">
+                            <form id="reservationForm" method="post" action="<?php echo getRelativePath('Erstellen'); ?>">
                                 <div class="mb-3">
                                     <label for="start_date" class="form-label">Startdatum</label>
                                     <input type="text" class="form-control" id="start_date" name="start_date" readonly required>
@@ -136,8 +136,8 @@ if (isset($_GET['month']) && isset($_GET['year'])) {
                             </div>
                             
                             <div class="d-grid gap-2">
-                                <a href="login.php" class="btn btn-primary">Anmelden</a>
-                                <a href="register.php" class="btn btn-outline-primary">Registrieren</a>
+                                <a href="<?php echo getRelativePath('Benutzer/Anmelden'); ?>" class="btn btn-primary">Anmelden</a>
+                                <a href="<?php echo getRelativePath('Benutzer/Registrieren'); ?>" class="btn btn-outline-primary">Registrieren</a>
                             </div>
                         </div>
                     </div>

@@ -10,27 +10,27 @@ require_once __DIR__ . '/config.php';
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="<?php echo str_repeat('../', substr_count($_SERVER['REQUEST_URI'], '/') - 3); ?>assets/css/style.css">
 </head>
 <body>
     <header class="bg-dark text-white">
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <div class="container">
-                <a class="navbar-brand" href="index.php">Grillhütte Reservierung</a>
+                <a class="navbar-brand" href="<?php echo getRelativePath('home'); ?>">Grillhütte Reservierung</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Navigation umschalten">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav me-auto">
                         <li class="nav-item">
-                            <a class="nav-link" href="index.php">Startseite</a>
+                            <a class="nav-link" href="<?php echo getRelativePath('home'); ?>">Startseite</a>
                         </li>
                         <?php if (isset($_SESSION['user_id'])): ?>
                             <li class="nav-item">
-                                <a class="nav-link" href="my_reservations.php">Meine Reservierungen</a>
+                                <a class="nav-link" href="<?php echo getRelativePath('Benutzer/Meine-Reservierungen'); ?>">Meine Reservierungen</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="profile.php">Mein Profil</a>
+                                <a class="nav-link" href="<?php echo getRelativePath('Benutzer/Profil'); ?>">Mein Profil</a>
                             </li>
                             <?php if (isset($_SESSION['is_admin']) && $_SESSION['is_admin']): ?>
                                 <li class="nav-item dropdown">
@@ -38,8 +38,8 @@ require_once __DIR__ . '/config.php';
                                         Administration
                                     </a>
                                     <ul class="dropdown-menu" aria-labelledby="adminDropdown">
-                                        <li><a class="dropdown-item" href="admin_reservations.php">Reservierungen verwalten</a></li>
-                                        <li><a class="dropdown-item" href="admin_users.php">Benutzer verwalten</a></li>
+                                        <li><a class="dropdown-item" href="<?php echo getRelativePath('Admin/Reservierungsverwaltung'); ?>">Reservierungen verwalten</a></li>
+                                        <li><a class="dropdown-item" href="<?php echo getRelativePath('Admin/Benutzerverwaltung'); ?>">Benutzer verwalten</a></li>
                                     </ul>
                                 </li>
                             <?php endif; ?>
@@ -51,14 +51,14 @@ require_once __DIR__ . '/config.php';
                                 <span class="nav-link">Willkommen, <?php echo escape($_SESSION['user_name']); ?></span>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="logout.php">Abmelden</a>
+                                <a class="nav-link" href="<?php echo getRelativePath('Benutzer/Abmelden'); ?>">Abmelden</a>
                             </li>
                         <?php else: ?>
                             <li class="nav-item">
-                                <a class="nav-link" href="login.php">Anmelden</a>
+                                <a class="nav-link" href="<?php echo getRelativePath('Benutzer/Anmelden'); ?>">Anmelden</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="register.php">Registrieren</a>
+                                <a class="nav-link" href="<?php echo getRelativePath('Benutzer/Registrieren'); ?>">Registrieren</a>
                             </li>
                         <?php endif; ?>
                     </ul>

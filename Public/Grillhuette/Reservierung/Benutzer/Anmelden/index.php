@@ -1,10 +1,10 @@
 <?php
-require_once 'includes/config.php';
-require_once 'includes/User.php';
+require_once '../../includes/config.php';
+require_once '../../includes/User.php';
 
 // Wenn der Benutzer bereits angemeldet ist, weiterleiten
 if (isset($_SESSION['user_id'])) {
-    header('Location: index.php');
+    header('Location: ' . getRelativePath('home'));
     exit;
 }
 
@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             if ($result['success']) {
                 // Weiterleitung zur Startseite oder vorherigen Seite, falls gesetzt
-                $redirect = isset($_SESSION['redirect_after_login']) ? $_SESSION['redirect_after_login'] : 'index.php';
+                $redirect = isset($_SESSION['redirect_after_login']) ? $_SESSION['redirect_after_login'] : getRelativePath('home');
                 unset($_SESSION['redirect_after_login']);
                 
                 header('Location: ' . $redirect);
@@ -54,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $pageTitle = 'Anmelden';
 
 // Header einbinden
-require_once 'includes/header.php';
+require_once '../../includes/header.php';
 ?>
 
 <div class="row justify-content-center">
@@ -74,7 +74,7 @@ require_once 'includes/header.php';
                     </div>
                 <?php endif; ?>
                 
-                <form method="post" action="login.php">
+                <form method="post">
                     <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
                     
                     <div class="mb-3">
@@ -89,15 +89,15 @@ require_once 'includes/header.php';
                     
                     <div class="d-flex justify-content-between align-items-center">
                         <button type="submit" class="btn btn-primary">Anmelden</button>
-                        <a href="forgot_password.php">Passwort vergessen?</a>
+                        <a href="<?php echo getRelativePath('Benutzer/Passwort-vergessen'); ?>">Passwort vergessen?</a>
                     </div>
                 </form>
             </div>
             <div class="card-footer text-center">
-                Noch kein Konto? <a href="register.php">Jetzt registrieren</a>
+                Noch kein Konto? <a href="<?php echo getRelativePath('Benutzer/Registrieren'); ?>">Jetzt registrieren</a>
             </div>
         </div>
     </div>
 </div>
 
-<?php require_once 'includes/footer.php'; ?> 
+<?php require_once '../../includes/footer.php'; ?> 

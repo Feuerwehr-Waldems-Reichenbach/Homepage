@@ -1,12 +1,12 @@
 <?php
-require_once 'includes/config.php';
-require_once 'includes/Reservation.php';
+require_once '../includes/config.php';
+require_once '../includes/Reservation.php';
 
 // Nur für angemeldete Benutzer mit verifizierten E-Mails
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['is_verified']) || !$_SESSION['is_verified']) {
     $_SESSION['flash_message'] = 'Sie müssen angemeldet sein und Ihre E-Mail-Adresse bestätigt haben, um eine Reservierung vornehmen zu können.';
     $_SESSION['flash_type'] = 'danger';
-    header('Location: index.php');
+    header('Location: ' . getRelativePath('home'));
     exit;
 }
 
@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($startDate) || empty($endDate)) {
         $_SESSION['flash_message'] = 'Bitte wählen Sie ein Start- und Enddatum aus.';
         $_SESSION['flash_type'] = 'danger';
-        header('Location: index.php');
+        header('Location: ' . getRelativePath('home'));
         exit;
     }
     
@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         !preg_match('/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/', $endTime)) {
         $_SESSION['flash_message'] = 'Bitte geben Sie gültige Uhrzeiten ein (Format: HH:MM).';
         $_SESSION['flash_type'] = 'danger';
-        header('Location: index.php');
+        header('Location: ' . getRelativePath('home'));
         exit;
     }
     
@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (strtotime($endDatetime) <= strtotime($startDatetime)) {
         $_SESSION['flash_message'] = 'Das Enddatum muss nach dem Startdatum liegen.';
         $_SESSION['flash_type'] = 'danger';
-        header('Location: index.php');
+        header('Location: ' . getRelativePath('home'));
         exit;
     }
     
@@ -60,10 +60,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['flash_type'] = 'danger';
     }
     
-    header('Location: my_reservations.php');
+    header('Location: ' . getRelativePath('Benutzer/Meine-Reservierungen'));
     exit;
 } else {
     // Bei direktem Zugriff auf die Seite zurück zur Startseite
-    header('Location: index.php');
+    header('Location: ' . getRelativePath('home'));
     exit;
 } 

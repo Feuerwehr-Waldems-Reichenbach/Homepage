@@ -1,10 +1,10 @@
 <?php
-require_once 'includes/config.php';
-require_once 'includes/User.php';
+require_once '../../includes/config.php';
+require_once '../../includes/User.php';
 
 // Wenn der Benutzer bereits angemeldet ist, weiterleiten
 if (isset($_SESSION['user_id'])) {
-    header('Location: index.php');
+    header('Location: ' . getRelativePath('home'));
     exit;
 }
 
@@ -15,7 +15,7 @@ $token = isset($_GET['token']) ? trim($_GET['token']) : '';
 if (empty($token)) {
     $_SESSION['flash_message'] = 'Ungültiger Reset-Link.';
     $_SESSION['flash_type'] = 'danger';
-    header('Location: login.php');
+    header('Location: ' . getRelativePath('Benutzer/Anmelden'));
     exit;
 }
 
@@ -60,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $pageTitle = 'Passwort zurücksetzen';
 
 // Header einbinden
-require_once 'includes/header.php';
+require_once '../../includes/header.php';
 ?>
 
 <div class="row justify-content-center">
@@ -75,7 +75,7 @@ require_once 'includes/header.php';
                         Ihr Passwort wurde erfolgreich zurückgesetzt.
                     </div>
                     <p class="text-center mt-3">
-                        <a href="login.php" class="btn btn-primary">Zum Login</a>
+                        <a href="<?php echo getRelativePath('Benutzer/Anmelden'); ?>" class="btn btn-primary">Zum Login</a>
                     </p>
                 <?php else: ?>
                     <?php if (!empty($errors)): ?>
@@ -88,7 +88,7 @@ require_once 'includes/header.php';
                         </div>
                     <?php endif; ?>
                     
-                    <form method="post" action="reset_password.php?token=<?php echo escape($token); ?>">
+                    <form method="post">
                         <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
                         
                         <div class="mb-3">
@@ -110,4 +110,4 @@ require_once 'includes/header.php';
     </div>
 </div>
 
-<?php require_once 'includes/footer.php'; ?> 
+<?php require_once '../../includes/footer.php'; ?> 
