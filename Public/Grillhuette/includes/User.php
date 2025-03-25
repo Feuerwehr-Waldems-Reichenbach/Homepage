@@ -9,7 +9,7 @@ class User {
     public function register($email, $password, $firstName, $lastName, $phone = null) {
         try {
             // Prüfen, ob E-Mail bereits existiert
-            $stmt = $this->db->prepare("SELECT id FROM users WHERE email = ?");
+            $stmt = $this->db->prepare("SELECT id FROM gh_users WHERE email = ?");
             $stmt->execute([$email]);
             if ($stmt->rowCount() > 0) {
                 return [
@@ -26,7 +26,7 @@ class User {
             
             // Benutzer anlegen
             $stmt = $this->db->prepare("
-                INSERT INTO users (email, password, first_name, last_name, phone, verification_token) 
+                INSERT INTO gh_users (email, password, first_name, last_name, phone, verification_token) 
                 VALUES (?, ?, ?, ?, ?, ?)
             ");
             $stmt->execute([$email, $hashedPassword, $firstName, $lastName, $phone, $verificationToken]);
@@ -71,7 +71,7 @@ class User {
     
     public function login($email, $password) {
         try {
-            $stmt = $this->db->prepare("SELECT * FROM users WHERE email = ?");
+            $stmt = $this->db->prepare("SELECT * FROM gh_users WHERE email = ?");
             $stmt->execute([$email]);
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
             
@@ -119,7 +119,7 @@ class User {
     
     public function verify($token) {
         try {
-            $stmt = $this->db->prepare("SELECT id FROM users WHERE verification_token = ? AND is_verified = 0");
+            $stmt = $this->db->prepare("SELECT id FROM gh_users WHERE verification_token = ? AND is_verified = 0");
             $stmt->execute([$token]);
             
             if ($stmt->rowCount() == 0) {
@@ -132,7 +132,7 @@ class User {
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
             
             // Benutzer verifizieren
-            $stmt = $this->db->prepare("UPDATE users SET is_verified = 1, verification_token = NULL WHERE id = ?");
+            $stmt = $this->db->prepare("UPDATE gh_users SET is_verified = 1, verification_token = NULL WHERE id = ?");
             $stmt->execute([$user['id']]);
             
             return [
@@ -150,7 +150,7 @@ class User {
     
     public function requestPasswordReset($email) {
         try {
-            $stmt = $this->db->prepare("SELECT id, first_name, last_name FROM users WHERE email = ? AND is_verified = 1");
+            $stmt = $this->db->prepare("SELECT id, first_name, last_name FROM gh_users WHERE email = ? AND is_verified = 1");
             $stmt->execute([$email]);
             
             if ($stmt->rowCount() == 0) {
@@ -163,7 +163,7 @@ class User {
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
             
             // Altes Token löschen falls vorhanden
-            $stmt = $this->db->prepare("DELETE FROM password_reset WHERE user_id = ?");
+            $stmt = $this->db->prepare("DELETE FROM gh_password_reset WHERE user_id = ?");
             $stmt->execute([$user['id']]);
             
             // Neues Token generieren
@@ -171,7 +171,7 @@ class User {
             $expiresAt = date('Y-m-d H:i:s', strtotime('+1 hour'));
             
             // Token speichern
-            $stmt = $this->db->prepare("INSERT INTO password_reset (user_id, token, expires_at) VALUES (?, ?, ?)");
+            $stmt = $this->db->prepare("INSERT INTO gh_password_reset (user_id, token, expires_at) VALUES (?, ?, ?)");
             $stmt->execute([$user['id'], $token, $expiresAt]);
             
             // E-Mail senden
@@ -213,7 +213,7 @@ class User {
         try {
             $stmt = $this->db->prepare("
                 SELECT r.user_id 
-                FROM password_reset r 
+                FROM gh_password_reset r 
                 WHERE r.token = ? AND r.expires_at > NOW()
             ");
             $stmt->execute([$token]);
@@ -230,11 +230,11 @@ class User {
             
             // Passwort aktualisieren
             $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
-            $stmt = $this->db->prepare("UPDATE users SET password = ? WHERE id = ?");
+            $stmt = $this->db->prepare("UPDATE gh_users SET password = ? WHERE id = ?");
             $stmt->execute([$hashedPassword, $userId]);
             
             // Token löschen
-            $stmt = $this->db->prepare("DELETE FROM password_reset WHERE user_id = ?");
+            $stmt = $this->db->prepare("DELETE FROM gh_password_reset WHERE user_id = ?");
             $stmt->execute([$userId]);
             
             return [
@@ -253,7 +253,7 @@ class User {
     public function updateProfile($userId, $firstName, $lastName, $phone, $currentPassword = null, $newPassword = null) {
         try {
             // Prüfen, ob der Benutzer existiert
-            $stmt = $this->db->prepare("SELECT * FROM users WHERE id = ?");
+            $stmt = $this->db->prepare("SELECT * FROM gh_users WHERE id = ?");
             $stmt->execute([$userId]);
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
             
@@ -274,12 +274,12 @@ class User {
                 }
                 
                 $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
-                $stmt = $this->db->prepare("UPDATE users SET password = ? WHERE id = ?");
+                $stmt = $this->db->prepare("UPDATE gh_users SET password = ? WHERE id = ?");
                 $stmt->execute([$hashedPassword, $userId]);
             }
             
             // Profilinformationen aktualisieren
-            $stmt = $this->db->prepare("UPDATE users SET first_name = ?, last_name = ?, phone = ? WHERE id = ?");
+            $stmt = $this->db->prepare("UPDATE gh_users SET first_name = ?, last_name = ?, phone = ? WHERE id = ?");
             $stmt->execute([$firstName, $lastName, $phone, $userId]);
             
             // Session aktualisieren
@@ -301,7 +301,7 @@ class User {
     public function updateEmail($userId, $newEmail, $password) {
         try {
             // Prüfen, ob der Benutzer existiert und das Passwort korrekt ist
-            $stmt = $this->db->prepare("SELECT * FROM users WHERE id = ?");
+            $stmt = $this->db->prepare("SELECT * FROM gh_users WHERE id = ?");
             $stmt->execute([$userId]);
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
             
@@ -313,7 +313,7 @@ class User {
             }
             
             // Prüfen, ob die neue E-Mail-Adresse bereits existiert
-            $stmt = $this->db->prepare("SELECT id FROM users WHERE email = ? AND id != ?");
+            $stmt = $this->db->prepare("SELECT id FROM gh_users WHERE email = ? AND id != ?");
             $stmt->execute([$newEmail, $userId]);
             if ($stmt->rowCount() > 0) {
                 return [
@@ -327,7 +327,7 @@ class User {
             
             // E-Mail aktualisieren und als nicht verifiziert markieren
             $stmt = $this->db->prepare("
-                UPDATE users 
+                UPDATE gh_users 
                 SET email = ?, is_verified = 0, verification_token = ? 
                 WHERE id = ?
             ");
@@ -373,7 +373,7 @@ class User {
 
     public function getUserById($userId) {
         try {
-            $stmt = $this->db->prepare("SELECT id, email, first_name, last_name, phone, is_admin, is_verified, created_at FROM users WHERE id = ?");
+            $stmt = $this->db->prepare("SELECT id, email, first_name, last_name, phone, is_admin, is_verified, created_at FROM gh_users WHERE id = ?");
             $stmt->execute([$userId]);
             return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
@@ -383,7 +383,7 @@ class User {
 
     public function getAllUsers() {
         try {
-            $stmt = $this->db->prepare("SELECT id, email, first_name, last_name, phone, is_admin, is_verified, created_at FROM users ORDER BY id");
+            $stmt = $this->db->prepare("SELECT id, email, first_name, last_name, phone, is_admin, is_verified, created_at FROM gh_users ORDER BY id");
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
@@ -394,7 +394,7 @@ class User {
     public function toggleAdmin($userId) {
         try {
             // Aktuellen Status abrufen
-            $stmt = $this->db->prepare("SELECT is_admin FROM users WHERE id = ?");
+            $stmt = $this->db->prepare("SELECT is_admin FROM gh_users WHERE id = ?");
             $stmt->execute([$userId]);
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
             
@@ -408,7 +408,7 @@ class User {
             // Status umkehren
             $newStatus = $user['is_admin'] ? 0 : 1;
             
-            $stmt = $this->db->prepare("UPDATE users SET is_admin = ? WHERE id = ?");
+            $stmt = $this->db->prepare("UPDATE gh_users SET is_admin = ? WHERE id = ?");
             $stmt->execute([$newStatus, $userId]);
             
             return [
@@ -427,7 +427,7 @@ class User {
     public function createUserByAdmin($email, $password, $firstName, $lastName, $phone = null, $isAdmin = 0, $isVerified = 1) {
         try {
             // Prüfen, ob E-Mail bereits existiert
-            $stmt = $this->db->prepare("SELECT id FROM users WHERE email = ?");
+            $stmt = $this->db->prepare("SELECT id FROM gh_users WHERE email = ?");
             $stmt->execute([$email]);
             if ($stmt->rowCount() > 0) {
                 return [
@@ -441,7 +441,7 @@ class User {
             
             // Benutzer anlegen (mit dem angegebenen Verifikationsstatus)
             $stmt = $this->db->prepare("
-                INSERT INTO users (email, password, first_name, last_name, phone, is_verified, is_admin) 
+                INSERT INTO gh_users (email, password, first_name, last_name, phone, is_verified, is_admin) 
                 VALUES (?, ?, ?, ?, ?, ?, ?)
             ");
             $stmt->execute([$email, $hashedPassword, $firstName, $lastName, $phone, $isVerified, $isAdmin]);
@@ -462,7 +462,7 @@ class User {
     public function deleteUser($userId) {
         try {
             // Prüfen, ob der Benutzer existiert
-            $stmt = $this->db->prepare("SELECT * FROM users WHERE id = ?");
+            $stmt = $this->db->prepare("SELECT * FROM gh_users WHERE id = ?");
             $stmt->execute([$userId]);
             
             if ($stmt->rowCount() == 0) {
@@ -473,11 +473,11 @@ class User {
             }
             
             // Passwort-Reset-Tokens löschen
-            $stmt = $this->db->prepare("DELETE FROM password_reset WHERE user_id = ?");
+            $stmt = $this->db->prepare("DELETE FROM gh_password_reset WHERE user_id = ?");
             $stmt->execute([$userId]);
             
             // Benutzer löschen
-            $stmt = $this->db->prepare("DELETE FROM users WHERE id = ?");
+            $stmt = $this->db->prepare("DELETE FROM gh_users WHERE id = ?");
             $stmt->execute([$userId]);
             
             return [
@@ -495,7 +495,7 @@ class User {
     
     public function authenticate($email, $password) {
         try {
-            $stmt = $this->db->prepare("SELECT * FROM users WHERE email = ?");
+            $stmt = $this->db->prepare("SELECT * FROM gh_users WHERE email = ?");
             $stmt->execute([$email]);
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
             
@@ -523,7 +523,7 @@ class User {
     public function updateUser($userId, $email, $firstName, $lastName, $phone = null, $isAdmin = 0, $newPassword = null, $isVerified = 1) {
         try {
             // Prüfen, ob der Benutzer existiert
-            $stmt = $this->db->prepare("SELECT * FROM users WHERE id = ?");
+            $stmt = $this->db->prepare("SELECT * FROM gh_users WHERE id = ?");
             $stmt->execute([$userId]);
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
             
@@ -536,7 +536,7 @@ class User {
             
             // Prüfen, ob die E-Mail bereits von einem anderen Benutzer verwendet wird
             if ($email !== $user['email']) {
-                $stmt = $this->db->prepare("SELECT id FROM users WHERE email = ? AND id != ?");
+                $stmt = $this->db->prepare("SELECT id FROM gh_users WHERE email = ? AND id != ?");
                 $stmt->execute([$email, $userId]);
                 if ($stmt->rowCount() > 0) {
                     return [
@@ -547,7 +547,7 @@ class User {
             }
             
             // SQL-Statement vorbereiten
-            $sql = "UPDATE users SET email = ?, first_name = ?, last_name = ?, phone = ?, is_admin = ?, is_verified = ?";
+            $sql = "UPDATE gh_users SET email = ?, first_name = ?, last_name = ?, phone = ?, is_admin = ?, is_verified = ?";
             $params = [$email, $firstName, $lastName, $phone, $isAdmin, $isVerified];
             
             // Passwort aktualisieren, wenn ein neues angegeben wurde
@@ -580,7 +580,7 @@ class User {
     public function toggleVerification($userId) {
         try {
             // Benutzer-ID prüfen
-            $stmt = $this->db->prepare("SELECT id, is_verified, email, first_name, last_name FROM users WHERE id = ?");
+            $stmt = $this->db->prepare("SELECT id, is_verified, email, first_name, last_name FROM gh_users WHERE id = ?");
             $stmt->execute([$userId]);
             
             if ($stmt->rowCount() === 0) {
@@ -595,7 +595,7 @@ class User {
             $statusText = $newStatus ? 'verifiziert' : 'unverifiziert';
             
             // Status ändern
-            $stmt = $this->db->prepare("UPDATE users SET is_verified = ?, verification_token = NULL WHERE id = ?");
+            $stmt = $this->db->prepare("UPDATE gh_users SET is_verified = ?, verification_token = NULL WHERE id = ?");
             $stmt->execute([$newStatus, $userId]);
             
             return [
