@@ -23,9 +23,7 @@ if (isset($_GET['month']) && isset($_GET['year'])) {
 ?>
 
 <div class="row mb-4">
-    <div class="col-md-12">
-        <h1 class="mb-4">Grillhütte Reservierungssystem</h1>
-        
+    <div class="col-md-12">       
         <!-- Neues Layout: Kalender (70%) und Eingabefelder (30%) nebeneinander -->
         <div class="row">
             <!-- Kalender Container (70%) -->
@@ -59,30 +57,103 @@ if (isset($_GET['month']) && isset($_GET['year'])) {
                 <!-- Willkommenskarte unter dem Kalender -->
                 <div class="card mb-4 mt-4">
                     <div class="card-body">
-                        <p>Willkommen im Reservierungssystem der Grillhütte Reichenbach. Hier können Sie freie Termine einsehen und eine Reservierung vornehmen.</p>
+                        <h5 class="card-title">Willkommen im Reservierungssystem der Grillhütte Waldems Reichenbach</h5>
+                        <p>Hier können Sie freie Termine einsehen und eine Reservierung vornehmen.</p>
                         
-                        <div class="row">
-                            <div class="col-md-4 mb-3">
+                        <div class="row mb-3">
+                            <div class="col-md-4 mb-2">
                                 <div class="d-flex align-items-center">
                                     <div class="me-2" style="width: 20px; height: 20px; background-color: #d4edda; border-radius: 3px;"></div>
                                     <span>Frei</span>
                                 </div>
                             </div>
-                            <div class="col-md-4 mb-3">
+                            <div class="col-md-4 mb-2">
                                 <div class="d-flex align-items-center">
                                     <div class="me-2" style="width: 20px; height: 20px; background-color: #fff3cd; border-radius: 3px;"></div>
                                     <span>Anfrage in Bearbeitung</span>
                                 </div>
                             </div>
-                            <div class="col-md-4 mb-3">
+                            <div class="col-md-4 mb-2">
                                 <div class="d-flex align-items-center">
                                     <div class="me-2" style="width: 20px; height: 20px; background-color: #f8d7da; border-radius: 3px;"></div>
                                     <span>Belegt</span>
                                 </div>
                             </div>
-                        </div>             
+                        </div>
+                        
+                        <hr>
+                        
+                        <h5 class="card-title">Informationen zur Grillhütte</h5>
+                        <ul class="list-unstyled">
+                            <li><strong>Miete:</strong> 100€ pro Tag (12 - 12 Uhr)</li>
+                            <li><strong>Kaution:</strong> 100€</li>
+                            <li><strong>Rückgabe:</strong> bis spätestens am nächsten Tag 12:00 Uhr</li>
+                        </ul>
+                        
+                        <h6>Im Mietzins enthalten:</h6>
+                        <ul>
+                            <li>1m³ Wasser</li>
+                            <li>5 kW/h Strom</li>
+                            <li>5 Biertisch-Garnituren, jede weitere Garnitur zzgl. 1€</li>
+                        </ul>
+                        
+                        <div class="alert alert-info">
+                            <p class="mb-1"><strong>Wichtige Hinweise:</strong></p>
+                            <ul class="mb-0">
+                                <li>Die Grillhütte sowie die Toiletten sind sauber zu verlassen</li>
+                                <li>Müll ist selbst zu entsorgen</li>
+                            </ul>
+                        </div>
+                        
+                        <h6>Schlüsselübergabe und Abnahme:</h6>
+                        <p>Julia Kitschmann</p>
+                        
+                        <div class="mt-3">
+                            <p><strong>Kontakt zur Verwalterin:</strong></p>
+                            <ul class="list-unstyled">
+                                <li><a href="javascript:void(0)" class="email-protect" data-encoded="<?php echo base64_encode('julia@kitschmann.de'); ?>">E-Mail anzeigen</a></li>
+                                <li><a href="javascript:void(0)" class="phone-protect" data-encoded="<?php echo base64_encode('0178/8829055'); ?>">Telefonnummer anzeigen</a></li>
+                            </ul>
+                        </div>                   
+                        
+                        <div class="mt-3 alert alert-secondary">
+                            <p class="mb-0"><strong>Hinweis:</strong> Bei technischen Problemen mit dem Reservierungssystem wenden Sie sich bitte an: <a href="javascript:void(0)" class="email-protect" data-encoded="<?php echo base64_encode('it@feuerwehr-waldems-reichenbach.de'); ?>">IT-Support</a></p>
+                        </div>
                     </div>
                 </div>
+                
+                <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    // Base64 decode function
+                    function decodeBase64(str) {
+                        return decodeURIComponent(atob(str).split('').map(function(c) {
+                            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                        }).join(''));
+                    }
+                    
+                    // Email protection
+                    document.querySelectorAll('.email-protect').forEach(function(element) {
+                        element.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            var encodedEmail = this.getAttribute('data-encoded');
+                            var email = decodeBase64(encodedEmail);
+                            this.innerHTML = email;
+                            this.setAttribute('href', 'mailto:' + email);
+                        });
+                    });
+                    
+                    // Phone protection
+                    document.querySelectorAll('.phone-protect').forEach(function(element) {
+                        element.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            var encodedPhone = this.getAttribute('data-encoded');
+                            var phone = decodeBase64(encodedPhone);
+                            this.innerHTML = phone;
+                            this.setAttribute('href', 'tel:' + phone.replace(/[^0-9+]/g, ''));
+                        });
+                    });
+                });
+                </script>
             </div>
             
             <!-- Manuelle Eingabefelder (30%) -->
