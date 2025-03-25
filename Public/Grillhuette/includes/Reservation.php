@@ -18,7 +18,7 @@ class Reservation {
             
             // Reservierung erstellen
             $stmt = $this->db->prepare("
-                INSERT INTO reservations (user_id, start_datetime, end_datetime, user_message, status) 
+                INSERT INTO gh_reservations (user_id, start_datetime, end_datetime, user_message, status) 
                 VALUES (?, ?, ?, ?, 'pending')
             ");
             $stmt->execute([$userId, $startDatetime, $endDatetime, $userMessage]);
@@ -40,11 +40,11 @@ class Reservation {
             sendEmail($user['email'], $subject, $body);
             
             // Admin-E-Mail abrufen und Benachrichtigung senden
-            $adminStmt = $this->db->prepare("SELECT email FROM users WHERE is_admin = 1 LIMIT 1");
+            $adminStmt = $this->db->prepare("SELECT email FROM gh_users WHERE is_admin = 1");
             $adminStmt->execute();
-            $admin = $adminStmt->fetch(PDO::FETCH_ASSOC);
+            $admins = $adminStmt->fetchAll(PDO::FETCH_ASSOC);
             
-            if ($admin) {
+            if (!empty($admins)) {
                 $adminSubject = 'Neue Reservierungsanfrage';
                 $adminBody = '
                     <h2>Neue Reservierungsanfrage</h2>
@@ -57,7 +57,9 @@ class Reservation {
                     <p>Bitte loggen Sie sich in das Administrationssystem ein, um die Anfrage zu bearbeiten.</p>
                 ';
                 
-                sendEmail($admin['email'], $adminSubject, $adminBody);
+                foreach ($admins as $admin) {
+                    sendEmail($admin['email'], $adminSubject, $adminBody);
+                }
             }
             
             return [
@@ -77,8 +79,8 @@ class Reservation {
         try {
             $stmt = $this->db->prepare("
                 SELECT r.*, u.first_name, u.last_name, u.email 
-                FROM reservations r
-                JOIN users u ON r.user_id = u.id
+                FROM gh_reservations r
+                JOIN gh_users u ON r.user_id = u.id
                 WHERE r.id = ?
             ");
             $stmt->execute([$id]);
@@ -91,7 +93,7 @@ class Reservation {
     public function getByUserId($userId) {
         try {
             $stmt = $this->db->prepare("
-                SELECT * FROM reservations 
+                SELECT * FROM gh_reservations 
                 WHERE user_id = ? 
                 ORDER BY start_datetime DESC
             ");
@@ -106,8 +108,8 @@ class Reservation {
         try {
             $stmt = $this->db->prepare("
                 SELECT r.*, u.first_name, u.last_name, u.email 
-                FROM reservations r
-                JOIN users u ON r.user_id = u.id
+                FROM gh_reservations r
+                JOIN gh_users u ON r.user_id = u.id
                 ORDER BY r.start_datetime DESC
             ");
             $stmt->execute();
@@ -121,8 +123,8 @@ class Reservation {
         try {
             $stmt = $this->db->prepare("
                 SELECT r.*, u.first_name, u.last_name, u.email 
-                FROM reservations r
-                JOIN users u ON r.user_id = u.id
+                FROM gh_reservations r
+                JOIN gh_users u ON r.user_id = u.id
                 WHERE r.status = ?
                 ORDER BY r.start_datetime DESC
             ");
@@ -144,7 +146,7 @@ class Reservation {
             }
             
             $stmt = $this->db->prepare("
-                UPDATE reservations 
+                UPDATE gh_reservations 
                 SET status = ?, admin_message = ? 
                 WHERE id = ?
             ");
@@ -186,17 +188,17 @@ class Reservation {
     
     public function addUserMessage($id, $message) {
         try {
-            $stmt = $this->db->prepare("UPDATE reservations SET user_message = ? WHERE id = ?");
+            $stmt = $this->db->prepare("UPDATE gh_reservations SET user_message = ? WHERE id = ?");
             $stmt->execute([$message, $id]);
             
             // Admin benachrichtigen
             $reservation = $this->getById($id);
             
-            $adminStmt = $this->db->prepare("SELECT email FROM users WHERE is_admin = 1 LIMIT 1");
+            $adminStmt = $this->db->prepare("SELECT email FROM gh_users WHERE is_admin = 1");
             $adminStmt->execute();
-            $admin = $adminStmt->fetch(PDO::FETCH_ASSOC);
+            $admins = $adminStmt->fetchAll(PDO::FETCH_ASSOC);
             
-            if ($admin) {
+            if (!empty($admins)) {
                 $subject = 'Neue Nachricht zu einer Reservierung';
                 $body = '
                     <h2>Neue Nachricht zu einer Reservierung</h2>
@@ -209,7 +211,9 @@ class Reservation {
                     <p>Bitte loggen Sie sich in das Administrationssystem ein, um die Reservierung zu bearbeiten.</p>
                 ';
                 
-                sendEmail($admin['email'], $subject, $body);
+                foreach ($admins as $admin) {
+                    sendEmail($admin['email'], $subject, $body);
+                }
             }
             
             return [
@@ -227,7 +231,7 @@ class Reservation {
     
     public function addAdminMessage($id, $message) {
         try {
-            $stmt = $this->db->prepare("UPDATE reservations SET admin_message = ? WHERE id = ?");
+            $stmt = $this->db->prepare("UPDATE gh_reservations SET admin_message = ? WHERE id = ?");
             $stmt->execute([$message, $id]);
             
             // Benutzer benachrichtigen
@@ -268,7 +272,7 @@ class Reservation {
             
             // Reservierung erstellen (direkt bestätigt)
             $stmt = $this->db->prepare("
-                INSERT INTO reservations (user_id, start_datetime, end_datetime, admin_message, status) 
+                INSERT INTO gh_reservations (user_id, start_datetime, end_datetime, admin_message, status) 
                 VALUES (?, ?, ?, ?, 'confirmed')
             ");
             $stmt->execute([$userId, $startDatetime, $endDatetime, $adminMessage]);
@@ -316,7 +320,7 @@ class Reservation {
                 ];
             }
             
-            $stmt = $this->db->prepare("UPDATE reservations SET status = 'canceled' WHERE id = ?");
+            $stmt = $this->db->prepare("UPDATE gh_reservations SET status = 'canceled' WHERE id = ?");
             $stmt->execute([$id]);
             
             // Benutzer per E-Mail benachrichtigen, falls vom Admin storniert
@@ -337,11 +341,11 @@ class Reservation {
             
             // Admin benachrichtigen, falls vom Benutzer storniert
             if (!isset($_SESSION['is_admin']) || !$_SESSION['is_admin']) {
-                $adminStmt = $this->db->prepare("SELECT email FROM users WHERE is_admin = 1 LIMIT 1");
+                $adminStmt = $this->db->prepare("SELECT email FROM gh_users WHERE is_admin = 1");
                 $adminStmt->execute();
-                $admin = $adminStmt->fetch(PDO::FETCH_ASSOC);
+                $admins = $adminStmt->fetchAll(PDO::FETCH_ASSOC);
                 
-                if ($admin) {
+                if (!empty($admins)) {
                     $userInfo = $reservation['first_name'] . ' ' . $reservation['last_name'];
                     
                     $subject = 'Stornierung einer Reservierung';
@@ -354,7 +358,9 @@ class Reservation {
                         </p>
                     ';
                     
-                    sendEmail($admin['email'], $subject, $body);
+                    foreach ($admins as $admin) {
+                        sendEmail($admin['email'], $subject, $body);
+                    }
                 }
             }
             
@@ -381,7 +387,7 @@ class Reservation {
         try {
             $stmt = $this->db->prepare("
                 SELECT id, start_datetime, end_datetime, status 
-                FROM reservations 
+                FROM gh_reservations 
                 WHERE 
                 (start_datetime BETWEEN ? AND ?) OR 
                 (end_datetime BETWEEN ? AND ?) OR 
@@ -399,7 +405,7 @@ class Reservation {
             // Überprüfen, ob für den Zeitraum bereits eine bestätigte oder ausstehende Reservierung existiert
             $stmt = $this->db->prepare("
                 SELECT COUNT(*) AS count
-                FROM reservations 
+                FROM gh_reservations 
                 WHERE 
                     status IN ('confirmed', 'pending') AND
                     (
@@ -427,7 +433,7 @@ class Reservation {
             // Reservierungen für diesen Tag abrufen
             $stmt = $this->db->prepare("
                 SELECT id, start_datetime, end_datetime, status 
-                FROM reservations 
+                FROM gh_reservations 
                 WHERE 
                     status IN ('confirmed', 'pending') AND
                     (
@@ -469,7 +475,7 @@ class Reservation {
     
     public function deleteByUserId($userId) {
         try {
-            $stmt = $this->db->prepare("DELETE FROM reservations WHERE user_id = ?");
+            $stmt = $this->db->prepare("DELETE FROM gh_reservations WHERE user_id = ?");
             $stmt->execute([$userId]);
             
             return [
@@ -487,7 +493,7 @@ class Reservation {
     public function updateReservation($id, $userId, $startDatetime, $endDatetime, $adminMessage = null, $status = 'pending') {
         try {
             // Überprüfen, ob die Reservierung existiert
-            $stmt = $this->db->prepare("SELECT id FROM reservations WHERE id = ?");
+            $stmt = $this->db->prepare("SELECT id FROM gh_reservations WHERE id = ?");
             $stmt->execute([$id]);
             
             if ($stmt->rowCount() == 0) {
@@ -499,7 +505,7 @@ class Reservation {
             
             // Reservierung aktualisieren
             $stmt = $this->db->prepare("
-                UPDATE reservations 
+                UPDATE gh_reservations 
                 SET user_id = ?, start_datetime = ?, end_datetime = ?, admin_message = ?, status = ? 
                 WHERE id = ?
             ");
@@ -558,7 +564,7 @@ class Reservation {
     public function deleteReservation($id) {
         try {
             // Überprüfen, ob die Reservierung existiert
-            $stmt = $this->db->prepare("SELECT r.*, u.email, u.first_name, u.last_name FROM reservations r LEFT JOIN users u ON r.user_id = u.id WHERE r.id = ?");
+            $stmt = $this->db->prepare("SELECT r.*, u.email, u.first_name, u.last_name FROM gh_reservations r LEFT JOIN gh_users u ON r.user_id = u.id WHERE r.id = ?");
             $stmt->execute([$id]);
             
             if ($stmt->rowCount() == 0) {
@@ -571,7 +577,7 @@ class Reservation {
             $reservation = $stmt->fetch(PDO::FETCH_ASSOC);
             
             // Reservierung löschen
-            $stmt = $this->db->prepare("DELETE FROM reservations WHERE id = ?");
+            $stmt = $this->db->prepare("DELETE FROM gh_reservations WHERE id = ?");
             $stmt->execute([$id]);
             
             // E-Mail an den Benutzer senden
