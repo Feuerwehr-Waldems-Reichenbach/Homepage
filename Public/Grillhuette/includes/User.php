@@ -36,12 +36,46 @@ class User {
             $verifyUrl = 'https://' . $_SERVER['HTTP_HOST'] . '/Grillhuette/verify.php?token=' . $verificationToken;
             
             $body = '
-                <h2>Hallo ' . $firstName . ' ' . $lastName . ',</h2>
-                <p>Vielen Dank für Ihre Registrierung im Reservierungssystem für die Grillhütte.</p>
-                <p>Bitte bestätigen Sie Ihre E-Mail-Adresse, indem Sie auf den folgenden Link klicken:</p>
-                <p><a href="' . $verifyUrl . '">' . $verifyUrl . '</a></p>
-                <p>Dieser Link ist 24 Stunden gültig.</p>
-                <p>Falls Sie sich nicht für diesen Dienst registriert haben, können Sie diese E-Mail ignorieren.</p>
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <style>
+                        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                        .header { background-color: #A72920; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
+                        .content { background-color: #ffffff; padding: 20px; border-radius: 0 0 5px 5px; border: 1px solid #ddd; }
+                        .button { display: inline-block; padding: 10px 20px; background-color: #A72920; color: white !important; text-decoration: none; border-radius: 5px; margin-top: 20px; }
+                        .info-box { background-color: #f8f9fa; border: 1px solid #ddd; padding: 15px; border-radius: 5px; margin: 20px 0; }
+                        .footer { text-align: center; margin-top: 20px; font-size: 0.9em; color: #666; }
+                    </style>
+                </head>
+                <body>
+                    <div class="container">
+                        <div class="header">
+                            <h2>E-Mail-Adresse bestätigen</h2>
+                        </div>
+                        <div class="content">
+                            <h3>Hallo ' . $firstName . ' ' . $lastName . ',</h3>
+                            <p>vielen Dank für Ihre Registrierung im Reservierungssystem für die Grillhütte.</p>
+                            
+                            <div class="info-box">
+                                <p>Um Ihre Registrierung abzuschließen, klicken Sie bitte auf den folgenden Button:</p>
+                                <a href="' . $verifyUrl . '" class="button">E-Mail-Adresse bestätigen</a>
+                            </div>
+                            
+                            <p>Alternativ können Sie auch diesen Link verwenden:<br>
+                            <a href="' . $verifyUrl . '">' . $verifyUrl . '</a></p>
+                            
+                            <p>Dieser Link ist 24 Stunden gültig.</p>
+                            
+                            <div class="footer">
+                                <p>Falls Sie sich nicht für diesen Dienst registriert haben, können Sie diese E-Mail ignorieren.</p>
+                                <p>Ihr Team der Grillhütte Reichenbach</p>
+                            </div>
+                        </div>
+                    </div>
+                </body>
+                </html>
             ';
             
             $emailResult = sendEmail($email, $subject, $body);
@@ -179,12 +213,46 @@ class User {
             $resetUrl = 'https://' . $_SERVER['HTTP_HOST'] . '/Grillhuette/reset_password.php?token=' . $token;
             
             $body = '
-                <h2>Hallo ' . $user['first_name'] . ' ' . $user['last_name'] . ',</h2>
-                <p>Sie haben eine Anfrage zum Zurücksetzen Ihres Passworts gestellt.</p>
-                <p>Bitte klicken Sie auf den folgenden Link, um Ihr Passwort zurückzusetzen:</p>
-                <p><a href="' . $resetUrl . '">' . $resetUrl . '</a></p>
-                <p>Dieser Link ist 1 Stunde gültig.</p>
-                <p>Falls Sie keine Anfrage zum Zurücksetzen Ihres Passworts gestellt haben, können Sie diese E-Mail ignorieren.</p>
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <style>
+                        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                        .header { background-color: #A72920; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
+                        .content { background-color: #ffffff; padding: 20px; border-radius: 0 0 5px 5px; border: 1px solid #ddd; }
+                        .button { display: inline-block; padding: 10px 20px; background-color: #A72920; color: white !important; text-decoration: none; border-radius: 5px; margin-top: 20px; }
+                        .info-box { background-color: #f8f9fa; border: 1px solid #ddd; padding: 15px; border-radius: 5px; margin: 20px 0; }
+                        .footer { text-align: center; margin-top: 20px; font-size: 0.9em; color: #666; }
+                    </style>
+                </head>
+                <body>
+                    <div class="container">
+                        <div class="header">
+                            <h2>Passwort zurücksetzen</h2>
+                        </div>
+                        <div class="content">
+                            <h3>Hallo ' . $user['first_name'] . ' ' . $user['last_name'] . ',</h3>
+                            <p>Sie haben eine Anfrage zum Zurücksetzen Ihres Passworts gestellt.</p>
+                            
+                            <div class="info-box">
+                                <p>Um Ihr Passwort zurückzusetzen, klicken Sie bitte auf den folgenden Button:</p>
+                                <a href="' . $resetUrl . '" class="button">Passwort zurücksetzen</a>
+                            </div>
+                            
+                            <p>Alternativ können Sie auch diesen Link verwenden:<br>
+                            <a href="' . $resetUrl . '">' . $resetUrl . '</a></p>
+                            
+                            <p>Dieser Link ist 1 Stunde gültig.</p>
+                            
+                            <div class="footer">
+                                <p>Falls Sie keine Anfrage zum Zurücksetzen Ihres Passworts gestellt haben, können Sie diese E-Mail ignorieren.</p>
+                                <p>Ihr Team der Grillhütte Reichenbach</p>
+                            </div>
+                        </div>
+                    </div>
+                </body>
+                </html>
             ';
             
             $emailResult = sendEmail($email, $subject, $body);
@@ -338,12 +406,50 @@ class User {
             $verifyUrl = 'https://' . $_SERVER['HTTP_HOST'] . '/Grillhuette/verify.php?token=' . $verificationToken;
             
             $body = '
-                <h2>Hallo ' . $user['first_name'] . ' ' . $user['last_name'] . ',</h2>
-                <p>Sie haben eine Änderung Ihrer E-Mail-Adresse im Reservierungssystem für die Grillhütte angefordert.</p>
-                <p>Bitte bestätigen Sie Ihre neue E-Mail-Adresse, indem Sie auf den folgenden Link klicken:</p>
-                <p><a href="' . $verifyUrl . '">' . $verifyUrl . '</a></p>
-                <p>Dieser Link ist 24 Stunden gültig.</p>
-                <p>Falls Sie diese Änderung nicht angefordert haben, setzen Sie sich bitte umgehend mit dem Administrator in Verbindung.</p>
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <style>
+                        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                        .header { background-color: #A72920; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
+                        .content { background-color: #ffffff; padding: 20px; border-radius: 0 0 5px 5px; border: 1px solid #ddd; }
+                        .button { display: inline-block; padding: 10px 20px; background-color: #A72920; color: white !important; text-decoration: none; border-radius: 5px; margin-top: 20px; }
+                        .info-box { background-color: #f8f9fa; border: 1px solid #ddd; padding: 15px; border-radius: 5px; margin: 20px 0; }
+                        .warning-box { background-color: #fff3cd; border: 1px solid #ffeeba; padding: 15px; border-radius: 5px; margin: 20px 0; }
+                        .footer { text-align: center; margin-top: 20px; font-size: 0.9em; color: #666; }
+                    </style>
+                </head>
+                <body>
+                    <div class="container">
+                        <div class="header">
+                            <h2>Neue E-Mail-Adresse bestätigen</h2>
+                        </div>
+                        <div class="content">
+                            <h3>Hallo ' . $user['first_name'] . ' ' . $user['last_name'] . ',</h3>
+                            <p>Sie haben eine Änderung Ihrer E-Mail-Adresse im Reservierungssystem für die Grillhütte angefordert.</p>
+                            
+                            <div class="info-box">
+                                <p>Um Ihre neue E-Mail-Adresse zu bestätigen, klicken Sie bitte auf den folgenden Button:</p>
+                                <a href="' . $verifyUrl . '" class="button">E-Mail-Adresse bestätigen</a>
+                            </div>
+                            
+                            <p>Alternativ können Sie auch diesen Link verwenden:<br>
+                            <a href="' . $verifyUrl . '">' . $verifyUrl . '</a></p>
+                            
+                            <div class="warning-box">
+                                <p><strong>Wichtiger Hinweis:</strong><br>
+                                Falls Sie diese Änderung nicht angefordert haben, setzen Sie sich bitte umgehend mit dem Administrator in Verbindung.</p>
+                            </div>
+                            
+                            <div class="footer">
+                                <p>Dieser Link ist 24 Stunden gültig.</p>
+                                <p>Ihr Team der Grillhütte Reichenbach</p>
+                            </div>
+                        </div>
+                    </div>
+                </body>
+                </html>
             ';
             
             $emailResult = sendEmail($newEmail, $subject, $body);

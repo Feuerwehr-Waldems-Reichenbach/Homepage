@@ -24,17 +24,54 @@ class Reservation {
             $stmt->execute([$userId, $startDatetime, $endDatetime, $userMessage]);
             
             // Benutzerinformationen für E-Mail abrufen
-            $userStmt = $this->db->prepare("SELECT email, first_name, last_name FROM users WHERE id = ?");
+            $userStmt = $this->db->prepare("SELECT email, first_name, last_name FROM gh_users WHERE id = ?");
             $userStmt->execute([$userId]);
             $user = $userStmt->fetch(PDO::FETCH_ASSOC);
             
             // Bestätigungs-E-Mail senden
             $subject = 'Ihre Reservierungsanfrage für die Grillhütte';
             $body = '
-                <h2>Hallo ' . $user['first_name'] . ' ' . $user['last_name'] . ',</h2>
-                <p>Vielen Dank für Ihre Reservierungsanfrage für die Grillhütte.</p>
-                <p>Ihre Reservierung für den Zeitraum vom ' . date('d.m.Y H:i', strtotime($startDatetime)) . ' bis ' . date('d.m.Y H:i', strtotime($endDatetime)) . ' wurde erfolgreich gespeichert und wartet auf Bestätigung.</p>
-                <p>Sie werden benachrichtigt, sobald Ihre Reservierung bestätigt oder abgelehnt wurde.</p>
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <style>
+                        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                        .header { background-color: #A72920; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
+                        .content { background-color: #ffffff; padding: 20px; border-radius: 0 0 5px 5px; border: 1px solid #ddd; }
+                        .button { display: inline-block; padding: 10px 20px; background-color: #A72920; color: white !important; text-decoration: none; border-radius: 5px; margin-top: 20px; }
+                        .info-box { background-color: #f8f9fa; border: 1px solid #ddd; padding: 15px; border-radius: 5px; margin: 20px 0; }
+                        .footer { text-align: center; margin-top: 20px; font-size: 0.9em; color: #666; }
+                    </style>
+                </head>
+                <body>
+                    <div class="container">
+                        <div class="header">
+                            <h2>Reservierungsanfrage eingegangen</h2>
+                        </div>
+                        <div class="content">
+                            <h3>Hallo ' . $user['first_name'] . ' ' . $user['last_name'] . ',</h3>
+                            <p>vielen Dank für Ihre Reservierungsanfrage für die Grillhütte.</p>
+                            
+                            <div class="info-box">
+                                <strong>Ihre Reservierungsdetails:</strong><br>
+                                Von: ' . date('d.m.Y H:i', strtotime($startDatetime)) . '<br>
+                                Bis: ' . date('d.m.Y H:i', strtotime($endDatetime)) . '<br>
+                                Status: <strong>Ausstehend</strong>
+                            </div>
+                            
+                            <p>Ihre Anfrage wird nun von unserem Team geprüft. Sie erhalten eine weitere E-Mail, sobald Ihre Reservierung bestätigt oder abgelehnt wurde.</p>
+                            
+                            <a href="https://' . $_SERVER['HTTP_HOST'] . '/Grillhuette/my_reservations.php" class="button">Meine Reservierungen ansehen</a>
+                            
+                            <div class="footer">
+                                <p>Bei Fragen stehen wir Ihnen gerne zur Verfügung.</p>
+                                <p>Ihr Team der Grillhütte Reichenbach</p>
+                            </div>
+                        </div>
+                    </div>
+                </body>
+                </html>
             ';
             
             sendEmail($user['email'], $subject, $body);
@@ -47,14 +84,44 @@ class Reservation {
             if (!empty($admins)) {
                 $adminSubject = 'Neue Reservierungsanfrage';
                 $adminBody = '
-                    <h2>Neue Reservierungsanfrage</h2>
-                    <p>Es liegt eine neue Reservierungsanfrage vor:</p>
-                    <p>
-                        <strong>Benutzer:</strong> ' . $user['first_name'] . ' ' . $user['last_name'] . '<br>
-                        <strong>E-Mail:</strong> ' . $user['email'] . '<br>
-                        <strong>Zeitraum:</strong> ' . date('d.m.Y H:i', strtotime($startDatetime)) . ' bis ' . date('d.m.Y H:i', strtotime($endDatetime)) . '
-                    </p>
-                    <p>Bitte loggen Sie sich in das Administrationssystem ein, um die Anfrage zu bearbeiten.</p>
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <style>
+                            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                            .header { background-color: #dc3545; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
+                            .content { background-color: #ffffff; padding: 20px; border-radius: 0 0 5px 5px; border: 1px solid #ddd; }
+                            .button { display: inline-block; padding: 10px 20px; background-color: #A72920; color: white !important; text-decoration: none; border-radius: 5px; margin-top: 20px; }
+                            .info-box { background-color: #f8f9fa; border: 1px solid #ddd; padding: 15px; border-radius: 5px; margin: 20px 0; }
+                            .footer { text-align: center; margin-top: 20px; font-size: 0.9em; color: #666; }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="container">
+                            <div class="header">
+                                <h2>Neue Reservierungsanfrage</h2>
+                            </div>
+                            <div class="content">
+                                <p>Es liegt eine neue Reservierungsanfrage vor, die Ihre Aufmerksamkeit erfordert.</p>
+                                
+                                <div class="info-box">
+                                    <strong>Reservierungsdetails:</strong><br>
+                                    Benutzer: ' . $user['first_name'] . ' ' . $user['last_name'] . '<br>
+                                    E-Mail: ' . $user['email'] . '<br>
+                                    Von: ' . date('d.m.Y H:i', strtotime($startDatetime)) . '<br>
+                                    Bis: ' . date('d.m.Y H:i', strtotime($endDatetime)) . '
+                                </div>
+                                
+                                <a href="https://' . $_SERVER['HTTP_HOST'] . '/Grillhuette/admin_reservations.php" class="button">Reservierung verwalten</a>
+                                
+                                <div class="footer">
+                                    <p>Dies ist eine automatische Benachrichtigung des Grillhütten-Reservierungssystems.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </body>
+                    </html>
                 ';
                 
                 foreach ($admins as $admin) {
@@ -153,23 +220,66 @@ class Reservation {
             $stmt->execute([$status, $adminMessage, $id]);
             
             // Benutzer per E-Mail benachrichtigen
-            $userStmt = $this->db->prepare("SELECT email, first_name, last_name FROM users WHERE id = ?");
+            $userStmt = $this->db->prepare("SELECT email, first_name, last_name FROM gh_users WHERE id = ?");
             $userStmt->execute([$reservation['user_id']]);
             $user = $userStmt->fetch(PDO::FETCH_ASSOC);
             
             $statusText = $status == 'confirmed' ? 'bestätigt' : 'abgelehnt';
+            $statusColor = $status == 'confirmed' ? '#28a745' : '#dc3545';
             $subject = 'Status Ihrer Reservierung für die Grillhütte';
             $body = '
-                <h2>Hallo ' . $user['first_name'] . ' ' . $user['last_name'] . ',</h2>
-                <p>Der Status Ihrer Reservierung für den Zeitraum vom ' . date('d.m.Y H:i', strtotime($reservation['start_datetime'])) . ' bis ' . date('d.m.Y H:i', strtotime($reservation['end_datetime'])) . ' wurde geändert.</p>
-                <p>Ihre Reservierung wurde <strong>' . $statusText . '</strong>.</p>
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <style>
+                        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                        .header { background-color: ' . $statusColor . '; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
+                        .content { background-color: #ffffff; padding: 20px; border-radius: 0 0 5px 5px; border: 1px solid #ddd; }
+                        .button { display: inline-block; padding: 10px 20px; background-color: #A72920; color: white !important; text-decoration: none; border-radius: 5px; margin-top: 20px; }
+                        .info-box { background-color: #f8f9fa; border: 1px solid #ddd; padding: 15px; border-radius: 5px; margin: 20px 0; }
+                        .status-badge { display: inline-block; padding: 5px 15px; background-color: ' . $statusColor . '; color: white; border-radius: 15px; }
+                        .message-box { background-color: #f8f9fa; border-left: 4px solid ' . $statusColor . '; padding: 15px; margin: 20px 0; }
+                        .footer { text-align: center; margin-top: 20px; font-size: 0.9em; color: #666; }
+                    </style>
+                </head>
+                <body>
+                    <div class="container">
+                        <div class="header">
+                            <h2>Reservierungsstatus aktualisiert</h2>
+                        </div>
+                        <div class="content">
+                            <h3>Hallo ' . $user['first_name'] . ' ' . $user['last_name'] . ',</h3>
+                            
+                            <div class="info-box">
+                                <strong>Ihre Reservierungsdetails:</strong><br>
+                                Von: ' . date('d.m.Y H:i', strtotime($reservation['start_datetime'])) . '<br>
+                                Bis: ' . date('d.m.Y H:i', strtotime($reservation['end_datetime'])) . '<br>
+                                Status: <span class="status-badge">' . ucfirst($statusText) . '</span>
+                            </div>
             ';
             
             if ($adminMessage) {
-                $body .= '<p><strong>Nachricht vom Administrator:</strong> ' . $adminMessage . '</p>';
+                $body .= '
+                    <div class="message-box">
+                        <strong>Nachricht vom Administrator:</strong><br>
+                        ' . nl2br($adminMessage) . '
+                    </div>
+                ';
             }
             
-            $body .= '<p>Bei Fragen können Sie auf diese E-Mail antworten.</p>';
+            $body .= '
+                            <a href="https://' . $_SERVER['HTTP_HOST'] . '/Grillhuette/my_reservations.php" class="button">Meine Reservierungen ansehen</a>
+                            
+                            <div class="footer">
+                                <p>Bei Fragen können Sie auf diese E-Mail antworten.</p>
+                                <p>Ihr Team der Grillhütte Reichenbach</p>
+                            </div>
+                        </div>
+                    </div>
+                </body>
+                </html>
+            ';
             
             sendEmail($user['email'], $subject, $body);
             
@@ -201,14 +311,49 @@ class Reservation {
             if (!empty($admins)) {
                 $subject = 'Neue Nachricht zu einer Reservierung';
                 $body = '
-                    <h2>Neue Nachricht zu einer Reservierung</h2>
-                    <p>Ein Benutzer hat eine Nachricht zu seiner Reservierung hinzugefügt:</p>
-                    <p>
-                        <strong>Benutzer:</strong> ' . $reservation['first_name'] . ' ' . $reservation['last_name'] . '<br>
-                        <strong>Zeitraum:</strong> ' . date('d.m.Y H:i', strtotime($reservation['start_datetime'])) . ' bis ' . date('d.m.Y H:i', strtotime($reservation['end_datetime'])) . '<br>
-                        <strong>Nachricht:</strong> ' . $message . '
-                    </p>
-                    <p>Bitte loggen Sie sich in das Administrationssystem ein, um die Reservierung zu bearbeiten.</p>
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <style>
+                            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                            .header { background-color: #A72920; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
+                            .content { background-color: #ffffff; padding: 20px; border-radius: 0 0 5px 5px; border: 1px solid #ddd; }
+                            .button { display: inline-block; padding: 10px 20px; background-color: #A72920; color: white !important; text-decoration: none; border-radius: 5px; margin-top: 20px; }
+                            .info-box { background-color: #f8f9fa; border: 1px solid #ddd; padding: 15px; border-radius: 5px; margin: 20px 0; }
+                            .message-box { background-color: #f8f9fa; border-left: 4px solid #A72920; padding: 15px; margin: 20px 0; }
+                            .footer { text-align: center; margin-top: 20px; font-size: 0.9em; color: #666; }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="container">
+                            <div class="header">
+                                <h2>Neue Nachricht zu einer Reservierung</h2>
+                            </div>
+                            <div class="content">
+                                <p>Ein Benutzer hat eine Nachricht zu seiner Reservierung hinzugefügt.</p>
+                                
+                                <div class="info-box">
+                                    <strong>Reservierungsdetails:</strong><br>
+                                    Benutzer: ' . $reservation['first_name'] . ' ' . $reservation['last_name'] . '<br>
+                                    Von: ' . date('d.m.Y H:i', strtotime($reservation['start_datetime'])) . '<br>
+                                    Bis: ' . date('d.m.Y H:i', strtotime($reservation['end_datetime'])) . '
+                                </div>
+                                
+                                <div class="message-box">
+                                    <strong>Neue Nachricht:</strong><br>
+                                    ' . nl2br($message) . '
+                                </div>
+                                
+                                <a href="https://' . $_SERVER['HTTP_HOST'] . '/Grillhuette/admin_reservations.php" class="button">Reservierung verwalten</a>
+                                
+                                <div class="footer">
+                                    <p>Dies ist eine automatische Benachrichtigung des Grillhütten-Reservierungssystems.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </body>
+                    </html>
                 ';
                 
                 foreach ($admins as $admin) {
@@ -239,10 +384,49 @@ class Reservation {
             
             $subject = 'Neue Nachricht zu Ihrer Reservierung';
             $body = '
-                <h2>Hallo ' . $reservation['first_name'] . ' ' . $reservation['last_name'] . ',</h2>
-                <p>Der Administrator hat eine Nachricht zu Ihrer Reservierung vom ' . date('d.m.Y H:i', strtotime($reservation['start_datetime'])) . ' bis ' . date('d.m.Y H:i', strtotime($reservation['end_datetime'])) . ' hinzugefügt:</p>
-                <p><strong>Nachricht:</strong> ' . $message . '</p>
-                <p>Bei Fragen können Sie auf diese E-Mail antworten.</p>
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <style>
+                        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                        .header { background-color: #A72920; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
+                        .content { background-color: #ffffff; padding: 20px; border-radius: 0 0 5px 5px; border: 1px solid #ddd; }
+                        .button { display: inline-block; padding: 10px 20px; background-color: #A72920; color: white !important; text-decoration: none; border-radius: 5px; margin-top: 20px; }
+                        .info-box { background-color: #f8f9fa; border: 1px solid #ddd; padding: 15px; border-radius: 5px; margin: 20px 0; }
+                        .message-box { background-color: #f8f9fa; border-left: 4px solid #A72920; padding: 15px; margin: 20px 0; }
+                        .footer { text-align: center; margin-top: 20px; font-size: 0.9em; color: #666; }
+                    </style>
+                </head>
+                <body>
+                    <div class="container">
+                        <div class="header">
+                            <h2>Neue Nachricht vom Administrator</h2>
+                        </div>
+                        <div class="content">
+                            <h3>Hallo ' . $reservation['first_name'] . ' ' . $reservation['last_name'] . ',</h3>
+                            
+                            <div class="info-box">
+                                <strong>Ihre Reservierung:</strong><br>
+                                Von: ' . date('d.m.Y H:i', strtotime($reservation['start_datetime'])) . '<br>
+                                Bis: ' . date('d.m.Y H:i', strtotime($reservation['end_datetime'])) . '
+                            </div>
+                            
+                            <div class="message-box">
+                                <strong>Nachricht vom Administrator:</strong><br>
+                                ' . nl2br($message) . '
+                            </div>
+                            
+                            <a href="https://' . $_SERVER['HTTP_HOST'] . '/Grillhuette/my_reservations.php" class="button">Meine Reservierungen ansehen</a>
+                            
+                            <div class="footer">
+                                <p>Bei Fragen können Sie auf diese E-Mail antworten.</p>
+                                <p>Ihr Team der Grillhütte Reichenbach</p>
+                            </div>
+                        </div>
+                    </div>
+                </body>
+                </html>
             ';
             
             sendEmail($reservation['email'], $subject, $body);
@@ -278,22 +462,64 @@ class Reservation {
             $stmt->execute([$userId, $startDatetime, $endDatetime, $adminMessage]);
             
             // Benutzer per E-Mail benachrichtigen
-            $userStmt = $this->db->prepare("SELECT email, first_name, last_name FROM users WHERE id = ?");
+            $userStmt = $this->db->prepare("SELECT email, first_name, last_name FROM gh_users WHERE id = ?");
             $userStmt->execute([$userId]);
             $user = $userStmt->fetch(PDO::FETCH_ASSOC);
             
             $subject = 'Neue Reservierung für die Grillhütte';
             $body = '
-                <h2>Hallo ' . $user['first_name'] . ' ' . $user['last_name'] . ',</h2>
-                <p>Der Administrator hat eine Reservierung für Sie erstellt.</p>
-                <p>Ihre Reservierung für den Zeitraum vom ' . date('d.m.Y H:i', strtotime($startDatetime)) . ' bis ' . date('d.m.Y H:i', strtotime($endDatetime)) . ' wurde bestätigt.</p>
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <style>
+                        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                        .header { background-color: #A72920; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
+                        .content { background-color: #ffffff; padding: 20px; border-radius: 0 0 5px 5px; border: 1px solid #ddd; }
+                        .button { display: inline-block; padding: 10px 20px; background-color: #A72920; color: white !important; text-decoration: none; border-radius: 5px; margin-top: 20px; }
+                        .info-box { background-color: #f8f9fa; border: 1px solid #ddd; padding: 15px; border-radius: 5px; margin: 20px 0; }
+                        .message-box { background-color: #f8f9fa; border-left: 4px solid #28a745; padding: 15px; margin: 20px 0; }
+                        .footer { text-align: center; margin-top: 20px; font-size: 0.9em; color: #666; }
+                    </style>
+                </head>
+                <body>
+                    <div class="container">
+                        <div class="header">
+                            <h2>Neue Reservierung bestätigt</h2>
+                        </div>
+                        <div class="content">
+                            <h3>Hallo ' . $user['first_name'] . ' ' . $user['last_name'] . ',</h3>
+                            <p>der Administrator hat eine Reservierung für Sie erstellt.</p>
+                            
+                            <div class="info-box">
+                                <strong>Ihre Reservierungsdetails:</strong><br>
+                                Von: ' . date('d.m.Y H:i', strtotime($startDatetime)) . '<br>
+                                Bis: ' . date('d.m.Y H:i', strtotime($endDatetime)) . '<br>
+                                Status: <span style="color: #28a745; font-weight: bold;">Bestätigt</span>
+                            </div>
             ';
             
             if ($adminMessage) {
-                $body .= '<p><strong>Nachricht vom Administrator:</strong> ' . $adminMessage . '</p>';
+                $body .= '
+                    <div class="message-box">
+                        <strong>Nachricht vom Administrator:</strong><br>
+                        ' . nl2br($adminMessage) . '
+                    </div>
+                ';
             }
             
-            $body .= '<p>Bei Fragen können Sie auf diese E-Mail antworten.</p>';
+            $body .= '
+                            <a href="https://' . $_SERVER['HTTP_HOST'] . '/Grillhuette/my_reservations.php" class="button">Meine Reservierungen ansehen</a>
+                            
+                            <div class="footer">
+                                <p>Bei Fragen können Sie auf diese E-Mail antworten.</p>
+                                <p>Ihr Team der Grillhütte Reichenbach</p>
+                            </div>
+                        </div>
+                    </div>
+                </body>
+                </html>
+            ';
             
             sendEmail($user['email'], $subject, $body);
             
@@ -325,15 +551,52 @@ class Reservation {
             
             // Benutzer per E-Mail benachrichtigen, falls vom Admin storniert
             if (isset($_SESSION['is_admin']) && $_SESSION['is_admin'] && $reservation['user_id'] != $_SESSION['user_id']) {
-                $userStmt = $this->db->prepare("SELECT email, first_name, last_name FROM users WHERE id = ?");
+                $userStmt = $this->db->prepare("SELECT email, first_name, last_name FROM gh_users WHERE id = ?");
                 $userStmt->execute([$reservation['user_id']]);
                 $user = $userStmt->fetch(PDO::FETCH_ASSOC);
                 
                 $subject = 'Stornierung Ihrer Reservierung für die Grillhütte';
                 $body = '
-                    <h2>Hallo ' . $user['first_name'] . ' ' . $user['last_name'] . ',</h2>
-                    <p>Ihre Reservierung für den Zeitraum vom ' . date('d.m.Y H:i', strtotime($reservation['start_datetime'])) . ' bis ' . date('d.m.Y H:i', strtotime($reservation['end_datetime'])) . ' wurde storniert.</p>
-                    <p>Bei Fragen wenden Sie sich bitte an den Administrator.</p>
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <style>
+                            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                            .header { background-color: #dc3545; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
+                            .content { background-color: #ffffff; padding: 20px; border-radius: 0 0 5px 5px; border: 1px solid #ddd; }
+                            .button { display: inline-block; padding: 10px 20px; background-color: #A72920; color: white !important; text-decoration: none; border-radius: 5px; margin-top: 20px; }
+                            .info-box { background-color: #f8f9fa; border: 1px solid #ddd; padding: 15px; border-radius: 5px; margin: 20px 0; }
+                            .status-badge { display: inline-block; padding: 5px 15px; background-color: #dc3545; color: white; border-radius: 15px; }
+                            .footer { text-align: center; margin-top: 20px; font-size: 0.9em; color: #666; }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="container">
+                            <div class="header">
+                                <h2>Reservierung storniert</h2>
+                            </div>
+                            <div class="content">
+                                <h3>Hallo ' . $user['first_name'] . ' ' . $user['last_name'] . ',</h3>
+                                
+                                <div class="info-box">
+                                    <strong>Stornierte Reservierung:</strong><br>
+                                    Von: ' . date('d.m.Y H:i', strtotime($reservation['start_datetime'])) . '<br>
+                                    Bis: ' . date('d.m.Y H:i', strtotime($reservation['end_datetime'])) . '<br>
+                                    Status: <span class="status-badge">Storniert</span>
+                                </div>
+                                
+                                <p>Bei Fragen wenden Sie sich bitte an den Administrator.</p>
+                                
+                                <a href="https://' . $_SERVER['HTTP_HOST'] . '/Grillhuette/my_reservations.php" class="button">Meine Reservierungen ansehen</a>
+                                
+                                <div class="footer">
+                                    <p>Ihr Team der Grillhütte Reichenbach</p>
+                                </div>
+                            </div>
+                        </div>
+                    </body>
+                    </html>
                 ';
                 
                 sendEmail($user['email'], $subject, $body);
@@ -350,12 +613,45 @@ class Reservation {
                     
                     $subject = 'Stornierung einer Reservierung';
                     $body = '
-                        <h2>Stornierung einer Reservierung</h2>
-                        <p>Eine Reservierung wurde vom Benutzer storniert:</p>
-                        <p>
-                            <strong>Benutzer:</strong> ' . $userInfo . '<br>
-                            <strong>Zeitraum:</strong> ' . date('d.m.Y H:i', strtotime($reservation['start_datetime'])) . ' bis ' . date('d.m.Y H:i', strtotime($reservation['end_datetime'])) . '
-                        </p>
+                        <!DOCTYPE html>
+                        <html>
+                        <head>
+                            <style>
+                                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                                .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                                .header { background-color: #dc3545; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
+                                .content { background-color: #ffffff; padding: 20px; border-radius: 0 0 5px 5px; border: 1px solid #ddd; }
+                                .button { display: inline-block; padding: 10px 20px; background-color: #A72920; color: white !important; text-decoration: none; border-radius: 5px; margin-top: 20px; }
+                                .info-box { background-color: #f8f9fa; border: 1px solid #ddd; padding: 15px; border-radius: 5px; margin: 20px 0; }
+                                .status-badge { display: inline-block; padding: 5px 15px; background-color: #dc3545; color: white; border-radius: 15px; }
+                                .footer { text-align: center; margin-top: 20px; font-size: 0.9em; color: #666; }
+                            </style>
+                        </head>
+                        <body>
+                            <div class="container">
+                                <div class="header">
+                                    <h2>Reservierung wurde storniert</h2>
+                                </div>
+                                <div class="content">
+                                    <p>Eine Reservierung wurde vom Benutzer storniert.</p>
+                                    
+                                    <div class="info-box">
+                                        <strong>Stornierte Reservierung:</strong><br>
+                                        Benutzer: ' . $userInfo . '<br>
+                                        Von: ' . date('d.m.Y H:i', strtotime($reservation['start_datetime'])) . '<br>
+                                        Bis: ' . date('d.m.Y H:i', strtotime($reservation['end_datetime'])) . '<br>
+                                        Status: <span class="status-badge">Storniert</span>
+                                    </div>
+                                    
+                                    <a href="https://' . $_SERVER['HTTP_HOST'] . '/Grillhuette/admin_reservations.php" class="button">Reservierungen verwalten</a>
+                                    
+                                    <div class="footer">
+                                        <p>Dies ist eine automatische Benachrichtigung des Grillhütten-Reservierungssystems.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </body>
+                        </html>
                     ';
                     
                     foreach ($admins as $admin) {
@@ -512,7 +808,7 @@ class Reservation {
             $stmt->execute([$userId, $startDatetime, $endDatetime, $adminMessage, $status, $id]);
             
             // Benutzer-Informationen abrufen
-            $userStmt = $this->db->prepare("SELECT email, first_name, last_name FROM users WHERE id = ?");
+            $userStmt = $this->db->prepare("SELECT email, first_name, last_name FROM gh_users WHERE id = ?");
             $userStmt->execute([$userId]);
             $user = $userStmt->fetch(PDO::FETCH_ASSOC);
             
@@ -533,16 +829,52 @@ class Reservation {
                         $statusText = $status;
                 }
                 
+                $statusColor = $status == 'confirmed' ? '#28a745' : '#dc3545';
                 $subject = 'Ihre Reservierungsdetails wurden aktualisiert';
                 $body = '
-                    <h2>Hallo ' . $user['first_name'] . ' ' . $user['last_name'] . ',</h2>
-                    <p>Ihre Reservierung für die Grillhütte wurde aktualisiert.</p>
-                    <p><strong>Neuer Zeitraum:</strong> ' . date('d.m.Y H:i', strtotime($startDatetime)) . ' bis ' . date('d.m.Y H:i', strtotime($endDatetime)) . '</p>
-                    <p><strong>Status:</strong> ' . $statusText . '</p>
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <style>
+                            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                            .header { background-color: ' . $statusColor . '; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
+                            .content { background-color: #ffffff; padding: 20px; border-radius: 0 0 5px 5px; border: 1px solid #ddd; }
+                            .button { display: inline-block; padding: 10px 20px; background-color: #A72920; color: white !important; text-decoration: none; border-radius: 5px; margin-top: 20px; }
+                            .info-box { background-color: #f8f9fa; border: 1px solid #ddd; padding: 15px; border-radius: 5px; margin: 20px 0; }
+                            .status-badge { display: inline-block; padding: 5px 15px; background-color: ' . $statusColor . '; color: white; border-radius: 15px; }
+                            .message-box { background-color: #f8f9fa; border-left: 4px solid ' . $statusColor . '; padding: 15px; margin: 20px 0; }
+                            .footer { text-align: center; margin-top: 20px; font-size: 0.9em; color: #666; }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="container">
+                            <div class="header">
+                                <h2>Reservierungsdetails aktualisiert</h2>
+                            </div>
+                            <div class="content">
+                                <h3>Hallo ' . $user['first_name'] . ' ' . $user['last_name'] . ',</h3>
+                                <p>Ihre Reservierung für die Grillhütte wurde aktualisiert.</p>
+                                <p><strong>Neuer Zeitraum:</strong> ' . date('d.m.Y H:i', strtotime($startDatetime)) . ' bis ' . date('d.m.Y H:i', strtotime($endDatetime)) . '</p>
+                                <p><strong>Status:</strong> ' . ucfirst($statusText) . '</p>
+                            </div>
+                            <a href="https://' . $_SERVER['HTTP_HOST'] . '/Grillhuette/my_reservations.php" class="button">Meine Reservierungen ansehen</a>
+                            <div class="footer">
+                                <p>Bei Fragen können Sie auf diese E-Mail antworten.</p>
+                                <p>Ihr Team der Grillhütte Reichenbach</p>
+                            </div>
+                        </div>
+                    </body>
+                    </html>
                 ';
                 
                 if (!empty($adminMessage)) {
-                    $body .= '<p><strong>Nachricht vom Administrator:</strong><br>' . nl2br($adminMessage) . '</p>';
+                    $body .= '
+                        <div class="message-box">
+                            <strong>Nachricht vom Administrator:</strong><br>
+                            ' . nl2br($adminMessage) . '
+                        </div>
+                    ';
                 }
                 
                 sendEmail($user['email'], $subject, $body);
@@ -584,9 +916,36 @@ class Reservation {
             if ($reservation['email']) {
                 $subject = 'Ihre Reservierung wurde gelöscht';
                 $body = '
-                    <h2>Hallo ' . $reservation['first_name'] . ' ' . $reservation['last_name'] . ',</h2>
-                    <p>Ihre Reservierung für die Grillhütte für den Zeitraum ' . date('d.m.Y H:i', strtotime($reservation['start_datetime'])) . ' bis ' . date('d.m.Y H:i', strtotime($reservation['end_datetime'])) . ' wurde gelöscht.</p>
-                    <p>Bei Fragen wenden Sie sich bitte an den Administrator.</p>
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <style>
+                            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                            .header { background-color: #dc3545; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
+                            .content { background-color: #ffffff; padding: 20px; border-radius: 0 0 5px 5px; border: 1px solid #ddd; }
+                            .button { display: inline-block; padding: 10px 20px; background-color: #A72920; color: white !important; text-decoration: none; border-radius: 5px; margin-top: 20px; }
+                            .info-box { background-color: #f8f9fa; border: 1px solid #ddd; padding: 15px; border-radius: 5px; margin: 20px 0; }
+                            .message-box { background-color: #f8f9fa; border-left: 4px solid #dc3545; padding: 15px; margin: 20px 0; }
+                            .footer { text-align: center; margin-top: 20px; font-size: 0.9em; color: #666; }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="container">
+                            <div class="header">
+                                <h2>Ihre Reservierung wurde gelöscht</h2>
+                            </div>
+                            <div class="content">
+                                <p>Ihre Reservierung für die Grillhütte für den Zeitraum ' . date('d.m.Y H:i', strtotime($reservation['start_datetime'])) . ' bis ' . date('d.m.Y H:i', strtotime($reservation['end_datetime'])) . ' wurde gelöscht.</p>
+                                <a href="https://' . $_SERVER['HTTP_HOST'] . '/Grillhuette/my_reservations.php" class="button">Meine Reservierungen ansehen</a>
+                                <div class="footer">
+                                    <p>Bei Fragen wenden Sie sich bitte an den Administrator.</p>
+                                    <p>Ihr Team der Grillhütte Reichenbach</p>
+                                </div>
+                            </div>
+                        </div>
+                    </body>
+                    </html>
                 ';
                 
                 sendEmail($reservation['email'], $subject, $body);
