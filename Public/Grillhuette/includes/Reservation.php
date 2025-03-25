@@ -789,7 +789,7 @@ class Reservation {
     public function updateReservation($id, $userId, $startDatetime, $endDatetime, $adminMessage = null, $status = 'pending') {
         try {
             // Überprüfen, ob die Reservierung existiert
-            $stmt = $this->db->prepare("SELECT id FROM gh_reservations WHERE id = ?");
+            $stmt = $this->db->prepare("SELECT id, status FROM gh_reservations WHERE id = ?");
             $stmt->execute([$id]);
             
             if ($stmt->rowCount() == 0) {
@@ -797,6 +797,32 @@ class Reservation {
                     'success' => false,
                     'message' => 'Reservierung nicht gefunden.'
                 ];
+            }
+
+            // Wenn der Status auf "confirmed" gesetzt werden soll, prüfen ob der Zeitraum verfügbar ist
+            if ($status === 'confirmed') {
+                // Prüfen ob es andere bestätigte oder ausstehende Reservierungen im gleichen Zeitraum gibt
+                $stmt = $this->db->prepare("
+                    SELECT COUNT(*) AS count
+                    FROM gh_reservations 
+                    WHERE 
+                        id != ? AND
+                        status = 'confirmed' AND
+                        (
+                            (start_datetime <= ? AND end_datetime > ?) OR
+                            (start_datetime < ? AND end_datetime >= ?) OR
+                            (start_datetime >= ? AND end_datetime <= ?)
+                        )
+                ");
+                $stmt->execute([$id, $endDatetime, $startDatetime, $endDatetime, $startDatetime, $startDatetime, $endDatetime]);
+                $result = $stmt->fetch(PDO::FETCH_ASSOC);
+                
+                if ($result['count'] > 0) {
+                    return [
+                        'success' => false,
+                        'message' => 'Der Zeitraum ist bereits durch eine andere Reservierung belegt. Die Reservierung kann nicht bestätigt werden.'
+                    ];
+                }
             }
             
             // Reservierung aktualisieren
