@@ -7,6 +7,10 @@ class Reservation {
     }
     
     public function create($userId, $startDatetime, $endDatetime, $userMessage = null) {
+        // Zuweisung der URL-Variablen
+        $myReservationsUrl = 'https://' . $_SERVER['HTTP_HOST'] . getRelativePath('Benutzer/Meine-Reservierungen');
+        $adminReservationsUrl = 'https://' . $_SERVER['HTTP_HOST'] . getRelativePath('Admin/Reservierungsverwaltung');
+
         try {
             // Überprüfen, ob der Zeitraum verfügbar ist
             if (!$this->isTimeSlotAvailable($startDatetime, $endDatetime)) {
@@ -203,6 +207,10 @@ class Reservation {
     }
     
     public function updateStatus($id, $status, $adminMessage = null) {
+        // Zuweisung der URL-Variablen
+        $myReservationsUrl = 'https://' . $_SERVER['HTTP_HOST'] . getRelativePath('Benutzer/Meine-Reservierungen');
+        $adminReservationsUrl = 'https://' . $_SERVER['HTTP_HOST'] . getRelativePath('Admin/Reservierungsverwaltung');
+
         try {
             $reservation = $this->getById($id);
             if (!$reservation) {
@@ -297,6 +305,10 @@ class Reservation {
     }
     
     public function addUserMessage($id, $message) {
+        // Zuweisung der URL-Variablen
+        $myReservationsUrl = 'https://' . $_SERVER['HTTP_HOST'] . getRelativePath('Benutzer/Meine-Reservierungen');
+        $adminReservationsUrl = 'https://' . $_SERVER['HTTP_HOST'] . getRelativePath('Admin/Reservierungsverwaltung');
+
         try {
             $stmt = $this->db->prepare("UPDATE gh_reservations SET user_message = ? WHERE id = ?");
             $stmt->execute([$message, $id]);
@@ -375,6 +387,10 @@ class Reservation {
     }
     
     public function addAdminMessage($id, $message) {
+        // Zuweisung der URL-Variablen
+        $myReservationsUrl = 'https://' . $_SERVER['HTTP_HOST'] . getRelativePath('Benutzer/Meine-Reservierungen');
+        $adminReservationsUrl = 'https://' . $_SERVER['HTTP_HOST'] . getRelativePath('Admin/Reservierungsverwaltung');
+
         try {
             $stmt = $this->db->prepare("UPDATE gh_reservations SET admin_message = ? WHERE id = ?");
             $stmt->execute([$message, $id]);
@@ -382,7 +398,7 @@ class Reservation {
             // Benutzer benachrichtigen
             $reservation = $this->getById($id);
             
-            $subject = 'Neue Nachricht zu Ihrer Reservierung';
+            $subject = 'Neue Nachricht vom Administrator';
             $body = '
                 <!DOCTYPE html>
                 <html>
@@ -445,6 +461,10 @@ class Reservation {
     }
     
     public function createByAdmin($userId, $startDatetime, $endDatetime, $adminMessage = null) {
+        // Zuweisung der URL-Variablen
+        $myReservationsUrl = 'https://' . $_SERVER['HTTP_HOST'] . getRelativePath('Benutzer/Meine-Reservierungen');
+        $adminReservationsUrl = 'https://' . $_SERVER['HTTP_HOST'] . getRelativePath('Admin/Reservierungsverwaltung');
+
         try {
             // Überprüfen, ob der Zeitraum verfügbar ist
             if (!$this->isTimeSlotAvailable($startDatetime, $endDatetime)) {
@@ -537,6 +557,10 @@ class Reservation {
     }
     
     public function cancel($id) {
+        // Zuweisung der URL-Variablen
+        $myReservationsUrl = 'https://' . $_SERVER['HTTP_HOST'] . getRelativePath('Benutzer/Meine-Reservierungen');
+        $adminReservationsUrl = 'https://' . $_SERVER['HTTP_HOST'] . getRelativePath('Admin/Reservierungsverwaltung');
+
         try {
             $reservation = $this->getById($id);
             if (!$reservation) {
@@ -854,6 +878,7 @@ class Reservation {
                     default:
                         $statusText = $status;
                 }
+                $myReservationsUrl = 'https://' . $_SERVER['HTTP_HOST'] . getRelativePath('Benutzer/Meine-Reservierungen');
                 
                 $statusColor = $status == 'confirmed' ? '#28a745' : '#dc3545';
                 $subject = 'Ihre Reservierungsdetails wurden aktualisiert';
@@ -938,6 +963,7 @@ class Reservation {
             $stmt = $this->db->prepare("DELETE FROM gh_reservations WHERE id = ?");
             $stmt->execute([$id]);
             
+            $myReservationsUrl = 'https://' . $_SERVER['HTTP_HOST'] . getRelativePath('Benutzer/Meine-Reservierungen');
             // E-Mail an den Benutzer senden
             if ($reservation['email']) {
                 $subject = 'Ihre Reservierung wurde gelöscht';
