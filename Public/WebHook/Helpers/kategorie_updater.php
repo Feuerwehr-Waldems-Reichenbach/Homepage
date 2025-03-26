@@ -14,5 +14,6 @@ try {
     echo $message;
 
 } catch (PDOException $e) {
-    echo "Fehler bei der Datenbankverbindung: " . $e->getMessage();
+    error_log("Fehler bei der Datenbankverbindung im Kategorie-Updater: " . $e->getMessage());
+    echo "Ein technischer Fehler ist aufgetreten. Bitte kontaktieren Sie den Administrator.";
 }

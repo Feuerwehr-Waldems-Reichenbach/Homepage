@@ -139,9 +139,10 @@ class Reservation {
             ];
             
         } catch (PDOException $e) {
+            error_log('Fehler beim Erstellen der Reservierung: ' . $e->getMessage());
             return [
                 'success' => false,
-                'message' => 'Fehler beim Erstellen der Reservierung: ' . $e->getMessage()
+                'message' => 'Ein technischer Fehler ist aufgetreten. Bitte versuchen Sie es später erneut oder kontaktieren Sie den Support.'
             ];
         }
     }
@@ -297,9 +298,10 @@ class Reservation {
             ];
             
         } catch (PDOException $e) {
+            error_log('Fehler beim Aktualisieren des Status: ' . $e->getMessage());
             return [
                 'success' => false,
-                'message' => 'Fehler beim Aktualisieren des Status: ' . $e->getMessage()
+                'message' => 'Ein Fehler ist aufgetreten. Die Statusänderung konnte nicht gespeichert werden.'
             ];
         }
     }
@@ -379,9 +381,10 @@ class Reservation {
             ];
             
         } catch (PDOException $e) {
+            error_log('Fehler beim Hinzufügen der Nachricht: ' . $e->getMessage());
             return [
                 'success' => false,
-                'message' => 'Fehler beim Hinzufügen der Nachricht: ' . $e->getMessage()
+                'message' => 'Die Nachricht konnte nicht gespeichert werden. Bitte versuchen Sie es später erneut.'
             ];
         }
     }
@@ -453,9 +456,10 @@ class Reservation {
             ];
             
         } catch (PDOException $e) {
+            error_log('Fehler beim Hinzufügen der Admin-Nachricht: ' . $e->getMessage());
             return [
                 'success' => false,
-                'message' => 'Fehler beim Hinzufügen der Nachricht: ' . $e->getMessage()
+                'message' => 'Die Admin-Nachricht konnte nicht gespeichert werden. Bitte versuchen Sie es später erneut.'
             ];
         }
     }
@@ -549,9 +553,10 @@ class Reservation {
             ];
             
         } catch (PDOException $e) {
+            error_log('Fehler beim Erstellen der Reservierung: ' . $e->getMessage());
             return [
                 'success' => false,
-                'message' => 'Fehler beim Erstellen der Reservierung: ' . $e->getMessage()
+                'message' => 'Die Reservierung konnte nicht erstellt werden. Bitte versuchen Sie es später erneut.'
             ];
         }
     }
@@ -690,9 +695,10 @@ class Reservation {
             ];
             
         } catch (PDOException $e) {
+            error_log('Fehler beim Stornieren der Reservierung: ' . $e->getMessage());
             return [
                 'success' => false,
-                'message' => 'Fehler beim Stornieren der Reservierung: ' . $e->getMessage()
+                'message' => 'Die Reservierung konnte nicht storniert werden. Bitte versuchen Sie es später erneut.'
             ];
         }
     }
@@ -716,6 +722,7 @@ class Reservation {
             $stmt->execute([$startDate, $endDate, $startDate, $endDate, $startDate, $endDate]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
+            error_log('Fehler beim Abrufen der Reservierungen: ' . $e->getMessage());
             return [];
         }
     }
@@ -803,9 +810,10 @@ class Reservation {
                 'message' => 'Alle Reservierungen des Benutzers wurden gelöscht.'
             ];
         } catch (PDOException $e) {
+            error_log('Fehler beim Löschen der Reservierungen: ' . $e->getMessage());
             return [
                 'success' => false,
-                'message' => 'Fehler beim Löschen der Reservierungen: ' . $e->getMessage()
+                'message' => 'Die Reservierungen konnten nicht gelöscht werden. Bitte versuchen Sie es später erneut.'
             ];
         }
     }
@@ -937,9 +945,10 @@ class Reservation {
             ];
             
         } catch (PDOException $e) {
+            error_log('Fehler beim Aktualisieren der Reservierung: ' . $e->getMessage());
             return [
                 'success' => false,
-                'message' => 'Fehler beim Aktualisieren der Reservierung: ' . $e->getMessage()
+                'message' => 'Die Reservierung konnte nicht aktualisiert werden. Bitte versuchen Sie es später erneut.'
             ];
         }
     }
@@ -1009,9 +1018,10 @@ class Reservation {
             ];
             
         } catch (PDOException $e) {
+            error_log('Fehler beim Löschen der Reservierung: ' . $e->getMessage());
             return [
                 'success' => false,
-                'message' => 'Fehler beim Löschen der Reservierung: ' . $e->getMessage()
+                'message' => 'Die Reservierung konnte nicht gelöscht werden. Bitte versuchen Sie es später erneut.'
             ];
         }
     }

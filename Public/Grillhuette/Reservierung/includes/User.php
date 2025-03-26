@@ -96,9 +96,10 @@ class User {
             ];
             
         } catch (PDOException $e) {
+            error_log('Fehler bei der Registrierung: ' . $e->getMessage());
             return [
                 'success' => false,
-                'message' => 'Fehler bei der Registrierung: ' . $e->getMessage()
+                'message' => 'Ein Fehler ist bei der Registrierung aufgetreten. Bitte versuchen Sie es später erneut.'
             ];
         }
     }
@@ -144,9 +145,10 @@ class User {
             ];
             
         } catch (PDOException $e) {
+            error_log('Fehler beim Login: ' . $e->getMessage());
             return [
                 'success' => false,
-                'message' => 'Fehler beim Login: ' . $e->getMessage()
+                'message' => 'Ein Fehler ist beim Login aufgetreten. Bitte versuchen Sie es später erneut.'
             ];
         }
     }
@@ -175,9 +177,10 @@ class User {
             ];
             
         } catch (PDOException $e) {
+            error_log('Fehler bei der Verifikation: ' . $e->getMessage());
             return [
                 'success' => false,
-                'message' => 'Fehler bei der Verifikation: ' . $e->getMessage()
+                'message' => 'Ein Fehler ist bei der Verifikation aufgetreten. Bitte versuchen Sie es später erneut.'
             ];
         }
     }
@@ -270,9 +273,10 @@ class User {
             ];
             
         } catch (PDOException $e) {
+            error_log('Fehler beim Zurücksetzen des Passworts: ' . $e->getMessage());
             return [
                 'success' => false,
-                'message' => 'Fehler beim Zurücksetzen des Passworts: ' . $e->getMessage()
+                'message' => 'Ein Fehler ist beim Zurücksetzen des Passworts aufgetreten. Bitte versuchen Sie es später erneut.'
             ];
         }
     }
@@ -311,9 +315,10 @@ class User {
             ];
             
         } catch (PDOException $e) {
+            error_log('Fehler beim Zurücksetzen des Passworts: ' . $e->getMessage());
             return [
                 'success' => false,
-                'message' => 'Fehler beim Zurücksetzen des Passworts: ' . $e->getMessage()
+                'message' => 'Ein Fehler ist beim Zurücksetzen des Passworts aufgetreten. Bitte versuchen Sie es später erneut.'
             ];
         }
     }
@@ -359,9 +364,10 @@ class User {
             ];
             
         } catch (PDOException $e) {
+            error_log('Fehler beim Aktualisieren des Profils: ' . $e->getMessage());
             return [
                 'success' => false,
-                'message' => 'Fehler beim Aktualisieren des Profils: ' . $e->getMessage()
+                'message' => 'Ein Fehler ist beim Aktualisieren des Profils aufgetreten. Bitte versuchen Sie es später erneut.'
             ];
         }
     }
@@ -470,9 +476,10 @@ class User {
             ];
             
         } catch (PDOException $e) {
+            error_log('Fehler beim Aktualisieren der E-Mail-Adresse: ' . $e->getMessage());
             return [
                 'success' => false,
-                'message' => 'Fehler beim Aktualisieren der E-Mail-Adresse: ' . $e->getMessage()
+                'message' => 'Ein Fehler ist beim Aktualisieren der E-Mail-Adresse aufgetreten. Bitte versuchen Sie es später erneut.'
             ];
         }
     }
@@ -483,6 +490,7 @@ class User {
             $stmt->execute([$userId]);
             return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
+            error_log('Fehler beim Abrufen des Benutzers: ' . $e->getMessage());
             return null;
         }
     }
@@ -493,6 +501,7 @@ class User {
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
+            error_log('Fehler beim Abrufen aller Benutzer: ' . $e->getMessage());
             return [];
         }
     }
@@ -523,9 +532,10 @@ class User {
                 'is_admin' => $newStatus
             ];
         } catch (PDOException $e) {
+            error_log('Fehler beim Umschalten des Admin-Status: ' . $e->getMessage());
             return [
                 'success' => false,
-                'message' => 'Fehler beim Ändern des Administrator-Status: ' . $e->getMessage()
+                'message' => 'Ein Fehler ist beim Ändern des Admin-Status aufgetreten. Bitte versuchen Sie es später erneut.'
             ];
         }
     }
@@ -558,9 +568,10 @@ class User {
             ];
             
         } catch (PDOException $e) {
+            error_log('Fehler beim Erstellen des Benutzers: ' . $e->getMessage());
             return [
                 'success' => false,
-                'message' => 'Fehler beim Erstellen des Benutzers: ' . $e->getMessage()
+                'message' => 'Ein Fehler ist beim Erstellen des Benutzers aufgetreten. Bitte versuchen Sie es später erneut.'
             ];
         }
     }
@@ -592,9 +603,10 @@ class User {
             ];
             
         } catch (PDOException $e) {
+            error_log('Fehler beim Löschen des Benutzers: ' . $e->getMessage());
             return [
                 'success' => false,
-                'message' => 'Fehler beim Löschen des Benutzers: ' . $e->getMessage()
+                'message' => 'Ein Fehler ist beim Löschen des Benutzers aufgetreten. Bitte versuchen Sie es später erneut.'
             ];
         }
     }
@@ -619,9 +631,10 @@ class User {
             ];
             
         } catch (PDOException $e) {
+            error_log('Fehler bei der Authentifizierung: ' . $e->getMessage());
             return [
                 'success' => false,
-                'message' => 'Fehler bei der Authentifizierung: ' . $e->getMessage()
+                'message' => 'Ein Fehler ist bei der Authentifizierung aufgetreten. Bitte versuchen Sie es später erneut.'
             ];
         }
     }
@@ -676,9 +689,10 @@ class User {
             ];
             
         } catch (PDOException $e) {
+            error_log('Fehler beim Aktualisieren des Benutzers: ' . $e->getMessage());
             return [
                 'success' => false,
-                'message' => 'Fehler beim Aktualisieren des Benutzers: ' . $e->getMessage()
+                'message' => 'Ein Fehler ist beim Aktualisieren des Benutzers aufgetreten. Bitte versuchen Sie es später erneut.'
             ];
         }
     }
@@ -710,9 +724,10 @@ class User {
             ];
             
         } catch (PDOException $e) {
+            error_log('Fehler beim Umschalten des Verifikations-Status: ' . $e->getMessage());
             return [
                 'success' => false,
-                'message' => 'Fehler beim Ändern des Verifikationsstatus: ' . $e->getMessage()
+                'message' => 'Ein Fehler ist beim Ändern des Verifikations-Status aufgetreten. Bitte versuchen Sie es später erneut.'
             ];
         }
     }
