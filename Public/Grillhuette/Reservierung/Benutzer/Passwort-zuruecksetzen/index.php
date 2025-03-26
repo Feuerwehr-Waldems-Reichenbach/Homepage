@@ -107,13 +107,23 @@ require_once '../../includes/header.php';
                         
                         <div class="mb-3">
                             <label for="password" class="form-label">Neues Passwort</label>
-                            <input type="password" class="form-control" id="password" name="password" required>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="password" name="password" required>
+                                <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
                             <div class="form-text">Mindestens 8 Zeichen.</div>
                         </div>
                         
                         <div class="mb-3">
                             <label for="password_confirm" class="form-label">Passwort bestätigen</label>
-                            <input type="password" class="form-control" id="password_confirm" name="password_confirm" required>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="password_confirm" name="password_confirm" required>
+                                <button class="btn btn-outline-secondary" type="button" id="togglePasswordConfirm">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
                         </div>
                         
                         <button type="submit" class="btn btn-primary">Passwort zurücksetzen</button>
@@ -123,5 +133,31 @@ require_once '../../includes/header.php';
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Funktion für den Toggle-Button
+    function setupPasswordToggle(buttonId, passwordId) {
+        const toggleButton = document.querySelector('#' + buttonId);
+        const passwordField = document.querySelector('#' + passwordId);
+        
+        if (toggleButton && passwordField) {
+            toggleButton.addEventListener('click', function() {
+                // Passworttyp umschalten
+                const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordField.setAttribute('type', type);
+                
+                // Icon umschalten
+                this.querySelector('i').classList.toggle('bi-eye');
+                this.querySelector('i').classList.toggle('bi-eye-slash');
+            });
+        }
+    }
+    
+    // Beide Passwortfelder einrichten
+    setupPasswordToggle('togglePassword', 'password');
+    setupPasswordToggle('togglePasswordConfirm', 'password_confirm');
+});
+</script>
 
 <?php require_once '../../includes/footer.php'; ?> 

@@ -338,18 +338,33 @@ require_once '../../includes/header.php';
                             
                             <div class="mb-3">
                                 <label for="current_password" class="form-label">Aktuelles Passwort</label>
-                                <input type="password" class="form-control" id="current_password" name="current_password" required>
+                                <div class="input-group">
+                                    <input type="password" class="form-control" id="current_password" name="current_password" required>
+                                    <button class="btn btn-outline-secondary" type="button" id="toggleCurrentPassword">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </div>
                             </div>
                             
                             <div class="mb-3">
                                 <label for="new_password" class="form-label">Neues Passwort</label>
-                                <input type="password" class="form-control" id="new_password" name="new_password" required>
+                                <div class="input-group">
+                                    <input type="password" class="form-control" id="new_password" name="new_password" required>
+                                    <button class="btn btn-outline-secondary" type="button" id="toggleNewPassword">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </div>
                                 <div class="form-text">Mindestens 8 Zeichen.</div>
                             </div>
                             
                             <div class="mb-3">
                                 <label for="confirm_password" class="form-label">Neues Passwort bestätigen</label>
-                                <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                                <div class="input-group">
+                                    <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                                    <button class="btn btn-outline-secondary" type="button" id="toggleConfirmPassword">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </div>
                             </div>
                             
                             <button type="submit" class="btn btn-primary">Passwort ändern</button>
@@ -381,7 +396,12 @@ require_once '../../includes/header.php';
                             
                             <div class="mb-3">
                                 <label for="email_password" class="form-label">Aktuelles Passwort</label>
-                                <input type="password" class="form-control" id="email_password" name="email_password" required>
+                                <div class="input-group">
+                                    <input type="password" class="form-control" id="email_password" name="email_password" required>
+                                    <button class="btn btn-outline-secondary" type="button" id="toggleEmailPassword">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </div>
                                 <div class="form-text">Zur Bestätigung Ihrer Identität benötigen wir Ihr aktuelles Passwort.</div>
                             </div>
                             
@@ -423,7 +443,12 @@ require_once '../../includes/header.php';
                             
                             <div class="mb-3">
                                 <label for="delete_password" class="form-label">Passwort zur Bestätigung</label>
-                                <input type="password" class="form-control" id="delete_password" name="delete_password" required>
+                                <div class="input-group">
+                                    <input type="password" class="form-control" id="delete_password" name="delete_password" required>
+                                    <button class="btn btn-outline-secondary" type="button" id="toggleDeletePassword">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </div>
                                 <div class="form-text">Zur Bestätigung Ihrer Identität benötigen wir Ihr aktuelles Passwort.</div>
                             </div>
                             
@@ -439,5 +464,34 @@ require_once '../../includes/header.php';
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Funktion für den Toggle-Button
+    function setupPasswordToggle(buttonId, passwordId) {
+        const toggleButton = document.querySelector('#' + buttonId);
+        const passwordField = document.querySelector('#' + passwordId);
+        
+        if (toggleButton && passwordField) {
+            toggleButton.addEventListener('click', function() {
+                // Passworttyp umschalten
+                const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordField.setAttribute('type', type);
+                
+                // Icon umschalten
+                this.querySelector('i').classList.toggle('bi-eye');
+                this.querySelector('i').classList.toggle('bi-eye-slash');
+            });
+        }
+    }
+    
+    // Alle Passwortfelder einrichten
+    setupPasswordToggle('toggleCurrentPassword', 'current_password');
+    setupPasswordToggle('toggleNewPassword', 'new_password');
+    setupPasswordToggle('toggleConfirmPassword', 'confirm_password');
+    setupPasswordToggle('toggleEmailPassword', 'email_password');
+    setupPasswordToggle('toggleDeletePassword', 'delete_password');
+});
+</script>
 
 <?php require_once '../../includes/footer.php'; ?> 
