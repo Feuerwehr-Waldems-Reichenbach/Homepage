@@ -22,11 +22,13 @@ h1, h2, h3, h4, h5, h6 {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     padding: 20px;
     margin-bottom: 30px;
+    overflow-x: auto; /* Allow horizontal scrolling on small screens */
 }
 
 .calendar {
     width: 100%;
     border-collapse: collapse;
+    min-width: 320px; /* Ensure minimum width for small screens */
 }
 
 .calendar th, .calendar td {
@@ -205,13 +207,157 @@ h1, h2, h3, h4, h5, h6 {
     background-color: #f0f0f0;
 }
 
-/* Responsive adjustments */
+/* Mobile optimizations */
 @media (max-width: 768px) {
+    /* General spacing adjustments */
+    body {
+        padding-bottom: 60px; /* Extra padding for mobile scroll */
+    }
+    
+    .container {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    
+    /* Calendar adjustments */
     .calendar th, .calendar td {
         padding: 5px;
     }
 
     .calendar .day {
         height: 50px;
+        min-width: 40px; /* Ensure minimum touchable area */
+    }
+    
+    /* Make month navigation more touch-friendly */
+    #prevMonth, #nextMonth {
+        padding: 8px 12px;
+        font-size: 0.9rem;
+    }
+    
+    /* Adjust card layouts */
+    .card-body {
+        padding: 15px;
+    }
+    
+    /* Form elements should be larger for touch */
+    .form-control, .form-select, .btn {
+        padding: 12px 15px;
+        font-size: 16px; /* Prevent zoom on iOS */
+    }
+    
+    /* Table overflows */
+    .table-responsive {
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    
+    /* Stack columns on mobile */
+    .col-md-6 {
+        margin-bottom: 20px;
+    }
+    
+    /* Adjust modals for mobile */
+    .modal-dialog {
+        margin: 10px;
+    }
+    
+    .modal-body {
+        padding: 15px;
+    }
+    
+    /* Make buttons more touch-friendly */
+    .btn-sm {
+        padding: 8px 12px;
+        font-size: 14px;
+    }
+    
+    /* Navigation adjustments */
+    .navbar-brand {
+        font-size: 1.1rem;
+    }
+    
+    /* Improve form layout on mobile */
+    .row > .col-md-4, .row > .col-md-6, .row > .col-md-8 {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+    
+    /* Better spacing for stacked elements */
+    .mb-3 {
+        margin-bottom: 1rem !important;
+    }
+    
+    /* Better touch target for links */
+    a, button, .nav-link {
+        padding: 8px;
+        display: inline-block;
+    }
+    
+    /* Fix for datepicker on mobile */
+    .flatpickr-calendar {
+        width: 307.875px;
+        font-size: 14px;
+    }
+}
+
+/* Specific mobile enhancements for very small screens */
+@media (max-width: 480px) {
+    h1 {
+        font-size: 1.8rem;
+    }
+    
+    h2, h3 {
+        font-size: 1.5rem;
+    }
+    
+    .card-header h4, .card-header h5 {
+        font-size: 1.2rem;
+    }
+    
+    /* Simplify navigation */
+    .navbar-brand {
+        font-size: 1rem;
+        max-width: 180px;
+        white-space: normal;
+    }
+    
+    /* Make sure buttons don't overflow */
+    .btn {
+        white-space: normal;
+    }
+    
+    /* Stack buttons on very small screens */
+    .modal-footer {
+        flex-direction: column;
+    }
+    
+    .modal-footer .btn {
+        margin-bottom: 10px;
+        width: 100%;
+    }
+    
+    /* Adjust calendar for very small screens */
+    #monthYear {
+        font-size: 1.2rem;
+    }
+    
+    #prevMonth, #nextMonth {
+        padding: 5px 8px;
+        font-size: 0.8rem;
+    }
+    
+    .calendar .day {
+        height: 40px;
+        min-width: 35px;
+    }
+}
+
+/* Fix for iPhone X and newer with safe area insets */
+@supports (padding: max(0px)) {
+    body {
+        padding-bottom: max(30px, env(safe-area-inset-bottom));
+        padding-left: env(safe-area-inset-left);
+        padding-right: env(safe-area-inset-right);
     }
 } 

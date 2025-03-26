@@ -23,15 +23,15 @@ if (isset($_GET['month']) && isset($_GET['year'])) {
 ?>
 
 <div class="row mb-4">
-    <div class="col-md-12">       
-        <!-- Neues Layout: Kalender (70%) und Eingabefelder (30%) nebeneinander -->
+    <div class="col-12">       
+        <!-- Responsives Layout für mobil und desktop -->
         <div class="row">
-            <!-- Kalender Container (70%) -->
-            <div class="col-md-8">
+            <!-- Kalender Container - volle Breite auf mobil, 2/3 auf Desktop -->
+            <div class="col-12 col-lg-8 mb-4">
                 <div class="calendar-container">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <button id="prevMonth" class="btn btn-outline-secondary">
-                            <i class="bi bi-chevron-left"></i> Vorheriger Monat
+                            <i class="bi bi-chevron-left"></i> <span class="d-none d-md-inline">Vorheriger Monat</span>
                         </button>
                         <h3 id="monthYear" class="mb-0">
                             <?php 
@@ -40,7 +40,7 @@ if (isset($_GET['month']) && isset($_GET['year'])) {
                             ?>
                         </h3>
                         <button id="nextMonth" class="btn btn-outline-secondary">
-                            Nächster Monat <i class="bi bi-chevron-right"></i>
+                            <span class="d-none d-md-inline">Nächster Monat</span> <i class="bi bi-chevron-right"></i>
                         </button>
                     </div>
                     
@@ -54,8 +54,37 @@ if (isset($_GET['month']) && isset($_GET['year'])) {
                     </form>
                 </div>
                 
-                <!-- Willkommenskarte unter dem Kalender -->
-                <div class="card mb-4 mt-4">
+                <!-- Mobile-optimierte Legende -->
+                <div class="d-md-none mb-4">
+                    <div class="card">
+                        <div class="card-body p-3">
+                            <h5 class="card-title h6 mb-2">Legende:</h5>
+                            <div class="d-flex flex-wrap">
+                                <div class="me-3 mb-2">
+                                    <div class="d-flex align-items-center">
+                                        <div class="me-1" style="width: 15px; height: 15px; background-color: #d4edda; border-radius: 3px;"></div>
+                                        <small>Frei</small>
+                                    </div>
+                                </div>
+                                <div class="me-3 mb-2">
+                                    <div class="d-flex align-items-center">
+                                        <div class="me-1" style="width: 15px; height: 15px; background-color: #fff3cd; border-radius: 3px;"></div>
+                                        <small>Angefragt</small>
+                                    </div>
+                                </div>
+                                <div class="mb-2">
+                                    <div class="d-flex align-items-center">
+                                        <div class="me-1" style="width: 15px; height: 15px; background-color: #f8d7da; border-radius: 3px;"></div>
+                                        <small>Belegt</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Willkommenskarte unter dem Kalender - nur auf Desktop sichtbar -->
+                <div class="card mb-4 d-none d-md-block">
                     <div class="card-body">
                         <h5 class="card-title">Willkommen im Reservierungssystem der Grillhütte Waldems Reichenbach</h5>
                         <p>Hier können Sie freie Termine einsehen und eine Reservierung vornehmen.</p>
@@ -156,8 +185,8 @@ if (isset($_GET['month']) && isset($_GET['year'])) {
                 </script>
             </div>
             
-            <!-- Manuelle Eingabefelder (30%) -->
-            <div class="col-md-4">
+            <!-- Reservierungsformular - volle Breite auf mobil, 1/3 auf Desktop -->
+            <div class="col-12 col-lg-4">
                 <?php if (isset($_SESSION['user_id']) && $_SESSION['is_verified']): ?>
                     <div class="card">
                         <div class="card-header">
@@ -188,7 +217,7 @@ if (isset($_GET['month']) && isset($_GET['year'])) {
                                     <textarea class="form-control" id="message" name="message" rows="3"></textarea>
                                 </div>
                                 
-                                <button type="submit" class="btn btn-primary">Reservierung anfragen</button>
+                                <button type="submit" class="btn btn-primary w-100">Reservierung anfragen</button>
                             </form>
                         </div>
                     </div>
@@ -213,6 +242,82 @@ if (isset($_GET['month']) && isset($_GET['year'])) {
                         </div>
                     </div>
                 <?php endif; ?>
+                
+                <!-- Mobile-optimierte Infokarte - nur auf mobil sichtbar -->
+                <div class="d-md-none mt-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Informationen</h5>
+                        </div>
+                        <div class="card-body p-3">
+                            <div class="accordion" id="mobileInfoAccordion">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                            Preise & Konditionen
+                                        </button>
+                                    </h2>
+                                    <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#mobileInfoAccordion">
+                                        <div class="accordion-body">
+                                            <ul class="list-unstyled mb-0">
+                                                <li><strong>Miete:</strong> 100€ pro Tag (12 - 12 Uhr)</li>
+                                                <li><strong>Kaution:</strong> 100€</li>
+                                                <li><strong>Rückgabe:</strong> bis spätestens am nächsten Tag 12:00 Uhr</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                            Im Preis enthalten
+                                        </button>
+                                    </h2>
+                                    <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#mobileInfoAccordion">
+                                        <div class="accordion-body">
+                                            <ul class="mb-0">
+                                                <li>1m³ Wasser</li>
+                                                <li>5 kW/h Strom</li>
+                                                <li>5 Biertisch-Garnituren, jede weitere Garnitur zzgl. 1€</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                            Wichtige Hinweise
+                                        </button>
+                                    </h2>
+                                    <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#mobileInfoAccordion">
+                                        <div class="accordion-body">
+                                            <ul class="mb-0">
+                                                <li>Die Grillhütte sowie die Toiletten sind sauber zu verlassen</li>
+                                                <li>Müll ist selbst zu entsorgen</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                            Kontakt
+                                        </button>
+                                    </h2>
+                                    <div id="collapseFour" class="accordion-collapse collapse" data-bs-parent="#mobileInfoAccordion">
+                                        <div class="accordion-body">
+                                            <p class="mb-2"><strong>Verwalterin:</strong> Julia Kitschmann</p>
+                                            <ul class="list-unstyled mb-0">
+                                                <li><a href="javascript:void(0)" class="email-protect" data-encoded="<?php echo base64_encode('julia@kitschmann.de'); ?>">E-Mail anzeigen</a></li>
+                                                <li><a href="javascript:void(0)" class="phone-protect" data-encoded="<?php echo base64_encode('0178/8829055'); ?>">Telefon anzeigen</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

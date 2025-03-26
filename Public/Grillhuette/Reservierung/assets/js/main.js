@@ -13,7 +13,110 @@ document.addEventListener('DOMContentLoaded', function() {
     const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl);
     });
+    
+    // Mobile-specific enhancements
+    setupMobileEnhancements();
 });
+
+// Mobile-specific enhancements
+function setupMobileEnhancements() {
+    // Detect if device is mobile
+    const isMobile = window.matchMedia("(max-width: 768px)").matches;
+    
+    if (isMobile) {
+        // Improve touch interactions for buttons
+        document.querySelectorAll('.btn').forEach(button => {
+            button.addEventListener('touchstart', function() {
+                this.classList.add('active');
+            });
+            
+            button.addEventListener('touchend', function() {
+                this.classList.remove('active');
+            });
+        });
+        
+        // Fix for 300ms delay on mobile devices
+        document.querySelectorAll('a, button, .nav-link, .day').forEach(element => {
+            element.addEventListener('touchstart', function() {}, {passive: true});
+        });
+        
+        // Adjust datepicker for better mobile experience
+        configureMobileDatepickers();
+        
+        // Handle navbar collapse after click on mobile
+        setupMobileNavbar();
+    }
+    
+    // Handle window resize events
+    window.addEventListener('resize', handleResize);
+    
+    // Initial call to set proper sizes
+    handleResize();
+}
+
+// Configure datepickers for mobile devices
+function configureMobileDatepickers() {
+    // Mobile specific flatpickr configuration
+    if (document.querySelectorAll('.date-picker').length > 0) {
+        document.querySelectorAll('.date-picker').forEach(function(picker) {
+            if (picker._flatpickr) {
+                picker._flatpickr.set('disableMobile', false); // Enable native datepicker on mobile for better UX
+            }
+        });
+    }
+}
+
+// Handle window resize events
+function handleResize() {
+    // Adjust calendar height based on screen width
+    const calendar = document.querySelector('.calendar');
+    if (calendar) {
+        const isMobile = window.matchMedia("(max-width: 768px)").matches;
+        const isVerySmall = window.matchMedia("(max-width: 480px)").matches;
+        
+        document.querySelectorAll('.calendar .day').forEach(day => {
+            if (isVerySmall) {
+                day.style.height = '40px';
+            } else if (isMobile) {
+                day.style.height = '50px';
+            } else {
+                day.style.height = '60px';
+            }
+        });
+    }
+    
+    // Adjust modal height on smaller screens
+    const modals = document.querySelectorAll('.modal-dialog');
+    if (modals.length > 0) {
+        const viewportHeight = window.innerHeight;
+        modals.forEach(modal => {
+            if (window.matchMedia("(max-width: 768px)").matches) {
+                modal.style.maxHeight = (viewportHeight * 0.9) + 'px';
+                modal.style.overflowY = 'auto';
+            } else {
+                modal.style.maxHeight = '';
+                modal.style.overflowY = '';
+            }
+        });
+    }
+}
+
+// Setup navbar to auto-collapse on mobile after clicking a link
+function setupMobileNavbar() {
+    const navLinks = document.querySelectorAll('.navbar-nav .nav-link');
+    const navbarToggler = document.querySelector('.navbar-toggler');
+    const navbarCollapse = document.querySelector('.navbar-collapse');
+    
+    if (navLinks && navbarToggler && navbarCollapse) {
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                if (navbarCollapse.classList.contains('show')) {
+                    navbarToggler.click();
+                }
+            });
+        });
+    }
+}
 
 // Initialize date and time pickers using Flatpickr
 function initializeDatePickers() {
@@ -27,7 +130,11 @@ function initializeDatePickers() {
                 altInput: true,
                 altFormat: "j. F Y",
                 minDate: "today",
-                disableMobile: "true"
+                disableMobile: "true",
+                // Better positioning for mobile devices
+                position: window.matchMedia("(max-width: 768px)").matches ? "auto" : "below",
+                // Mobile-friendly settings
+                appendTo: window.matchMedia("(max-width: 768px)").matches ? document.body : undefined
             });
         });
     }
@@ -43,7 +150,11 @@ function initializeDatePickers() {
                 altInput: true,
                 altFormat: "j. F Y",
                 minDate: "today",
-                disableMobile: "true"
+                disableMobile: "true",
+                // Better positioning for mobile devices
+                position: window.matchMedia("(max-width: 768px)").matches ? "auto" : "below",
+                // Mobile-friendly settings
+                appendTo: window.matchMedia("(max-width: 768px)").matches ? document.body : undefined
             });
         });
     }
@@ -59,7 +170,11 @@ function initializeDatePickers() {
                 dateFormat: "H:i",
                 time_24hr: true,
                 minuteIncrement: 30,
-                disableMobile: "true"
+                disableMobile: "true",
+                // Better positioning for mobile devices
+                position: window.matchMedia("(max-width: 768px)").matches ? "auto" : "below",
+                // Mobile-friendly settings
+                appendTo: window.matchMedia("(max-width: 768px)").matches ? document.body : undefined
             });
         });
     }
@@ -109,6 +224,40 @@ function initializeCalendar() {
             }
             renderCalendar(currentMonth, currentYear);
         });
+    }
+    
+    // Add touch swipe for mobile calendar navigation
+    setupCalendarSwipe(calendarContainer, prevMonthBtn, nextMonthBtn);
+}
+
+// Add swipe gesture support for calendar navigation on mobile
+function setupCalendarSwipe(element, prevBtn, nextBtn) {
+    let touchStartX = 0;
+    let touchEndX = 0;
+    
+    // Only setup swipe if on mobile
+    if (!window.matchMedia("(max-width: 768px)").matches) return;
+    
+    element.addEventListener('touchstart', function(e) {
+        touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+    
+    element.addEventListener('touchend', function(e) {
+        touchEndX = e.changedTouches[0].screenX;
+        handleCalendarSwipe();
+    }, { passive: true });
+    
+    function handleCalendarSwipe() {
+        // Define minimum swipe distance for a valid swipe (in pixels)
+        const minSwipeDistance = 50;
+        
+        if (touchStartX - touchEndX > minSwipeDistance) {
+            // Swipe left - go to next month
+            if (nextBtn) nextBtn.click();
+        } else if (touchEndX - touchStartX > minSwipeDistance) {
+            // Swipe right - go to previous month
+            if (prevBtn) prevBtn.click();
+        }
     }
 }
 
@@ -196,14 +345,31 @@ function renderCalendar(month, year) {
     // Add click event to days for selection - only for future dates
     const dayElements = calendarContainer.querySelectorAll('.day:not(.other-month)');
     dayElements.forEach(day => {
-        day.addEventListener('click', function() {
-            // Check if the day is selectable
-            if (!isSelectable(this)) {
-                return;
-            }
-            selectDay(this);
-        });
+        // Use touchend for mobile devices to prevent delay
+        if (window.matchMedia("(max-width: 768px)").matches) {
+            day.addEventListener('touchend', function(e) {
+                e.preventDefault();
+                // Check if the day is selectable
+                if (!isSelectable(this)) {
+                    return;
+                }
+                selectDay(this);
+            }, { passive: false });
+        } else {
+            day.addEventListener('click', function() {
+                // Check if the day is selectable
+                if (!isSelectable(this)) {
+                    return;
+                }
+                selectDay(this);
+            });
+        }
     });
+    
+    // Apply mobile-specific adjustments
+    if (window.matchMedia("(max-width: 768px)").matches) {
+        handleResize();
+    }
 }
 
 // Load day statuses (free, pending, booked) via AJAX
@@ -227,18 +393,66 @@ function loadDayStatuses(month, year) {
                     updateDayStatuses(response.data);
                 } else {
                     console.error('Error loading calendar data:', response.message);
+                    // Display error for mobile users with toast or alert
+                    if (window.matchMedia("(max-width: 768px)").matches) {
+                        showMobileAlert('Fehler beim Laden der Kalenderdaten. Bitte versuchen Sie es später erneut.');
+                    }
                 }
             } catch (e) {
                 console.error('Error parsing calendar data:', e, this.responseText);
+                // Display parse error for mobile users
+                if (window.matchMedia("(max-width: 768px)").matches) {
+                    showMobileAlert('Fehler beim Laden der Kalenderdaten. Bitte versuchen Sie es später erneut.');
+                }
             }
         }
     };
     
     xhr.onerror = function() {
         console.error('AJAX request failed');
+        // Show network error to mobile users
+        if (window.matchMedia("(max-width: 768px)").matches) {
+            showMobileAlert('Netzwerkfehler. Bitte überprüfen Sie Ihre Internetverbindung.');
+        }
     };
     
     xhr.send();
+}
+
+// Show a mobile-friendly alert/toast message
+function showMobileAlert(message) {
+    // Create a toast element if it doesn't exist
+    let toast = document.getElementById('mobileToast');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'mobileToast';
+        toast.className = 'mobile-toast';
+        toast.style.cssText = `
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #343a40;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            z-index: 9999;
+            font-size: 14px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            max-width: 90%;
+            text-align: center;
+        `;
+        document.body.appendChild(toast);
+    }
+    
+    // Set message and show toast
+    toast.textContent = message;
+    toast.style.display = 'block';
+    
+    // Hide toast after 3 seconds
+    setTimeout(() => {
+        toast.style.display = 'none';
+    }, 3000);
 }
 
 // Update day status classes in the calendar
@@ -295,6 +509,12 @@ function isSelectable(dayElement) {
     // Check if it's a past date (before today)
     if (date < today) {
         console.log('Date is in the past and not selectable:', dateStr);
+        
+        // Show feedback on mobile
+        if (window.matchMedia("(max-width: 768px)").matches) {
+            showMobileAlert('Vergangene Daten sind nicht auswählbar.');
+        }
+        
         return false;
     }
     
@@ -304,6 +524,12 @@ function isSelectable(dayElement) {
         // to see if the time slot is partially available
         // This would require additional logic with backend communication
         console.log('Date is not free:', dateStr);
+        
+        // Show feedback on mobile
+        if (window.matchMedia("(max-width: 768px)").matches) {
+            showMobileAlert('Dieses Datum ist bereits reserviert oder angefragt.');
+        }
+        
         return false;
     }
     
@@ -335,6 +561,11 @@ function selectDay(dayElement) {
             });
             
             dayElement.classList.add('selected');
+            
+            // Mobile feedback
+            if (window.matchMedia("(max-width: 768px)").matches) {
+                showMobileAlert('Startdatum ausgewählt. Bitte wählen Sie jetzt das Enddatum.');
+            }
         } else if (startDateInput.value && !endDateInput.value) {
             // Complete the selection
             const startDate = new Date(startDateInput.value);
@@ -345,6 +576,11 @@ function selectDay(dayElement) {
                 // If end date is before start date, swap them
                 endDateInput.value = startDateInput.value;
                 startDateInput.value = date;
+                
+                // Mobile feedback
+                if (window.matchMedia("(max-width: 768px)").matches) {
+                    showMobileAlert('Daten wurden getauscht, da das Enddatum vor dem Startdatum lag.');
+                }
             } else {
                 endDateInput.value = date;
             }
@@ -416,8 +652,13 @@ function highlightDateRange(startDate, endDate) {
     
     // If the range contains unavailable days, show a warning to the user
     if (!allDaysInRangeAreSelectable) {
-        alert('Achtung: Der ausgewählte Zeitraum enthält Tage, die nicht verfügbar sind. ' +
-              'Bitte wählen Sie einen anderen Zeitraum aus.');
+        const message = 'Achtung: Der ausgewählte Zeitraum enthält Tage, die nicht verfügbar sind. Bitte wählen Sie einen anderen Zeitraum aus.';
+        
+        if (window.matchMedia("(max-width: 768px)").matches) {
+            showMobileAlert(message);
+        } else {
+            alert(message);
+        }
         
         // Reset the selection
         document.querySelectorAll('.day.selected').forEach(el => {
@@ -458,13 +699,27 @@ function setupReservationSelection() {
         
         if (!startDate.value) {
             event.preventDefault();
-            alert('Bitte wählen Sie ein Startdatum aus.');
+            const message = 'Bitte wählen Sie ein Startdatum aus.';
+            
+            if (window.matchMedia("(max-width: 768px)").matches) {
+                showMobileAlert(message);
+            } else {
+                alert(message);
+            }
+            
             return false;
         }
         
         if (!endDate.value) {
             event.preventDefault();
-            alert('Bitte wählen Sie ein Enddatum aus.');
+            const message = 'Bitte wählen Sie ein Enddatum aus.';
+            
+            if (window.matchMedia("(max-width: 768px)").matches) {
+                showMobileAlert(message);
+            } else {
+                alert(message);
+            }
+            
             return false;
         }
         
@@ -480,7 +735,15 @@ function setupReservationSelection() {
             if (dayElement && !isSelectable(dayElement)) {
                 // Found a non-selectable day in the range
                 event.preventDefault();
-                alert('Der ausgewählte Zeitraum enthält Tage, die nicht verfügbar sind. Bitte wählen Sie einen anderen Zeitraum aus.');
+                
+                const message = 'Der ausgewählte Zeitraum enthält Tage, die nicht verfügbar sind. Bitte wählen Sie einen anderen Zeitraum aus.';
+                
+                if (window.matchMedia("(max-width: 768px)").matches) {
+                    showMobileAlert(message);
+                } else {
+                    alert(message);
+                }
+                
                 return false;
             }
             
