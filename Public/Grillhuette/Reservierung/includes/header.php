@@ -24,6 +24,12 @@ require_once __DIR__ . '/config.php';
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
+                    <?php if (isset($_SESSION['user_id'])): ?>
+                    <!-- Welcome message at the top of mobile menu -->
+                    <div class="d-lg-none py-2 mb-2 border-bottom border-secondary">
+                        <span class="text-white">Willkommen, <?php echo escape($_SESSION['user_name']); ?></span>
+                    </div>
+                    <?php endif; ?>
                     <ul class="navbar-nav me-auto">
                     <li class="nav-item">
                             <a class="nav-link" href="/Grillhuette">Informationen</a>
@@ -53,7 +59,7 @@ require_once __DIR__ . '/config.php';
                     </ul>
                     <ul class="navbar-nav">
                         <?php if (isset($_SESSION['user_id'])): ?>
-                            <li class="nav-item">
+                            <li class="nav-item d-none d-lg-block">
                                 <span class="nav-link">Willkommen, <?php echo escape($_SESSION['user_name']); ?></span>
                             </li>
                             <li class="nav-item">
