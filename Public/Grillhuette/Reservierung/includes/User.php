@@ -33,7 +33,7 @@ class User {
             
             // E-Mail zur Verifikation senden
             $subject = 'Bestätigen Sie Ihre E-Mail-Adresse';
-            $verifyUrl = 'https://' . $_SERVER['HTTP_HOST'] . '/Grillhuette/verify.php?token=' . $verificationToken;
+            $verifyUrl = 'https://' . $_SERVER['HTTP_HOST'] . getRelativePath('Benutzer/Verifizieren') . '?token=' . $verificationToken;
             
             $body = '
                 <!DOCTYPE html>
@@ -210,7 +210,7 @@ class User {
             
             // E-Mail senden
             $subject = 'Zurücksetzen Ihres Passworts';
-            $resetUrl = 'https://' . $_SERVER['HTTP_HOST'] . '/Grillhuette/reset_password.php?token=' . $token;
+            $resetUrl = 'https://' . $_SERVER['HTTP_HOST'] . getRelativePath('Benutzer/Passwort-zuruecksetzen') . '?token=' . $token;
             
             $body = '
                 <!DOCTYPE html>
@@ -403,7 +403,7 @@ class User {
             
             // E-Mail zur Verifikation senden
             $subject = 'Bestätigen Sie Ihre neue E-Mail-Adresse';
-            $verifyUrl = 'https://' . $_SERVER['HTTP_HOST'] . '/Grillhuette/verify.php?token=' . $verificationToken;
+            $verifyUrl = 'https://' . $_SERVER['HTTP_HOST'] . getRelativePath('Benutzer/Verifizieren') . '?token=' . $verificationToken;
             
             $body = '
                 <!DOCTYPE html>

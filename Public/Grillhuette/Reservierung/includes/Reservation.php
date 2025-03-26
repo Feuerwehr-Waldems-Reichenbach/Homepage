@@ -62,7 +62,7 @@ class Reservation {
                             
                             <p>Ihre Anfrage wird nun von unserem Team geprüft. Sie erhalten eine weitere E-Mail, sobald Ihre Reservierung bestätigt oder abgelehnt wurde.</p>
                             
-                            <a href="https://' . $_SERVER['HTTP_HOST'] . '/Grillhuette/my_reservations.php" class="button">Meine Reservierungen ansehen</a>
+                            <a href="' . $myReservationsUrl . '" class="button">Meine Reservierungen ansehen</a>
                             
                             <div class="footer">
                                 <p>Bei Fragen stehen wir Ihnen gerne zur Verfügung.</p>
@@ -113,7 +113,7 @@ class Reservation {
                                     Bis: ' . date('d.m.Y H:i', strtotime($endDatetime)) . '
                                 </div>
                                 
-                                <a href="https://' . $_SERVER['HTTP_HOST'] . '/Grillhuette/admin_reservations.php" class="button">Reservierung verwalten</a>
+                                <a href="' . $adminReservationsUrl . '" class="button">Reservierung verwalten</a>
                                 
                                 <div class="footer">
                                     <p>Dies ist eine automatische Benachrichtigung des Grillhütten-Reservierungssystems.</p>
@@ -269,7 +269,7 @@ class Reservation {
             }
             
             $body .= '
-                            <a href="https://' . $_SERVER['HTTP_HOST'] . '/Grillhuette/my_reservations.php" class="button">Meine Reservierungen ansehen</a>
+                            <a href="' . $myReservationsUrl . '" class="button">Meine Reservierungen ansehen</a>
                             
                             <div class="footer">
                                 <p>Bei Fragen können Sie auf diese E-Mail antworten.</p>
@@ -345,7 +345,7 @@ class Reservation {
                                     ' . nl2br($message) . '
                                 </div>
                                 
-                                <a href="https://' . $_SERVER['HTTP_HOST'] . '/Grillhuette/admin_reservations.php" class="button">Reservierung verwalten</a>
+                                <a href="' . $adminReservationsUrl . '" class="button">Reservierung verwalten</a>
                                 
                                 <div class="footer">
                                     <p>Dies ist eine automatische Benachrichtigung des Grillhütten-Reservierungssystems.</p>
@@ -417,7 +417,7 @@ class Reservation {
                                 ' . nl2br($message) . '
                             </div>
                             
-                            <a href="https://' . $_SERVER['HTTP_HOST'] . '/Grillhuette/my_reservations.php" class="button">Meine Reservierungen ansehen</a>
+                            <a href="' . $myReservationsUrl . '" class="button">Meine Reservierungen ansehen</a>
                             
                             <div class="footer">
                                 <p>Bei Fragen können Sie auf diese E-Mail antworten.</p>
@@ -509,7 +509,7 @@ class Reservation {
             }
             
             $body .= '
-                            <a href="https://' . $_SERVER['HTTP_HOST'] . '/Grillhuette/my_reservations.php" class="button">Meine Reservierungen ansehen</a>
+                            <a href="' . $myReservationsUrl . '" class="button">Meine Reservierungen ansehen</a>
                             
                             <div class="footer">
                                 <p>Bei Fragen können Sie auf diese E-Mail antworten.</p>
@@ -588,7 +588,7 @@ class Reservation {
                                 
                                 <p>Bei Fragen wenden Sie sich bitte an den Administrator.</p>
                                 
-                                <a href="https://' . $_SERVER['HTTP_HOST'] . '/Grillhuette/my_reservations.php" class="button">Meine Reservierungen ansehen</a>
+                                <a href="' . $myReservationsUrl . '" class="button">Meine Reservierungen ansehen</a>
                                 
                                 <div class="footer">
                                     <p>Ihr Team der Grillhütte Reichenbach</p>
@@ -643,7 +643,7 @@ class Reservation {
                                         Status: <span class="status-badge">Storniert</span>
                                     </div>
                                     
-                                    <a href="https://' . $_SERVER['HTTP_HOST'] . '/Grillhuette/admin_reservations.php" class="button">Reservierungen verwalten</a>
+                                    <a href="' . $adminReservationsUrl . '" class="button">Reservierungen verwalten</a>
                                     
                                     <div class="footer">
                                         <p>Dies ist eine automatische Benachrichtigung des Grillhütten-Reservierungssystems.</p>
@@ -884,7 +884,7 @@ class Reservation {
                                 <p><strong>Neuer Zeitraum:</strong> ' . date('d.m.Y H:i', strtotime($startDatetime)) . ' bis ' . date('d.m.Y H:i', strtotime($endDatetime)) . '</p>
                                 <p><strong>Status:</strong> ' . ucfirst($statusText) . '</p>
                             </div>
-                            <a href="https://' . $_SERVER['HTTP_HOST'] . '/Grillhuette/my_reservations.php" class="button">Meine Reservierungen ansehen</a>
+                            <a href="' . $myReservationsUrl . '" class="button">Meine Reservierungen ansehen</a>
                             <div class="footer">
                                 <p>Bei Fragen können Sie auf diese E-Mail antworten.</p>
                                 <p>Ihr Team der Grillhütte Reichenbach</p>
@@ -963,7 +963,7 @@ class Reservation {
                             </div>
                             <div class="content">
                                 <p>Ihre Reservierung für die Grillhütte für den Zeitraum ' . date('d.m.Y H:i', strtotime($reservation['start_datetime'])) . ' bis ' . date('d.m.Y H:i', strtotime($reservation['end_datetime'])) . ' wurde gelöscht.</p>
-                                <a href="https://' . $_SERVER['HTTP_HOST'] . '/Grillhuette/my_reservations.php" class="button">Meine Reservierungen ansehen</a>
+                                <a href="' . $myReservationsUrl . '" class="button">Meine Reservierungen ansehen</a>
                                 <div class="footer">
                                     <p>Bei Fragen wenden Sie sich bitte an den Administrator.</p>
                                     <p>Ihr Team der Grillhütte Reichenbach</p>
