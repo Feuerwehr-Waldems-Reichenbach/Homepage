@@ -19,19 +19,17 @@ if (empty($token)) {
     exit;
 }
 
-$errors = [];
-$success = false;
-
 // POST-Anfrage verarbeiten
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // CSRF-Token überprüfen
     if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
-        $errors[] = 'Ungültige Anfrage. Bitte versuchen Sie es erneut.';
+        $_SESSION['reset_error'] = 'Ungültige Anfrage. Bitte versuchen Sie es erneut.';
     } else {
         $password = isset($_POST['password']) ? $_POST['password'] : '';
         $password_confirm = isset($_POST['password_confirm']) ? $_POST['password_confirm'] : '';
         
         // Validierung
+        $errors = [];
         if (empty($password)) {
             $errors[] = 'Bitte geben Sie ein Passwort ein.';
         } elseif (strlen($password) < 8) {
@@ -48,12 +46,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $result = $user->resetPassword($token, $password);
             
             if ($result['success']) {
-                $success = true;
+                $_SESSION['reset_success'] = true;
             } else {
-                $errors[] = $result['message'];
+                $_SESSION['reset_error'] = $result['message'];
             }
+        } else {
+            $_SESSION['reset_error'] = implode('<br>', $errors);
         }
     }
+    
+    // PRG-Muster: Nach POST-Anfrage zurück zur selben Seite weiterleiten mit dem Token
+    header('Location: ' . getRelativePath('Benutzer/Passwort-zuruecksetzen') . '?token=' . urlencode($token));
+    exit;
+}
+
+// Temporäre Daten aus der Session auslesen und entfernen
+$error = '';
+$success = false;
+
+if (isset($_SESSION['reset_error'])) {
+    $error = $_SESSION['reset_error'];
+    unset($_SESSION['reset_error']);
+}
+
+if (isset($_SESSION['reset_success'])) {
+    $success = true;
+    unset($_SESSION['reset_success']);
 }
 
 // Titel für die Seite
@@ -78,13 +96,9 @@ require_once '../../includes/header.php';
                         <a href="<?php echo getRelativePath('Benutzer/Anmelden'); ?>" class="btn btn-primary">Zum Login</a>
                     </p>
                 <?php else: ?>
-                    <?php if (!empty($errors)): ?>
+                    <?php if (!empty($error)): ?>
                         <div class="alert alert-danger">
-                            <ul class="mb-0">
-                                <?php foreach ($errors as $error): ?>
-                                    <li><?php echo escape($error); ?></li>
-                                <?php endforeach; ?>
-                            </ul>
+                            <?php echo $error; ?>
                         </div>
                     <?php endif; ?>
                     

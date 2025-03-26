@@ -8,19 +8,11 @@ if (isset($_SESSION['user_id'])) {
     exit;
 }
 
-$errors = [];
-$formData = [
-    'email' => '',
-    'first_name' => '',
-    'last_name' => '',
-    'phone' => ''
-];
-
 // POST-Anfrage verarbeiten
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // CSRF-Token überprüfen
     if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
-        $errors[] = 'Ungültige Anfrage. Bitte versuchen Sie es erneut.';
+        $_SESSION['reg_error'] = 'Ungültige Anfrage. Bitte versuchen Sie es erneut.';
     } else {
         // Formularfelder validieren
         $formData = [
@@ -34,6 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $password_confirm = isset($_POST['password_confirm']) ? $_POST['password_confirm'] : '';
         
         // Validierung
+        $errors = [];
         if (empty($formData['email'])) {
             $errors[] = 'Bitte geben Sie Ihre E-Mail-Adresse ein.';
         } elseif (!filter_var($formData['email'], FILTER_VALIDATE_EMAIL)) {
@@ -75,10 +68,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 header('Location: ' . getRelativePath('Benutzer/Anmelden'));
                 exit;
             } else {
-                $errors[] = $result['message'];
+                $_SESSION['reg_error'] = $result['message'];
+                $_SESSION['reg_form_data'] = $formData;
             }
+        } else {
+            $_SESSION['reg_error'] = implode('<br>', $errors);
+            $_SESSION['reg_form_data'] = $formData;
         }
     }
+    
+    // PRG-Muster: Nach POST-Anfrage zurück zur Registrierungsseite weiterleiten
+    header('Location: ' . getRelativePath('Benutzer/Registrieren'));
+    exit;
+}
+
+// Temporäre Fehler und Formulardaten aus der Session auslesen und entfernen
+$error = '';
+$formData = [
+    'email' => '',
+    'first_name' => '',
+    'last_name' => '',
+    'phone' => ''
+];
+
+if (isset($_SESSION['reg_error'])) {
+    $error = $_SESSION['reg_error'];
+    unset($_SESSION['reg_error']);
+}
+
+if (isset($_SESSION['reg_form_data'])) {
+    $formData = $_SESSION['reg_form_data'];
+    unset($_SESSION['reg_form_data']);
 }
 
 // Titel für die Seite
@@ -95,13 +115,9 @@ require_once '../../includes/header.php';
                 <h2>Registrieren</h2>
             </div>
             <div class="card-body">
-                <?php if (!empty($errors)): ?>
+                <?php if (!empty($error)): ?>
                     <div class="alert alert-danger">
-                        <ul class="mb-0">
-                            <?php foreach ($errors as $error): ?>
-                                <li><?php echo escape($error); ?></li>
-                            <?php endforeach; ?>
-                        </ul>
+                        <?php echo $error; ?>
                     </div>
                 <?php endif; ?>
                 

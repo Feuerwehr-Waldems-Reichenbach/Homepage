@@ -12,57 +12,49 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-// Reservierungen des Benutzers abrufen
-$reservation = new Reservation();
-$userReservations = $reservation->getByUserId($_SESSION['user_id']);
-
 // Nachricht hinzufügen
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_message'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // CSRF-Token überprüfen
     if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
         $_SESSION['flash_message'] = 'Ungültige Anfrage. Bitte versuchen Sie es erneut.';
         $_SESSION['flash_type'] = 'danger';
     } else {
-        $reservationId = isset($_POST['reservation_id']) ? intval($_POST['reservation_id']) : 0;
-        $message = isset($_POST['message']) ? trim($_POST['message']) : '';
+        if (isset($_POST['add_message'])) {
+            $reservationId = isset($_POST['reservation_id']) ? intval($_POST['reservation_id']) : 0;
+            $message = isset($_POST['message']) ? trim($_POST['message']) : '';
+            
+            if (empty($message)) {
+                $_SESSION['flash_message'] = 'Bitte geben Sie eine Nachricht ein.';
+                $_SESSION['flash_type'] = 'danger';
+            } else {
+                $reservation = new Reservation();
+                $result = $reservation->addUserMessage($reservationId, $message);
+                
+                $_SESSION['flash_message'] = $result['message'];
+                $_SESSION['flash_type'] = $result['success'] ? 'success' : 'danger';
+            }
+        }
         
-        if (empty($message)) {
-            $_SESSION['flash_message'] = 'Bitte geben Sie eine Nachricht ein.';
-            $_SESSION['flash_type'] = 'danger';
-        } else {
-            $result = $reservation->addUserMessage($reservationId, $message);
+        // Reservierung stornieren
+        if (isset($_POST['cancel_reservation'])) {
+            $reservationId = isset($_POST['reservation_id']) ? intval($_POST['reservation_id']) : 0;
+            
+            $reservation = new Reservation();
+            $result = $reservation->cancel($reservationId);
             
             $_SESSION['flash_message'] = $result['message'];
             $_SESSION['flash_type'] = $result['success'] ? 'success' : 'danger';
-            
-            // Bei Erfolg die Reservierungen neu laden
-            if ($result['success']) {
-                $userReservations = $reservation->getByUserId($_SESSION['user_id']);
-            }
         }
+        
+        // PRG-Muster: Umleiten nach POST, um erneutes Absenden bei Neuladen zu verhindern
+        header('Location: ' . getRelativePath('Benutzer/Meine-Reservierungen'));
+        exit;
     }
 }
 
-// Reservierung stornieren
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cancel_reservation'])) {
-    // CSRF-Token überprüfen
-    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
-        $_SESSION['flash_message'] = 'Ungültige Anfrage. Bitte versuchen Sie es erneut.';
-        $_SESSION['flash_type'] = 'danger';
-    } else {
-        $reservationId = isset($_POST['reservation_id']) ? intval($_POST['reservation_id']) : 0;
-        
-        $result = $reservation->cancel($reservationId);
-        
-        $_SESSION['flash_message'] = $result['message'];
-        $_SESSION['flash_type'] = $result['success'] ? 'success' : 'danger';
-        
-        // Bei Erfolg die Reservierungen neu laden
-        if ($result['success']) {
-            $userReservations = $reservation->getByUserId($_SESSION['user_id']);
-        }
-    }
-}
+// Reservierungen des Benutzers abrufen
+$reservation = new Reservation();
+$userReservations = $reservation->getByUserId($_SESSION['user_id']);
 
 // Titel für die Seite
 $pageTitle = 'Meine Reservierungen';

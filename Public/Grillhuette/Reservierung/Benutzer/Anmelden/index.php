@@ -8,19 +8,17 @@ if (isset($_SESSION['user_id'])) {
     exit;
 }
 
-$errors = [];
-$email = '';
-
 // POST-Anfrage verarbeiten
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // CSRF-Token überprüfen
     if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
-        $errors[] = 'Ungültige Anfrage. Bitte versuchen Sie es erneut.';
+        $_SESSION['login_error'] = 'Ungültige Anfrage. Bitte versuchen Sie es erneut.';
     } else {
         $email = isset($_POST['email']) ? trim($_POST['email']) : '';
         $password = isset($_POST['password']) ? $_POST['password'] : '';
         
         // Validierung
+        $errors = [];
         if (empty($email)) {
             $errors[] = 'Bitte geben Sie Ihre E-Mail-Adresse ein.';
         } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -44,10 +42,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 header('Location: ' . $redirect);
                 exit;
             } else {
-                $errors[] = $result['message'];
+                $_SESSION['login_error'] = $result['message'];
+                $_SESSION['login_email'] = $email; // Email für Wiederanzeige speichern
             }
+        } else {
+            $_SESSION['login_error'] = implode('<br>', $errors);
+            $_SESSION['login_email'] = $email; // Email für Wiederanzeige speichern
         }
     }
+    
+    // PRG-Muster: Nach POST-Anfrage zurück zur Login-Seite weiterleiten
+    header('Location: ' . getRelativePath('Benutzer/Anmelden'));
+    exit;
+}
+
+// Temporäre Fehler und Email-Adresse aus der Session auslesen und entfernen
+$error = '';
+$email = '';
+
+if (isset($_SESSION['login_error'])) {
+    $error = $_SESSION['login_error'];
+    unset($_SESSION['login_error']);
+}
+
+if (isset($_SESSION['login_email'])) {
+    $email = $_SESSION['login_email'];
+    unset($_SESSION['login_email']);
 }
 
 // Titel für die Seite
@@ -64,13 +84,9 @@ require_once '../../includes/header.php';
                 <h2>Anmelden</h2>
             </div>
             <div class="card-body">
-                <?php if (!empty($errors)): ?>
+                <?php if (!empty($error)): ?>
                     <div class="alert alert-danger">
-                        <ul class="mb-0">
-                            <?php foreach ($errors as $error): ?>
-                                <li><?php echo escape($error); ?></li>
-                            <?php endforeach; ?>
-                        </ul>
+                        <?php echo $error; ?>
                     </div>
                 <?php endif; ?>
                 

@@ -18,230 +18,172 @@ $reservation = new Reservation();
 // Status-Filter
 $statusFilter = isset($_GET['status']) ? $_GET['status'] : 'all';
 
+// Benutzer für Dropdown bei neuer Reservierung
+$allUsers = $user->getAllUsers();
+
+// Alle POST-Anfragen abfangen und PRG-Muster anwenden
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // CSRF-Token überprüfen
+    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+        $_SESSION['flash_message'] = 'Ungültige Anfrage. Bitte versuchen Sie es erneut.';
+        $_SESSION['flash_type'] = 'danger';
+    } else {
+        // Status aktualisieren
+        if (isset($_POST['update_status'])) {
+            $reservationId = isset($_POST['reservation_id']) ? intval($_POST['reservation_id']) : 0;
+            $newStatus = isset($_POST['update_status']) ? $_POST['update_status'] : '';
+            $adminMessage = isset($_POST['admin_message']) ? trim($_POST['admin_message']) : '';
+            
+            if (empty($newStatus) || !in_array($newStatus, ['pending', 'confirmed', 'canceled'])) {
+                $_SESSION['flash_message'] = 'Ungültiger Status.';
+                $_SESSION['flash_type'] = 'danger';
+            } else {
+                $result = $reservation->updateStatus($reservationId, $newStatus, $adminMessage);
+                
+                $_SESSION['flash_message'] = $result['message'];
+                $_SESSION['flash_type'] = $result['success'] ? 'success' : 'danger';
+            }
+        }
+        
+        // Neue Reservierung erstellen
+        else if (isset($_POST['create_reservation'])) {
+            $userId = isset($_POST['user_id']) ? intval($_POST['user_id']) : 0;
+            $startDate = isset($_POST['start_date']) ? trim($_POST['start_date']) : '';
+            $endDate = isset($_POST['end_date']) ? trim($_POST['end_date']) : '';
+            $startTime = isset($_POST['start_time']) ? trim($_POST['start_time']) : '12:00';
+            $endTime = isset($_POST['end_time']) ? trim($_POST['end_time']) : '12:00';
+            $adminMessage = isset($_POST['admin_message']) ? trim($_POST['admin_message']) : '';
+            
+            // Validierung
+            $errors = [];
+            
+            if (empty($userId)) {
+                $errors[] = 'Bitte wählen Sie einen Benutzer aus.';
+            }
+            
+            if (empty($startDate) || empty($endDate)) {
+                $errors[] = 'Bitte wählen Sie ein Start- und Enddatum aus.';
+            }
+            
+            if (!preg_match('/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/', $startTime) || 
+                !preg_match('/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/', $endTime)) {
+                $errors[] = 'Bitte geben Sie gültige Uhrzeiten ein (Format: HH:MM).';
+            }
+            
+            if (empty($errors)) {
+                // Start- und Enddatum mit Uhrzeit kombinieren
+                $startDatetime = $startDate . ' ' . $startTime . ':00';
+                $endDatetime = $endDate . ' ' . $endTime . ':00';
+                
+                // Überprüfen, ob das Enddatum nach dem Startdatum liegt
+                if (strtotime($endDatetime) <= strtotime($startDatetime)) {
+                    $_SESSION['flash_message'] = 'Das Enddatum muss nach dem Startdatum liegen.';
+                    $_SESSION['flash_type'] = 'danger';
+                } else {
+                    $result = $reservation->createByAdmin($userId, $startDatetime, $endDatetime, $adminMessage);
+                    
+                    $_SESSION['flash_message'] = $result['message'];
+                    $_SESSION['flash_type'] = $result['success'] ? 'success' : 'danger';
+                }
+            } else {
+                $_SESSION['flash_message'] = implode('<br>', $errors);
+                $_SESSION['flash_type'] = 'danger';
+            }
+        }
+        
+        // Nachricht hinzufügen
+        else if (isset($_POST['add_admin_message'])) {
+            $reservationId = isset($_POST['reservation_id']) ? intval($_POST['reservation_id']) : 0;
+            $message = isset($_POST['admin_message']) ? trim($_POST['admin_message']) : '';
+            
+            if (empty($message)) {
+                $_SESSION['flash_message'] = 'Bitte geben Sie eine Nachricht ein.';
+                $_SESSION['flash_type'] = 'danger';
+            } else {
+                $result = $reservation->addAdminMessage($reservationId, $message);
+                
+                $_SESSION['flash_message'] = $result['message'];
+                $_SESSION['flash_type'] = $result['success'] ? 'success' : 'danger';
+            }
+        }
+        
+        // Reservierung bearbeiten
+        else if (isset($_POST['edit_reservation'])) {
+            $reservationId = isset($_POST['reservation_id']) ? intval($_POST['reservation_id']) : 0;
+            $userId = isset($_POST['user_id']) ? intval($_POST['user_id']) : 0;
+            $startDate = isset($_POST['start_date']) ? trim($_POST['start_date']) : '';
+            $endDate = isset($_POST['end_date']) ? trim($_POST['end_date']) : '';
+            $startTime = isset($_POST['start_time']) ? trim($_POST['start_time']) : '12:00';
+            $endTime = isset($_POST['end_time']) ? trim($_POST['end_time']) : '12:00';
+            $adminMessage = isset($_POST['admin_message']) ? trim($_POST['admin_message']) : '';
+            $status = isset($_POST['status']) ? trim($_POST['status']) : 'pending';
+            
+            // Validierung
+            $errors = [];
+            
+            if (empty($userId)) {
+                $errors[] = 'Bitte wählen Sie einen Benutzer aus.';
+            }
+            
+            if (empty($startDate) || empty($endDate)) {
+                $errors[] = 'Bitte wählen Sie ein Start- und Enddatum aus.';
+            }
+            
+            if (!preg_match('/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/', $startTime) || 
+                !preg_match('/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/', $endTime)) {
+                $errors[] = 'Bitte geben Sie gültige Uhrzeiten ein (Format: HH:MM).';
+            }
+            
+            if (!in_array($status, ['pending', 'confirmed', 'canceled'])) {
+                $errors[] = 'Ungültiger Status.';
+            }
+            
+            if (empty($errors)) {
+                // Start- und Enddatum mit Uhrzeit kombinieren
+                $startDatetime = $startDate . ' ' . $startTime . ':00';
+                $endDatetime = $endDate . ' ' . $endTime . ':00';
+                
+                // Überprüfen, ob das Enddatum nach dem Startdatum liegt
+                if (strtotime($endDatetime) <= strtotime($startDatetime)) {
+                    $_SESSION['flash_message'] = 'Das Enddatum muss nach dem Startdatum liegen.';
+                    $_SESSION['flash_type'] = 'danger';
+                } else {
+                    $result = $reservation->updateReservation($reservationId, $userId, $startDatetime, $endDatetime, $adminMessage, $status);
+                    
+                    $_SESSION['flash_message'] = $result['message'];
+                    $_SESSION['flash_type'] = $result['success'] ? 'success' : 'danger';
+                }
+            } else {
+                $_SESSION['flash_message'] = implode('<br>', $errors);
+                $_SESSION['flash_type'] = 'danger';
+            }
+        }
+        
+        // Reservierung löschen
+        else if (isset($_POST['delete_reservation'])) {
+            $reservationId = isset($_POST['reservation_id']) ? intval($_POST['reservation_id']) : 0;
+            
+            $result = $reservation->deleteReservation($reservationId);
+            
+            $_SESSION['flash_message'] = $result['message'];
+            $_SESSION['flash_type'] = $result['success'] ? 'success' : 'danger';
+        }
+    }
+    
+    // PRG-Muster: Nach POST-Anfrage zurück zur selben Seite weiterleiten, um erneutes Absenden zu verhindern
+    $redirectUrl = getRelativePath('Admin/Reservierungsverwaltung');
+    if ($statusFilter !== 'all') {
+        $redirectUrl .= '?status=' . $statusFilter;
+    }
+    header('Location: ' . $redirectUrl);
+    exit;
+}
+
 // Reservierungen abrufen
 if ($statusFilter === 'all') {
     $allReservations = $reservation->getAll();
 } else {
     $allReservations = $reservation->getAllByStatus($statusFilter);
-}
-
-// Benutzer für Dropdown bei neuer Reservierung
-$allUsers = $user->getAllUsers();
-
-// Status aktualisieren
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_status'])) {
-    // CSRF-Token überprüfen
-    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
-        $_SESSION['flash_message'] = 'Ungültige Anfrage. Bitte versuchen Sie es erneut.';
-        $_SESSION['flash_type'] = 'danger';
-    } else {
-        $reservationId = isset($_POST['reservation_id']) ? intval($_POST['reservation_id']) : 0;
-        $newStatus = isset($_POST['update_status']) ? $_POST['update_status'] : '';
-        $adminMessage = isset($_POST['admin_message']) ? trim($_POST['admin_message']) : '';
-        
-        if (empty($newStatus) || !in_array($newStatus, ['pending', 'confirmed', 'canceled'])) {
-            $_SESSION['flash_message'] = 'Ungültiger Status.';
-            $_SESSION['flash_type'] = 'danger';
-        } else {
-            $result = $reservation->updateStatus($reservationId, $newStatus, $adminMessage);
-            
-            $_SESSION['flash_message'] = $result['message'];
-            $_SESSION['flash_type'] = $result['success'] ? 'success' : 'danger';
-            
-            // Bei Erfolg die Reservierungen neu laden
-            if ($result['success']) {
-                if ($statusFilter === 'all') {
-                    $allReservations = $reservation->getAll();
-                } else {
-                    $allReservations = $reservation->getAllByStatus($statusFilter);
-                }
-            }
-        }
-    }
-}
-
-// Neue Reservierung erstellen
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_reservation'])) {
-    // CSRF-Token überprüfen
-    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
-        $_SESSION['flash_message'] = 'Ungültige Anfrage. Bitte versuchen Sie es erneut.';
-        $_SESSION['flash_type'] = 'danger';
-    } else {
-        $userId = isset($_POST['user_id']) ? intval($_POST['user_id']) : 0;
-        $startDate = isset($_POST['start_date']) ? trim($_POST['start_date']) : '';
-        $endDate = isset($_POST['end_date']) ? trim($_POST['end_date']) : '';
-        $startTime = isset($_POST['start_time']) ? trim($_POST['start_time']) : '12:00';
-        $endTime = isset($_POST['end_time']) ? trim($_POST['end_time']) : '12:00';
-        $adminMessage = isset($_POST['admin_message']) ? trim($_POST['admin_message']) : '';
-        
-        // Validierung
-        $errors = [];
-        
-        if (empty($userId)) {
-            $errors[] = 'Bitte wählen Sie einen Benutzer aus.';
-        }
-        
-        if (empty($startDate) || empty($endDate)) {
-            $errors[] = 'Bitte wählen Sie ein Start- und Enddatum aus.';
-        }
-        
-        if (!preg_match('/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/', $startTime) || 
-            !preg_match('/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/', $endTime)) {
-            $errors[] = 'Bitte geben Sie gültige Uhrzeiten ein (Format: HH:MM).';
-        }
-        
-        if (empty($errors)) {
-            // Start- und Enddatum mit Uhrzeit kombinieren
-            $startDatetime = $startDate . ' ' . $startTime . ':00';
-            $endDatetime = $endDate . ' ' . $endTime . ':00';
-            
-            // Überprüfen, ob das Enddatum nach dem Startdatum liegt
-            if (strtotime($endDatetime) <= strtotime($startDatetime)) {
-                $_SESSION['flash_message'] = 'Das Enddatum muss nach dem Startdatum liegen.';
-                $_SESSION['flash_type'] = 'danger';
-            } else {
-                $result = $reservation->createByAdmin($userId, $startDatetime, $endDatetime, $adminMessage);
-                
-                $_SESSION['flash_message'] = $result['message'];
-                $_SESSION['flash_type'] = $result['success'] ? 'success' : 'danger';
-                
-                // Bei Erfolg die Reservierungen neu laden
-                if ($result['success']) {
-                    if ($statusFilter === 'all') {
-                        $allReservations = $reservation->getAll();
-                    } else {
-                        $allReservations = $reservation->getAllByStatus($statusFilter);
-                    }
-                }
-            }
-        } else {
-            $_SESSION['flash_message'] = implode('<br>', $errors);
-            $_SESSION['flash_type'] = 'danger';
-        }
-    }
-}
-
-// Nachricht hinzufügen
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_admin_message'])) {
-    // CSRF-Token überprüfen
-    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
-        $_SESSION['flash_message'] = 'Ungültige Anfrage. Bitte versuchen Sie es erneut.';
-        $_SESSION['flash_type'] = 'danger';
-    } else {
-        $reservationId = isset($_POST['reservation_id']) ? intval($_POST['reservation_id']) : 0;
-        $message = isset($_POST['admin_message']) ? trim($_POST['admin_message']) : '';
-        
-        if (empty($message)) {
-            $_SESSION['flash_message'] = 'Bitte geben Sie eine Nachricht ein.';
-            $_SESSION['flash_type'] = 'danger';
-        } else {
-            $result = $reservation->addAdminMessage($reservationId, $message);
-            
-            $_SESSION['flash_message'] = $result['message'];
-            $_SESSION['flash_type'] = $result['success'] ? 'success' : 'danger';
-            
-            // Bei Erfolg die Reservierungen neu laden
-            if ($result['success']) {
-                if ($statusFilter === 'all') {
-                    $allReservations = $reservation->getAll();
-                } else {
-                    $allReservations = $reservation->getAllByStatus($statusFilter);
-                }
-            }
-        }
-    }
-}
-
-// Reservierung bearbeiten
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_reservation'])) {
-    // CSRF-Token überprüfen
-    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
-        $_SESSION['flash_message'] = 'Ungültige Anfrage. Bitte versuchen Sie es erneut.';
-        $_SESSION['flash_type'] = 'danger';
-    } else {
-        $reservationId = isset($_POST['reservation_id']) ? intval($_POST['reservation_id']) : 0;
-        $userId = isset($_POST['user_id']) ? intval($_POST['user_id']) : 0;
-        $startDate = isset($_POST['start_date']) ? trim($_POST['start_date']) : '';
-        $endDate = isset($_POST['end_date']) ? trim($_POST['end_date']) : '';
-        $startTime = isset($_POST['start_time']) ? trim($_POST['start_time']) : '12:00';
-        $endTime = isset($_POST['end_time']) ? trim($_POST['end_time']) : '12:00';
-        $adminMessage = isset($_POST['admin_message']) ? trim($_POST['admin_message']) : '';
-        $status = isset($_POST['status']) ? trim($_POST['status']) : 'pending';
-        
-        // Validierung
-        $errors = [];
-        
-        if (empty($userId)) {
-            $errors[] = 'Bitte wählen Sie einen Benutzer aus.';
-        }
-        
-        if (empty($startDate) || empty($endDate)) {
-            $errors[] = 'Bitte wählen Sie ein Start- und Enddatum aus.';
-        }
-        
-        if (!preg_match('/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/', $startTime) || 
-            !preg_match('/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/', $endTime)) {
-            $errors[] = 'Bitte geben Sie gültige Uhrzeiten ein (Format: HH:MM).';
-        }
-        
-        if (!in_array($status, ['pending', 'confirmed', 'canceled'])) {
-            $errors[] = 'Ungültiger Status.';
-        }
-        
-        if (empty($errors)) {
-            // Start- und Enddatum mit Uhrzeit kombinieren
-            $startDatetime = $startDate . ' ' . $startTime . ':00';
-            $endDatetime = $endDate . ' ' . $endTime . ':00';
-            
-            // Überprüfen, ob das Enddatum nach dem Startdatum liegt
-            if (strtotime($endDatetime) <= strtotime($startDatetime)) {
-                $_SESSION['flash_message'] = 'Das Enddatum muss nach dem Startdatum liegen.';
-                $_SESSION['flash_type'] = 'danger';
-            } else {
-                $result = $reservation->updateReservation($reservationId, $userId, $startDatetime, $endDatetime, $adminMessage, $status);
-                
-                $_SESSION['flash_message'] = $result['message'];
-                $_SESSION['flash_type'] = $result['success'] ? 'success' : 'danger';
-                
-                // Bei Erfolg die Reservierungen neu laden
-                if ($result['success']) {
-                    if ($statusFilter === 'all') {
-                        $allReservations = $reservation->getAll();
-                    } else {
-                        $allReservations = $reservation->getAllByStatus($statusFilter);
-                    }
-                }
-            }
-        } else {
-            $_SESSION['flash_message'] = implode('<br>', $errors);
-            $_SESSION['flash_type'] = 'danger';
-        }
-    }
-}
-
-// Reservierung löschen
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_reservation'])) {
-    // CSRF-Token überprüfen
-    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
-        $_SESSION['flash_message'] = 'Ungültige Anfrage. Bitte versuchen Sie es erneut.';
-        $_SESSION['flash_type'] = 'danger';
-    } else {
-        $reservationId = isset($_POST['reservation_id']) ? intval($_POST['reservation_id']) : 0;
-        
-        $result = $reservation->deleteReservation($reservationId);
-        
-        $_SESSION['flash_message'] = $result['message'];
-        $_SESSION['flash_type'] = $result['success'] ? 'success' : 'danger';
-        
-        // Bei Erfolg die Reservierungen neu laden
-        if ($result['success']) {
-            if ($statusFilter === 'all') {
-                $allReservations = $reservation->getAll();
-            } else {
-                $allReservations = $reservation->getAllByStatus($statusFilter);
-            }
-        }
-    }
 }
 
 // Titel für die Seite

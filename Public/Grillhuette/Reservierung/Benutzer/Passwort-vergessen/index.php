@@ -8,38 +8,58 @@ if (isset($_SESSION['user_id'])) {
     exit;
 }
 
-$errors = [];
-$success = false;
-$email = '';
-
 // POST-Anfrage verarbeiten
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // CSRF-Token überprüfen
     if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
-        $errors[] = 'Ungültige Anfrage. Bitte versuchen Sie es erneut.';
+        $_SESSION['pw_reset_error'] = 'Ungültige Anfrage. Bitte versuchen Sie es erneut.';
     } else {
         $email = isset($_POST['email']) ? trim($_POST['email']) : '';
         
         // Validierung
         if (empty($email)) {
-            $errors[] = 'Bitte geben Sie Ihre E-Mail-Adresse ein.';
+            $_SESSION['pw_reset_error'] = 'Bitte geben Sie Ihre E-Mail-Adresse ein.';
+            $_SESSION['pw_reset_email'] = $email;
         } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $errors[] = 'Bitte geben Sie eine gültige E-Mail-Adresse ein.';
-        }
-        
-        // Wenn keine Fehler, Passwort-Reset anfordern
-        if (empty($errors)) {
+            $_SESSION['pw_reset_error'] = 'Bitte geben Sie eine gültige E-Mail-Adresse ein.';
+            $_SESSION['pw_reset_email'] = $email;
+        } else {
+            // Wenn keine Fehler, Passwort-Reset anfordern
             $user = new User();
             $result = $user->requestPasswordReset($email);
             
             if ($result['success']) {
-                $success = true;
-                $email = ''; // E-Mail-Adresse aus dem Formular löschen
+                $_SESSION['pw_reset_success'] = true;
             } else {
-                $errors[] = $result['message'];
+                $_SESSION['pw_reset_error'] = $result['message'];
+                $_SESSION['pw_reset_email'] = $email;
             }
         }
     }
+    
+    // PRG-Muster: Nach POST-Anfrage zurück zur selben Seite weiterleiten
+    header('Location: ' . getRelativePath('Benutzer/Passwort-vergessen'));
+    exit;
+}
+
+// Temporäre Daten aus der Session auslesen und entfernen
+$error = '';
+$email = '';
+$success = false;
+
+if (isset($_SESSION['pw_reset_error'])) {
+    $error = $_SESSION['pw_reset_error'];
+    unset($_SESSION['pw_reset_error']);
+}
+
+if (isset($_SESSION['pw_reset_email'])) {
+    $email = $_SESSION['pw_reset_email'];
+    unset($_SESSION['pw_reset_email']);
+}
+
+if (isset($_SESSION['pw_reset_success'])) {
+    $success = true;
+    unset($_SESSION['pw_reset_success']);
 }
 
 // Titel für die Seite
@@ -64,13 +84,9 @@ require_once '../../includes/header.php';
                         <a href="<?php echo getRelativePath('Benutzer/Anmelden'); ?>" class="btn btn-primary">Zurück zum Login</a>
                     </p>
                 <?php else: ?>
-                    <?php if (!empty($errors)): ?>
+                    <?php if (!empty($error)): ?>
                         <div class="alert alert-danger">
-                            <ul class="mb-0">
-                                <?php foreach ($errors as $error): ?>
-                                    <li><?php echo escape($error); ?></li>
-                                <?php endforeach; ?>
-                            </ul>
+                            <?php echo $error; ?>
                         </div>
                     <?php endif; ?>
                     

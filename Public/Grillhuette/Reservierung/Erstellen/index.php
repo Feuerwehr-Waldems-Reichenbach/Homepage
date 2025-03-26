@@ -60,6 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['flash_type'] = 'danger';
     }
     
+    // Weiterleiten zu den eigenen Reservierungen (PRG-Muster)
     header('Location: ' . getRelativePath('Benutzer/Meine-Reservierungen'));
     exit;
 } else {

@@ -22,16 +22,12 @@ if (!$userData) {
     exit;
 }
 
-$errors = [];
-$success = false;
-$emailChangeSuccess = false;
-$passwordChangeSuccess = false;
-
 // POST-Anfrage für Profilaktualisierung verarbeiten
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // CSRF-Token überprüfen
     if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
-        $errors[] = 'Ungültige Anfrage. Bitte versuchen Sie es erneut.';
+        $_SESSION['flash_message'] = 'Ungültige Anfrage. Bitte versuchen Sie es erneut.';
+        $_SESSION['flash_type'] = 'danger';
     } else {
         // Profil-Update
         if (isset($_POST['update_profile'])) {
@@ -40,6 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $phone = isset($_POST['phone']) ? trim($_POST['phone']) : '';
             
             // Validierung
+            $errors = [];
             if (empty($firstName)) {
                 $errors[] = 'Bitte geben Sie Ihren Vornamen ein.';
             }
@@ -53,13 +50,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $result = $user->updateProfile($_SESSION['user_id'], $firstName, $lastName, $phone);
                 
                 if ($result['success']) {
-                    $success = true;
-                    $userData['first_name'] = $firstName;
-                    $userData['last_name'] = $lastName;
-                    $userData['phone'] = $phone;
+                    $_SESSION['flash_message'] = 'Ihr Profil wurde erfolgreich aktualisiert.';
+                    $_SESSION['flash_type'] = 'success';
                 } else {
-                    $errors[] = $result['message'];
+                    $_SESSION['flash_message'] = $result['message'];
+                    $_SESSION['flash_type'] = 'danger';
                 }
+            } else {
+                $_SESSION['flash_message'] = implode('<br>', $errors);
+                $_SESSION['flash_type'] = 'danger';
             }
         }
         
@@ -69,6 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $password = isset($_POST['email_password']) ? $_POST['email_password'] : '';
             
             // Validierung
+            $errors = [];
             if (empty($newEmail)) {
                 $errors[] = 'Bitte geben Sie Ihre neue E-Mail-Adresse ein.';
             } elseif (!filter_var($newEmail, FILTER_VALIDATE_EMAIL)) {
@@ -84,10 +84,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $result = $user->updateEmail($_SESSION['user_id'], $newEmail, $password);
                 
                 if ($result['success']) {
-                    $emailChangeSuccess = true;
+                    $_SESSION['flash_message'] = 'Ihre E-Mail-Adresse wurde aktualisiert. Bitte bestätigen Sie Ihre neue E-Mail-Adresse, indem Sie auf den Link klicken, den wir Ihnen gesendet haben.';
+                    $_SESSION['flash_type'] = 'success';
+                    $_SESSION['email_change_success'] = true;
                 } else {
-                    $errors[] = $result['message'];
+                    $_SESSION['flash_message'] = $result['message'];
+                    $_SESSION['flash_type'] = 'danger';
                 }
+            } else {
+                $_SESSION['flash_message'] = implode('<br>', $errors);
+                $_SESSION['flash_type'] = 'danger';
             }
         }
         
@@ -98,6 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $confirmPassword = isset($_POST['confirm_password']) ? $_POST['confirm_password'] : '';
             
             // Validierung
+            $errors = [];
             if (empty($currentPassword)) {
                 $errors[] = 'Bitte geben Sie Ihr aktuelles Passwort ein.';
             }
@@ -117,10 +124,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $result = $user->updateProfile($_SESSION['user_id'], $userData['first_name'], $userData['last_name'], $userData['phone'], $currentPassword, $newPassword);
                 
                 if ($result['success']) {
-                    $passwordChangeSuccess = true;
+                    $_SESSION['flash_message'] = 'Ihr Passwort wurde erfolgreich aktualisiert.';
+                    $_SESSION['flash_type'] = 'success';
                 } else {
-                    $errors[] = $result['message'];
+                    $_SESSION['flash_message'] = $result['message'];
+                    $_SESSION['flash_type'] = 'danger';
                 }
+            } else {
+                $_SESSION['flash_message'] = implode('<br>', $errors);
+                $_SESSION['flash_type'] = 'danger';
             }
         }
         
@@ -199,7 +211,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['flash_message'] = 'Eine E-Mail mit Ihren gespeicherten Daten wurde an Ihre E-Mail-Adresse gesendet.';
                 $_SESSION['flash_type'] = 'success';
             } else {
-                $errors[] = 'Fehler beim Senden der E-Mail: ' . $result['message'];
+                $_SESSION['flash_message'] = 'Fehler beim Senden der E-Mail: ' . $result['message'];
+                $_SESSION['flash_type'] = 'danger';
             }
         }
         
@@ -208,6 +221,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $password = isset($_POST['delete_password']) ? $_POST['delete_password'] : '';
             
             // Validierung
+            $errors = [];
             if (empty($password)) {
                 $errors[] = 'Bitte geben Sie Ihr Passwort ein, um Ihr Profil zu löschen.';
             } else {
@@ -234,14 +248,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         header('Location: ' . getRelativePath('home'));
                         exit;
                     } else {
-                        $errors[] = 'Fehler beim Löschen des Profils: ' . $result['message'];
+                        $_SESSION['flash_message'] = 'Fehler beim Löschen des Profils: ' . $result['message'];
+                        $_SESSION['flash_type'] = 'danger';
                     }
                 } else {
-                    $errors[] = 'Falsches Passwort. Bitte versuchen Sie es erneut.';
+                    $_SESSION['flash_message'] = 'Falsches Passwort. Bitte versuchen Sie es erneut.';
+                    $_SESSION['flash_type'] = 'danger';
                 }
             }
         }
+        
+        // Nach der Verarbeitung umleiten, um erneutes Absenden bei Neuladen zu verhindern
+        header('Location: ' . getRelativePath('Benutzer/Profil'));
+        exit;
     }
+}
+
+// Email-Change Success Flag prüfen und entfernen
+$emailChangeSuccess = false;
+if (isset($_SESSION['email_change_success'])) {
+    $emailChangeSuccess = true;
+    unset($_SESSION['email_change_success']);
 }
 
 // Titel für die Seite
@@ -255,22 +282,6 @@ require_once '../../includes/header.php';
     <div class="col-md-12">
         <h1 class="mb-4">Mein Profil</h1>
         
-        <?php if (!empty($errors)): ?>
-            <div class="alert alert-danger">
-                <ul class="mb-0">
-                    <?php foreach ($errors as $error): ?>
-                        <li><?php echo escape($error); ?></li>
-                    <?php endforeach; ?>
-                </ul>
-            </div>
-        <?php endif; ?>
-        
-        <?php if ($success): ?>
-            <div class="alert alert-success">
-                Ihr Profil wurde erfolgreich aktualisiert.
-            </div>
-        <?php endif; ?>
-        
         <?php if ($emailChangeSuccess): ?>
             <div class="alert alert-success">
                 Ihre E-Mail-Adresse wurde aktualisiert. Bitte bestätigen Sie Ihre neue E-Mail-Adresse, indem Sie auf den Link klicken, den wir Ihnen gesendet haben.
@@ -280,12 +291,6 @@ require_once '../../includes/header.php';
                         window.location.href = '<?php echo getRelativePath('Benutzer/Abmelden'); ?>';
                     }, 5000);
                 </script>
-            </div>
-        <?php endif; ?>
-        
-        <?php if ($passwordChangeSuccess): ?>
-            <div class="alert alert-success">
-                Ihr Passwort wurde erfolgreich aktualisiert.
             </div>
         <?php endif; ?>
         

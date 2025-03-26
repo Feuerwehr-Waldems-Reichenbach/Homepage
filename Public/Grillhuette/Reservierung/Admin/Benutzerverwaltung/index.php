@@ -13,205 +13,163 @@ if (!isset($_SESSION['user_id']) || !isset($_SESSION['is_admin']) || !$_SESSION[
 // User-Objekt initialisieren
 $user = new User();
 
-// Benutzer abrufen
-$allUsers = $user->getAllUsers();
-
-// Admin-Status ändern
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['toggle_admin'])) {
+// Alle POST-Anfragen abfangen und PRG-Muster anwenden
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // CSRF-Token überprüfen
     if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
         $_SESSION['flash_message'] = 'Ungültige Anfrage. Bitte versuchen Sie es erneut.';
         $_SESSION['flash_type'] = 'danger';
     } else {
-        $userId = isset($_POST['user_id']) ? intval($_POST['user_id']) : 0;
-        
-        // Verhindern, dass ein Admin sich selbst die Rechte entzieht
-        if ($userId === $_SESSION['user_id']) {
-            $_SESSION['flash_message'] = 'Sie können Ihren eigenen Administrator-Status nicht ändern.';
-            $_SESSION['flash_type'] = 'danger';
-        } else {
-            $result = $user->toggleAdmin($userId);
+        // Admin-Status ändern
+        if (isset($_POST['toggle_admin'])) {
+            $userId = isset($_POST['user_id']) ? intval($_POST['user_id']) : 0;
             
-            $_SESSION['flash_message'] = $result['message'];
-            $_SESSION['flash_type'] = $result['success'] ? 'success' : 'danger';
-            
-            // Bei Erfolg die Benutzer neu laden
-            if ($result['success']) {
-                $allUsers = $user->getAllUsers();
+            // Verhindern, dass ein Admin sich selbst die Rechte entzieht
+            if ($userId === $_SESSION['user_id']) {
+                $_SESSION['flash_message'] = 'Sie können Ihren eigenen Administrator-Status nicht ändern.';
+                $_SESSION['flash_type'] = 'danger';
+            } else {
+                $result = $user->toggleAdmin($userId);
+                
+                $_SESSION['flash_message'] = $result['message'];
+                $_SESSION['flash_type'] = $result['success'] ? 'success' : 'danger';
             }
         }
-    }
-}
-
-// Verifikationsstatus ändern
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['toggle_verification'])) {
-    // CSRF-Token überprüfen
-    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
-        $_SESSION['flash_message'] = 'Ungültige Anfrage. Bitte versuchen Sie es erneut.';
-        $_SESSION['flash_type'] = 'danger';
-    } else {
-        $userId = isset($_POST['user_id']) ? intval($_POST['user_id']) : 0;
         
-        $result = $user->toggleVerification($userId);
-        
-        $_SESSION['flash_message'] = $result['message'];
-        $_SESSION['flash_type'] = $result['success'] ? 'success' : 'danger';
-        
-        // Bei Erfolg die Benutzer neu laden
-        if ($result['success']) {
-            $allUsers = $user->getAllUsers();
-        }
-    }
-}
-
-// Neuen Benutzer erstellen
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_user'])) {
-    // CSRF-Token überprüfen
-    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
-        $_SESSION['flash_message'] = 'Ungültige Anfrage. Bitte versuchen Sie es erneut.';
-        $_SESSION['flash_type'] = 'danger';
-    } else {
-        $email = isset($_POST['email']) ? trim($_POST['email']) : '';
-        $firstName = isset($_POST['first_name']) ? trim($_POST['first_name']) : '';
-        $lastName = isset($_POST['last_name']) ? trim($_POST['last_name']) : '';
-        $phone = isset($_POST['phone']) ? trim($_POST['phone']) : '';
-        $password = isset($_POST['password']) ? $_POST['password'] : '';
-        $isAdmin = isset($_POST['is_admin']) ? 1 : 0;
-        $isVerified = isset($_POST['is_verified']) ? 1 : 0;
-        
-        // Validierung
-        $errors = [];
-        
-        if (empty($email)) {
-            $errors[] = 'Bitte geben Sie eine E-Mail-Adresse ein.';
-        } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $errors[] = 'Bitte geben Sie eine gültige E-Mail-Adresse ein.';
-        }
-        
-        if (empty($firstName)) {
-            $errors[] = 'Bitte geben Sie einen Vornamen ein.';
-        }
-        
-        if (empty($lastName)) {
-            $errors[] = 'Bitte geben Sie einen Nachnamen ein.';
-        }
-        
-        if (empty($password)) {
-            $errors[] = 'Bitte geben Sie ein Passwort ein.';
-        } elseif (strlen($password) < 8) {
-            $errors[] = 'Das Passwort muss mindestens 8 Zeichen lang sein.';
-        }
-        
-        if (empty($errors)) {
-            $result = $user->createUserByAdmin($email, $password, $firstName, $lastName, $phone, $isAdmin, $isVerified);
+        // Verifikationsstatus ändern
+        else if (isset($_POST['toggle_verification'])) {
+            $userId = isset($_POST['user_id']) ? intval($_POST['user_id']) : 0;
+            
+            $result = $user->toggleVerification($userId);
             
             $_SESSION['flash_message'] = $result['message'];
             $_SESSION['flash_type'] = $result['success'] ? 'success' : 'danger';
+        }
+        
+        // Neuen Benutzer erstellen
+        else if (isset($_POST['create_user'])) {
+            $email = isset($_POST['email']) ? trim($_POST['email']) : '';
+            $firstName = isset($_POST['first_name']) ? trim($_POST['first_name']) : '';
+            $lastName = isset($_POST['last_name']) ? trim($_POST['last_name']) : '';
+            $phone = isset($_POST['phone']) ? trim($_POST['phone']) : '';
+            $password = isset($_POST['password']) ? $_POST['password'] : '';
+            $isAdmin = isset($_POST['is_admin']) ? 1 : 0;
+            $isVerified = isset($_POST['is_verified']) ? 1 : 0;
             
-            // Bei Erfolg die Benutzer neu laden
-            if ($result['success']) {
-                $allUsers = $user->getAllUsers();
+            // Validierung
+            $errors = [];
+            
+            if (empty($email)) {
+                $errors[] = 'Bitte geben Sie eine E-Mail-Adresse ein.';
+            } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $errors[] = 'Bitte geben Sie eine gültige E-Mail-Adresse ein.';
             }
-        } else {
-            $_SESSION['flash_message'] = implode('<br>', $errors);
-            $_SESSION['flash_type'] = 'danger';
-        }
-    }
-}
-
-// Benutzer bearbeiten
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_user'])) {
-    // CSRF-Token überprüfen
-    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
-        $_SESSION['flash_message'] = 'Ungültige Anfrage. Bitte versuchen Sie es erneut.';
-        $_SESSION['flash_type'] = 'danger';
-    } else {
-        $userId = isset($_POST['user_id']) ? intval($_POST['user_id']) : 0;
-        $email = isset($_POST['email']) ? trim($_POST['email']) : '';
-        $firstName = isset($_POST['first_name']) ? trim($_POST['first_name']) : '';
-        $lastName = isset($_POST['last_name']) ? trim($_POST['last_name']) : '';
-        $phone = isset($_POST['phone']) ? trim($_POST['phone']) : '';
-        $isAdmin = isset($_POST['is_admin']) ? 1 : 0;
-        $isVerified = isset($_POST['is_verified']) ? 1 : 0;
-        $newPassword = isset($_POST['new_password']) ? $_POST['new_password'] : '';
-        
-        // Validierung
-        $errors = [];
-        
-        if (empty($email)) {
-            $errors[] = 'Bitte geben Sie eine E-Mail-Adresse ein.';
-        } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $errors[] = 'Bitte geben Sie eine gültige E-Mail-Adresse ein.';
-        }
-        
-        if (empty($firstName)) {
-            $errors[] = 'Bitte geben Sie einen Vornamen ein.';
-        }
-        
-        if (empty($lastName)) {
-            $errors[] = 'Bitte geben Sie einen Nachnamen ein.';
-        }
-        
-        // Passwort nur überprüfen, wenn es geändert werden soll
-        if (!empty($newPassword) && strlen($newPassword) < 8) {
-            $errors[] = 'Das neue Passwort muss mindestens 8 Zeichen lang sein.';
-        }
-        
-        // Verhindern, dass ein Admin sich selbst die Rechte entzieht
-        if ($userId === $_SESSION['user_id'] && $_SESSION['is_admin'] && !$isAdmin) {
-            $errors[] = 'Sie können Ihren eigenen Administrator-Status nicht ändern.';
-        }
-        
-        if (empty($errors)) {
-            $result = $user->updateUser($userId, $email, $firstName, $lastName, $phone, $isAdmin, $newPassword, $isVerified);
             
-            $_SESSION['flash_message'] = $result['message'];
-            $_SESSION['flash_type'] = $result['success'] ? 'success' : 'danger';
+            if (empty($firstName)) {
+                $errors[] = 'Bitte geben Sie einen Vornamen ein.';
+            }
             
-            // Bei Erfolg die Benutzer neu laden
-            if ($result['success']) {
-                $allUsers = $user->getAllUsers();
+            if (empty($lastName)) {
+                $errors[] = 'Bitte geben Sie einen Nachnamen ein.';
+            }
+            
+            if (empty($password)) {
+                $errors[] = 'Bitte geben Sie ein Passwort ein.';
+            } elseif (strlen($password) < 8) {
+                $errors[] = 'Das Passwort muss mindestens 8 Zeichen lang sein.';
+            }
+            
+            if (empty($errors)) {
+                $result = $user->createUserByAdmin($email, $password, $firstName, $lastName, $phone, $isAdmin, $isVerified);
+                
+                $_SESSION['flash_message'] = $result['message'];
+                $_SESSION['flash_type'] = $result['success'] ? 'success' : 'danger';
+            } else {
+                $_SESSION['flash_message'] = implode('<br>', $errors);
+                $_SESSION['flash_type'] = 'danger';
+            }
+        }
+        
+        // Benutzer bearbeiten
+        else if (isset($_POST['edit_user'])) {
+            $userId = isset($_POST['user_id']) ? intval($_POST['user_id']) : 0;
+            $email = isset($_POST['email']) ? trim($_POST['email']) : '';
+            $firstName = isset($_POST['first_name']) ? trim($_POST['first_name']) : '';
+            $lastName = isset($_POST['last_name']) ? trim($_POST['last_name']) : '';
+            $phone = isset($_POST['phone']) ? trim($_POST['phone']) : '';
+            $isAdmin = isset($_POST['is_admin']) ? 1 : 0;
+            $isVerified = isset($_POST['is_verified']) ? 1 : 0;
+            $newPassword = isset($_POST['new_password']) ? $_POST['new_password'] : '';
+            
+            // Validierung
+            $errors = [];
+            
+            if (empty($email)) {
+                $errors[] = 'Bitte geben Sie eine E-Mail-Adresse ein.';
+            } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $errors[] = 'Bitte geben Sie eine gültige E-Mail-Adresse ein.';
+            }
+            
+            if (empty($firstName)) {
+                $errors[] = 'Bitte geben Sie einen Vornamen ein.';
+            }
+            
+            if (empty($lastName)) {
+                $errors[] = 'Bitte geben Sie einen Nachnamen ein.';
+            }
+            
+            // Passwort nur überprüfen, wenn es geändert werden soll
+            if (!empty($newPassword) && strlen($newPassword) < 8) {
+                $errors[] = 'Das neue Passwort muss mindestens 8 Zeichen lang sein.';
+            }
+            
+            // Verhindern, dass ein Admin sich selbst die Rechte entzieht
+            if ($userId === $_SESSION['user_id'] && $_SESSION['is_admin'] && !$isAdmin) {
+                $errors[] = 'Sie können Ihren eigenen Administrator-Status nicht ändern.';
+            }
+            
+            if (empty($errors)) {
+                $result = $user->updateUser($userId, $email, $firstName, $lastName, $phone, $isAdmin, $newPassword, $isVerified);
+                
+                $_SESSION['flash_message'] = $result['message'];
+                $_SESSION['flash_type'] = $result['success'] ? 'success' : 'danger';
                 
                 // Session aktualisieren, wenn der eigene Benutzer aktualisiert wurde
-                if ($userId === $_SESSION['user_id']) {
+                if ($result['success'] && $userId === $_SESSION['user_id']) {
                     $_SESSION['user_email'] = $email;
                     $_SESSION['user_name'] = $firstName . ' ' . $lastName;
                     $_SESSION['is_admin'] = $isAdmin;
                 }
+            } else {
+                $_SESSION['flash_message'] = implode('<br>', $errors);
+                $_SESSION['flash_type'] = 'danger';
             }
-        } else {
-            $_SESSION['flash_message'] = implode('<br>', $errors);
-            $_SESSION['flash_type'] = 'danger';
+        }
+        
+        // Benutzer löschen
+        else if (isset($_POST['delete_user'])) {
+            $userId = isset($_POST['user_id']) ? intval($_POST['user_id']) : 0;
+            
+            // Verhindern, dass ein Admin sich selbst löscht
+            if ($userId === $_SESSION['user_id']) {
+                $_SESSION['flash_message'] = 'Sie können Ihr eigenes Konto nicht löschen.';
+                $_SESSION['flash_type'] = 'danger';
+            } else {
+                $result = $user->deleteUser($userId);
+                
+                $_SESSION['flash_message'] = $result['message'];
+                $_SESSION['flash_type'] = $result['success'] ? 'success' : 'danger';
+            }
         }
     }
+    
+    // PRG-Muster: Nach POST-Anfrage zurück zur selben Seite weiterleiten, um erneutes Absenden zu verhindern
+    header('Location: ' . getRelativePath('Admin/Benutzerverwaltung'));
+    exit;
 }
 
-// Benutzer löschen
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_user'])) {
-    // CSRF-Token überprüfen
-    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
-        $_SESSION['flash_message'] = 'Ungültige Anfrage. Bitte versuchen Sie es erneut.';
-        $_SESSION['flash_type'] = 'danger';
-    } else {
-        $userId = isset($_POST['user_id']) ? intval($_POST['user_id']) : 0;
-        
-        // Verhindern, dass ein Admin sich selbst löscht
-        if ($userId === $_SESSION['user_id']) {
-            $_SESSION['flash_message'] = 'Sie können Ihr eigenes Konto nicht löschen.';
-            $_SESSION['flash_type'] = 'danger';
-        } else {
-            $result = $user->deleteUser($userId);
-            
-            $_SESSION['flash_message'] = $result['message'];
-            $_SESSION['flash_type'] = $result['success'] ? 'success' : 'danger';
-            
-            // Bei Erfolg die Benutzer neu laden
-            if ($result['success']) {
-                $allUsers = $user->getAllUsers();
-            }
-        }
-    }
-}
+// Benutzer abrufen für die Anzeige
+$allUsers = $user->getAllUsers();
 
 // Titel für die Seite
 $pageTitle = 'Benutzer verwalten';
