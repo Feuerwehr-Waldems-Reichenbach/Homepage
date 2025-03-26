@@ -266,10 +266,10 @@ require_once '../../includes/header.php';
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h3 class="mb-0">Reservierungen</h3>
                 <div class="btn-group">
-                    <a href="admin_reservations.php" class="btn btn-outline-secondary <?php echo $statusFilter === 'all' ? 'active' : ''; ?>">Alle</a>
-                    <a href="admin_reservations.php?status=pending" class="btn btn-outline-warning <?php echo $statusFilter === 'pending' ? 'active' : ''; ?>">Ausstehend</a>
-                    <a href="admin_reservations.php?status=confirmed" class="btn btn-outline-success <?php echo $statusFilter === 'confirmed' ? 'active' : ''; ?>">Bestätigt</a>
-                    <a href="admin_reservations.php?status=canceled" class="btn btn-outline-danger <?php echo $statusFilter === 'canceled' ? 'active' : ''; ?>">Storniert</a>
+                    <a href="<?php echo getRelativePath('Admin/Reservierungsverwaltung'); ?>" class="btn btn-outline-secondary <?php echo $statusFilter === 'all' ? 'active' : ''; ?>">Alle</a>
+                    <a href="<?php echo getRelativePath('Admin/Reservierungsverwaltung'); ?>?status=pending" class="btn btn-outline-warning <?php echo $statusFilter === 'pending' ? 'active' : ''; ?>">Ausstehend</a>
+                    <a href="<?php echo getRelativePath('Admin/Reservierungsverwaltung'); ?>?status=confirmed" class="btn btn-outline-success <?php echo $statusFilter === 'confirmed' ? 'active' : ''; ?>">Bestätigt</a>
+                    <a href="<?php echo getRelativePath('Admin/Reservierungsverwaltung'); ?>?status=canceled" class="btn btn-outline-danger <?php echo $statusFilter === 'canceled' ? 'active' : ''; ?>">Storniert</a>
                 </div>
             </div>
             <div class="card-body">
@@ -380,7 +380,7 @@ require_once '../../includes/header.php';
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
             </div>
             <div class="modal-body">
-                <form method="post" action="admin_reservations.php<?php echo $statusFilter !== 'all' ? '?status=' . $statusFilter : ''; ?>" id="createReservationForm">
+                <form method="post" action="<?php echo getRelativePath('Admin/Reservierungsverwaltung'); ?><?php echo $statusFilter !== 'all' ? '?status=' . $statusFilter : ''; ?>" id="createReservationForm">
                     <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
                     <input type="hidden" name="create_reservation" value="1">
                     
@@ -443,7 +443,7 @@ require_once '../../includes/header.php';
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
             </div>
             <div class="modal-body">
-                <form method="post" action="admin_reservations.php<?php echo $statusFilter !== 'all' ? '?status=' . $statusFilter : ''; ?>" id="editReservationForm">
+                <form method="post" action="<?php echo getRelativePath('Admin/Reservierungsverwaltung'); ?><?php echo $statusFilter !== 'all' ? '?status=' . $statusFilter : ''; ?>" id="editReservationForm">
                     <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
                     <input type="hidden" name="edit_reservation" value="1">
                     <input type="hidden" name="reservation_id" id="edit_reservation_id">
@@ -522,7 +522,7 @@ require_once '../../includes/header.php';
 </div>
 
 <!-- Formular zum Löschen einer Reservierung (wird via JavaScript abgesendet) -->
-<form method="post" action="admin_reservations.php<?php echo $statusFilter !== 'all' ? '?status=' . $statusFilter : ''; ?>" id="deleteReservationForm" style="display: none;">
+<form method="post" action="<?php echo getRelativePath('Admin/Reservierungsverwaltung'); ?><?php echo $statusFilter !== 'all' ? '?status=' . $statusFilter : ''; ?>" id="deleteReservationForm" style="display: none;">
     <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
     <input type="hidden" name="delete_reservation" value="1">
     <input type="hidden" name="reservation_id" id="delete_reservation_id">

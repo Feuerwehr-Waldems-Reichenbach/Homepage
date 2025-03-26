@@ -423,10 +423,10 @@ class Reservation {
                             <h2>Neue Nachricht vom Administrator</h2>
                         </div>
                         <div class="content">
-                            <h3>Hallo ' . $reservation['first_name'] . ' ' . $reservation['last_name'] . ',</h3>
+                            <p>Der Administrator hat eine Nachricht zu Ihrer Reservierung hinzugefügt.</p>
                             
                             <div class="info-box">
-                                <strong>Ihre Reservierung:</strong><br>
+                                <strong>Reservierungsdetails:</strong><br>
                                 Von: ' . date('d.m.Y H:i', strtotime($reservation['start_datetime'])) . '<br>
                                 Bis: ' . date('d.m.Y H:i', strtotime($reservation['end_datetime'])) . '
                             </div>
@@ -916,25 +916,29 @@ class Reservation {
                                 <p>Ihre Reservierung für die Grillhütte wurde aktualisiert.</p>
                                 <p><strong>Neuer Zeitraum:</strong> ' . date('d.m.Y H:i', strtotime($startDatetime)) . ' bis ' . date('d.m.Y H:i', strtotime($endDatetime)) . '</p>
                                 <p><strong>Status:</strong> ' . ucfirst($statusText) . '</p>
-                            </div>
-                            <a href="' . $myReservationsUrl . '" class="button">Meine Reservierungen ansehen</a>
-                            <div class="footer">
+                                ';
+                                if (!empty($adminMessage)) {
+                                    $body .= '
+                                    <div class="message-box">
+                                    <strong>Nachricht vom Administrator:</strong><br>
+                                    ' . nl2br($adminMessage) . '
+                                    </div>
+                                    ';
+                                }
+                                
+                                $body .= '
+                                <a href="' . $myReservationsUrl . '" class="button">Meine Reservierungen ansehen</a>
+                                <div class="footer">
                                 <p>Bei Fragen können Sie auf diese E-Mail antworten.</p>
                                 <p>Ihr Team der Grillhütte Reichenbach</p>
-                            </div>
+                                </div>
+                                </div>
                         </div>
                     </body>
                     </html>
                 ';
                 
-                if (!empty($adminMessage)) {
-                    $body .= '
-                        <div class="message-box">
-                            <strong>Nachricht vom Administrator:</strong><br>
-                            ' . nl2br($adminMessage) . '
-                        </div>
-                    ';
-                }
+
                 
                 sendEmail($user['email'], $subject, $body);
             }
