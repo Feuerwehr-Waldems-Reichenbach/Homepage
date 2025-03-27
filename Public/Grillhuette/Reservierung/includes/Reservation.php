@@ -22,18 +22,26 @@ class Reservation {
             
             // Reservierung erstellen
             $stmt = $this->db->prepare("
-                INSERT INTO gh_reservations (user_id, start_datetime, end_datetime, user_message, status) 
-                VALUES (?, ?, ?, ?, 'pending')
+                INSERT INTO gh_reservations (user_id, start_datetime, end_datetime, user_message) 
+                VALUES (?, ?, ?, ?)
             ");
             $stmt->execute([$userId, $startDatetime, $endDatetime, $userMessage]);
             
-            // Benutzerinformationen für E-Mail abrufen
+            // Benutzer per E-Mail benachrichtigen
             $userStmt = $this->db->prepare("SELECT email, first_name, last_name FROM gh_users WHERE id = ?");
             $userStmt->execute([$userId]);
             $user = $userStmt->fetch(PDO::FETCH_ASSOC);
             
-            // Bestätigungs-E-Mail senden
-            $subject = 'Ihre Reservierungsanfrage für die Grillhütte Waldems Reichenbach';
+            // Kostenberechnung
+            $startDate = new DateTime($startDatetime);
+            $endDate = new DateTime($endDatetime);
+            $diffSeconds = $endDate->getTimestamp() - $startDate->getTimestamp();
+            $diffDays = $diffSeconds / (24 * 60 * 60);
+            $days = max(1, ceil($diffDays));
+            $totalCost = $days * 100;
+            $formattedCost = number_format($totalCost, 2, ',', '.');
+            
+            $subject = 'Reservierungsanfrage für die Grillhütte Waldems Reichenbach';
             $body = '
                 <!DOCTYPE html>
                 <html>
@@ -45,26 +53,35 @@ class Reservation {
                         .content { background-color: #ffffff; padding: 20px; border-radius: 0 0 5px 5px; border: 1px solid #ddd; }
                         .button { display: inline-block; padding: 10px 20px; background-color: #A72920; color: white !important; text-decoration: none; border-radius: 5px; margin-top: 20px; }
                         .info-box { background-color: #f8f9fa; border: 1px solid #ddd; padding: 15px; border-radius: 5px; margin: 20px 0; }
+                        .cost-box { background-color: #f0f8ff; border: 1px solid #b8daff; padding: 15px; border-radius: 5px; margin: 20px 0; }
                         .footer { text-align: center; margin-top: 20px; font-size: 0.9em; color: #666; }
                     </style>
                 </head>
                 <body>
                     <div class="container">
                         <div class="header">
-                            <h2>Reservierungsanfrage eingegangen</h2>
+                            <h2>Reservierungsbestätigung</h2>
                         </div>
                         <div class="content">
                             <h3>Hallo ' . $user['first_name'] . ' ' . $user['last_name'] . ',</h3>
-                            <p>vielen Dank für Ihre Reservierungsanfrage für die Grillhütte Waldems Reichenbach.</p>
+                            <p>vielen Dank für Ihre Reservierungsanfrage für die Grillhütte Waldems Reichenbach. Wir haben Ihre Anfrage erhalten und werden sie so schnell wie möglich bearbeiten.</p>
                             
                             <div class="info-box">
                                 <strong>Ihre Reservierungsdetails:</strong><br>
                                 Von: ' . date('d.m.Y H:i', strtotime($startDatetime)) . '<br>
                                 Bis: ' . date('d.m.Y H:i', strtotime($endDatetime)) . '<br>
-                                Status: <strong>Ausstehend</strong>
+                                Status: <span style="color: #ffc107; font-weight: bold;">Ausstehend</span>
                             </div>
                             
-                            <p>Ihre Anfrage wird nun von unserem Team geprüft. Sie erhalten eine weitere E-Mail, sobald Ihre Reservierung bestätigt oder abgelehnt wurde.</p>
+                            <div class="cost-box">
+                                <strong>Kostenübersicht:</strong><br>
+                                Grundpreis pro Tag: 100,00€<br>
+                                Anzahl der Tage: ' . $days . '<br>
+                                <strong>Gesamtpreis: ' . $formattedCost . '€</strong><br>
+                                <small>Hinweis: Die Kaution ist in diesem Preis nicht enthalten.</small>
+                            </div>
+                            
+                            <p>Wir werden Sie benachrichtigen, sobald Ihre Anfrage bearbeitet wurde. Sie können den Status Ihrer Reservierung auch jederzeit über den folgenden Link überprüfen.</p>
                             
                             <a href="' . $myReservationsUrl . '" class="button">Meine Reservierungen ansehen</a>
                             
@@ -98,6 +115,7 @@ class Reservation {
                             .content { background-color: #ffffff; padding: 20px; border-radius: 0 0 5px 5px; border: 1px solid #ddd; }
                             .button { display: inline-block; padding: 10px 20px; background-color: #A72920; color: white !important; text-decoration: none; border-radius: 5px; margin-top: 20px; }
                             .info-box { background-color: #f8f9fa; border: 1px solid #ddd; padding: 15px; border-radius: 5px; margin: 20px 0; }
+                            .cost-box { background-color: #f0f8ff; border: 1px solid #b8daff; padding: 15px; border-radius: 5px; margin: 20px 0; }
                             .footer { text-align: center; margin-top: 20px; font-size: 0.9em; color: #666; }
                         </style>
                     </head>
@@ -115,6 +133,13 @@ class Reservation {
                                     E-Mail: ' . $user['email'] . '<br>
                                     Von: ' . date('d.m.Y H:i', strtotime($startDatetime)) . '<br>
                                     Bis: ' . date('d.m.Y H:i', strtotime($endDatetime)) . '
+                                </div>
+                                
+                                <div class="cost-box">
+                                    <strong>Kostenübersicht:</strong><br>
+                                    Grundpreis pro Tag: 100,00€<br>
+                                    Anzahl der Tage: ' . $days . '<br>
+                                    <strong>Gesamtpreis: ' . $formattedCost . '€</strong>
                                 </div>
                                 
                                 <a href="' . $adminReservationsUrl . '" class="button">Reservierung verwalten</a>
@@ -228,10 +253,22 @@ class Reservation {
             ");
             $stmt->execute([$status, $adminMessage, $id]);
             
-            // Benutzer per E-Mail benachrichtigen
-            $userStmt = $this->db->prepare("SELECT email, first_name, last_name FROM gh_users WHERE id = ?");
-            $userStmt->execute([$reservation['user_id']]);
-            $user = $userStmt->fetch(PDO::FETCH_ASSOC);
+            // Berechne die Anzahl der Tage
+            $startDate = new DateTime($reservation['start_datetime']);
+            $endDate = new DateTime($reservation['end_datetime']);
+            
+            // Berechne die Differenz in Sekunden
+            $diffSeconds = $endDate->getTimestamp() - $startDate->getTimestamp();
+            
+            // Berechne die Anzahl der Tage als Dezimalzahl
+            $diffDays = $diffSeconds / (24 * 60 * 60);
+            
+            // Runde auf ganze Tage auf (mindestens 1 Tag)
+            $days = max(1, ceil($diffDays));
+            
+            // Berechne Gesamtkosten (100€ pro Tag)
+            $totalCost = $days * 100;
+            $formattedCost = number_format($totalCost, 2, ',', '.');
             
             $statusText = $status == 'confirmed' ? 'bestätigt' : 'abgelehnt';
             $statusColor = $status == 'confirmed' ? '#28a745' : '#dc3545';
@@ -247,6 +284,7 @@ class Reservation {
                         .content { background-color: #ffffff; padding: 20px; border-radius: 0 0 5px 5px; border: 1px solid #ddd; }
                         .button { display: inline-block; padding: 10px 20px; background-color: #A72920; color: white !important; text-decoration: none; border-radius: 5px; margin-top: 20px; }
                         .info-box { background-color: #f8f9fa; border: 1px solid #ddd; padding: 15px; border-radius: 5px; margin: 20px 0; }
+                        .cost-box { background-color: #f0f8ff; border: 1px solid #b8daff; padding: 15px; border-radius: 5px; margin: 20px 0; }
                         .status-badge { display: inline-block; padding: 5px 15px; background-color: ' . $statusColor . '; color: white; border-radius: 15px; }
                         .message-box { background-color: #f8f9fa; border-left: 4px solid ' . $statusColor . '; padding: 15px; margin: 20px 0; }
                         .footer { text-align: center; margin-top: 20px; font-size: 0.9em; color: #666; }
@@ -258,13 +296,21 @@ class Reservation {
                             <h2>Reservierungsstatus aktualisiert</h2>
                         </div>
                         <div class="content">
-                            <h3>Hallo ' . $user['first_name'] . ' ' . $user['last_name'] . ',</h3>
+                            <h3>Hallo ' . $reservation['first_name'] . ' ' . $reservation['last_name'] . ',</h3>
                             
                             <div class="info-box">
                                 <strong>Ihre Reservierungsdetails:</strong><br>
                                 Von: ' . date('d.m.Y H:i', strtotime($reservation['start_datetime'])) . '<br>
                                 Bis: ' . date('d.m.Y H:i', strtotime($reservation['end_datetime'])) . '<br>
                                 Status: <span class="status-badge">' . ucfirst($statusText) . '</span>
+                            </div>
+                            
+                            <div class="cost-box">
+                                <strong>Kostenübersicht:</strong><br>
+                                Grundpreis pro Tag: 100,00€<br>
+                                Anzahl der Tage: ' . $days . '<br>
+                                <strong>Gesamtpreis: ' . $formattedCost . '€</strong><br>
+                                <small>Hinweis: Die Kaution ist in diesem Preis nicht enthalten.</small>
                             </div>
             ';
             
@@ -289,6 +335,11 @@ class Reservation {
                 </body>
                 </html>
             ';
+            
+            // Benutzer per E-Mail benachrichtigen
+            $userStmt = $this->db->prepare("SELECT email, first_name, last_name FROM gh_users WHERE id = ?");
+            $userStmt->execute([$reservation['user_id']]);
+            $user = $userStmt->fetch(PDO::FETCH_ASSOC);
             
             sendEmail($user['email'], $subject, $body);
             
@@ -490,6 +541,15 @@ class Reservation {
             $userStmt->execute([$userId]);
             $user = $userStmt->fetch(PDO::FETCH_ASSOC);
             
+            // Kostenberechnung
+            $startDate = new DateTime($startDatetime);
+            $endDate = new DateTime($endDatetime);
+            $diffSeconds = $endDate->getTimestamp() - $startDate->getTimestamp();
+            $diffDays = $diffSeconds / (24 * 60 * 60);
+            $days = max(1, ceil($diffDays));
+            $totalCost = $days * 100;
+            $formattedCost = number_format($totalCost, 2, ',', '.');
+            
             $subject = 'Neue Reservierung für die Grillhütte Waldems Reichenbach';
             $body = '
                 <!DOCTYPE html>
@@ -502,6 +562,7 @@ class Reservation {
                         .content { background-color: #ffffff; padding: 20px; border-radius: 0 0 5px 5px; border: 1px solid #ddd; }
                         .button { display: inline-block; padding: 10px 20px; background-color: #A72920; color: white !important; text-decoration: none; border-radius: 5px; margin-top: 20px; }
                         .info-box { background-color: #f8f9fa; border: 1px solid #ddd; padding: 15px; border-radius: 5px; margin: 20px 0; }
+                        .cost-box { background-color: #f0f8ff; border: 1px solid #b8daff; padding: 15px; border-radius: 5px; margin: 20px 0; }
                         .message-box { background-color: #f8f9fa; border-left: 4px solid #28a745; padding: 15px; margin: 20px 0; }
                         .footer { text-align: center; margin-top: 20px; font-size: 0.9em; color: #666; }
                     </style>
@@ -520,6 +581,14 @@ class Reservation {
                                 Von: ' . date('d.m.Y H:i', strtotime($startDatetime)) . '<br>
                                 Bis: ' . date('d.m.Y H:i', strtotime($endDatetime)) . '<br>
                                 Status: <span style="color: #28a745; font-weight: bold;">Bestätigt</span>
+                            </div>
+                            
+                            <div class="cost-box">
+                                <strong>Kostenübersicht:</strong><br>
+                                Grundpreis pro Tag: 100,00€<br>
+                                Anzahl der Tage: ' . $days . '<br>
+                                <strong>Gesamtpreis: ' . $formattedCost . '€</strong><br>
+                                <small>Hinweis: Die Kaution ist in diesem Preis nicht enthalten.</small>
                             </div>
             ';
             
@@ -578,6 +647,23 @@ class Reservation {
             $stmt = $this->db->prepare("UPDATE gh_reservations SET status = 'canceled' WHERE id = ?");
             $stmt->execute([$id]);
             
+            // Berechne die Anzahl der Tage
+            $startDate = new DateTime($reservation['start_datetime']);
+            $endDate = new DateTime($reservation['end_datetime']);
+            
+            // Berechne die Differenz in Sekunden
+            $diffSeconds = $endDate->getTimestamp() - $startDate->getTimestamp();
+            
+            // Berechne die Anzahl der Tage als Dezimalzahl
+            $diffDays = $diffSeconds / (24 * 60 * 60);
+            
+            // Runde auf ganze Tage auf (mindestens 1 Tag)
+            $days = max(1, ceil($diffDays));
+            
+            // Berechne Gesamtkosten (100€ pro Tag)
+            $totalCost = $days * 100;
+            $formattedCost = number_format($totalCost, 2, ',', '.');
+            
             // Benutzer per E-Mail benachrichtigen, falls vom Admin storniert
             if (isset($_SESSION['is_admin']) && $_SESSION['is_admin'] && $reservation['user_id'] != $_SESSION['user_id']) {
                 $userStmt = $this->db->prepare("SELECT email, first_name, last_name FROM gh_users WHERE id = ?");
@@ -596,6 +682,7 @@ class Reservation {
                             .content { background-color: #ffffff; padding: 20px; border-radius: 0 0 5px 5px; border: 1px solid #ddd; }
                             .button { display: inline-block; padding: 10px 20px; background-color: #A72920; color: white !important; text-decoration: none; border-radius: 5px; margin-top: 20px; }
                             .info-box { background-color: #f8f9fa; border: 1px solid #ddd; padding: 15px; border-radius: 5px; margin: 20px 0; }
+                            .cost-box { background-color: #f0f8ff; border: 1px solid #b8daff; padding: 15px; border-radius: 5px; margin: 20px 0; text-decoration: line-through; }
                             .status-badge { display: inline-block; padding: 5px 15px; background-color: #dc3545; color: white; border-radius: 15px; }
                             .footer { text-align: center; margin-top: 20px; font-size: 0.9em; color: #666; }
                         </style>
@@ -613,6 +700,13 @@ class Reservation {
                                     Von: ' . date('d.m.Y H:i', strtotime($reservation['start_datetime'])) . '<br>
                                     Bis: ' . date('d.m.Y H:i', strtotime($reservation['end_datetime'])) . '<br>
                                     Status: <span class="status-badge">Storniert</span>
+                                </div>
+                                
+                                <div class="cost-box">
+                                    <strong>Ursprüngliche Kostenübersicht:</strong><br>
+                                    Grundpreis pro Tag: 100,00€<br>
+                                    Anzahl der Tage: ' . $days . '<br>
+                                    <strong>Gesamtpreis: ' . $formattedCost . '€</strong>
                                 </div>
                                 
                                 <p>Bei Fragen wenden Sie sich bitte an den Administrator.</p>
@@ -652,6 +746,7 @@ class Reservation {
                                 .content { background-color: #ffffff; padding: 20px; border-radius: 0 0 5px 5px; border: 1px solid #ddd; }
                                 .button { display: inline-block; padding: 10px 20px; background-color: #A72920; color: white !important; text-decoration: none; border-radius: 5px; margin-top: 20px; }
                                 .info-box { background-color: #f8f9fa; border: 1px solid #ddd; padding: 15px; border-radius: 5px; margin: 20px 0; }
+                                .cost-box { background-color: #f0f8ff; border: 1px solid #b8daff; padding: 15px; border-radius: 5px; margin: 20px 0; }
                                 .status-badge { display: inline-block; padding: 5px 15px; background-color: #dc3545; color: white; border-radius: 15px; }
                                 .footer { text-align: center; margin-top: 20px; font-size: 0.9em; color: #666; }
                             </style>
@@ -670,6 +765,13 @@ class Reservation {
                                         Von: ' . date('d.m.Y H:i', strtotime($reservation['start_datetime'])) . '<br>
                                         Bis: ' . date('d.m.Y H:i', strtotime($reservation['end_datetime'])) . '<br>
                                         Status: <span class="status-badge">Storniert</span>
+                                    </div>
+                                    
+                                    <div class="cost-box">
+                                        <strong>Ursprüngliche Kostenübersicht:</strong><br>
+                                        Grundpreis pro Tag: 100,00€<br>
+                                        Anzahl der Tage: ' . $days . '<br>
+                                        <strong>Gesamtpreis: ' . $formattedCost . '€</strong>
                                     </div>
                                     
                                     <a href="' . $adminReservationsUrl . '" class="button">Reservierungen verwalten</a>
@@ -901,6 +1003,7 @@ class Reservation {
                             .content { background-color: #ffffff; padding: 20px; border-radius: 0 0 5px 5px; border: 1px solid #ddd; }
                             .button { display: inline-block; padding: 10px 20px; background-color: #A72920; color: white !important; text-decoration: none; border-radius: 5px; margin-top: 20px; }
                             .info-box { background-color: #f8f9fa; border: 1px solid #ddd; padding: 15px; border-radius: 5px; margin: 20px 0; }
+                            .cost-box { background-color: #f0f8ff; border: 1px solid #b8daff; padding: 15px; border-radius: 5px; margin: 20px 0; }
                             .status-badge { display: inline-block; padding: 5px 15px; background-color: ' . $statusColor . '; color: white; border-radius: 15px; }
                             .message-box { background-color: #f8f9fa; border-left: 4px solid ' . $statusColor . '; padding: 15px; margin: 20px 0; }
                             .footer { text-align: center; margin-top: 20px; font-size: 0.9em; color: #666; }
