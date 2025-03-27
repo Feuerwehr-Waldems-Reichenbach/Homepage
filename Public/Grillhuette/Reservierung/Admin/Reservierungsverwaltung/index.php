@@ -601,15 +601,25 @@ function updateEditCosts() {
 
 // Calculate costs for new reservation
 function updateNewCosts() {
+    console.log('updateNewCosts called');
     calculateCosts('start_date', 'end_date', 'new-day-count', 'new-total-cost');
 }
 
 // Generic cost calculation function
 function calculateCosts(startDateId, endDateId, dayCountId, totalCostId) {
+    console.log('calculateCosts called with:', { startDateId, endDateId, dayCountId, totalCostId });
+    
     const startDateInput = document.getElementById(startDateId);
     const endDateInput = document.getElementById(endDateId);
     const dayCountElement = document.getElementById(dayCountId);
     const totalCostElement = document.getElementById(totalCostId);
+    
+    console.log('Elements found:', { 
+        startDateInput: !!startDateInput, 
+        endDateInput: !!endDateInput, 
+        dayCountElement: !!dayCountElement, 
+        totalCostElement: !!totalCostElement 
+    });
     
     // Finde die passenden Zeitfelder basierend auf den Datums-IDs
     let startTimeId = startDateId.replace('date', 'time');
@@ -617,10 +627,25 @@ function calculateCosts(startDateId, endDateId, dayCountId, totalCostId) {
     const startTimeInput = document.getElementById(startTimeId);
     const endTimeInput = document.getElementById(endTimeId);
     
-    if (!startDateInput || !endDateInput || !dayCountElement || !totalCostElement) return;
+    console.log('Time elements found:', { 
+        startTimeInput: !!startTimeInput, 
+        endTimeInput: !!endTimeInput,
+        startTimeValue: startTimeInput ? startTimeInput.value : null,
+        endTimeValue: endTimeInput ? endTimeInput.value : null
+    });
+    
+    if (!startDateInput || !endDateInput || !dayCountElement || !totalCostElement) {
+        console.error('Missing required elements for calculation');
+        return;
+    }
     
     // Only calculate if both dates are selected
     if (startDateInput.value && endDateInput.value) {
+        console.log('Date values:', { 
+            startDate: startDateInput.value, 
+            endDate: endDateInput.value
+        });
+        
         // Erstelle vollständige Datums-Zeit-Objekte
         let startDateTime = new Date(startDateInput.value);
         let endDateTime = new Date(endDateInput.value);
@@ -629,12 +654,19 @@ function calculateCosts(startDateId, endDateId, dayCountId, totalCostId) {
         if (startTimeInput && startTimeInput.value) {
             const [startHours, startMinutes] = startTimeInput.value.split(':').map(Number);
             startDateTime.setHours(startHours, startMinutes, 0);
+            console.log('Applied start time:', { startHours, startMinutes });
         }
         
         if (endTimeInput && endTimeInput.value) {
             const [endHours, endMinutes] = endTimeInput.value.split(':').map(Number);
             endDateTime.setHours(endHours, endMinutes, 0);
+            console.log('Applied end time:', { endHours, endMinutes });
         }
+        
+        console.log('DateTime objects:', { 
+            startDateTime: startDateTime.toISOString(), 
+            endDateTime: endDateTime.toISOString() 
+        });
         
         // Berechne die Differenz in Millisekunden
         const diffTime = Math.abs(endDateTime - startDateTime);
@@ -649,10 +681,14 @@ function calculateCosts(startDateId, endDateId, dayCountId, totalCostId) {
         const dailyRate = 100; // €
         const totalCost = days * dailyRate;
         
+        console.log('Calculation results:', { diffTime, diffDays, days, totalCost });
+        
         // Update the UI
         dayCountElement.textContent = days;
         totalCostElement.textContent = totalCost.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '€';
+        console.log('UI updated with days:', days);
     } else {
+        console.log('One or both dates are missing');
         // Default values if dates not selected
         dayCountElement.textContent = '1';
         totalCostElement.textContent = '100,00€';
@@ -661,6 +697,46 @@ function calculateCosts(startDateId, endDateId, dayCountId, totalCostId) {
 
 // Initialisierung beim Laden des Modals
 document.addEventListener('DOMContentLoaded', function() {
+    // Add event listeners to the time inputs in the new reservation form directly
+    const newStartTimeField = document.getElementById('start_time');
+    const newEndTimeField = document.getElementById('end_time');
+    
+    if (newStartTimeField) {
+        newStartTimeField.addEventListener('change', updateNewCosts);
+    }
+    
+    if (newEndTimeField) {
+        newEndTimeField.addEventListener('change', updateNewCosts);
+    }
+    
+    // Initialize flatpickr for the new reservation form date fields
+    flatpickr('#start_date', {
+        locale: "de",
+        dateFormat: "Y-m-d",
+        altInput: true,
+        altFormat: "j. F Y",
+        minDate: "today",
+        disableMobile: "true",
+        onChange: function() {
+            updateNewCosts();
+        }
+    });
+    
+    flatpickr('#end_date', {
+        locale: "de",
+        dateFormat: "Y-m-d",
+        altInput: true,
+        altFormat: "j. F Y",
+        minDate: "today",
+        disableMobile: "true",
+        onChange: function() {
+            updateNewCosts();
+        }
+    });
+    
+    // Run the initial cost calculation for the new reservation form
+    updateNewCosts();
+    
     // Event-Listener für das Öffnen des Edit-Modals
     const editModal = document.getElementById('editReservationModal');
     if (editModal) {
@@ -720,21 +796,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const newModal = document.getElementById('newReservationModal');
     if (newModal) {
         newModal.addEventListener('shown.bs.modal', function () {
-            // Initial cost calculation and setup event listeners
+            // Just run the cost calculation again when the modal is shown
             updateNewCosts();
-            
-            // Update cost when date pickers change
-            if (flatpickr.instances['start_date']) {
-                flatpickr.instances['start_date'].config.onChange.push(function() {
-                    updateNewCosts();
-                });
-            }
-            
-            if (flatpickr.instances['end_date']) {
-                flatpickr.instances['end_date'].config.onChange.push(function() {
-                    updateNewCosts();
-                });
-            }
         });
     }
 });
