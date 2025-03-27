@@ -248,16 +248,16 @@ h1, h2, h3, h4, h5, h6 {
     
     /* Table overflows */
     .table-responsive {
-        border-radius: 8px;
-        overflow: hidden;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
     }
     
-    /* Stack columns on mobile */
+    /* Adjust column widths for better stacking */
     .col-md-6 {
-        margin-bottom: 20px;
+        margin-bottom: 15px;
     }
     
-    /* Adjust modals for mobile */
+    /* Modal adjustments */
     .modal-dialog {
         margin: 10px;
     }
@@ -266,90 +266,117 @@ h1, h2, h3, h4, h5, h6 {
         padding: 15px;
     }
     
-    /* Make buttons more touch-friendly */
+    /* Smaller buttons on mobile */
     .btn-sm {
-        padding: 8px 12px;
-        font-size: 14px;
+        padding: 5px 10px;
+        font-size: 0.8rem;
     }
     
-    /* Navigation adjustments */
+    /* Brand adjustments */
     .navbar-brand {
-        font-size: 1.1rem;
+        font-size: 1.2rem;
+        max-width: 80%;
     }
     
-    /* Improve form layout on mobile */
+    /* Fix column spacing in forms */
     .row > .col-md-4, .row > .col-md-6, .row > .col-md-8 {
-        padding-left: 10px;
-        padding-right: 10px;
+        margin-bottom: 15px;
     }
     
-    /* Better spacing for stacked elements */
+    /* Adjust form spacing */
     .mb-3 {
-        margin-bottom: 1rem !important;
+        margin-bottom: 0.75rem !important;
     }
     
-    /* Better touch target for links */
+    /* Make all interactive elements more touch-friendly */
     a, button, .nav-link {
-        padding: 8px;
-        display: inline-block;
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
     }
     
-    /* Fix for datepicker on mobile */
+    /* Flatpickr adjustments for better mobile experience */
     .flatpickr-calendar {
-        width: 307.875px;
-        font-size: 14px;
+        width: 307.875px !important;
+        font-size: 16px;
     }
 }
 
-/* Specific mobile enhancements for very small screens */
-@media (max-width: 480px) {
-    h1 {
-        font-size: 1.8rem;
+/* Tablet optimizations - to match mobile layout */
+@media (min-width: 769px) and (max-width: 991px) {
+    /* Calendar and form layout should match mobile */
+    .calendar .day {
+        height: 50px;
+        min-width: 40px;
     }
     
-    h2, h3 {
+    /* Form elements should be larger for touch */
+    .form-control, .form-select, .btn {
+        padding: 12px 15px;
+        font-size: 16px; 
+    }
+    
+    /* Fix column spacing in forms */
+    .row > .col-md-4, .row > .col-md-6, .row > .col-md-8 {
+        margin-bottom: 15px;
+    }
+    
+    /* Adjust form spacing */
+    .mb-3 {
+        margin-bottom: 0.75rem !important;
+    }
+}
+
+/* Very small mobile devices */
+@media (max-width: 480px) {
+    h1 {
         font-size: 1.5rem;
     }
     
-    .card-header h4, .card-header h5 {
-        font-size: 1.2rem;
+    h2, h3 {
+        font-size: 1.3rem;
     }
     
-    /* Simplify navigation */
+    .card-header h4, .card-header h5 {
+        font-size: 1.1rem;
+    }
+    
     .navbar-brand {
         font-size: 1rem;
-        max-width: 180px;
-        white-space: normal;
     }
     
-    /* Make sure buttons don't overflow */
+    /* Make buttons full width on very small screens */
     .btn {
-        white-space: normal;
-    }
-    
-    /* Stack buttons on very small screens */
-    .modal-footer {
-        flex-direction: column;
-    }
-    
-    .modal-footer .btn {
-        margin-bottom: 10px;
+        display: block;
         width: 100%;
     }
     
-    /* Adjust calendar for very small screens */
+    .modal-footer {
+        display: block;
+    }
+    
+    .modal-footer .btn {
+        margin-top: 10px;
+    }
+    
+    /* Calendar adjustments for very small screens */
     #monthYear {
-        font-size: 1.2rem;
+        font-size: 1.1rem;
     }
     
     #prevMonth, #nextMonth {
-        padding: 5px 8px;
-        font-size: 0.8rem;
+        padding: 4px 8px;
     }
     
     .calendar .day {
         height: 40px;
-        min-width: 35px;
+        font-size: 0.8rem;
+        min-width: 30px;
+    }
+    
+    /* Additional padding at the bottom for iOS Safari */
+    body {
+        padding-bottom: 80px;
     }
 }
 

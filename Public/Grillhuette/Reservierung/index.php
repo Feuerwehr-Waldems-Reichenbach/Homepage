@@ -55,7 +55,7 @@ if (isset($_GET['month']) && isset($_GET['year'])) {
                 </div>
                 
                 <!-- Mobile-optimierte Legende -->
-                <div class="d-md-none mb-4">
+                <div class="d-lg-none mb-4">
                     <div class="card">
                         <div class="card-body p-3">
                             <h5 class="card-title h6 mb-2">Legende:</h5>
@@ -84,7 +84,7 @@ if (isset($_GET['month']) && isset($_GET['year'])) {
                 </div>
                 
                 <!-- Willkommenskarte unter dem Kalender - nur auf Desktop sichtbar -->
-                <div class="card mb-4 d-none d-md-block">
+                <div class="card mb-4 d-none d-lg-block">
                     <div class="card-body">
                         <h5 class="card-title">Willkommen im Reservierungssystem der Grillhütte Waldems Reichenbach</h5>
                         <p>Hier können Sie freie Termine einsehen und eine Reservierung vornehmen.</p>
@@ -260,7 +260,7 @@ if (isset($_GET['month']) && isset($_GET['year'])) {
                 <?php endif; ?>
                 
                 <!-- Mobile-optimierte Infokarte - nur auf mobil sichtbar -->
-                <div class="d-md-none mt-4">
+                <div class="d-lg-none mt-4">
                     <div class="card">
                         <div class="card-header">
                             <h5 class="mb-0">Informationen</h5>
