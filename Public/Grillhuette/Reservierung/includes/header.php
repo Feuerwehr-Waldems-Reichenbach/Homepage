@@ -60,7 +60,7 @@ require_once __DIR__ . '/config.php';
                     <ul class="navbar-nav">
                         <?php if (isset($_SESSION['user_id'])): ?>
                             <li class="nav-item d-none d-lg-block">
-                                <span class="nav-link">Willkommen, <?php echo escape($_SESSION['user_name']); ?></span>
+                                <span class="nav-link user-welcome">Willkommen, <?php echo escape($_SESSION['user_name']); ?></span>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="<?php echo getRelativePath('Benutzer/Abmelden'); ?>">Abmelden</a>

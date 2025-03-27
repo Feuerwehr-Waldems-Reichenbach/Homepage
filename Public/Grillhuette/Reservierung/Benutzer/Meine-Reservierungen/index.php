@@ -163,11 +163,13 @@ require_once '../../includes/header.php';
                                                 <textarea class="form-control" id="message_<?php echo $res['id']; ?>" name="message" rows="3"><?php echo escape($res['user_message']); ?></textarea>
                                             </div>
                                             
-                                            <button type="submit" name="add_message" class="btn btn-primary">Nachricht speichern</button>
-                                            
-                                            <?php if ($res['status'] !== 'canceled'): ?>
-                                                <button type="submit" name="cancel_reservation" class="btn btn-danger ms-2" onclick="return confirm('Sind Sie sicher, dass Sie diese Reservierung stornieren möchten?');">Reservierung stornieren</button>
-                                            <?php endif; ?>
+                                            <div class="d-flex flex-wrap gap-2">
+                                                <button type="submit" name="add_message" class="btn btn-primary flex-grow-1">Nachricht speichern</button>
+                                                
+                                                <?php if ($res['status'] !== 'canceled'): ?>
+                                                    <button type="submit" name="cancel_reservation" class="btn btn-danger flex-grow-1" onclick="return confirm('Sind Sie sicher, dass Sie diese Reservierung stornieren möchten?');">Reservierung stornieren</button>
+                                                <?php endif; ?>
+                                            </div>
                                         </form>
                                     </div>
                                 </div>

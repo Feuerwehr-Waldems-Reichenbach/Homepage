@@ -15,6 +15,124 @@ h1, h2, h3, h4, h5, h6 {
     margin-bottom: 1rem;
 }
 
+/* Improved navbar styling for desktop */
+@media (min-width: 992px) {
+    /* Navbar structure improvements */
+    .navbar {
+        padding-top: 0.75rem;
+        padding-bottom: 0.75rem;
+    }
+    
+    .navbar-nav .nav-item {
+        margin-right: 0.5rem;
+        position: relative;
+    }
+    
+    .navbar-nav .nav-item:not(:last-child)::after {
+        content: "";
+        position: absolute;
+        right: -0.25rem;
+        top: 25%;
+        height: 50%;
+        width: 1px;
+        background-color: rgba(255, 255, 255, 0.2);
+    }
+    
+    .navbar-expand-lg .navbar-nav .nav-link {
+        padding: 0.5rem 0.75rem;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+        margin: 0 0.1rem;
+    }
+    
+    .navbar-expand-lg .navbar-nav .nav-link:hover {
+        background-color: rgba(255, 255, 255, 0.15);
+        color: #fff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .navbar-brand {
+        margin-right: 2.5rem;
+        font-size: 1.4rem;
+        flex-shrink: 0;
+        white-space: nowrap;
+        letter-spacing: 0.5px;
+        position: relative;
+    }
+    
+    .navbar-brand::after {
+        content: "";
+        position: absolute;
+        right: -1.25rem;
+        top: 10%;
+        height: 80%;
+        width: 1px;
+        background-color: rgba(255, 255, 255, 0.3);
+    }
+    
+    .dropdown-menu {
+        min-width: 220px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        border: none;
+        border-radius: 6px;
+    }
+    
+    .dropdown-item {
+        padding: 0.6rem 1.2rem;
+    }
+    
+    /* Container optimization for wider screens */
+    .container {
+        max-width: 1300px;
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+    
+    /* Better spacing for navbar items */
+    .navbar-nav {
+        flex-wrap: nowrap;
+    }
+    
+    /* Prevent welcome message from taking too much space */
+    .navbar-nav .nav-item .nav-link {
+        white-space: nowrap;
+    }
+    
+    /* Improved spacing between nav items */
+    .navbar > .container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    
+    /* Welcome message better styling */
+    .nav-item .nav-link.user-welcome {
+        color: rgba(255, 255, 255, 0.8);
+        font-style: italic;
+        padding-right: 1.5rem;
+        border-right: 1px solid rgba(255, 255, 255, 0.2);
+        margin-right: 0.5rem;
+    }
+}
+
+/* Additional optimization for very wide screens */
+@media (min-width: 1400px) {
+    .container {
+        max-width: 1400px;
+    }
+    
+    .navbar-brand {
+        font-size: 1.6rem;
+        margin-right: 3rem;
+    }
+    
+    .navbar-expand-lg .navbar-nav .nav-link {
+        padding-left: 1rem;
+        padding-right: 1rem;
+        margin-right: 0.5rem;
+    }
+}
+
 /* Calendar styles */
 .calendar-container {
     background-color: #fff;
@@ -205,6 +323,32 @@ h1, h2, h3, h4, h5, h6 {
 
 .user-message {
     background-color: #f0f0f0;
+}
+
+/* Better button layout in reservation management */
+.gap-2 {
+    gap: 0.75rem !important;
+}
+
+/* Ensure buttons have equal height and width distribution */
+.flex-grow-1 {
+    min-width: 160px;
+}
+
+/* When buttons stack on small screens */
+@media (max-width: 576px) {
+    .d-flex.flex-wrap.gap-2 {
+        flex-direction: column;
+    }
+    
+    .d-flex.flex-wrap.gap-2 .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    
+    .flex-grow-1 {
+        min-width: 100%;
+    }
 }
 
 /* Mobile optimizations */
