@@ -33,7 +33,7 @@ class Reservation {
             $user = $userStmt->fetch(PDO::FETCH_ASSOC);
             
             // Bestätigungs-E-Mail senden
-            $subject = 'Ihre Reservierungsanfrage für die Grillhütte';
+            $subject = 'Ihre Reservierungsanfrage für die Grillhütte Waldems Reichenbach';
             $body = '
                 <!DOCTYPE html>
                 <html>
@@ -55,7 +55,7 @@ class Reservation {
                         </div>
                         <div class="content">
                             <h3>Hallo ' . $user['first_name'] . ' ' . $user['last_name'] . ',</h3>
-                            <p>vielen Dank für Ihre Reservierungsanfrage für die Grillhütte.</p>
+                            <p>vielen Dank für Ihre Reservierungsanfrage für die Grillhütte Waldems Reichenbach.</p>
                             
                             <div class="info-box">
                                 <strong>Ihre Reservierungsdetails:</strong><br>
@@ -70,7 +70,7 @@ class Reservation {
                             
                             <div class="footer">
                                 <p>Bei Fragen stehen wir Ihnen gerne zur Verfügung.</p>
-                                <p>Ihr Team der Grillhütte Reichenbach</p>
+                                <p>Ihr Team der Grillhütte Waldems Reichenbach</p>
                             </div>
                         </div>
                     </div>
@@ -235,7 +235,7 @@ class Reservation {
             
             $statusText = $status == 'confirmed' ? 'bestätigt' : 'abgelehnt';
             $statusColor = $status == 'confirmed' ? '#28a745' : '#dc3545';
-            $subject = 'Status Ihrer Reservierung für die Grillhütte';
+            $subject = 'Status Ihrer Reservierung für die Grillhütte Waldems Reichenbach';
             $body = '
                 <!DOCTYPE html>
                 <html>
@@ -282,7 +282,7 @@ class Reservation {
                             
                             <div class="footer">
                                 <p>Bei Fragen können Sie auf diese E-Mail antworten.</p>
-                                <p>Ihr Team der Grillhütte Reichenbach</p>
+                                <p>Ihr Team der Grillhütte Waldems Reichenbach</p>
                             </div>
                         </div>
                     </div>
@@ -440,7 +440,7 @@ class Reservation {
                             
                             <div class="footer">
                                 <p>Bei Fragen können Sie auf diese E-Mail antworten.</p>
-                                <p>Ihr Team der Grillhütte Reichenbach</p>
+                                <p>Ihr Team der Grillhütte Waldems Reichenbach</p>
                             </div>
                         </div>
                     </div>
@@ -490,7 +490,7 @@ class Reservation {
             $userStmt->execute([$userId]);
             $user = $userStmt->fetch(PDO::FETCH_ASSOC);
             
-            $subject = 'Neue Reservierung für die Grillhütte';
+            $subject = 'Neue Reservierung für die Grillhütte Waldems Reichenbach';
             $body = '
                 <!DOCTYPE html>
                 <html>
@@ -537,7 +537,7 @@ class Reservation {
                             
                             <div class="footer">
                                 <p>Bei Fragen können Sie auf diese E-Mail antworten.</p>
-                                <p>Ihr Team der Grillhütte Reichenbach</p>
+                                <p>Ihr Team der Grillhütte Waldems Reichenbach</p>
                             </div>
                         </div>
                     </div>
@@ -584,7 +584,7 @@ class Reservation {
                 $userStmt->execute([$reservation['user_id']]);
                 $user = $userStmt->fetch(PDO::FETCH_ASSOC);
                 
-                $subject = 'Stornierung Ihrer Reservierung für die Grillhütte';
+                $subject = 'Stornierung Ihrer Reservierung für die Grillhütte Waldems Reichenbach';
                 $body = '
                     <!DOCTYPE html>
                     <html>
@@ -620,7 +620,7 @@ class Reservation {
                                 <a href="' . $myReservationsUrl . '" class="button">Meine Reservierungen ansehen</a>
                                 
                                 <div class="footer">
-                                    <p>Ihr Team der Grillhütte Reichenbach</p>
+                                    <p>Ihr Team der Grillhütte Waldems Reichenbach</p>
                                 </div>
                             </div>
                         </div>
@@ -913,7 +913,7 @@ class Reservation {
                             </div>
                             <div class="content">
                                 <h3>Hallo ' . $user['first_name'] . ' ' . $user['last_name'] . ',</h3>
-                                <p>Ihre Reservierung für die Grillhütte wurde aktualisiert.</p>
+                                <p>Ihre Reservierung für die Grillhütte Waldems Reichenbach wurde aktualisiert.</p>
                                 <p><strong>Neuer Zeitraum:</strong> ' . date('d.m.Y H:i', strtotime($startDatetime)) . ' bis ' . date('d.m.Y H:i', strtotime($endDatetime)) . '</p>
                                 <p><strong>Status:</strong> ' . ucfirst($statusText) . '</p>
                                 ';
@@ -930,7 +930,7 @@ class Reservation {
                                 <a href="' . $myReservationsUrl . '" class="button">Meine Reservierungen ansehen</a>
                                 <div class="footer">
                                 <p>Bei Fragen können Sie auf diese E-Mail antworten.</p>
-                                <p>Ihr Team der Grillhütte Reichenbach</p>
+                                <p>Ihr Team der Grillhütte Waldems Reichenbach</p>
                                 </div>
                                 </div>
                         </div>
@@ -1001,11 +1001,11 @@ class Reservation {
                                 <h2>Ihre Reservierung wurde gelöscht</h2>
                             </div>
                             <div class="content">
-                                <p>Ihre Reservierung für die Grillhütte für den Zeitraum ' . date('d.m.Y H:i', strtotime($reservation['start_datetime'])) . ' bis ' . date('d.m.Y H:i', strtotime($reservation['end_datetime'])) . ' wurde gelöscht.</p>
+                                <p>Ihre Reservierung für die Grillhütte Waldems Reichenbach für den Zeitraum ' . date('d.m.Y H:i', strtotime($reservation['start_datetime'])) . ' bis ' . date('d.m.Y H:i', strtotime($reservation['end_datetime'])) . ' wurde gelöscht.</p>
                                 <a href="' . $myReservationsUrl . '" class="button">Meine Reservierungen ansehen</a>
                                 <div class="footer">
                                     <p>Bei Fragen wenden Sie sich bitte an den Administrator.</p>
-                                    <p>Ihr Team der Grillhütte Reichenbach</p>
+                                    <p>Ihr Team der Grillhütte Waldems Reichenbach</p>
                                 </div>
                             </div>
                         </div>

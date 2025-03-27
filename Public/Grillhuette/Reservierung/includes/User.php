@@ -56,7 +56,7 @@ class User {
                         </div>
                         <div class="content">
                             <h3>Hallo ' . $firstName . ' ' . $lastName . ',</h3>
-                            <p>vielen Dank für Ihre Registrierung im Reservierungssystem für die Grillhütte.</p>
+                            <p>vielen Dank für Ihre Registrierung im Reservierungssystem für die Grillhütte Waldems Reichenbach.</p>
                             
                             <div class="info-box">
                                 <p>Um Ihre Registrierung abzuschließen, klicken Sie bitte auf den folgenden Button:</p>
@@ -70,7 +70,7 @@ class User {
                             
                             <div class="footer">
                                 <p>Falls Sie sich nicht für diesen Dienst registriert haben, können Sie diese E-Mail ignorieren.</p>
-                                <p>Ihr Team der Grillhütte Reichenbach</p>
+                                <p>Ihr Team der Grillhütte Waldems Reichenbach</p>
                             </div>
                         </div>
                     </div>
@@ -250,7 +250,7 @@ class User {
                             
                             <div class="footer">
                                 <p>Falls Sie keine Anfrage zum Zurücksetzen Ihres Passworts gestellt haben, können Sie diese E-Mail ignorieren.</p>
-                                <p>Ihr Team der Grillhütte Reichenbach</p>
+                                <p>Ihr Team der Grillhütte Waldems Reichenbach</p>
                             </div>
                         </div>
                     </div>
@@ -433,7 +433,7 @@ class User {
                         </div>
                         <div class="content">
                             <h3>Hallo ' . $user['first_name'] . ' ' . $user['last_name'] . ',</h3>
-                            <p>Sie haben eine Änderung Ihrer E-Mail-Adresse im Reservierungssystem für die Grillhütte angefordert.</p>
+                            <p>Sie haben eine Änderung Ihrer E-Mail-Adresse im Reservierungssystem für die Grillhütte Waldems Reichenbach angefordert.</p>
                             
                             <div class="info-box">
                                 <p>Um Ihre neue E-Mail-Adresse zu bestätigen, klicken Sie bitte auf den folgenden Button:</p>
@@ -450,7 +450,7 @@ class User {
                             
                             <div class="footer">
                                 <p>Dieser Link ist 24 Stunden gültig.</p>
-                                <p>Ihr Team der Grillhütte Reichenbach</p>
+                                <p>Ihr Team der Grillhütte Waldems Reichenbach</p>
                             </div>
                         </div>
                     </div>
