@@ -182,6 +182,24 @@ if (isset($_GET['month']) && isset($_GET['year'])) {
                             this.setAttribute('href', 'tel:' + phone.replace(/[^0-9+]/g, ''));
                         });
                     });
+
+                    // Für nicht angemeldete Nutzer - Kalender-Klick-Handler
+                    <?php if (!isset($_SESSION['user_id'])): ?>
+                    const calendarElement = document.getElementById('calendar');
+                    if (calendarElement) {
+                        calendarElement.addEventListener('click', function(e) {
+                            if (e.target.classList.contains('day') && !e.target.classList.contains('other-month') && !e.target.classList.contains('past')) {
+                                // Verhindere Standard-Verhalten
+                                e.preventDefault();
+                                e.stopPropagation();
+                                
+                                // Zeige Modal
+                                const loginModal = new bootstrap.Modal(document.getElementById('loginRequiredModal'));
+                                loginModal.show();
+                            }
+                        }, true);
+                    }
+                    <?php endif; ?>
                 });
                 </script>
             </div>
@@ -339,5 +357,30 @@ if (isset($_GET['month']) && isset($_GET['year'])) {
         </div>
     </div>
 </div>
+
+<!-- Login Required Modal -->
+<?php if (!isset($_SESSION['user_id'])): ?>
+<div class="modal fade" id="loginRequiredModal" tabindex="-1" aria-labelledby="loginRequiredModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="loginRequiredModalLabel">Anmeldung erforderlich</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center mb-4">
+                    <i class="bi bi-lock-fill" style="font-size: 3rem; color: #6c757d;"></i>
+                </div>
+                <p>Um eine Reservierung vornehmen zu können, müssen Sie angemeldet sein und Ihre E-Mail-Adresse bestätigt haben.</p>
+                <p>Bitte melden Sie sich an oder erstellen Sie ein neues Konto, um fortzufahren.</p>
+            </div>
+            <div class="modal-footer d-flex justify-content-center">
+                <a href="<?php echo getRelativePath('Benutzer/Anmelden'); ?>" class="btn btn-primary" style="min-width: 120px;">Anmelden</a>
+                <a href="<?php echo getRelativePath('Benutzer/Registrieren'); ?>" class="btn btn-outline-primary" style="min-width: 120px;">Registrieren</a>
+            </div>
+        </div>
+    </div>
+</div>
+<?php endif; ?>
 
 <?php require_once 'includes/footer.php'; ?> 
