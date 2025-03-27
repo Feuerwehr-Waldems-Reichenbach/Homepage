@@ -158,26 +158,6 @@ function initializeDatePickers() {
             });
         });
     }
-    
-    // Time picker config
-    const timePickers = document.querySelectorAll('.time-picker');
-    if (timePickers.length > 0) {
-        timePickers.forEach(function(picker) {
-            flatpickr(picker, {
-                locale: "de",
-                enableTime: true,
-                noCalendar: true,
-                dateFormat: "H:i",
-                time_24hr: true,
-                minuteIncrement: 30,
-                disableMobile: "true",
-                // Better positioning for mobile devices
-                position: window.matchMedia("(max-width: 768px)").matches ? "auto" : "below",
-                // Mobile-friendly settings
-                appendTo: window.matchMedia("(max-width: 768px)").matches ? document.body : undefined
-            });
-        });
-    }
 }
 
 // Initialize and render the calendar
@@ -804,39 +784,11 @@ function setupReservationSelection() {
         if (startTimeInput) {
             startTimeInput.addEventListener('change', updateReservationCosts);
             startTimeInput.addEventListener('input', updateReservationCosts);
-            
-            // Für Flatpickr-Integration
-            if (typeof flatpickr !== 'undefined') {
-                try {
-                    const startTimePicker = flatpickr(startTimeInput, {
-                        enableTime: true,
-                        noCalendar: true,
-                        dateFormat: "H:i",
-                        onChange: updateReservationCosts
-                    });
-                } catch (e) {
-                    console.log("Flatpickr für Startzeit konnte nicht initialisiert werden", e);
-                }
-            }
         }
         
         if (endTimeInput) {
             endTimeInput.addEventListener('change', updateReservationCosts);
             endTimeInput.addEventListener('input', updateReservationCosts);
-            
-            // Für Flatpickr-Integration
-            if (typeof flatpickr !== 'undefined') {
-                try {
-                    const endTimePicker = flatpickr(endTimeInput, {
-                        enableTime: true,
-                        noCalendar: true,
-                        dateFormat: "H:i",
-                        onChange: updateReservationCosts
-                    });
-                } catch (e) {
-                    console.log("Flatpickr für Endzeit konnte nicht initialisiert werden", e);
-                }
-            }
         }
         
         // Initiale Berechnung

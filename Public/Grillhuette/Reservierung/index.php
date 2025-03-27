@@ -206,11 +206,11 @@ if (isset($_GET['month']) && isset($_GET['year'])) {
                                 
                                 <div class="mb-3">
                                     <label for="start_time" class="form-label">Startzeit</label>
-                                    <input type="text" class="form-control time-picker" id="start_time" name="start_time" value="12:00" required>
+                                    <input type="time" class="form-control" id="start_time" name="start_time" value="12:00" step="1800" required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="end_time" class="form-label">Endzeit</label>
-                                    <input type="text" class="form-control time-picker" id="end_time" name="end_time" value="12:00" required>
+                                    <input type="time" class="form-control" id="end_time" name="end_time" value="12:00" step="1800" required>
                                 </div>
                                 
                                 <div class="mb-3">

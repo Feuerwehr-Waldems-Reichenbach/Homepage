@@ -375,12 +375,12 @@ require_once '../../includes/header.php';
                     <div class="row">
                         <div class="col-md-4 mb-3">
                             <label for="start_time" class="form-label">Startzeit</label>
-                            <input type="text" class="form-control time-picker" id="start_time" name="start_time" value="12:00" required>
+                            <input type="time" class="form-control" id="start_time" name="start_time" value="12:00" step="1800" required>
                         </div>
                         
                         <div class="col-md-4 mb-3">
                             <label for="end_time" class="form-label">Endzeit</label>
-                            <input type="text" class="form-control time-picker" id="end_time" name="end_time" value="12:00" required>
+                            <input type="time" class="form-control" id="end_time" name="end_time" value="12:00" step="1800" required>
                         </div>
                         
                         <div class="col-md-4 mb-3">
@@ -465,12 +465,12 @@ require_once '../../includes/header.php';
                     <div class="row">
                         <div class="col-md-4 mb-3">
                             <label for="edit_start_time" class="form-label">Startzeit</label>
-                            <input type="text" class="form-control time-picker" id="edit_start_time" name="start_time" required>
+                            <input type="time" class="form-control" id="edit_start_time" name="start_time" step="1800" required>
                         </div>
                         
                         <div class="col-md-4 mb-3">
                             <label for="edit_end_time" class="form-label">Endzeit</label>
-                            <input type="text" class="form-control time-picker" id="edit_end_time" name="end_time" required>
+                            <input type="time" class="form-control" id="edit_end_time" name="end_time" step="1800" required>
                         </div>
                         
                         <div class="col-md-4 mb-3">
