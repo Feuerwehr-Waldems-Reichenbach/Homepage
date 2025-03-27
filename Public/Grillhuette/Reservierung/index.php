@@ -117,6 +117,7 @@ if (isset($_GET['month']) && isset($_GET['year'])) {
                             <li><strong>Miete:</strong> 100€ pro Tag (12 - 12 Uhr)</li>
                             <li><strong>Kaution:</strong> 100€</li>
                             <li><strong>Rückgabe:</strong> bis spätestens am nächsten Tag 12:00 Uhr</li>
+                            <li><strong>Min. Buchungszeitraum:</strong> 1 Tag</li>
                         </ul>
                         
                         <h6>Im Mietzins enthalten:</h6>
@@ -217,6 +218,21 @@ if (isset($_GET['month']) && isset($_GET['year'])) {
                                     <textarea class="form-control" id="message" name="message" rows="3"></textarea>
                                 </div>
                                 
+                                <!-- Kostenübersicht -->
+                                <div class="mb-3">
+                                    <label class="form-label">Kostenübersicht</label>
+                                    <div class="card">
+                                        <div class="card-body p-3">
+                                            <ul class="list-unstyled mb-0" id="cost-overview">
+                                                <li>Grundpreis: <span id="base-cost">100,00€</span></li>
+                                                <li>Anzahl Tage: <span id="day-count">1</span></li>
+                                                <li class="border-top mt-2 pt-2"><strong>Gesamtpreis: <span id="total-cost">100,00€</span></strong></li>
+                                            </ul>
+                                            <div class="form-text mt-2">Kaution (100€) nicht im Gesamtpreis enthalten.</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
                                 <button type="submit" class="btn btn-primary w-100">Reservierung anfragen</button>
                             </form>
                         </div>
@@ -263,6 +279,7 @@ if (isset($_GET['month']) && isset($_GET['year'])) {
                                                 <li><strong>Miete:</strong> 100€ pro Tag (12 - 12 Uhr)</li>
                                                 <li><strong>Kaution:</strong> 100€</li>
                                                 <li><strong>Rückgabe:</strong> bis spätestens am nächsten Tag 12:00 Uhr</li>
+                                                <li><strong>Min. Buchungszeitraum:</strong> 1 Tag</li>
                                             </ul>
                                         </div>
                                     </div>

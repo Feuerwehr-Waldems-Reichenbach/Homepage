@@ -110,6 +110,36 @@ require_once '../../includes/header.php';
                                         </span>
                                     </div>
                                     <div class="card-body">
+                                        <!-- Kostenübersicht -->
+                                        <div class="card mb-3">
+                                            <div class="card-body p-3">
+                                                <?php
+                                                // Berechne die Anzahl der Tage
+                                                $startDate = new DateTime($res['start_datetime']);
+                                                $endDate = new DateTime($res['end_datetime']);
+                                                
+                                                // Berechne die Differenz in Sekunden
+                                                $diffSeconds = $endDate->getTimestamp() - $startDate->getTimestamp();
+                                                
+                                                // Berechne die Anzahl der Tage als Dezimalzahl
+                                                $diffDays = $diffSeconds / (24 * 60 * 60);
+                                                
+                                                // Runde auf ganze Tage auf (mindestens 1 Tag)
+                                                $days = max(1, ceil($diffDays));
+                                                
+                                                // Berechne Gesamtkosten (100€ pro Tag)
+                                                $totalCost = $days * 100;
+                                                ?>
+                                                <h6 class="mb-2">Kostenübersicht:</h6>
+                                                <ul class="list-unstyled mb-0">
+                                                    <li>Grundpreis: 100,00€ pro Tag</li>
+                                                    <li>Anzahl Tage: <?php echo $days; ?></li>
+                                                    <li class="border-top mt-2 pt-2"><strong>Gesamtpreis: <?php echo number_format($totalCost, 2, ',', '.'); ?>€</strong></li>
+                                                </ul>
+                                                <div class="form-text mt-2">Kaution (100€) nicht im Gesamtpreis enthalten.</div>
+                                            </div>
+                                        </div>
+                                        
                                         <?php if (!empty($res['user_message'])): ?>
                                             <div class="message-box user-message mb-3">
                                                 <h5>Ihre Nachricht:</h5>
@@ -200,6 +230,36 @@ require_once '../../includes/header.php';
                                         </span>
                                     </div>
                                     <div class="card-body">
+                                        <!-- Kostenübersicht -->
+                                        <div class="card mb-3">
+                                            <div class="card-body p-3">
+                                                <?php
+                                                // Berechne die Anzahl der Tage
+                                                $startDate = new DateTime($res['start_datetime']);
+                                                $endDate = new DateTime($res['end_datetime']);
+                                                
+                                                // Berechne die Differenz in Sekunden
+                                                $diffSeconds = $endDate->getTimestamp() - $startDate->getTimestamp();
+                                                
+                                                // Berechne die Anzahl der Tage als Dezimalzahl
+                                                $diffDays = $diffSeconds / (24 * 60 * 60);
+                                                
+                                                // Runde auf ganze Tage auf (mindestens 1 Tag)
+                                                $days = max(1, ceil($diffDays));
+                                                
+                                                // Berechne Gesamtkosten (100€ pro Tag)
+                                                $totalCost = $days * 100;
+                                                ?>
+                                                <h6 class="mb-2">Kostenübersicht:</h6>
+                                                <ul class="list-unstyled mb-0">
+                                                    <li>Grundpreis: 100,00€ pro Tag</li>
+                                                    <li>Anzahl Tage: <?php echo $days; ?></li>
+                                                    <li class="border-top mt-2 pt-2"><strong>Gesamtpreis: <?php echo number_format($totalCost, 2, ',', '.'); ?>€</strong></li>
+                                                </ul>
+                                                <div class="form-text mt-2">Kaution (100€) nicht im Gesamtpreis enthalten.</div>
+                                            </div>
+                                        </div>
+                                        
                                         <?php if (!empty($res['user_message'])): ?>
                                             <div class="message-box user-message mb-3">
                                                 <h5>Ihre Nachricht:</h5>

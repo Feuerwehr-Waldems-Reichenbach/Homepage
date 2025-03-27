@@ -566,6 +566,9 @@ function selectDay(dayElement) {
             if (window.matchMedia("(max-width: 768px)").matches) {
                 showMobileAlert('Startdatum ausgewählt. Bitte wählen Sie jetzt das Enddatum.');
             }
+            
+            // Trigger cost update
+            updateReservationCosts();
         } else if (startDateInput.value && !endDateInput.value) {
             // Complete the selection
             const startDate = new Date(startDateInput.value);
@@ -587,6 +590,9 @@ function selectDay(dayElement) {
             
             // Highlight all days in the range
             highlightDateRange(startDateInput.value, endDateInput.value);
+            
+            // Trigger cost update after selection is complete
+            updateReservationCosts();
         }
     } else if (selectedDatesInput) {
         // Multiple date selection for admin blocking
@@ -677,6 +683,9 @@ function highlightDateRange(startDate, endDate) {
             endDateInput.value = '';
         }
     }
+    
+    // Update the cost calculation after the range is highlighted
+    updateReservationCosts();
 }
 
 // Format date as YYYY-MM-DD
@@ -723,6 +732,20 @@ function setupReservationSelection() {
             return false;
         }
         
+        // Check if booking is at least 1 day
+        if (!isMinimumBookingDuration(startDate.value, endDate.value)) {
+            event.preventDefault();
+            const message = 'Der Mindestbuchungszeitraum beträgt 1 Tag.';
+            
+            if (window.matchMedia("(max-width: 768px)").matches) {
+                showMobileAlert(message);
+            } else {
+                alert(message);
+            }
+            
+            return false;
+        }
+        
         // Validate that all days in the range are available
         const start = new Date(startDate.value);
         const end = new Date(endDate.value);
@@ -753,4 +776,153 @@ function setupReservationSelection() {
         
         return true;
     });
+    
+    // Setup cost calculator
+    const startDateInput = document.getElementById('start_date');
+    const endDateInput = document.getElementById('end_date');
+    const startTimeInput = document.getElementById('start_time');
+    const endTimeInput = document.getElementById('end_time');
+    
+    if (startDateInput && endDateInput) {
+        // Einfache Event-Listener für Wertänderungen hinzufügen, ohne den Setter zu überschreiben
+        startDateInput.addEventListener('input', updateReservationCosts);
+        endDateInput.addEventListener('input', updateReservationCosts);
+        
+        // Update costs when dates change (durch MutationObserver)
+        const observer = new MutationObserver(function(mutations) {
+            updateReservationCosts();
+        });
+        
+        observer.observe(startDateInput, { attributes: true });
+        observer.observe(endDateInput, { attributes: true });
+        
+        // Auch bei direkter Änderung aktualisieren
+        startDateInput.addEventListener('change', updateReservationCosts);
+        endDateInput.addEventListener('change', updateReservationCosts);
+        
+        // Auch bei Uhrzeitänderungen aktualisieren
+        if (startTimeInput) {
+            startTimeInput.addEventListener('change', updateReservationCosts);
+            startTimeInput.addEventListener('input', updateReservationCosts);
+            
+            // Für Flatpickr-Integration
+            if (typeof flatpickr !== 'undefined') {
+                try {
+                    const startTimePicker = flatpickr(startTimeInput, {
+                        enableTime: true,
+                        noCalendar: true,
+                        dateFormat: "H:i",
+                        onChange: updateReservationCosts
+                    });
+                } catch (e) {
+                    console.log("Flatpickr für Startzeit konnte nicht initialisiert werden", e);
+                }
+            }
+        }
+        
+        if (endTimeInput) {
+            endTimeInput.addEventListener('change', updateReservationCosts);
+            endTimeInput.addEventListener('input', updateReservationCosts);
+            
+            // Für Flatpickr-Integration
+            if (typeof flatpickr !== 'undefined') {
+                try {
+                    const endTimePicker = flatpickr(endTimeInput, {
+                        enableTime: true,
+                        noCalendar: true,
+                        dateFormat: "H:i",
+                        onChange: updateReservationCosts
+                    });
+                } catch (e) {
+                    console.log("Flatpickr für Endzeit konnte nicht initialisiert werden", e);
+                }
+            }
+        }
+        
+        // Initiale Berechnung
+        updateReservationCosts();
+    }
+}
+
+// Calculate and update reservation costs
+function updateReservationCosts() {
+    const startDateInput = document.getElementById('start_date');
+    const endDateInput = document.getElementById('end_date');
+    const startTimeInput = document.getElementById('start_time');
+    const endTimeInput = document.getElementById('end_time');
+    const dayCountElement = document.getElementById('day-count');
+    const totalCostElement = document.getElementById('total-cost');
+    
+    if (!startDateInput || !endDateInput || !dayCountElement || !totalCostElement) return;
+    
+    // Only calculate if both dates are selected
+    if (startDateInput.value && endDateInput.value) {
+        // Erstelle vollständige Datums-Zeit-Objekte
+        let startDateTime = new Date(startDateInput.value);
+        let endDateTime = new Date(endDateInput.value);
+        
+        // Füge die Uhrzeiten hinzu, falls verfügbar
+        if (startTimeInput && startTimeInput.value) {
+            const [startHours, startMinutes] = startTimeInput.value.split(':').map(Number);
+            startDateTime.setHours(startHours, startMinutes, 0);
+        }
+        
+        if (endTimeInput && endTimeInput.value) {
+            const [endHours, endMinutes] = endTimeInput.value.split(':').map(Number);
+            endDateTime.setHours(endHours, endMinutes, 0);
+        }
+        
+        // Berechne die Differenz in Millisekunden
+        const diffTime = Math.abs(endDateTime - startDateTime);
+        
+        // Berechne die Anzahl der Tage als Dezimalzahl (z.B. 1,5 Tage)
+        const diffDays = diffTime / (24 * 60 * 60 * 1000);
+        
+        // Runde auf ganze Tage auf (mindestens 1 Tag)
+        const days = Math.max(1, Math.ceil(diffDays));
+        
+        // Calculate total cost (100€ per day)
+        const dailyRate = 100; // €
+        const totalCost = days * dailyRate;
+        
+        // Update the UI
+        dayCountElement.textContent = days;
+        totalCostElement.textContent = totalCost.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '€';
+    } else {
+        // Default values if dates not selected
+        dayCountElement.textContent = '1';
+        totalCostElement.textContent = '100,00€';
+    }
+}
+
+// Check if booking meets minimum duration requirement (1 day)
+function isMinimumBookingDuration(startDateStr, endDateStr) {
+    if (!startDateStr || !endDateStr) return false;
+    
+    const startTimeInput = document.getElementById('start_time');
+    const endTimeInput = document.getElementById('end_time');
+    
+    // Erstelle vollständige Datums-Zeit-Objekte
+    let startDateTime = new Date(startDateStr);
+    let endDateTime = new Date(endDateStr);
+    
+    // Füge die Uhrzeiten hinzu, falls verfügbar
+    if (startTimeInput && startTimeInput.value) {
+        const [startHours, startMinutes] = startTimeInput.value.split(':').map(Number);
+        startDateTime.setHours(startHours, startMinutes, 0);
+    }
+    
+    if (endTimeInput && endTimeInput.value) {
+        const [endHours, endMinutes] = endTimeInput.value.split(':').map(Number);
+        endDateTime.setHours(endHours, endMinutes, 0);
+    }
+    
+    // Berechne die Differenz in Millisekunden
+    const diffTime = Math.abs(endDateTime - startDateTime);
+    
+    // Berechne die Anzahl der Tage als Dezimalzahl
+    const diffDays = diffTime / (24 * 60 * 60 * 1000);
+    
+    // Prüfe, ob mindestens 1 Tag gebucht wird
+    return diffDays >= 1;
 } 

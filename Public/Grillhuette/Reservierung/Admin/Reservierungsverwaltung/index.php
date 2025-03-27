@@ -227,6 +227,7 @@ require_once '../../includes/header.php';
                                     <th>ID</th>
                                     <th>Benutzer</th>
                                     <th>Zeitraum</th>
+                                    <th>Kosten</th>
                                     <th>Status</th>
                                     <th>Nachrichten</th>
                                     <th>Aktionen</th>
@@ -243,6 +244,27 @@ require_once '../../includes/header.php';
                                         <td>
                                             Von: <?php echo date('d.m.Y H:i', strtotime($res['start_datetime'])); ?><br>
                                             Bis: <?php echo date('d.m.Y H:i', strtotime($res['end_datetime'])); ?>
+                                        </td>
+                                        <td>
+                                            <?php
+                                            // Berechne die Anzahl der Tage
+                                            $startDate = new DateTime($res['start_datetime']);
+                                            $endDate = new DateTime($res['end_datetime']);
+                                            
+                                            // Berechne die Differenz in Sekunden
+                                            $diffSeconds = $endDate->getTimestamp() - $startDate->getTimestamp();
+                                            
+                                            // Berechne die Anzahl der Tage als Dezimalzahl
+                                            $diffDays = $diffSeconds / (24 * 60 * 60);
+                                            
+                                            // Runde auf ganze Tage auf (mindestens 1 Tag)
+                                            $days = max(1, ceil($diffDays));
+                                            
+                                            // Berechne Gesamtkosten (100€ pro Tag)
+                                            $totalCost = $days * 100;
+                                            ?>
+                                            <strong><?php echo number_format($totalCost, 2, ',', '.'); ?>€</strong><br>
+                                            <small>(<?php echo $days; ?> Tage × 100€)</small>
                                         </td>
                                         <td>
                                             <span class="badge status-badge status-<?php echo $res['status']; ?>">
@@ -366,6 +388,32 @@ require_once '../../includes/header.php';
                             <textarea class="form-control" id="admin_message" name="admin_message" rows="1"></textarea>
                         </div>
                     </div>
+                    
+                    <!-- Kostenübersicht -->
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label">Kostenübersicht</label>
+                            <div class="card">
+                                <div class="card-body p-3">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <ul class="list-unstyled mb-0" id="new-cost-overview">
+                                                <li>Grundpreis: 100,00€ pro Tag</li>
+                                                <li>Anzahl Tage: <span id="new-day-count">1</span></li>
+                                                <li class="border-top mt-2 pt-2"><strong>Gesamtpreis: <span id="new-total-cost">100,00€</span></strong></li>
+                                            </ul>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-text">
+                                                Der Mindestbuchungszeitraum beträgt 1 Tag.<br>
+                                                Kaution (100€) nicht im Gesamtpreis enthalten.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </form>
             </div>
             <div class="modal-footer">
@@ -434,7 +482,7 @@ require_once '../../includes/header.php';
                             </select>
                         </div>
                     </div>
-
+                    
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="edit_user_message_display" class="form-label">Nachricht vom Benutzer</label>
@@ -444,6 +492,32 @@ require_once '../../includes/header.php';
                         <div class="col-md-6 mb-3">
                             <label for="edit_admin_message" class="form-label">Nachricht an den Benutzer</label>
                             <textarea class="form-control" id="edit_admin_message" name="admin_message" rows="3"></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-8 mb-3">
+                            <!-- Kostenübersicht -->
+                            <label class="form-label">Kostenübersicht</label>
+                            <div class="card">
+                                <div class="card-body p-3">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <ul class="list-unstyled mb-0" id="edit-cost-overview">
+                                                <li>Grundpreis: 100,00€ pro Tag</li>
+                                                <li>Anzahl Tage: <span id="edit-day-count">1</span></li>
+                                                <li class="border-top mt-2 pt-2"><strong>Gesamtpreis: <span id="edit-total-cost">100,00€</span></strong></li>
+                                            </ul>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-text">
+                                                Der Mindestbuchungszeitraum beträgt 1 Tag.<br>
+                                                Kaution (100€) nicht im Gesamtpreis enthalten.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </form>
@@ -496,11 +570,79 @@ function prepareEditModal(button) {
     document.getElementById('edit_admin_message').value = adminMessage;
     document.getElementById('edit_user_message_display').value = userMessage;
     document.getElementById('edit_status').value = status;
+    
+    // Update cost calculation
+    updateEditCosts();
 }
 
 function confirmDeleteReservation() {
     if (confirm('Sind Sie sicher, dass Sie diese Reservierung löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.')) {
         document.getElementById('deleteReservationForm').submit();
+    }
+}
+
+// Calculate costs for edit reservation
+function updateEditCosts() {
+    calculateCosts('edit_start_date', 'edit_end_date', 'edit-day-count', 'edit-total-cost');
+}
+
+// Calculate costs for new reservation
+function updateNewCosts() {
+    calculateCosts('start_date', 'end_date', 'new-day-count', 'new-total-cost');
+}
+
+// Generic cost calculation function
+function calculateCosts(startDateId, endDateId, dayCountId, totalCostId) {
+    const startDateInput = document.getElementById(startDateId);
+    const endDateInput = document.getElementById(endDateId);
+    const dayCountElement = document.getElementById(dayCountId);
+    const totalCostElement = document.getElementById(totalCostId);
+    
+    // Finde die passenden Zeitfelder basierend auf den Datums-IDs
+    let startTimeId = startDateId.replace('date', 'time');
+    let endTimeId = endDateId.replace('date', 'time');
+    const startTimeInput = document.getElementById(startTimeId);
+    const endTimeInput = document.getElementById(endTimeId);
+    
+    if (!startDateInput || !endDateInput || !dayCountElement || !totalCostElement) return;
+    
+    // Only calculate if both dates are selected
+    if (startDateInput.value && endDateInput.value) {
+        // Erstelle vollständige Datums-Zeit-Objekte
+        let startDateTime = new Date(startDateInput.value);
+        let endDateTime = new Date(endDateInput.value);
+        
+        // Füge die Uhrzeiten hinzu, falls verfügbar
+        if (startTimeInput && startTimeInput.value) {
+            const [startHours, startMinutes] = startTimeInput.value.split(':').map(Number);
+            startDateTime.setHours(startHours, startMinutes, 0);
+        }
+        
+        if (endTimeInput && endTimeInput.value) {
+            const [endHours, endMinutes] = endTimeInput.value.split(':').map(Number);
+            endDateTime.setHours(endHours, endMinutes, 0);
+        }
+        
+        // Berechne die Differenz in Millisekunden
+        const diffTime = Math.abs(endDateTime - startDateTime);
+        
+        // Berechne die Anzahl der Tage als Dezimalzahl (z.B. 1,5 Tage)
+        const diffDays = diffTime / (24 * 60 * 60 * 1000);
+        
+        // Runde auf ganze Tage auf (mindestens 1 Tag)
+        const days = Math.max(1, Math.ceil(diffDays));
+        
+        // Calculate total cost (100€ per day)
+        const dailyRate = 100; // €
+        const totalCost = days * dailyRate;
+        
+        // Update the UI
+        dayCountElement.textContent = days;
+        totalCostElement.textContent = totalCost.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '€';
+    } else {
+        // Default values if dates not selected
+        dayCountElement.textContent = '1';
+        totalCostElement.textContent = '100,00€';
     }
 }
 
@@ -530,7 +672,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 altFormat: "j. F Y",
                 minDate: "today",
                 disableMobile: "true",
-                defaultDate: startDateField.value
+                defaultDate: startDateField.value,
+                onChange: function() {
+                    updateEditCosts();
+                }
             });
             
             flatpickr('#edit_end_date', {
@@ -540,7 +685,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 altFormat: "j. F Y",
                 minDate: "today",
                 disableMobile: "true",
-                defaultDate: endDateField.value
+                defaultDate: endDateField.value,
+                onChange: function() {
+                    updateEditCosts();
+                }
             });
             
             // Time picker für Startzeit und Endzeit
@@ -565,6 +713,31 @@ document.addEventListener('DOMContentLoaded', function() {
                 disableMobile: "true",
                 defaultDate: endTimeField.value ? `2000-01-01T${endTimeField.value}` : null
             });
+            
+            // Initial cost calculation
+            updateEditCosts();
+        });
+    }
+    
+    // Setup for new reservation modal
+    const newModal = document.getElementById('newReservationModal');
+    if (newModal) {
+        newModal.addEventListener('shown.bs.modal', function () {
+            // Initial cost calculation and setup event listeners
+            updateNewCosts();
+            
+            // Update cost when date pickers change
+            if (flatpickr.instances['start_date']) {
+                flatpickr.instances['start_date'].config.onChange.push(function() {
+                    updateNewCosts();
+                });
+            }
+            
+            if (flatpickr.instances['end_date']) {
+                flatpickr.instances['end_date'].config.onChange.push(function() {
+                    updateNewCosts();
+                });
+            }
         });
     }
 });

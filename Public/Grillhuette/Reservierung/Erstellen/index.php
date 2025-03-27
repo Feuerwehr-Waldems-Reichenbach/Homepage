@@ -48,6 +48,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
     
+    // Überprüfen, ob der Mindestbuchungszeitraum von 1 Tag eingehalten wird
+    $startDate = new DateTime($startDatetime);
+    $endDate = new DateTime($endDatetime);
+    
+    // Berechne die Differenz in Sekunden
+    $diffSeconds = $endDate->getTimestamp() - $startDate->getTimestamp();
+    
+    // Berechne die Anzahl der Tage als Dezimalzahl
+    $diffDays = $diffSeconds / (24 * 60 * 60);
+    
+    // Runde auf ganze Tage auf
+    $days = ceil($diffDays);
+    
+    if ($days < 1) {
+        $_SESSION['flash_message'] = 'Der Mindestbuchungszeitraum beträgt 1 Tag.';
+        $_SESSION['flash_type'] = 'danger';
+        header('Location: ' . getRelativePath('home'));
+        exit;
+    }
+    
     // Reservierung erstellen
     $reservation = new Reservation();
     $result = $reservation->create($_SESSION['user_id'], $startDatetime, $endDatetime, $message);
