@@ -571,6 +571,19 @@ function prepareEditModal(button) {
     document.getElementById('edit_user_message_display').value = userMessage;
     document.getElementById('edit_status').value = status;
     
+    // Time values direkt im nativen HTML5-Format setzen
+    const startTimeField = document.getElementById('edit_start_time');
+    const endTimeField = document.getElementById('edit_end_time');
+    
+    // Ensure the time values are properly formatted as HH:MM
+    if (startTime && startTimeField) {
+        startTimeField.value = startTime;
+    }
+    
+    if (endTime && endTimeField) {
+        endTimeField.value = endTime;
+    }
+    
     // Update cost calculation
     updateEditCosts();
 }
@@ -691,28 +704,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
             
-            // Time picker für Startzeit und Endzeit
-            flatpickr('#edit_start_time', {
-                locale: "de",
-                enableTime: true,
-                noCalendar: true,
-                dateFormat: "H:i",
-                time_24hr: true,
-                minuteIncrement: 30,
-                disableMobile: "true",
-                defaultDate: startTimeField.value ? `2000-01-01T${startTimeField.value}` : null
-            });
+            // Time picker für Startzeit und Endzeit - stattdessen einfache HTML Zeit-Eingabefelder verwenden
+            // Keine flatpickr-Instanzen für die Zeitfelder erstellen
             
-            flatpickr('#edit_end_time', {
-                locale: "de",
-                enableTime: true,
-                noCalendar: true,
-                dateFormat: "H:i",
-                time_24hr: true,
-                minuteIncrement: 30,
-                disableMobile: "true",
-                defaultDate: endTimeField.value ? `2000-01-01T${endTimeField.value}` : null
-            });
+            // Event-Listener hinzufügen, um die Kostenberechnung zu aktualisieren, wenn sich die Zeit ändert
+            startTimeField.addEventListener('change', updateEditCosts);
+            endTimeField.addEventListener('change', updateEditCosts);
             
             // Initial cost calculation
             updateEditCosts();
