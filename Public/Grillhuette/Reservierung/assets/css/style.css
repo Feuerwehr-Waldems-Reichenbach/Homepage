@@ -6,32 +6,107 @@ body {
     line-height: 1.6;
 }
 
+/* Navbar base styles - prevent truncation */
 .navbar-brand {
     font-weight: 700;
+    font-size: 1rem; /* Smaller base size */
+    white-space: normal; /* Allow text wrapping */
+    line-height: 1.2;
+    width: auto;
+    max-width: 200px; /* Limit width on small screens */
 }
 
-h1, h2, h3, h4, h5, h6 {
-    font-weight: 600;
-    margin-bottom: 1rem;
+/* Nav items should shrink and wrap if needed */
+.navbar-nav .nav-item {
+    min-width: 0; /* Override any min-width */
+    display: flex;
+    flex-shrink: 1;
+}
+
+.navbar-nav .nav-link {
+    white-space: normal; /* Allow text wrapping */
+    padding: 0.5rem 0.35rem; /* Smaller padding by default */
+    display: flex;
+    align-items: center;
+    font-size: 0.9rem; /* Slightly smaller text */
+}
+
+/* Fix dropdown alignment */
+.dropdown-menu {
+    position: absolute;
+    left: 0;
+    right: auto;
+}
+
+/* Move to hamburger menu earlier */
+@media (max-width: 1199px) {
+    .navbar-expand-lg .navbar-nav {
+        flex-direction: column;
+    }
+    
+    .navbar-expand-lg .navbar-toggler {
+        display: block;
+    }
+    
+    .navbar-expand-lg .navbar-collapse {
+        display: none !important;
+    }
+    
+    .navbar-expand-lg .navbar-collapse.show {
+        display: block !important;
+    }
+    
+    .dropdown-menu {
+        position: static;
+        float: none;
+        width: auto;
+        margin-top: 0;
+        background-color: transparent;
+        border: 0;
+        box-shadow: none;
+    }
+}
+
+/* Small screens */
+@media (max-width: 575.98px) {
+    .navbar-brand {
+        max-width: 180px;
+        font-size: 0.9rem;
+    }
+    
+    .navbar-toggler {
+        padding: 0.25rem 0.5rem;
+    }
+    
+    .navbar > .container {
+        padding-left: 5px;
+        padding-right: 5px;
+    }
 }
 
 /* Improved navbar styling for desktop */
 @media (min-width: 992px) {
     /* Navbar structure improvements */
     .navbar {
-        padding-top: 0.75rem;
-        padding-bottom: 0.75rem;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+    }
+    
+    .navbar-brand {
+        max-width: none;
+        font-size: 1.2rem;
+        margin-right: 1rem; /* Smaller margin */
     }
     
     .navbar-nav .nav-item {
-        margin-right: 0.5rem;
+        margin-right: 0.25rem; /* Smaller margin */
         position: relative;
     }
     
     .navbar-nav .nav-item:not(:last-child)::after {
         content: "";
         position: absolute;
-        right: -0.25rem;
+        right: -0.15rem; /* Smaller gap */
         top: 25%;
         height: 50%;
         width: 1px;
@@ -39,10 +114,11 @@ h1, h2, h3, h4, h5, h6 {
     }
     
     .navbar-expand-lg .navbar-nav .nav-link {
-        padding: 0.5rem 0.75rem;
+        padding: 0.4rem 0.5rem; /* Smaller padding */
         border-radius: 4px;
         transition: all 0.2s ease;
-        margin: 0 0.1rem;
+        margin: 0 0.05rem; /* Smaller margin */
+        font-size: 0.95rem; /* More reasonable font size */
     }
     
     .navbar-expand-lg .navbar-nav .nav-link:hover {
@@ -51,19 +127,10 @@ h1, h2, h3, h4, h5, h6 {
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
     
-    .navbar-brand {
-        margin-right: 2.5rem;
-        font-size: 1.4rem;
-        flex-shrink: 0;
-        white-space: nowrap;
-        letter-spacing: 0.5px;
-        position: relative;
-    }
-    
     .navbar-brand::after {
         content: "";
         position: absolute;
-        right: -1.25rem;
+        right: -0.75rem; /* Smaller gap */
         top: 10%;
         height: 80%;
         width: 1px;
@@ -71,47 +138,42 @@ h1, h2, h3, h4, h5, h6 {
     }
     
     .dropdown-menu {
-        min-width: 220px;
+        min-width: 180px; /* Smaller dropdown */
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         border: none;
         border-radius: 6px;
     }
     
     .dropdown-item {
-        padding: 0.6rem 1.2rem;
+        padding: 0.5rem 1rem; /* Smaller padding */
     }
     
     /* Container optimization for wider screens */
     .container {
-        max-width: 1300px;
-        padding-left: 30px;
-        padding-right: 30px;
+        padding-left: 15px;
+        padding-right: 15px;
     }
     
     /* Better spacing for navbar items */
     .navbar-nav {
-        flex-wrap: nowrap;
+        flex-wrap: wrap; /* Allow wrapping if needed */
     }
     
     /* Prevent welcome message from taking too much space */
     .navbar-nav .nav-item .nav-link {
-        white-space: nowrap;
-    }
-    
-    /* Improved spacing between nav items */
-    .navbar > .container {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
+        white-space: normal; /* Allow text wrapping */
     }
     
     /* Welcome message better styling */
     .nav-item .nav-link.user-welcome {
         color: rgba(255, 255, 255, 0.8);
         font-style: italic;
-        padding-right: 1.5rem;
+        padding-right: 0.75rem; /* Smaller padding */
         border-right: 1px solid rgba(255, 255, 255, 0.2);
-        margin-right: 0.5rem;
+        margin-right: 0.25rem; /* Smaller margin */
+        max-width: 150px; /* Limit width */
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 }
 
@@ -122,14 +184,19 @@ h1, h2, h3, h4, h5, h6 {
     }
     
     .navbar-brand {
-        font-size: 1.6rem;
-        margin-right: 3rem;
+        font-size: 1.5rem;
+        margin-right: 2rem;
     }
     
     .navbar-expand-lg .navbar-nav .nav-link {
-        padding-left: 1rem;
-        padding-right: 1rem;
-        margin-right: 0.5rem;
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+        margin-right: 0.3rem;
+        font-size: 1rem;
+    }
+    
+    .nav-item .nav-link.user-welcome {
+        max-width: none; /* No limit on large screens */
     }
 }
 
