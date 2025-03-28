@@ -31,6 +31,28 @@ body {
     font-size: 0.9rem; /* Slightly smaller text */
 }
 
+/* Welcome message styling */
+.user-welcome {
+    color: rgba(255, 255, 255, 0.8);
+    font-style: italic;
+    padding-right: 0.5rem;
+}
+
+/* Desktop welcome item with separator */
+.welcome-item {
+    position: relative;
+}
+
+.welcome-item::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 25%;
+    height: 50%;
+    width: 1px;
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
 /* Fix dropdown alignment */
 .dropdown-menu {
     position: absolute;
@@ -38,32 +60,49 @@ body {
     right: auto;
 }
 
-/* Move to hamburger menu earlier */
-@media (max-width: 1199px) {
-    .navbar-expand-lg .navbar-nav {
-        flex-direction: column;
+/* Hamburger menu styles */
+@media (max-width: 991.98px) {
+    /* Fixed hamburger menu */
+    .navbar-collapse {
+        padding-top: 0.5rem;
     }
     
-    .navbar-expand-lg .navbar-toggler {
-        display: block;
+    /* Make menu items take full width */
+    .navbar-nav {
+        width: 100%;
     }
     
-    .navbar-expand-lg .navbar-collapse {
-        display: none !important;
+    .navbar-nav .nav-item {
+        width: 100%;
+        margin: 0;
     }
     
-    .navbar-expand-lg .navbar-collapse.show {
-        display: block !important;
+    .navbar-nav .nav-link {
+        padding: 0.75rem 1rem;
+        width: 100%;
     }
     
+    /* Fix dropdown menu */
     .dropdown-menu {
+        background-color: rgba(0, 0, 0, 0.1);
+        border: none;
+        margin: 0;
+        padding: 0;
         position: static;
-        float: none;
-        width: auto;
-        margin-top: 0;
-        background-color: transparent;
-        border: 0;
-        box-shadow: none;
+    }
+    
+    .dropdown-item {
+        color: rgba(255, 255, 255, 0.8);
+        padding: 0.75rem 2rem;
+    }
+    
+    .dropdown-item:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    /* Hide all separators in mobile */
+    .welcome-item::after {
+        display: none;
     }
 }
 
@@ -84,41 +123,54 @@ body {
     }
 }
 
-/* Improved navbar styling for desktop */
+/* Desktop styles */
 @media (min-width: 992px) {
     /* Navbar structure improvements */
     .navbar {
-        padding-top: 0.5rem;
-        padding-bottom: 0.5rem;
+        padding: 0.5rem;
     }
     
     .navbar-brand {
         max-width: none;
         font-size: 1.2rem;
-        margin-right: 1rem; /* Smaller margin */
+        margin-right: 1rem;
+        position: relative;
     }
     
+    /* Brand separator */
+    .navbar-brand.d-lg-welcome-separator::after {
+        content: "";
+        position: absolute;
+        right: -0.5rem;
+        top: 25%;
+        height: 50%;
+        width: 1px;
+        background-color: rgba(255, 255, 255, 0.3);
+    }
+    
+    /* Nav item separators */
     .navbar-nav .nav-item {
-        margin-right: 0.25rem; /* Smaller margin */
+        margin-right: 0.25rem;
         position: relative;
     }
     
     .navbar-nav .nav-item:not(:last-child)::after {
         content: "";
         position: absolute;
-        right: -0.15rem; /* Smaller gap */
+        right: -0.15rem;
         top: 25%;
         height: 50%;
         width: 1px;
-        background-color: rgba(255, 255, 255, 0.2);
+        background-color: rgba(255, 255, 255, 0.3);
     }
     
+    /* Nav link styling */
     .navbar-expand-lg .navbar-nav .nav-link {
-        padding: 0.4rem 0.5rem; /* Smaller padding */
+        padding: 0.4rem 0.5rem;
         border-radius: 4px;
         transition: all 0.2s ease;
-        margin: 0 0.05rem; /* Smaller margin */
-        font-size: 0.95rem; /* More reasonable font size */
+        margin: 0 0.05rem;
+        font-size: 0.95rem;
     }
     
     .navbar-expand-lg .navbar-nav .nav-link:hover {
@@ -127,57 +179,35 @@ body {
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
     
-    .navbar-brand::after {
-        content: "";
-        position: absolute;
-        right: -0.75rem; /* Smaller gap */
-        top: 10%;
-        height: 80%;
-        width: 1px;
-        background-color: rgba(255, 255, 255, 0.3);
-    }
-    
+    /* Dropdown styling */
     .dropdown-menu {
-        min-width: 180px; /* Smaller dropdown */
+        min-width: 180px;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         border: none;
         border-radius: 6px;
+        margin-top: 0.5rem;
     }
     
     .dropdown-item {
-        padding: 0.5rem 1rem; /* Smaller padding */
+        padding: 0.5rem 1rem;
     }
     
-    /* Container optimization for wider screens */
+    /* Container optimization */
     .container {
         padding-left: 15px;
         padding-right: 15px;
     }
     
-    /* Better spacing for navbar items */
-    .navbar-nav {
-        flex-wrap: wrap; /* Allow wrapping if needed */
-    }
-    
-    /* Prevent welcome message from taking too much space */
-    .navbar-nav .nav-item .nav-link {
-        white-space: normal; /* Allow text wrapping */
-    }
-    
-    /* Welcome message better styling */
-    .nav-item .nav-link.user-welcome {
-        color: rgba(255, 255, 255, 0.8);
-        font-style: italic;
-        padding-right: 0.75rem; /* Smaller padding */
-        border-right: 1px solid rgba(255, 255, 255, 0.2);
-        margin-right: 0.25rem; /* Smaller margin */
-        max-width: 150px; /* Limit width */
+    /* Welcome message styling */
+    .user-welcome {
+        max-width: 150px;
         overflow: hidden;
         text-overflow: ellipsis;
+        margin-right: 0.25rem;
     }
 }
 
-/* Additional optimization for very wide screens */
+/* Larger screens */
 @media (min-width: 1400px) {
     .container {
         max-width: 1400px;
@@ -189,14 +219,13 @@ body {
     }
     
     .navbar-expand-lg .navbar-nav .nav-link {
-        padding-left: 0.75rem;
-        padding-right: 0.75rem;
+        padding: 0.5rem 0.75rem;
         margin-right: 0.3rem;
         font-size: 1rem;
     }
     
-    .nav-item .nav-link.user-welcome {
-        max-width: none; /* No limit on large screens */
+    .user-welcome {
+        max-width: none;
     }
 }
 
