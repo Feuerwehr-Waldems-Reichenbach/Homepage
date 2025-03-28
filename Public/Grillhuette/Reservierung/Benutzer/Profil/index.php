@@ -209,17 +209,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $emailBody .= '<td style="padding: 8px; border: 1px solid #ddd;">' . (empty($res['admin_message']) ? '-' : nl2br(escape($res['admin_message']))) . '</td>';
                     $emailBody .= '</tr>';
                     
-                    // Kostenübersicht für diese Reservierung
+                    // Vereinfachte Kostenübersicht als zusätzliche Zeile in der bestehenden Tabelle
                     $emailBody .= '<tr>';
-                    $emailBody .= '<td colspan="4" style="padding: 10px; border: 1px solid #ddd; background-color: #f9f9f9;">';
-                    $emailBody .= '<table style="width: 100%; border-collapse: collapse; max-width: 400px; margin: 0 auto;">';
-                    $emailBody .= '<tr><td colspan="2" style="padding: 5px; border-bottom: 1px solid #eee;"><strong>Kostenübersicht</strong></td></tr>';
-                    $emailBody .= '<tr><td style="padding: 5px;">Grundpreis:</td><td style="padding: 5px; text-align: right;">100,00€ pro Tag</td></tr>';
-                    $emailBody .= '<tr><td style="padding: 5px;">Anzahl Tage:</td><td style="padding: 5px; text-align: right;">' . $days . '</td></tr>';
-                    $emailBody .= '<tr style="border-top: 1px solid #eee;"><td style="padding: 5px;"><strong>Gesamtpreis:</strong></td><td style="padding: 5px; text-align: right;"><strong>' . number_format($totalCost, 2, ',', '.') . '€</strong></td></tr>';
-                    $emailBody .= '</table>';
-                    $emailBody .= '<div style="text-align: center; margin-top: 5px; font-size: 0.9em; color: #6c757d;">Kaution (100€) nicht im Gesamtpreis enthalten.</div>';
-                    $emailBody .= '</td>';
+                    $emailBody .= '<td style="padding: 8px; border: 1px solid #ddd; background-color: #f9f9f9;">Gesamtpreis:</td>';
+                    $emailBody .= '<td colspan="3" style="padding: 8px; border: 1px solid #ddd; background-color: #f9f9f9;"><strong>' . number_format($totalCost, 2, ',', '.') . '€</strong> (zzgl. 100,00€ Kaution)</td>';
                     $emailBody .= '</tr>';
                 }
                 
