@@ -137,6 +137,8 @@ class User {
             $_SESSION['user_name'] = $user['first_name'] . ' ' . $user['last_name'];
             $_SESSION['is_admin'] = $user['is_admin'];
             $_SESSION['is_verified'] = $user['is_verified'];
+            $_SESSION['is_AktivesMitglied'] = $user['is_AktivesMitglied'] ?? 0;
+            $_SESSION['is_Feuerwehr'] = $user['is_Feuerwehr'] ?? 0;
             
             return [
                 'success' => true,
@@ -486,7 +488,7 @@ class User {
 
     public function getUserById($userId) {
         try {
-            $stmt = $this->db->prepare("SELECT id, email, first_name, last_name, phone, is_admin, is_verified, created_at FROM gh_users WHERE id = ?");
+            $stmt = $this->db->prepare("SELECT id, email, first_name, last_name, phone, is_admin, is_verified, is_AktivesMitglied, is_Feuerwehr, created_at FROM gh_users WHERE id = ?");
             $stmt->execute([$userId]);
             return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
@@ -497,7 +499,7 @@ class User {
 
     public function getAllUsers() {
         try {
-            $stmt = $this->db->prepare("SELECT id, email, first_name, last_name, phone, is_admin, is_verified, created_at FROM gh_users ORDER BY id");
+            $stmt = $this->db->prepare("SELECT id, email, first_name, last_name, phone, is_admin, is_verified, is_AktivesMitglied, is_Feuerwehr, created_at FROM gh_users ORDER BY id");
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
@@ -540,7 +542,7 @@ class User {
         }
     }
 
-    public function createUserByAdmin($email, $password, $firstName, $lastName, $phone = null, $isAdmin = 0, $isVerified = 1) {
+    public function createUserByAdmin($email, $password, $firstName, $lastName, $phone = null, $isAdmin = 0, $isVerified = 1, $isAktivesMitglied = 0, $isFeuerwehr = 0) {
         try {
             // Prüfen, ob E-Mail bereits existiert
             $stmt = $this->db->prepare("SELECT id FROM gh_users WHERE email = ?");
@@ -557,10 +559,10 @@ class User {
             
             // Benutzer anlegen (mit dem angegebenen Verifikationsstatus)
             $stmt = $this->db->prepare("
-                INSERT INTO gh_users (email, password, first_name, last_name, phone, is_verified, is_admin) 
-                VALUES (?, ?, ?, ?, ?, ?, ?)
+                INSERT INTO gh_users (email, password, first_name, last_name, phone, is_verified, is_admin, is_AktivesMitglied, is_Feuerwehr) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             ");
-            $stmt->execute([$email, $hashedPassword, $firstName, $lastName, $phone, $isVerified, $isAdmin]);
+            $stmt->execute([$email, $hashedPassword, $firstName, $lastName, $phone, $isVerified, $isAdmin, $isAktivesMitglied, $isFeuerwehr]);
             
             return [
                 'success' => true,
@@ -639,7 +641,7 @@ class User {
         }
     }
     
-    public function updateUser($userId, $email, $firstName, $lastName, $phone = null, $isAdmin = 0, $newPassword = null, $isVerified = 1) {
+    public function updateUser($userId, $email, $firstName, $lastName, $phone = null, $isAdmin = 0, $newPassword = null, $isVerified = 1, $isAktivesMitglied = 0, $isFeuerwehr = 0) {
         try {
             // Prüfen, ob der Benutzer existiert
             $stmt = $this->db->prepare("SELECT * FROM gh_users WHERE id = ?");
@@ -666,8 +668,8 @@ class User {
             }
             
             // SQL-Statement vorbereiten
-            $sql = "UPDATE gh_users SET email = ?, first_name = ?, last_name = ?, phone = ?, is_admin = ?, is_verified = ?";
-            $params = [$email, $firstName, $lastName, $phone, $isAdmin, $isVerified];
+            $sql = "UPDATE gh_users SET email = ?, first_name = ?, last_name = ?, phone = ?, is_admin = ?, is_verified = ?, is_AktivesMitglied = ?, is_Feuerwehr = ?";
+            $params = [$email, $firstName, $lastName, $phone, $isAdmin, $isVerified, $isAktivesMitglied, $isFeuerwehr];
             
             // Passwort aktualisieren, wenn ein neues angegeben wurde
             if (!empty($newPassword)) {

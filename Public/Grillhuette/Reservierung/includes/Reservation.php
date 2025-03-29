@@ -1240,5 +1240,32 @@ class Reservation {
             ];
         }
     }
+
+    /**
+     * Abrufen von Systeminformationen aus der gh_informations-Tabelle
+     * 
+     * @param array $keys Array mit den zu suchenden Schlüsseln
+     * @return array Gefundene Schlüssel und deren Werte
+     */
+    public function getSystemInformation($keys = []) {
+        try {
+            if (empty($keys)) {
+                // Wenn keine Schlüssel angegeben, alle Einträge holen
+                $stmt = $this->db->prepare("SELECT title, content FROM gh_informations");
+                $stmt->execute();
+            } else {
+                // Placeholders für die IN-Klausel erstellen
+                $placeholders = implode(',', array_fill(0, count($keys), '?'));
+                $stmt = $this->db->prepare("SELECT title, content FROM gh_informations WHERE title IN ($placeholders)");
+                $stmt->execute($keys);
+            }
+            
+            // Daten als Key-Value-Paare abrufen
+            return $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
+        } catch (PDOException $e) {
+            error_log('Fehler beim Abrufen der Systemeinstellungen: ' . $e->getMessage());
+            return [];
+        }
+    }
 }
 ?> 

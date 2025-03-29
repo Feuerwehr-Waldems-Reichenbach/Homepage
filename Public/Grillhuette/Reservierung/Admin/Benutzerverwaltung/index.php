@@ -13,6 +13,34 @@ if (!isset($_SESSION['user_id']) || !isset($_SESSION['is_admin']) || !$_SESSION[
 // User-Objekt initialisieren
 $user = new User();
 
+// Benutzer abrufen für die Anzeige
+$allUsers = $user->getAllUsers();
+
+// Preisdaten aus der Datenbank abrufen
+require_once '../../includes/Reservation.php';
+$reservation = new Reservation();
+$priceInfo = $reservation->getPriceInformation();
+$basePrice = number_format($priceInfo['base_price'], 2, ',', '.');
+
+// Werte für Aktives Mitglied und Feuerwehr aus dem PriceInfo-Array holen
+$aktivesPrice = "80,00"; // Standardwert
+$feuerwehrPrice = "60,00"; // Standardwert
+
+// Aus den Systemeinstellungen holen (falls vorhanden)
+$infoQuery = $reservation->getSystemInformation(['MietpreisAktivesMitglied', 'MietpreisFeuerwehr']);
+
+if (isset($infoQuery['MietpreisAktivesMitglied'])) {
+    $aktivesPrice = $infoQuery['MietpreisAktivesMitglied'];
+    // € Zeichen entfernen falls vorhanden
+    $aktivesPrice = str_replace('€', '', $aktivesPrice);
+}
+
+if (isset($infoQuery['MietpreisFeuerwehr'])) {
+    $feuerwehrPrice = $infoQuery['MietpreisFeuerwehr'];
+    // € Zeichen entfernen falls vorhanden
+    $feuerwehrPrice = str_replace('€', '', $feuerwehrPrice);
+}
+
 // Alle POST-Anfragen abfangen und PRG-Muster anwenden
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // CSRF-Token überprüfen
@@ -55,6 +83,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $password = isset($_POST['password']) ? $_POST['password'] : '';
             $isAdmin = isset($_POST['is_admin']) ? 1 : 0;
             $isVerified = isset($_POST['is_verified']) ? 1 : 0;
+            $isAktivesMitglied = isset($_POST['is_AktivesMitglied']) ? 1 : 0;
+            $isFeuerwehr = isset($_POST['is_Feuerwehr']) ? 1 : 0;
             
             // Validierung
             $errors = [];
@@ -80,7 +110,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             
             if (empty($errors)) {
-                $result = $user->createUserByAdmin($email, $password, $firstName, $lastName, $phone, $isAdmin, $isVerified);
+                $result = $user->createUserByAdmin($email, $password, $firstName, $lastName, $phone, $isAdmin, $isVerified, $isAktivesMitglied, $isFeuerwehr);
                 
                 $_SESSION['flash_message'] = $result['message'];
                 $_SESSION['flash_type'] = $result['success'] ? 'success' : 'danger';
@@ -99,6 +129,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $phone = isset($_POST['phone']) ? trim($_POST['phone']) : '';
             $isAdmin = isset($_POST['is_admin']) ? 1 : 0;
             $isVerified = isset($_POST['is_verified']) ? 1 : 0;
+            $isAktivesMitglied = isset($_POST['is_AktivesMitglied']) ? 1 : 0;
+            $isFeuerwehr = isset($_POST['is_Feuerwehr']) ? 1 : 0;
             $newPassword = isset($_POST['new_password']) ? $_POST['new_password'] : '';
             
             // Validierung
@@ -129,7 +161,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             
             if (empty($errors)) {
-                $result = $user->updateUser($userId, $email, $firstName, $lastName, $phone, $isAdmin, $newPassword, $isVerified);
+                $result = $user->updateUser($userId, $email, $firstName, $lastName, $phone, $isAdmin, $newPassword, $isVerified, $isAktivesMitglied, $isFeuerwehr);
                 
                 $_SESSION['flash_message'] = $result['message'];
                 $_SESSION['flash_type'] = $result['success'] ? 'success' : 'danger';
@@ -139,6 +171,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $_SESSION['user_email'] = $email;
                     $_SESSION['user_name'] = $firstName . ' ' . $lastName;
                     $_SESSION['is_admin'] = $isAdmin;
+                    $_SESSION['is_AktivesMitglied'] = $isAktivesMitglied;
+                    $_SESSION['is_Feuerwehr'] = $isFeuerwehr;
                 }
             } else {
                 $_SESSION['flash_message'] = implode('<br>', $errors);
@@ -167,9 +201,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header('Location: ' . getRelativePath('Admin/Benutzerverwaltung'));
     exit;
 }
-
-// Benutzer abrufen für die Anzeige
-$allUsers = $user->getAllUsers();
 
 // Titel für die Seite
 $pageTitle = 'Benutzer verwalten';
@@ -229,6 +260,14 @@ require_once '../../includes/header.php';
                                             <?php if ($userItem['is_admin']): ?>
                                                 <span class="badge bg-primary">Administrator</span>
                                             <?php endif; ?>
+                                            
+                                            <?php if (isset($userItem['is_Feuerwehr']) && $userItem['is_Feuerwehr']): ?>
+                                                <span class="badge bg-danger">Feuerwehr</span>
+                                            <?php endif; ?>
+                                            
+                                            <?php if (isset($userItem['is_AktivesMitglied']) && $userItem['is_AktivesMitglied']): ?>
+                                                <span class="badge bg-info">Aktives Mitglied</span>
+                                            <?php endif; ?>
                                         </td>
                                         <td><?php echo date('d.m.Y H:i', strtotime($userItem['created_at'])); ?></td>
                                         <td>
@@ -243,6 +282,8 @@ require_once '../../includes/header.php';
                                                     data-phone="<?php echo escape($userItem['phone']); ?>"
                                                     data-is-admin="<?php echo $userItem['is_admin']; ?>"
                                                     data-is-verified="<?php echo $userItem['is_verified']; ?>"
+                                                    data-is-aktivesmitglied="<?php echo isset($userItem['is_AktivesMitglied']) && $userItem['is_AktivesMitglied'] ? 1 : 0; ?>"
+                                                    data-is-feuerwehr="<?php echo isset($userItem['is_Feuerwehr']) && $userItem['is_Feuerwehr'] ? 1 : 0; ?>"
                                                     onclick="prepareEditUserModal(this)">
                                                 <i class="bi bi-pencil"></i> Bearbeiten
                                             </button>
@@ -320,6 +361,20 @@ require_once '../../includes/header.php';
                                 <div class="form-text">Wenn aktiviert, kann sich der Benutzer sofort einloggen ohne E-Mail-Bestätigung.</div>
                             </div>
                         </div>
+                        
+                        <div class="col-md-6 mb-3 d-flex flex-column">
+                            <div class="form-check mt-1">
+                                <input type="checkbox" class="form-check-input" id="is_aktivesmitglied" name="is_AktivesMitglied">
+                                <label class="form-check-label" for="is_aktivesmitglied">Aktives Mitglied</label>
+                                <div class="form-text">Ermöglicht vergünstigte Buchungen (<?php echo $aktivesPrice; ?>€ pro Tag).</div>
+                            </div>
+                            
+                            <div class="form-check mt-2">
+                                <input type="checkbox" class="form-check-input" id="is_feuerwehr" name="is_Feuerwehr">
+                                <label class="form-check-label" for="is_feuerwehr">Feuerwehr</label>
+                                <div class="form-text">Ermöglicht vergünstigte Buchungen (<?php echo $feuerwehrPrice; ?>€ pro Tag).</div>
+                            </div>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -386,6 +441,18 @@ require_once '../../includes/header.php';
                                 <label class="form-check-label" for="edit_is_verified">Benutzer verifiziert</label>
                                 <div class="form-text">Wenn aktiviert, kann sich der Benutzer einloggen ohne E-Mail-Bestätigung.</div>
                             </div>
+                            
+                            <div class="form-check mt-2">
+                                <input type="checkbox" class="form-check-input" id="edit_is_aktivesmitglied" name="is_AktivesMitglied">
+                                <label class="form-check-label" for="edit_is_aktivesmitglied">Aktives Mitglied</label>
+                                <div class="form-text">Ermöglicht vergünstigte Buchungen (<?php echo $aktivesPrice; ?>€ pro Tag).</div>
+                            </div>
+                            
+                            <div class="form-check mt-2">
+                                <input type="checkbox" class="form-check-input" id="edit_is_feuerwehr" name="is_Feuerwehr">
+                                <label class="form-check-label" for="edit_is_feuerwehr">Feuerwehr</label>
+                                <div class="form-text">Ermöglicht vergünstigte Buchungen (<?php echo $feuerwehrPrice; ?>€ pro Tag).</div>
+                            </div>
                         </div>
                     </div>
                 </form>
@@ -423,6 +490,15 @@ function prepareEditUserModal(button) {
     const phone = button.getAttribute('data-phone');
     const isAdmin = button.getAttribute('data-is-admin') === '1';
     const isVerified = button.getAttribute('data-is-verified') === '1';
+    const isAktivesMitglied = button.getAttribute('data-is-aktivesmitglied') === '1';
+    const isFeuerwehr = button.getAttribute('data-is-feuerwehr') === '1';
+    
+    // Debug-Ausgabe
+    console.log('User ID:', userId);
+    console.log('isAktivesMitglied attribute:', button.getAttribute('data-is-aktivesmitglied'));
+    console.log('isAktivesMitglied parsed:', isAktivesMitglied);
+    console.log('isFeuerwehr attribute:', button.getAttribute('data-is-feuerwehr'));
+    console.log('isFeuerwehr parsed:', isFeuerwehr);
     
     // Formularfelder ausfüllen
     document.getElementById('edit_user_id').value = userId;
@@ -432,6 +508,8 @@ function prepareEditUserModal(button) {
     document.getElementById('edit_phone').value = phone || '';
     document.getElementById('edit_is_admin').checked = isAdmin;
     document.getElementById('edit_is_verified').checked = isVerified;
+    document.getElementById('edit_is_aktivesmitglied').checked = isAktivesMitglied;
+    document.getElementById('edit_is_feuerwehr').checked = isFeuerwehr;
     document.getElementById('edit_new_password').value = '';
     document.getElementById('delete_user_id').value = userId;
     
