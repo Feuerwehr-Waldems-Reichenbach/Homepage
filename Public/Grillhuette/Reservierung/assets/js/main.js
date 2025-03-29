@@ -867,7 +867,8 @@ function updateReservationCosts() {
                         
                         const specialNote = document.createElement('li');
                         specialNote.className = 'special-price-note text-success';
-                        specialNote.innerHTML = `<i class="bi bi-check-circle"></i> ${noteText} (0€)`;
+                        const priceDisplay = priceInfo.rate_type === 'feuerwehr' ? '0,00€' : `${rate.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}€`;
+                        specialNote.innerHTML = `<i class="bi bi-check-circle"></i> ${noteText} (${priceDisplay})`;
                         costOverview.appendChild(specialNote);
                     }
                 }
@@ -890,6 +891,28 @@ function updateReservationCosts() {
                 const formattedRate = rate.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                 baseCostElement.textContent = formattedRate + '€';
                 totalCostElement.textContent = formattedRate + '€';
+                
+                // If we have special pricing, add a note
+                const costOverview = document.getElementById('cost-overview');
+                if (costOverview) {
+                    // Remove any existing special pricing notes
+                    const existingNote = document.querySelector('.special-price-note');
+                    if (existingNote) {
+                        existingNote.remove();
+                    }
+                    
+                    // Add a special note if using a special rate
+                    if (priceInfo.rate_type !== 'normal') {
+                        const noteText = priceInfo.rate_type === 'feuerwehr' ? 
+                            'Spezialpreis für Feuerwehr' : 'Spezialpreis für aktives Mitglied';
+                        
+                        const specialNote = document.createElement('li');
+                        specialNote.className = 'special-price-note text-success';
+                        const priceDisplay = priceInfo.rate_type === 'feuerwehr' ? '0,00€' : `${rate.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}€`;
+                        specialNote.innerHTML = `<i class="bi bi-check-circle"></i> ${noteText} (${priceDisplay})`;
+                        costOverview.appendChild(specialNote);
+                    }
+                }
             })
             .catch(() => {
                 // Try to get the user rate from the data attribute
