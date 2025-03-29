@@ -1374,6 +1374,14 @@ class Reservation {
      */
     public function updateInformation($id, $content, $category = null, $sortOrder = null) {
         try {
+            // Debug-Logging für Parameter
+            error_log("updateInformation called with id=$id, content=$content, category=$category, sortOrder=$sortOrder");
+            
+            // Prüfen Sie, ob es sich um einen System-Eintrag handelt
+            $checkStmt = $this->db->prepare("SELECT category FROM gh_informations WHERE id = ?");
+            $checkStmt->execute([$id]);
+            $entryCategory = $checkStmt->fetchColumn();
+            
             // Dynamisches SQL basierend auf den übergebenen Parametern
             $sql = "UPDATE gh_informations SET content = ?";
             $params = [$content];
@@ -1383,13 +1391,18 @@ class Reservation {
                 $params[] = $category;
             }
             
-            if ($sortOrder !== null) {
+            // Sort order nur aktualisieren, wenn es kein System-Eintrag ist und ein Wert gegeben ist
+            if ($sortOrder !== null && $entryCategory !== 'system') {
                 $sql .= ", sort_order = ?";
                 $params[] = $sortOrder;
+                error_log("Setting sort_order=$sortOrder for id=$id");
             }
             
             $sql .= " WHERE id = ?";
             $params[] = $id;
+            
+            // Debug-Logging für SQL
+            error_log("SQL: $sql with params: " . implode(", ", $params));
             
             $stmt = $this->db->prepare($sql);
             $success = $stmt->execute($params);
@@ -1409,7 +1422,7 @@ class Reservation {
             error_log('Fehler beim Aktualisieren der Information: ' . $e->getMessage());
             return [
                 'success' => false,
-                'message' => 'Datenbankfehler beim Aktualisieren der Information.'
+                'message' => 'Datenbankfehler beim Aktualisieren der Information: ' . $e->getMessage()
             ];
         }
     }
@@ -1454,6 +1467,42 @@ class Reservation {
                 'success' => false,
                 'message' => 'Datenbankfehler beim Löschen der Information.'
             ];
+        }
+    }
+    
+    /**
+     * Abrufen aller Systeminformationen sortiert nach Erstellungszeit (ID)
+     * Speziell für die Admin-Oberfläche, wo Einträge in Erstellungsreihenfolge angezeigt werden sollen
+     * 
+     * @param string $category Optional: Filter für eine bestimmte Kategorie
+     * @return array Array mit vollständigen Datensätzen, sortiert nach ID (älteste zuerst)
+     */
+    public function getSystemInformationByCreationTime($category = null) {
+        try {
+            if (empty($category)) {
+                $sql = "SELECT id, title, content, category, sort_order 
+                       FROM gh_informations 
+                       ORDER BY category, id ASC";
+                $stmt = $this->db->prepare($sql);
+                $stmt->execute();
+            } else {
+                $sql = "SELECT id, title, content, category, sort_order 
+                       FROM gh_informations 
+                       WHERE category = ? 
+                       ORDER BY id ASC";
+                $stmt = $this->db->prepare($sql);
+                $stmt->execute([$category]);
+            }
+            
+            // Debug-Ausgabe für Fehlersuche
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            error_log("getSystemInformationByCreationTime results: " . count($results) . " records");
+            
+            // Leeres Array als Fallback, falls keine Ergebnisse
+            return $results ?: [];
+        } catch (PDOException $e) {
+            error_log('Fehler beim Abrufen der Systeminformationen: ' . $e->getMessage());
+            return [];
         }
     }
 }

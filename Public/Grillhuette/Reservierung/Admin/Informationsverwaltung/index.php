@@ -5,6 +5,9 @@ require_once '../../includes/Reservation.php';
 // Generate CSRF token for forms
 $_SESSION['csrf_token'] = generate_csrf_token();
 
+// Verfolgen der aktiven Tab
+$activeTab = isset($_GET['tab']) ? $_GET['tab'] : 'system';
+
 // Nur für angemeldete Administratoren zugänglich
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['is_admin']) || !$_SESSION['is_admin']) {
     $_SESSION['flash_message'] = 'Sie haben keine Berechtigung, auf diese Seite zuzugreifen.';
@@ -23,6 +26,11 @@ $categoriesMap = [
     'im_preis_enthalten' => 'Im Preis enthalten',
     'wichtige_hinweise' => 'Wichtige Hinweise'
 ];
+
+// Validierung der aktiven Tab gegen verfügbare Kategorien
+if (!isset($categoriesMap[$activeTab])) {
+    $activeTab = 'system'; // Fallback auf system, wenn ungültige Tab
+}
 
 // Bearbeitbare vs. nicht bearbeitbare Kategorien
 $editableCategories = ['grillhuette_info', 'im_preis_enthalten', 'wichtige_hinweise'];
@@ -59,7 +67,7 @@ try {
 }
 
 // Alle Informationen abrufen (mit allen Feldern)
-$allInformations = $reservation->getAllSystemInformationRecords();
+$allInformations = $reservation->getSystemInformationByCreationTime();
 
 // Informationen nach Kategorien gruppieren
 $groupedInfo = [];
@@ -82,12 +90,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (isset($_POST['update_info'])) {
             $infoId = isset($_POST['info_id']) ? intval($_POST['info_id']) : 0;
             $infoContent = isset($_POST['info_content']) ? trim($_POST['info_content']) : '';
+            $sortOrder = isset($_POST['info_sort_order']) ? intval($_POST['info_sort_order']) : null;
+            
+            // Aktive Tab aus der Form abrufen
+            $activeTab = isset($_POST['active_tab']) ? $_POST['active_tab'] : 'system';
             
             if (empty($infoId)) {
                 $_SESSION['flash_message'] = 'Keine gültige Information ausgewählt.';
                 $_SESSION['flash_type'] = 'danger';
             } else {
-                $result = $reservation->updateInformation($infoId, $infoContent);
+                // Sortierreihenfolge nur für nicht-System-Einträge aktualisieren
+                $result = $reservation->updateInformation($infoId, $infoContent, null, $sortOrder);
                 
                 $_SESSION['flash_message'] = $result['message'];
                 $_SESSION['flash_type'] = $result['success'] ? 'success' : 'danger';
@@ -100,6 +113,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $infoContent = isset($_POST['info_content']) ? trim($_POST['info_content']) : '';
             $infoCategory = isset($_POST['info_category']) ? trim($_POST['info_category']) : '';
             $infoSortOrder = isset($_POST['info_sort_order']) ? intval($_POST['info_sort_order']) : 10;
+            
+            // Aktive Tab aus der Form abrufen
+            $activeTab = isset($_POST['active_tab']) ? $_POST['active_tab'] : $infoCategory;
             
             if (empty($infoTitle) || empty($infoContent) || empty($infoCategory)) {
                 $_SESSION['flash_message'] = 'Bitte füllen Sie alle Pflichtfelder aus.';
@@ -119,6 +135,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         else if (isset($_POST['delete_info'])) {
             $infoId = isset($_POST['info_id']) ? intval($_POST['info_id']) : 0;
             
+            // Aktive Tab aus der Form abrufen
+            $activeTab = isset($_POST['active_tab']) ? $_POST['active_tab'] : 'system';
+            
             if (empty($infoId)) {
                 $_SESSION['flash_message'] = 'Keine gültige Information ausgewählt.';
                 $_SESSION['flash_type'] = 'danger';
@@ -132,7 +151,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     
     // PRG-Muster: Nach POST-Anfrage zurück zur selben Seite weiterleiten, um erneutes Absenden zu verhindern
-    header('Location: ' . getRelativePath('Admin/Informationsverwaltung'));
+    header('Location: ' . getRelativePath('Admin/Informationsverwaltung') . '?tab=' . $activeTab);
     exit;
 }
 
@@ -223,32 +242,32 @@ require_once '../../includes/header.php';
                     <?php 
                     $first = true;
                     foreach ($categoriesMap as $category => $displayName): 
+                        $isActive = ($category === $activeTab);
                     ?>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link <?php echo $first ? 'active' : ''; ?>" 
+                        <button class="nav-link <?php echo $isActive ? 'active' : ''; ?>" 
                                 id="<?php echo str_replace('_', '-', $category); ?>-tab" 
                                 data-bs-toggle="tab" 
                                 data-bs-target="#<?php echo str_replace('_', '-', $category); ?>" 
                                 type="button" 
                                 role="tab" 
                                 aria-controls="<?php echo str_replace('_', '-', $category); ?>" 
-                                aria-selected="<?php echo $first ? 'true' : 'false'; ?>">
+                                aria-selected="<?php echo $isActive ? 'true' : 'false'; ?>">
                             <?php echo $displayName; ?>
                         </button>
                     </li>
                     <?php 
-                    $first = false;
                     endforeach; 
                     ?>
                 </ul>
                 
                 <div class="tab-content" id="infoTabsContent">
                     <?php 
-                    $first = true;
                     foreach ($categoriesMap as $category => $displayName): 
                         $infos = $groupedInfo[$category] ?? [];
+                        $isActive = ($category === $activeTab);
                     ?>
-                    <div class="tab-pane fade <?php echo $first ? 'show active' : ''; ?>" 
+                    <div class="tab-pane fade <?php echo $isActive ? 'show active' : ''; ?>" 
                          id="<?php echo str_replace('_', '-', $category); ?>" 
                          role="tabpanel" 
                          aria-labelledby="<?php echo str_replace('_', '-', $category); ?>-tab">
@@ -303,18 +322,46 @@ require_once '../../includes/header.php';
                                 
                                 foreach ($infos as $info): 
                                     // Bestimme den anzuzeigenden Titel
-                                    $displayTitle = $category === 'system' ? 
-                                        ($friendlyTitles[$info['title']] ?? $info['title']) : 
-                                        $info['title'];
+                                    if ($category === 'system') {
+                                        $displayTitle = $friendlyTitles[$info['title']] ?? $info['title'];
+                                    } else {
+                                        // Kategorie-spezifische statische Titel
+                                        switch ($category) {
+                                            case 'grillhuette_info':
+                                                $displayTitle = 'Information zur Grillhütte';
+                                                break;
+                                            case 'im_preis_enthalten':
+                                                $displayTitle = 'Im Preis enthalten';
+                                                break;
+                                            case 'wichtige_hinweise':
+                                                $displayTitle = 'Wichtiger Hinweis';
+                                                break;
+                                            default:
+                                                $displayTitle = 'Information';
+                                        }
+                                        
+                                        // Einfaches Nummerierungssystem für mehrere Einträge
+                                        if (count($groupedInfo[$category]) > 1) {
+                                            // Finde die Position in der sortierten Liste
+                                            $position = array_search($info, $infos) + 1;
+                                            $displayTitle .= ' #' . $position;
+                                        }
+                                    }
                                 ?>
                                 <div class="col-md-6 mb-4">
                                     <div class="card h-100">
                                         <div class="card-header d-flex justify-content-between align-items-center">
-                                            <h5 class="mb-0"><?php echo $displayTitle; ?></h5>
+                                            <div>
+                                                <h5 class="mb-0"><?php echo $displayTitle; ?></h5>
+                                                <?php if ($category !== 'system'): ?>
+                                                <small class="text-muted">Sortierung: <span class="badge bg-light text-dark"><?php echo $info['sort_order']; ?></span></small>
+                                                <?php endif; ?>
+                                            </div>
                                             <?php if (in_array($category, $editableCategories)): ?>
                                             <form method="post" class="d-inline" onsubmit="return confirm('Sind Sie sicher, dass Sie diese Information löschen möchten?');">
                                                 <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
                                                 <input type="hidden" name="info_id" value="<?php echo $info['id']; ?>">
+                                                <input type="hidden" name="active_tab" value="<?php echo $category; ?>">
                                                 <button type="submit" name="delete_info" class="btn btn-sm btn-outline-danger">
                                                     <i class="bi bi-trash"></i>
                                                 </button>
@@ -325,6 +372,14 @@ require_once '../../includes/header.php';
                                             <form method="post">
                                                 <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
                                                 <input type="hidden" name="info_id" value="<?php echo $info['id']; ?>">
+                                                <input type="hidden" name="active_tab" value="<?php echo $category; ?>">
+                                                
+                                                <!-- Wenn kein System-Eintrag, zeige den Datenbankschlüssel als Hinweis -->
+                                                <?php if ($category !== 'system'): ?>
+                                                <div class="mb-2">
+                                                    <small class="text-muted">Datenbankschlüssel: <?php echo $info['title']; ?></small>
+                                                </div>
+                                                <?php endif; ?>
                                                 
                                                 <div class="mb-3">
                                                     <label for="info_content_<?php echo $info['id']; ?>" class="form-label">Inhalt</label>
@@ -333,6 +388,14 @@ require_once '../../includes/header.php';
                                                     <div class="form-text">Bitte mit €-Zeichen eingeben, z.B. "100€"</div>
                                                     <?php endif; ?>
                                                 </div>
+                                                
+                                                <?php if (in_array($category, $editableCategories)): ?>
+                                                <div class="mb-3">
+                                                    <label for="info_sort_order_<?php echo $info['id']; ?>" class="form-label">Sortierreihenfolge</label>
+                                                    <input type="number" class="form-control" id="info_sort_order_<?php echo $info['id']; ?>" name="info_sort_order" value="<?php echo $info['sort_order']; ?>" min="1">
+                                                    <div class="form-text">Kleinere Zahlen werden weiter oben angezeigt. <strong>Hinweis:</strong> Die Sortierreihenfolge bestimmt nur die Anzeigereihenfolge auf der Website, nicht in der Verwaltung.</div>
+                                                </div>
+                                                <?php endif; ?>
                                                 
                                                 <div class="d-grid">
                                                     <button type="submit" name="update_info" class="btn btn-primary">Aktualisieren</button>
@@ -346,7 +409,6 @@ require_once '../../includes/header.php';
                         </div>
                     </div>
                     <?php 
-                    $first = false;
                     endforeach; 
                     ?>
                 </div>
@@ -376,17 +438,30 @@ require_once '../../includes/header.php';
                     <li><strong>Kaution:</strong> <?php echo $systemInfos['Kautionspreis'] ?? '100€'; ?></li>
                     <li><strong>Rückgabe:</strong> <?php echo $systemInfos['RueckgabeText'] ?? 'bis spätestens am nächsten Tag 12:00 Uhr'; ?></li>
                     <li><strong>Min. Buchungszeitraum:</strong> <?php echo $systemInfos['MinBuchungszeitraum'] ?? '1 Tag'; ?></li>
-                    <?php foreach ($grillhuetteInfos as $title => $content): ?>
+                    <?php 
+                    // Zusätzliche Informationen zur Grillhütte
+                    $counter = 1;
+                    foreach ($grillhuetteInfos as $title => $content): 
+                    ?>
                     <li><?php echo $content; ?></li>
-                    <?php endforeach; ?>
+                    <?php 
+                    $counter++;
+                    endforeach; 
+                    ?>
                 </ul>
                 
                 <h6>Im Mietzins enthalten:</h6>
                 <ul>
                     <?php if (!empty($imPreisEnthalten)): ?>
-                        <?php foreach ($imPreisEnthalten as $title => $content): ?>
+                        <?php 
+                        $counter = 1;
+                        foreach ($imPreisEnthalten as $title => $content): 
+                        ?>
                         <li><?php echo $content; ?></li>
-                        <?php endforeach; ?>
+                        <?php 
+                        $counter++;
+                        endforeach; 
+                        ?>
                     <?php else: ?>
                         <li>1m³ Wasser</li>
                         <li>5 kW/h Strom</li>
@@ -398,9 +473,15 @@ require_once '../../includes/header.php';
                     <p class="mb-1"><strong>Wichtige Hinweise:</strong></p>
                     <ul class="mb-0">
                         <?php if (!empty($wichtigeHinweise)): ?>
-                            <?php foreach ($wichtigeHinweise as $title => $content): ?>
+                            <?php 
+                            $counter = 1;
+                            foreach ($wichtigeHinweise as $title => $content): 
+                            ?>
                             <li><?php echo $content; ?></li>
-                            <?php endforeach; ?>
+                            <?php 
+                            $counter++;
+                            endforeach; 
+                            ?>
                         <?php else: ?>
                             <li>Die Grillhütte sowie die Toiletten sind sauber zu verlassen</li>
                             <li>Müll ist selbst zu entsorgen</li>
@@ -458,6 +539,7 @@ require_once '../../includes/header.php';
                 <form method="post">
                     <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
                     <input type="hidden" name="info_category" value="<?php echo $category; ?>">
+                    <input type="hidden" name="active_tab" value="<?php echo $category; ?>">
                     
                     <div class="mb-3">
                         <label for="info_title_<?php echo $category; ?>" class="form-label">Schlüssel/ID</label>
@@ -532,7 +614,7 @@ require_once '../../includes/header.php';
                     <div class="mb-3">
                         <label for="info_sort_order_<?php echo $category; ?>" class="form-label">Sortierreihenfolge</label>
                         <input type="number" class="form-control" id="info_sort_order_<?php echo $category; ?>" name="info_sort_order" value="<?php echo count($groupedInfo[$category] ?? []) + 1; ?>" min="1">
-                        <div class="form-text">Kleinere Zahlen werden weiter oben angezeigt.</div>
+                        <div class="form-text">Kleinere Zahlen werden weiter oben angezeigt. <strong>Hinweis:</strong> Die Sortierreihenfolge bestimmt nur die Anzeigereihenfolge auf der Website, nicht in der Verwaltung.</div>
                     </div>
                     
                     <div class="d-grid">
@@ -544,5 +626,24 @@ require_once '../../includes/header.php';
     </div>
 </div>
 <?php endforeach; ?>
+
+<!-- JavaScript für Tab-Aktivierung basierend auf URL-Parameter -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Aktive Tab bei Seitenaufruf auswählen
+    const urlParams = new URLSearchParams(window.location.search);
+    const activeTab = urlParams.get('tab');
+    
+    if (activeTab) {
+        // Tab-Button aktivieren
+        const tabId = activeTab.replace(/_/g, '-');
+        const tabElement = document.getElementById(tabId + '-tab');
+        if (tabElement) {
+            const tab = new bootstrap.Tab(tabElement);
+            tab.show();
+        }
+    }
+});
+</script>
 
 <?php require_once '../../includes/footer.php'; ?> 
