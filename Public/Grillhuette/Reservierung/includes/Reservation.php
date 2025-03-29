@@ -1242,21 +1242,32 @@ class Reservation {
     }
 
     /**
-     * Abrufen von Systeminformationen aus der gh_informations-Tabelle
+     * Systeminformationen aus der Datenbank abrufen
      * 
-     * @param array $keys Array mit den zu suchenden Schlüsseln
-     * @return array Gefundene Schlüssel und deren Werte
+     * @param array $keys Array mit Schlüsseln, die abgerufen werden sollen
+     * @param string $category Optional: Nur Einträge einer bestimmten Kategorie abrufen
+     * @return array Array mit den abgerufenen Informationen
      */
-    public function getSystemInformation($keys = []) {
+    public function getSystemInformation($keys = [], $category = null) {
         try {
-            if (empty($keys)) {
-                // Wenn keine Schlüssel angegeben, alle Einträge holen
-                $stmt = $this->db->prepare("SELECT title, content FROM gh_informations");
+            if (empty($keys) && empty($category)) {
+                // Wenn keine Schlüssel und keine Kategorie angegeben, alle Einträge holen
+                $stmt = $this->db->prepare("SELECT title, content FROM gh_informations ORDER BY sort_order ASC");
                 $stmt->execute();
+            } else if (!empty($category) && empty($keys)) {
+                // Wenn nur Kategorie angegeben, alle Einträge der Kategorie holen
+                $stmt = $this->db->prepare("SELECT title, content FROM gh_informations WHERE category = ? ORDER BY sort_order ASC");
+                $stmt->execute([$category]);
+            } else if (!empty($keys) && !empty($category)) {
+                // Wenn Schlüssel und Kategorie angegeben, beide Kriterien anwenden
+                $placeholders = str_repeat('?,', count($keys) - 1) . '?';
+                $stmt = $this->db->prepare("SELECT title, content FROM gh_informations WHERE title IN ($placeholders) AND category = ? ORDER BY sort_order ASC");
+                $params = array_merge($keys, [$category]);
+                $stmt->execute($params);
             } else {
-                // Placeholders für die IN-Klausel erstellen
-                $placeholders = implode(',', array_fill(0, count($keys), '?'));
-                $stmt = $this->db->prepare("SELECT title, content FROM gh_informations WHERE title IN ($placeholders)");
+                // Nur Schlüssel angegeben
+                $placeholders = str_repeat('?,', count($keys) - 1) . '?';
+                $stmt = $this->db->prepare("SELECT title, content FROM gh_informations WHERE title IN ($placeholders) ORDER BY sort_order ASC");
                 $stmt->execute($keys);
             }
             
@@ -1265,6 +1276,184 @@ class Reservation {
         } catch (PDOException $e) {
             error_log('Fehler beim Abrufen der Systemeinstellungen: ' . $e->getMessage());
             return [];
+        }
+    }
+    
+    /**
+     * Abrufen aller Systeminformationen mit vollständigen Datensätzen (nicht als Key-Value-Paare)
+     * 
+     * @param string $category Optional: Filter für eine bestimmte Kategorie
+     * @return array Array mit vollständigen Datensätzen
+     */
+    public function getAllSystemInformationRecords($category = null) {
+        try {
+            if (empty($category)) {
+                $sql = "SELECT id, title, content, category, sort_order 
+                       FROM gh_informations 
+                       ORDER BY category, sort_order ASC";
+                $stmt = $this->db->prepare($sql);
+                $stmt->execute();
+            } else {
+                $sql = "SELECT id, title, content, category, sort_order 
+                       FROM gh_informations 
+                       WHERE category = ? 
+                       ORDER BY sort_order ASC";
+                $stmt = $this->db->prepare($sql);
+                $stmt->execute([$category]);
+            }
+            
+            // Debug-Ausgabe für Fehlersuche
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            error_log("getAllSystemInformationRecords results: " . count($results) . " records");
+            
+            // Leeres Array als Fallback, falls keine Ergebnisse
+            return $results ?: [];
+        } catch (PDOException $e) {
+            error_log('Fehler beim Abrufen der Systeminformationen: ' . $e->getMessage());
+            return [];
+        }
+    }
+    
+    /**
+     * Hinzufügen einer neuen Information zur gh_informations-Tabelle
+     * 
+     * @param string $title Titel/Schlüssel der Information
+     * @param string $content Inhalt der Information
+     * @param string $category Kategorie der Information
+     * @param int $sortOrder Sortierreihenfolge
+     * @return array Erfolg/Fehlermeldung
+     */
+    public function addInformation($title, $content, $category, $sortOrder = 10) {
+        try {
+            // Prüfen, ob der Titel bereits existiert
+            $checkStmt = $this->db->prepare("SELECT COUNT(*) FROM gh_informations WHERE title = ?");
+            $checkStmt->execute([$title]);
+            
+            if ($checkStmt->fetchColumn() > 0) {
+                return [
+                    'success' => false,
+                    'message' => 'Eine Information mit diesem Titel existiert bereits.'
+                ];
+            }
+            
+            // Verwende MySQL-Syntax die mit der Tabellendefinition kompatibel ist
+            $stmt = $this->db->prepare("
+                INSERT INTO gh_informations (title, content, category, sort_order) 
+                VALUES (?, ?, ?, ?)
+            ");
+            $success = $stmt->execute([$title, $content, $category, $sortOrder]);
+            
+            if ($success) {
+                return [
+                    'success' => true,
+                    'message' => 'Information erfolgreich hinzugefügt.'
+                ];
+            } else {
+                return [
+                    'success' => false,
+                    'message' => 'Fehler beim Hinzufügen der Information.'
+                ];
+            }
+        } catch (PDOException $e) {
+            error_log('Fehler beim Hinzufügen der Information: ' . $e->getMessage());
+            return [
+                'success' => false,
+                'message' => 'Datenbankfehler beim Hinzufügen der Information: ' . $e->getMessage()
+            ];
+        }
+    }
+    
+    /**
+     * Aktualisieren einer Information in der gh_informations-Tabelle
+     * 
+     * @param int $id ID der zu aktualisierenden Information
+     * @param string $content Neuer Inhalt
+     * @param string $category Neue Kategorie (optional)
+     * @param int $sortOrder Neue Sortierreihenfolge (optional)
+     * @return array Erfolg/Fehlermeldung
+     */
+    public function updateInformation($id, $content, $category = null, $sortOrder = null) {
+        try {
+            // Dynamisches SQL basierend auf den übergebenen Parametern
+            $sql = "UPDATE gh_informations SET content = ?";
+            $params = [$content];
+            
+            if ($category !== null) {
+                $sql .= ", category = ?";
+                $params[] = $category;
+            }
+            
+            if ($sortOrder !== null) {
+                $sql .= ", sort_order = ?";
+                $params[] = $sortOrder;
+            }
+            
+            $sql .= " WHERE id = ?";
+            $params[] = $id;
+            
+            $stmt = $this->db->prepare($sql);
+            $success = $stmt->execute($params);
+            
+            if ($success) {
+                return [
+                    'success' => true,
+                    'message' => 'Information erfolgreich aktualisiert.'
+                ];
+            } else {
+                return [
+                    'success' => false,
+                    'message' => 'Fehler beim Aktualisieren der Information.'
+                ];
+            }
+        } catch (PDOException $e) {
+            error_log('Fehler beim Aktualisieren der Information: ' . $e->getMessage());
+            return [
+                'success' => false,
+                'message' => 'Datenbankfehler beim Aktualisieren der Information.'
+            ];
+        }
+    }
+    
+    /**
+     * Löschen einer Information aus der gh_informations-Tabelle
+     * 
+     * @param int $id ID der zu löschenden Information
+     * @return array Erfolg/Fehlermeldung
+     */
+    public function deleteInformation($id) {
+        try {
+            // Prüfen, ob es sich um eine System-Information handelt
+            $checkStmt = $this->db->prepare("SELECT category FROM gh_informations WHERE id = ?");
+            $checkStmt->execute([$id]);
+            $category = $checkStmt->fetchColumn();
+            
+            if ($category === 'system') {
+                return [
+                    'success' => false,
+                    'message' => 'System-Informationen können nicht gelöscht werden.'
+                ];
+            }
+            
+            $stmt = $this->db->prepare("DELETE FROM gh_informations WHERE id = ?");
+            $success = $stmt->execute([$id]);
+            
+            if ($success) {
+                return [
+                    'success' => true,
+                    'message' => 'Information erfolgreich gelöscht.'
+                ];
+            } else {
+                return [
+                    'success' => false,
+                    'message' => 'Fehler beim Löschen der Information.'
+                ];
+            }
+        } catch (PDOException $e) {
+            error_log('Fehler beim Löschen der Information: ' . $e->getMessage());
+            return [
+                'success' => false,
+                'message' => 'Datenbankfehler beim Löschen der Information.'
+            ];
         }
     }
 }

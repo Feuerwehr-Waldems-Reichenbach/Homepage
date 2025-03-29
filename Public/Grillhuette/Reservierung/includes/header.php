@@ -52,6 +52,7 @@ require_once __DIR__ . '/config.php';
                                     <ul class="dropdown-menu" aria-labelledby="adminDropdown">
                                         <li><a class="dropdown-item" href="<?php echo getRelativePath('Admin/Reservierungsverwaltung'); ?>">Reservierungen verwalten</a></li>
                                         <li><a class="dropdown-item" href="<?php echo getRelativePath('Admin/Benutzerverwaltung'); ?>">Benutzer verwalten</a></li>
+                                        <li><a class="dropdown-item" href="<?php echo getRelativePath('Admin/Informationsverwaltung'); ?>">Informationen verwalten</a></li>
                                     </ul>
                                 </li>
                             <?php endif; ?>

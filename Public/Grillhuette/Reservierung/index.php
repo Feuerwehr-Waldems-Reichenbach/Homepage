@@ -20,6 +20,36 @@ if (isset($_GET['month']) && isset($_GET['year'])) {
         $currentYear = $year;
     }
 }
+
+// Alle benötigten Informationen aus der Datenbank abrufen
+$infoKeys = [
+    'WillkommensText',
+    'WillkommensUntertext',
+    'UebergabeZeit', 
+    'MinBuchungszeitraum', 
+    'RueckgabeText',
+    'ImPreisEnthaltenWasser',
+    'ImPreisEnthaltenStrom',
+    'ImPreisEnthaltenBiertische',
+    'WichtigerHinweis1',
+    'WichtigerHinweis2',
+    'VerwaltungspersonVorname',
+    'VerwaltungspersonNachname',
+    'VerwaltungspersonEmail',
+    'VerwaltungspersonTelefon',
+    'SystemEmailProbleme'
+];
+
+// Preisdaten und Systeminformationen abrufen
+$priceInfo = $reservation->getPriceInformation();
+$basePrice = number_format($priceInfo['base_price'], 2, ',', '.');
+$depositAmount = number_format($priceInfo['deposit_amount'], 2, ',', '.');
+$infoData = $reservation->getSystemInformation($infoKeys);
+
+// Dynamische Informationen nach Kategorien abrufen
+$grillhuetteInfos = $reservation->getSystemInformation([], 'grillhuette_info');
+$imPreisEnthalten = $reservation->getSystemInformation([], 'im_preis_enthalten');
+$wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
 ?>
 
 <div class="row mb-4">
@@ -86,8 +116,10 @@ if (isset($_GET['month']) && isset($_GET['year'])) {
                 <!-- Willkommenskarte unter dem Kalender - nur auf Desktop sichtbar -->
                 <div class="card mb-4 d-none d-lg-block">
                     <div class="card-body">
-                        <h5 class="card-title">Willkommen im Reservierungssystem der Grillhütte Waldems Reichenbach</h5>
-                        <p>Hier können Sie freie Termine einsehen und eine Reservierung vornehmen.</p>
+                        <?php
+                        ?>
+                        <h5 class="card-title"><?php echo $infoData['WillkommensText'] ?? 'Willkommen im Reservierungssystem der Grillhütte Waldems Reichenbach'; ?></h5>
+                        <p><?php echo $infoData['WillkommensUntertext'] ?? 'Hier können Sie freie Termine einsehen und eine Reservierung vornehmen.'; ?></p>
                         
                         <div class="row mb-3">
                             <div class="col-md-4 mb-2">
@@ -113,47 +145,71 @@ if (isset($_GET['month']) && isset($_GET['year'])) {
                         <hr>
                         
                         <h5 class="card-title">Informationen zur Grillhütte</h5>
-                        <?php
-                        // Preisdaten abrufen
-                        $priceInfo = $reservation->getPriceInformation();
-                        $basePrice = number_format($priceInfo['base_price'], 2, ',', '.');
-                        $depositAmount = number_format($priceInfo['deposit_amount'], 2, ',', '.');
-                        ?>
                         <ul class="list-unstyled">
-                            <li><strong>Miete:</strong> <?php echo $basePrice; ?>€ pro Tag (12 - 12 Uhr)</li>
+                            <li><strong>Miete:</strong> <?php echo $basePrice; ?>€ pro Tag (<?php echo $infoData['UebergabeZeit'] ?? '12 - 12 Uhr'; ?>)</li>
                             <li><strong>Kaution:</strong> <?php echo $depositAmount; ?>€</li>
-                            <li><strong>Rückgabe:</strong> bis spätestens am nächsten Tag 12:00 Uhr</li>
-                            <li><strong>Min. Buchungszeitraum:</strong> 1 Tag</li>
+                            <li><strong>Rückgabe:</strong> <?php echo $infoData['RueckgabeText'] ?? 'bis spätestens am nächsten Tag 12:00 Uhr'; ?></li>
+                            <li><strong>Min. Buchungszeitraum:</strong> <?php echo $infoData['MinBuchungszeitraum'] ?? '1 Tag'; ?></li>
+                            <?php 
+                            // Zusätzliche dynamische Informationen zur Grillhütte
+                            foreach ($grillhuetteInfos as $title => $content): 
+                            ?>
+                            <li><?php echo $content; ?></li>
+                            <?php endforeach; ?>
                         </ul>
                         
                         <h6>Im Mietzins enthalten:</h6>
                         <ul>
-                            <li>1m³ Wasser</li>
-                            <li>5 kW/h Strom</li>
-                            <li>5 Biertisch-Garnituren, jede weitere Garnitur zzgl. 1€</li>
+                            <?php 
+                            // Dynamische Informationen zum Mietzins
+                            if (!empty($imPreisEnthalten)) {
+                                foreach ($imPreisEnthalten as $title => $content): 
+                                ?>
+                                <li><?php echo $content; ?></li>
+                                <?php 
+                                endforeach;
+                            } else {
+                                // Fallback für alte Einträge, falls die Kategorisierung nicht funktioniert
+                                ?>
+                                <li><?php echo $infoData['ImPreisEnthaltenWasser'] ?? '1m³ Wasser'; ?></li>
+                                <li><?php echo $infoData['ImPreisEnthaltenStrom'] ?? '5 kW/h Strom'; ?></li>
+                                <li><?php echo $infoData['ImPreisEnthaltenBiertische'] ?? '5 Biertisch-Garnituren, jede weitere Garnitur zzgl. 1€'; ?></li>
+                            <?php } ?>
                         </ul>
                         
                         <div class="alert alert-info">
                             <p class="mb-1"><strong>Wichtige Hinweise:</strong></p>
                             <ul class="mb-0">
-                                <li>Die Grillhütte sowie die Toiletten sind sauber zu verlassen</li>
-                                <li>Müll ist selbst zu entsorgen</li>
+                                <?php 
+                                // Dynamische wichtige Hinweise
+                                if (!empty($wichtigeHinweise)) {
+                                    foreach ($wichtigeHinweise as $title => $content): 
+                                    ?>
+                                    <li><?php echo $content; ?></li>
+                                    <?php 
+                                    endforeach;
+                                } else {
+                                    // Fallback für alte Einträge
+                                    ?>
+                                    <li><?php echo $infoData['WichtigerHinweis1'] ?? 'Die Grillhütte sowie die Toiletten sind sauber zu verlassen'; ?></li>
+                                    <li><?php echo $infoData['WichtigerHinweis2'] ?? 'Müll ist selbst zu entsorgen'; ?></li>
+                                <?php } ?>
                             </ul>
                         </div>
                         
                         <h6>Schlüsselübergabe und Abnahme:</h6>
-                        <p>Julia Kitschmann</p>
+                        <p><?php echo $infoData['VerwaltungspersonVorname'] ?? 'Julia'; ?> <?php echo $infoData['VerwaltungspersonNachname'] ?? 'Kitschmann'; ?></p>
                         
                         <div class="mt-3">
                             <p><strong>Kontakt zur Verwalterin:</strong></p>
                             <ul class="list-unstyled">
-                                <li><a href="javascript:void(0)" class="email-protect" data-encoded="<?php echo base64_encode('julia@kitschmann.de'); ?>">E-Mail anzeigen</a></li>
-                                <li><a href="javascript:void(0)" class="phone-protect" data-encoded="<?php echo base64_encode('0178/8829055'); ?>">Telefonnummer anzeigen</a></li>
+                                <li><a href="javascript:void(0)" class="email-protect" data-encoded="<?php echo base64_encode($infoData['VerwaltungspersonEmail'] ?? 'julia@kitschmann.de'); ?>">E-Mail anzeigen</a></li>
+                                <li><a href="javascript:void(0)" class="phone-protect" data-encoded="<?php echo base64_encode($infoData['VerwaltungspersonTelefon'] ?? '0178/8829055'); ?>">Telefonnummer anzeigen</a></li>
                             </ul>
                         </div>                   
                         
                         <div class="mt-3 alert alert-secondary">
-                            <p class="mb-0"><strong>Hinweis:</strong> Bei technischen Problemen mit dem Reservierungssystem wenden Sie sich bitte an: <a href="javascript:void(0)" class="email-protect" data-encoded="<?php echo base64_encode('it@feuerwehr-waldems-reichenbach.de'); ?>">IT-Support</a></p>
+                            <p class="mb-0"><strong>Hinweis:</strong> Bei technischen Problemen mit dem Reservierungssystem wenden Sie sich bitte an: <a href="javascript:void(0)" class="email-protect" data-encoded="<?php echo base64_encode($infoData['SystemEmailProbleme'] ?? 'it@feuerwehr-waldems-reichenbach.de'); ?>">IT-Support</a></p>
                         </div>
                     </div>
                 </div>
@@ -306,10 +362,13 @@ if (isset($_GET['month']) && isset($_GET['year'])) {
                                     <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#mobileInfoAccordion">
                                         <div class="accordion-body">
                                             <ul class="list-unstyled mb-0">
-                                                <li><strong>Miete:</strong> <?php echo $basePrice; ?>€ pro Tag (12 - 12 Uhr)</li>
+                                                <li><strong>Miete:</strong> <?php echo $basePrice; ?>€ pro Tag (<?php echo $infoData['UebergabeZeit'] ?? '12 - 12 Uhr'; ?>)</li>
                                                 <li><strong>Kaution:</strong> <?php echo $depositAmount; ?>€</li>
-                                                <li><strong>Rückgabe:</strong> bis spätestens am nächsten Tag 12:00 Uhr</li>
-                                                <li><strong>Min. Buchungszeitraum:</strong> 1 Tag</li>
+                                                <li><strong>Rückgabe:</strong> <?php echo $infoData['RueckgabeText'] ?? 'bis spätestens am nächsten Tag 12:00 Uhr'; ?></li>
+                                                <li><strong>Min. Buchungszeitraum:</strong> <?php echo $infoData['MinBuchungszeitraum'] ?? '1 Tag'; ?></li>
+                                                <?php foreach ($grillhuetteInfos as $title => $content): ?>
+                                                <li><?php echo $content; ?></li>
+                                                <?php endforeach; ?>
                                             </ul>
                                         </div>
                                     </div>
@@ -323,9 +382,19 @@ if (isset($_GET['month']) && isset($_GET['year'])) {
                                     <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#mobileInfoAccordion">
                                         <div class="accordion-body">
                                             <ul class="mb-0">
-                                                <li>1m³ Wasser</li>
-                                                <li>5 kW/h Strom</li>
-                                                <li>5 Biertisch-Garnituren, jede weitere Garnitur zzgl. 1€</li>
+                                                <?php 
+                                                if (!empty($imPreisEnthalten)) {
+                                                    foreach ($imPreisEnthalten as $title => $content): 
+                                                    ?>
+                                                    <li><?php echo $content; ?></li>
+                                                    <?php 
+                                                    endforeach;
+                                                } else {
+                                                    ?>
+                                                    <li><?php echo $infoData['ImPreisEnthaltenWasser'] ?? '1m³ Wasser'; ?></li>
+                                                    <li><?php echo $infoData['ImPreisEnthaltenStrom'] ?? '5 kW/h Strom'; ?></li>
+                                                    <li><?php echo $infoData['ImPreisEnthaltenBiertische'] ?? '5 Biertisch-Garnituren, jede weitere Garnitur zzgl. 1€'; ?></li>
+                                                <?php } ?>
                                             </ul>
                                         </div>
                                     </div>
@@ -339,8 +408,18 @@ if (isset($_GET['month']) && isset($_GET['year'])) {
                                     <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#mobileInfoAccordion">
                                         <div class="accordion-body">
                                             <ul class="mb-0">
-                                                <li>Die Grillhütte sowie die Toiletten sind sauber zu verlassen</li>
-                                                <li>Müll ist selbst zu entsorgen</li>
+                                                <?php 
+                                                if (!empty($wichtigeHinweise)) {
+                                                    foreach ($wichtigeHinweise as $title => $content): 
+                                                    ?>
+                                                    <li><?php echo $content; ?></li>
+                                                    <?php 
+                                                    endforeach;
+                                                } else {
+                                                    ?>
+                                                    <li><?php echo $infoData['WichtigerHinweis1'] ?? 'Die Grillhütte sowie die Toiletten sind sauber zu verlassen'; ?></li>
+                                                    <li><?php echo $infoData['WichtigerHinweis2'] ?? 'Müll ist selbst zu entsorgen'; ?></li>
+                                                <?php } ?>
                                             </ul>
                                         </div>
                                     </div>
@@ -353,10 +432,10 @@ if (isset($_GET['month']) && isset($_GET['year'])) {
                                     </h2>
                                     <div id="collapseFour" class="accordion-collapse collapse" data-bs-parent="#mobileInfoAccordion">
                                         <div class="accordion-body">
-                                            <p class="mb-2"><strong>Verwalterin:</strong> Julia Kitschmann</p>
+                                            <p class="mb-2"><strong>Verwalterin:</strong> <?php echo $infoData['VerwaltungspersonVorname'] ?? 'Julia'; ?> <?php echo $infoData['VerwaltungspersonNachname'] ?? 'Kitschmann'; ?></p>
                                             <ul class="list-unstyled mb-0">
-                                                <li><a href="javascript:void(0)" class="email-protect" data-encoded="<?php echo base64_encode('julia@kitschmann.de'); ?>">E-Mail anzeigen</a></li>
-                                                <li><a href="javascript:void(0)" class="phone-protect" data-encoded="<?php echo base64_encode('0178/8829055'); ?>">Telefon anzeigen</a></li>
+                                                <li><a href="javascript:void(0)" class="email-protect" data-encoded="<?php echo base64_encode($infoData['VerwaltungspersonEmail'] ?? 'julia@kitschmann.de'); ?>">E-Mail anzeigen</a></li>
+                                                <li><a href="javascript:void(0)" class="phone-protect" data-encoded="<?php echo base64_encode($infoData['VerwaltungspersonTelefon'] ?? '0178/8829055'); ?>">Telefon anzeigen</a></li>
                                             </ul>
                                         </div>
                                     </div>
