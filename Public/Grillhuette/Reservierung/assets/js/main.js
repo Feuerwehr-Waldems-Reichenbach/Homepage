@@ -891,9 +891,20 @@ function updateReservationCosts() {
                 totalCostElement.textContent = formattedRate + '€';
             })
             .catch(() => {
+                // Try to get the user rate from the data attribute
+                const costOverview = document.getElementById('cost-overview');
+                let defaultRate = 100; // Default fallback
+                
+                if (costOverview && costOverview.hasAttribute('data-user-rate')) {
+                    defaultRate = parseFloat(costOverview.getAttribute('data-user-rate')) || 100;
+                }
+                
+                // Format for display with German notation
+                const formattedRate = defaultRate.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                
                 // Hard fallback
-                baseCostElement.textContent = '100,00€';
-                totalCostElement.textContent = '100,00€';
+                baseCostElement.textContent = formattedRate + '€';
+                totalCostElement.textContent = formattedRate + '€';
             });
     }
 }
@@ -905,14 +916,24 @@ function calculateDefaultCosts(startDateTime, endDateTime, dayCountElement, tota
     const diffDays = diffTime / (24 * 60 * 60 * 1000);
     const days = Math.max(1, Math.ceil(diffDays));
     
-    // Use default rate of 100€
-    const dailyRate = 100;
+    // Try to get the user rate from the data attribute
+    const costOverview = document.getElementById('cost-overview');
+    let dailyRate = 100; // Default fallback
+    
+    if (costOverview && costOverview.hasAttribute('data-user-rate')) {
+        dailyRate = parseFloat(costOverview.getAttribute('data-user-rate')) || 100;
+    }
+    
     const totalCost = days * dailyRate;
+    
+    // Format for display with German notation
+    const formattedRate = dailyRate.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const formattedTotal = totalCost.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     
     // Update UI
     dayCountElement.textContent = days;
-    baseCostElement.textContent = '100,00€';
-    totalCostElement.textContent = totalCost.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '€';
+    baseCostElement.textContent = formattedRate + '€';
+    totalCostElement.textContent = formattedTotal + '€';
 }
 
 // Check if booking meets minimum duration requirement (1 day)

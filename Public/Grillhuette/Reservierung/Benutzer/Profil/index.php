@@ -199,8 +199,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     // Runde auf ganze Tage auf (mindestens 1 Tag)
                     $days = max(1, ceil($diffDays));
                     
-                    // Berechne Gesamtkosten (100€ pro Tag)
-                    $totalCost = $days * 100;
+                    // Preisdaten aus der Datenbank holen
+                    require_once '../../includes/Reservation.php';
+                    $reservation = new Reservation();
+                    $priceInfo = $reservation->getPriceInformation($userData['id']);
+                    $basePrice = $priceInfo['base_price'];
+                    $depositAmount = $priceInfo['deposit_amount'];
+                    
+                    // Berechne Gesamtkosten mit dynamischem Preis
+                    $totalCost = $days * $basePrice;
                     
                     $emailBody .= '<tr>';
                     $emailBody .= '<td style="padding: 8px; border: 1px solid #ddd;">' . date('d.m.Y H:i', strtotime($res['start_datetime'])) . ' - ' . date('d.m.Y H:i', strtotime($res['end_datetime'])) . '</td>';
@@ -212,7 +219,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     // Vereinfachte Kostenübersicht als zusätzliche Zeile in der bestehenden Tabelle
                     $emailBody .= '<tr>';
                     $emailBody .= '<td style="padding: 8px; border: 1px solid #ddd; background-color: #f9f9f9;">Gesamtpreis:</td>';
-                    $emailBody .= '<td colspan="3" style="padding: 8px; border: 1px solid #ddd; background-color: #f9f9f9;"><strong>' . number_format($totalCost, 2, ',', '.') . '€</strong> (zzgl. 100,00€ Kaution)</td>';
+                    $emailBody .= '<td colspan="3" style="padding: 8px; border: 1px solid #ddd; background-color: #f9f9f9;"><strong>' . number_format($totalCost, 2, ',', '.') . '€</strong> (zzgl. ' . number_format($depositAmount, 2, ',', '.') . '€ Kaution)</td>';
                     $emailBody .= '</tr>';
                 }
                 

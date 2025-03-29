@@ -247,10 +247,16 @@ if (isset($_GET['month']) && isset($_GET['year'])) {
                                     <label class="form-label">Kostenübersicht</label>
                                     <div class="card">
                                         <div class="card-body p-3">
-                                            <ul class="list-unstyled mb-0" id="cost-overview">
-                                                <li>Grundpreis: <span id="base-cost">100,00€</span> pro Tag</li>
+                                            <?php
+                                            // Preisdaten für den angemeldeten Benutzer abrufen
+                                            $userPriceInfo = $reservation->getPriceInformation(isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null);
+                                            $userRate = number_format($userPriceInfo['user_rate'], 2, ',', '.');
+                                            $userRateRaw = $userPriceInfo['user_rate'];
+                                            ?>
+                                            <ul class="list-unstyled mb-0" id="cost-overview" data-user-rate="<?php echo $userRateRaw; ?>">
+                                                <li>Grundpreis: <span id="base-cost"><?php echo $userRate; ?>€</span> pro Tag</li>
                                                 <li>Anzahl Tage: <span id="day-count">1</span></li>
-                                                <li class="border-top mt-2 pt-2"><strong>Gesamtpreis: <span id="total-cost">100,00€</span></strong></li>
+                                                <li class="border-top mt-2 pt-2"><strong>Gesamtpreis: <span id="total-cost"><?php echo $userRate; ?>€</span></strong></li>
                                             </ul>
                                             <div class="form-text mt-2">Kaution (<?php echo $depositAmount; ?>€) nicht im Gesamtpreis enthalten.</div>
                                         </div>

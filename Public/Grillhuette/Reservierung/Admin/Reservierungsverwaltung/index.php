@@ -249,17 +249,23 @@ require_once '../../includes/header.php';
                                             <?php
                                             // Use prices stored in the database
                                             $daysCount = $res['days_count'] ?? 1;
-                                            $basePrice = $res['base_price'] ?? 100.00;
+                                            $priceInfo = $reservation->getPriceInformation();
+                                            $defaultBasePrice = $priceInfo['base_price'];
+                                            $basePrice = $res['base_price'] ?? $defaultBasePrice;
                                             $totalPrice = $res['total_price'] ?? ($daysCount * $basePrice);
                                             
                                             // Format for display
                                             $formattedBasePrice = number_format($basePrice, 2, ',', '.');
                                             $formattedTotalPrice = number_format($totalPrice, 2, ',', '.');
+                                            
+                                            // Determine rate type for the user
+                                            $priceInfo = $reservation->getPriceInformation($res['user_id']);
+                                            $rateType = $priceInfo['rate_type'] ?? 'normal';
                                             ?>
                                             <strong><?php echo $formattedTotalPrice; ?>€</strong><br>
                                             <small>(<?php echo $daysCount; ?> Tage × <?php echo $formattedBasePrice; ?>€)</small>
                                             
-                                            <?php if ($basePrice < 100): ?>
+                                            <?php if ($rateType !== 'normal'): ?>
                                             <div class="mt-1">
                                                 <small class="text-danger">
                                                     <i class="bi bi-tag-fill"></i> Spezialpreis angewendet
@@ -398,10 +404,16 @@ require_once '../../includes/header.php';
                                 <div class="card-body p-3">
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <ul class="list-unstyled mb-0" id="new-cost-overview">
-                                                <li>Grundpreis: <span class="daily-rate">100,00€</span> pro Tag</li>
+                                            <ul class="list-unstyled mb-0" id="new-cost-overview" data-base-price="<?php echo $priceInfo['base_price']; ?>">
+                                                <?php 
+                                                // Holen Sie den Standardpreis aus der Datenbank
+                                                $priceInfo = $reservation->getPriceInformation();
+                                                $basePrice = number_format($priceInfo['base_price'], 2, ',', '.');
+                                                $basePriceRaw = $priceInfo['base_price'];
+                                                ?>
+                                                <li>Grundpreis: <span class="daily-rate" data-base-price="<?php echo $basePriceRaw; ?>"><?php echo $basePrice; ?>€</span> pro Tag</li>
                                                 <li>Anzahl Tage: <span id="new-day-count">1</span></li>
-                                                <li class="border-top mt-2 pt-2"><strong>Gesamtpreis: <span id="new-total-cost">100,00€</span></strong></li>
+                                                <li class="border-top mt-2 pt-2"><strong>Gesamtpreis: <span id="new-total-cost"><?php echo $basePrice; ?>€</span></strong></li>
                                             </ul>
                                         </div>
                                         <div class="col-md-6">
@@ -509,10 +521,16 @@ require_once '../../includes/header.php';
                                 <div class="card-body p-3">
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <ul class="list-unstyled mb-0" id="edit-cost-overview">
-                                                <li>Grundpreis: <span class="daily-rate">100,00€</span> pro Tag</li>
+                                            <ul class="list-unstyled mb-0" id="edit-cost-overview" data-base-price="<?php echo $priceInfo['base_price']; ?>">
+                                                <?php 
+                                                // Holen Sie den Standardpreis aus der Datenbank
+                                                $priceInfo = $reservation->getPriceInformation();
+                                                $basePrice = number_format($priceInfo['base_price'], 2, ',', '.');
+                                                $basePriceRaw = $priceInfo['base_price'];
+                                                ?>
+                                                <li>Grundpreis: <span class="daily-rate" data-base-price="<?php echo $basePriceRaw; ?>"><?php echo $basePrice; ?>€</span> pro Tag</li>
                                                 <li>Anzahl Tage: <span id="edit-day-count">1</span></li>
-                                                <li class="border-top mt-2 pt-2"><strong>Gesamtpreis: <span id="edit-total-cost">100,00€</span></strong></li>
+                                                <li class="border-top mt-2 pt-2"><strong>Gesamtpreis: <span id="edit-total-cost"><?php echo $basePrice; ?>€</span></strong></li>
                                             </ul>
                                         </div>
                                         <div class="col-md-6">
@@ -650,6 +668,11 @@ function calculateCosts(startDateId, endDateId, dayCountId, totalCostId) {
         return;
     }
     
+    // Get the standard base price from the cost overview element
+    const costOverview = totalCostElement.closest('.card-body').querySelector('[data-base-price]');
+    const defaultBasePrice = costOverview && costOverview.dataset.basePrice ? 
+        parseFloat(costOverview.dataset.basePrice) : 100;
+    
     // Only calculate if both dates are selected
     if (startDateInput.value && endDateInput.value) {
         console.log('Date values:', { 
@@ -759,27 +782,33 @@ function calculateCosts(startDateId, endDateId, dayCountId, totalCostId) {
                         console.log('UI updated with user pricing');
                     } else {
                         // Fallback to standard calculation
-                        calculateStandardCost(startDateTime, endDateTime, dayCountElement, totalCostElement);
+                        calculateStandardCost(startDateTime, endDateTime, dayCountElement, totalCostElement, defaultBasePrice);
                     }
                 })
                 .catch(error => {
                     console.error('Error fetching user pricing:', error);
-                    calculateStandardCost(startDateTime, endDateTime, dayCountElement, totalCostElement);
+                    calculateStandardCost(startDateTime, endDateTime, dayCountElement, totalCostElement, defaultBasePrice);
                 });
         } else {
             // If no user ID, use standard calculation
-            calculateStandardCost(startDateTime, endDateTime, dayCountElement, totalCostElement);
+            calculateStandardCost(startDateTime, endDateTime, dayCountElement, totalCostElement, defaultBasePrice);
         }
     } else {
         console.log('One or both dates are missing');
         // Default values if dates not selected
         dayCountElement.textContent = '1';
-        totalCostElement.textContent = '100,00€';
+        
+        // Format with German locale
+        const formattedRate = defaultBasePrice.toLocaleString('de-DE', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+        totalCostElement.textContent = formattedRate + '€';
     }
 }
 
 // Fallback to standard pricing calculation
-function calculateStandardCost(startDateTime, endDateTime, dayCountElement, totalCostElement) {
+function calculateStandardCost(startDateTime, endDateTime, dayCountElement, totalCostElement, defaultBasePrice) {
     // Berechne die Differenz in Millisekunden
     const diffTime = Math.abs(endDateTime - startDateTime);
     
@@ -789,11 +818,12 @@ function calculateStandardCost(startDateTime, endDateTime, dayCountElement, tota
     // Runde auf ganze Tage auf (mindestens 1 Tag)
     const days = Math.max(1, Math.ceil(diffDays));
     
-    // Use standard rate
-    const dailyRate = 100;
+    // Get the standard rate from the DOM or use provided defaultBasePrice
+    const dailyRate = defaultBasePrice || 100;
+    
     const totalCost = days * dailyRate;
     
-    console.log('Standard calculation results:', { diffDays, days, totalCost });
+    console.log('Standard calculation results:', { diffDays, days, dailyRate, totalCost });
     
     // Update the UI
     dayCountElement.textContent = days;
