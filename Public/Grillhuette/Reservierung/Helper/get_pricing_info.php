@@ -12,8 +12,24 @@ try {
     // Get user ID from session if logged in
     $userId = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
     
+    // Debug: Log user session information
+    error_log("get_pricing_info.php - User ID: " . ($userId ? $userId : 'not logged in'));
+    if (isset($_SESSION['is_Feuerwehr'])) {
+        error_log("get_pricing_info.php - User is_Feuerwehr: " . ($_SESSION['is_Feuerwehr'] ? 'true' : 'false'));
+    }
+    
     // Get pricing information for the current user
     $priceInfo = $reservation->getPriceInformation($userId);
+    
+    // Debug: Log pricing result
+    error_log("get_pricing_info.php - User rate: {$priceInfo['user_rate']}€, Rate type: {$priceInfo['rate_type']}");
+    
+    // For Feuerwehr users, always ensure rate is 0
+    if (isset($_SESSION['is_Feuerwehr']) && $_SESSION['is_Feuerwehr']) {
+        $priceInfo['user_rate'] = 0.00;
+        $priceInfo['rate_type'] = 'feuerwehr';
+        error_log("get_pricing_info.php - Forcing Feuerwehr rate to 0.00€");
+    }
     
     // Return the data
     echo json_encode([

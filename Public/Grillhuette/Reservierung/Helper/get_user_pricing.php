@@ -40,6 +40,19 @@ try {
     // Get pricing information for the specified user
     $priceInfo = $reservation->getPriceInformation($userId);
     
+    // Get user information to check if they're a Feuerwehr member
+    $db = Database::getInstance()->getConnection();
+    $stmt = $db->prepare("SELECT is_Feuerwehr FROM gh_users WHERE id = ?");
+    $stmt->execute([$userId]);
+    $userData = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    // For Feuerwehr users, always ensure rate is 0
+    if ($userData && $userData['is_Feuerwehr']) {
+        $priceInfo['user_rate'] = 0.00;
+        $priceInfo['rate_type'] = 'feuerwehr';
+        error_log("get_user_pricing.php - Forcing Feuerwehr rate to 0.00€ for user $userId");
+    }
+    
     // Return the data
     echo json_encode([
         'success' => true,

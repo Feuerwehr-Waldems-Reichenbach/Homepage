@@ -36,7 +36,11 @@ class Reservation {
                 // Remove the € symbol and replace comma with dot for proper decimal parsing
                 $basePrice = floatval(str_replace(['€', ','], ['', '.'], $pricingData['MietpreisNormal'] ?? '100'));
                 $aktivesPrice = floatval(str_replace(['€', ','], ['', '.'], $pricingData['MietpreisAktivesMitglied'] ?? '50'));
-                $feuerwehrPrice = floatval(str_replace(['€', ','], ['', '.'], $pricingData['MietpreisFeuerwehr'] ?? '0'));
+                
+                // Always set Feuerwehr price to 0, regardless of what's in the database
+                // This ensures the price is always free for Feuerwehr members
+                $feuerwehrPrice = 0.00;
+                
                 $depositAmount = floatval(str_replace(['€', ','], ['', '.'], $pricingData['Kautionspreis'] ?? '100'));
                 
                 $priceInfo['base_price'] = $basePrice;
@@ -46,6 +50,13 @@ class Reservation {
             
             // If userId is provided, check for special pricing
             if ($userId) {
+                // Special case for test mode
+                if ($userId === 'test' && isset($_SESSION['is_Feuerwehr']) && $_SESSION['is_Feuerwehr']) {
+                    $priceInfo['user_rate'] = 0.00; // Hard-coded to 0 for Feuerwehr
+                    $priceInfo['rate_type'] = 'feuerwehr';
+                    return $priceInfo;
+                }
+                
                 $userStmt = $this->db->prepare("
                     SELECT is_AktivesMitglied, is_Feuerwehr 
                     FROM gh_users 
@@ -55,15 +66,22 @@ class Reservation {
                 $userData = $userStmt->fetch(PDO::FETCH_ASSOC);
                 
                 if ($userData) {
-                    if ($userData['is_Feuerwehr']) {
-                        // Feuerwehr has highest priority pricing
-                        $priceInfo['user_rate'] = $feuerwehrPrice ?? 0.00;
+                    // Force conversion to boolean to ensure proper comparison
+                    $isFeuerwehr = (bool)$userData['is_Feuerwehr'];
+                    $isAktivesMitglied = (bool)$userData['is_AktivesMitglied'];
+                    
+                    if ($isFeuerwehr) {
+                        // Feuerwehr has highest priority pricing - always set to 0
+                        $priceInfo['user_rate'] = 0.00;
                         $priceInfo['rate_type'] = 'feuerwehr';
-                    } elseif ($userData['is_AktivesMitglied']) {
+                    } elseif ($isAktivesMitglied) {
                         // Aktives Mitglied has second priority
-                        $priceInfo['user_rate'] = $aktivesPrice ?? 50.00;
+                        $priceInfo['user_rate'] = $aktivesPrice;
                         $priceInfo['rate_type'] = 'aktives_mitglied';
                     }
+                    
+                    // Log for debugging purposes
+                    error_log("User $userId pricing: rate={$priceInfo['user_rate']}, type={$priceInfo['rate_type']}, isFeuerwehr=$isFeuerwehr");
                 }
             }
             

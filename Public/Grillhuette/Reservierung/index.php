@@ -306,6 +306,10 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
                                             <?php
                                             // Preisdaten für den angemeldeten Benutzer abrufen
                                             $userPriceInfo = $reservation->getPriceInformation(isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null);
+                                            // Explizit 0€ für Feuerwehr-Mitglieder setzen (Sicherheitsmaßnahme)
+                                            if (isset($_SESSION['is_Feuerwehr']) && $_SESSION['is_Feuerwehr']) {
+                                                $userPriceInfo['user_rate'] = 0.00;
+                                            }
                                             $userRate = number_format($userPriceInfo['user_rate'], 2, ',', '.');
                                             $userRateRaw = $userPriceInfo['user_rate'];
                                             ?>
@@ -313,6 +317,9 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
                                                 <li>Grundpreis: <span id="base-cost"><?php echo $userRate; ?>€</span> pro Tag</li>
                                                 <li>Anzahl Tage: <span id="day-count">1</span></li>
                                                 <li class="border-top mt-2 pt-2"><strong>Gesamtpreis: <span id="total-cost"><?php echo $userRate; ?>€</span></strong></li>
+                                                <?php if (isset($_SESSION['is_Feuerwehr']) && $_SESSION['is_Feuerwehr']): ?>
+                                                <li class="special-price-note text-success mt-2"><i class="bi bi-check-circle"></i> Spezialpreis für Feuerwehr (0€)</li>
+                                                <?php endif; ?>
                                             </ul>
                                             <div class="form-text mt-2">Kaution (<?php echo $depositAmount; ?>€) nicht im Gesamtpreis enthalten.</div>
                                         </div>

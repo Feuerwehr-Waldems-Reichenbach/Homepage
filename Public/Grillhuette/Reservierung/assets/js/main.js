@@ -838,12 +838,12 @@ function updateReservationCosts() {
                 // Runde auf ganze Tage auf (mindestens 1 Tag)
                 const days = Math.max(1, Math.ceil(diffDays));
                 
-                // Get the user's rate from the price info
-                const dailyRate = priceInfo.user_rate || 100; // Default to 100€ if not available
-                const totalCost = days * dailyRate;
+                // Use proper check to preserve 0 values
+                const rate = (priceInfo.user_rate !== undefined && priceInfo.user_rate !== null) ? priceInfo.user_rate : 100;
+                const totalCost = days * rate;
                 
                 // Format for display with German notation (comma for decimal)
-                const formattedRate = dailyRate.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                const formattedRate = rate.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                 const formattedTotal = totalCost.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                 
                 // Update the UI
@@ -867,7 +867,7 @@ function updateReservationCosts() {
                         
                         const specialNote = document.createElement('li');
                         specialNote.className = 'special-price-note text-success';
-                        specialNote.innerHTML = `<i class="bi bi-check-circle"></i> ${noteText}`;
+                        specialNote.innerHTML = `<i class="bi bi-check-circle"></i> ${noteText} (0€)`;
                         costOverview.appendChild(specialNote);
                     }
                 }
@@ -885,7 +885,8 @@ function updateReservationCosts() {
         fetch('Helper/get_pricing_info.php')
             .then(response => response.json())
             .then(priceInfo => {
-                const rate = priceInfo.user_rate || 100;
+                // Use proper check to preserve 0 values
+                const rate = (priceInfo.user_rate !== undefined && priceInfo.user_rate !== null) ? priceInfo.user_rate : 100;
                 const formattedRate = rate.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                 baseCostElement.textContent = formattedRate + '€';
                 totalCostElement.textContent = formattedRate + '€';
@@ -896,7 +897,8 @@ function updateReservationCosts() {
                 let defaultRate = 100; // Default fallback
                 
                 if (costOverview && costOverview.hasAttribute('data-user-rate')) {
-                    defaultRate = parseFloat(costOverview.getAttribute('data-user-rate')) || 100;
+                    const userRateVal = parseFloat(costOverview.getAttribute('data-user-rate'));
+                    defaultRate = (!isNaN(userRateVal) && userRateVal !== null) ? userRateVal : 100;
                 }
                 
                 // Format for display with German notation
@@ -921,7 +923,8 @@ function calculateDefaultCosts(startDateTime, endDateTime, dayCountElement, tota
     let dailyRate = 100; // Default fallback
     
     if (costOverview && costOverview.hasAttribute('data-user-rate')) {
-        dailyRate = parseFloat(costOverview.getAttribute('data-user-rate')) || 100;
+        const userRateVal = parseFloat(costOverview.getAttribute('data-user-rate'));
+        dailyRate = (!isNaN(userRateVal) && userRateVal !== null) ? userRateVal : 100;
     }
     
     const totalCost = days * dailyRate;
