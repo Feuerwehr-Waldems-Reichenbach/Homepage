@@ -247,24 +247,25 @@ require_once '../../includes/header.php';
                                         </td>
                                         <td>
                                             <?php
-                                            // Berechne die Anzahl der Tage
-                                            $startDate = new DateTime($res['start_datetime']);
-                                            $endDate = new DateTime($res['end_datetime']);
+                                            // Use prices stored in the database
+                                            $daysCount = $res['days_count'] ?? 1;
+                                            $basePrice = $res['base_price'] ?? 100.00;
+                                            $totalPrice = $res['total_price'] ?? ($daysCount * $basePrice);
                                             
-                                            // Berechne die Differenz in Sekunden
-                                            $diffSeconds = $endDate->getTimestamp() - $startDate->getTimestamp();
-                                            
-                                            // Berechne die Anzahl der Tage als Dezimalzahl
-                                            $diffDays = $diffSeconds / (24 * 60 * 60);
-                                            
-                                            // Runde auf ganze Tage auf (mindestens 1 Tag)
-                                            $days = max(1, ceil($diffDays));
-                                            
-                                            // Berechne Gesamtkosten (100€ pro Tag)
-                                            $totalCost = $days * 100;
+                                            // Format for display
+                                            $formattedBasePrice = number_format($basePrice, 2, ',', '.');
+                                            $formattedTotalPrice = number_format($totalPrice, 2, ',', '.');
                                             ?>
-                                            <strong><?php echo number_format($totalCost, 2, ',', '.'); ?>€</strong><br>
-                                            <small>(<?php echo $days; ?> Tage × 100€)</small>
+                                            <strong><?php echo $formattedTotalPrice; ?>€</strong><br>
+                                            <small>(<?php echo $daysCount; ?> Tage × <?php echo $formattedBasePrice; ?>€)</small>
+                                            
+                                            <?php if ($basePrice < 100): ?>
+                                            <div class="mt-1">
+                                                <small class="text-danger">
+                                                    <i class="bi bi-tag-fill"></i> Spezialpreis angewendet
+                                                </small>
+                                            </div>
+                                            <?php endif; ?>
                                         </td>
                                         <td>
                                             <span class="badge status-badge status-<?php echo $res['status']; ?>">
@@ -398,7 +399,7 @@ require_once '../../includes/header.php';
                                     <div class="row">
                                         <div class="col-md-6">
                                             <ul class="list-unstyled mb-0" id="new-cost-overview">
-                                                <li>Grundpreis: 100,00€ pro Tag</li>
+                                                <li>Grundpreis: <span class="daily-rate">100,00€</span> pro Tag</li>
                                                 <li>Anzahl Tage: <span id="new-day-count">1</span></li>
                                                 <li class="border-top mt-2 pt-2"><strong>Gesamtpreis: <span id="new-total-cost">100,00€</span></strong></li>
                                             </ul>
@@ -406,7 +407,12 @@ require_once '../../includes/header.php';
                                         <div class="col-md-6">
                                             <div class="form-text">
                                                 Der Mindestbuchungszeitraum beträgt 1 Tag.<br>
-                                                Kaution (100€) nicht im Gesamtpreis enthalten.
+                                                <?php 
+                                                // Get pricing info from database
+                                                $priceInfo = $reservation->getPriceInformation();
+                                                $depositAmount = number_format($priceInfo['deposit_amount'], 2, ',', '.');
+                                                ?>
+                                                Kaution (<?php echo $depositAmount; ?>€) nicht im Gesamtpreis enthalten.
                                             </div>
                                         </div>
                                     </div>
@@ -504,7 +510,7 @@ require_once '../../includes/header.php';
                                     <div class="row">
                                         <div class="col-md-6">
                                             <ul class="list-unstyled mb-0" id="edit-cost-overview">
-                                                <li>Grundpreis: 100,00€ pro Tag</li>
+                                                <li>Grundpreis: <span class="daily-rate">100,00€</span> pro Tag</li>
                                                 <li>Anzahl Tage: <span id="edit-day-count">1</span></li>
                                                 <li class="border-top mt-2 pt-2"><strong>Gesamtpreis: <span id="edit-total-cost">100,00€</span></strong></li>
                                             </ul>
@@ -512,7 +518,12 @@ require_once '../../includes/header.php';
                                         <div class="col-md-6">
                                             <div class="form-text">
                                                 Der Mindestbuchungszeitraum beträgt 1 Tag.<br>
-                                                Kaution (100€) nicht im Gesamtpreis enthalten.
+                                                <?php 
+                                                // Get pricing info from database
+                                                $priceInfo = $reservation->getPriceInformation();
+                                                $depositAmount = number_format($priceInfo['deposit_amount'], 2, ',', '.');
+                                                ?>
+                                                Kaution (<?php echo $depositAmount; ?>€) nicht im Gesamtpreis enthalten.
                                             </div>
                                         </div>
                                     </div>
@@ -668,31 +679,128 @@ function calculateCosts(startDateId, endDateId, dayCountId, totalCostId) {
             endDateTime: endDateTime.toISOString() 
         });
         
-        // Berechne die Differenz in Millisekunden
-        const diffTime = Math.abs(endDateTime - startDateTime);
+        // Get the user ID if we're on the edit form
+        let userId = null;
+        if (startDateId === 'edit_start_date') {
+            const userSelect = document.getElementById('edit_user_id');
+            userId = userSelect ? userSelect.value : null;
+        } else if (startDateId === 'start_date') {
+            const userSelect = document.getElementById('user_id');
+            userId = userSelect ? userSelect.value : null;
+        }
         
-        // Berechne die Anzahl der Tage als Dezimalzahl (z.B. 1,5 Tage)
-        const diffDays = diffTime / (24 * 60 * 60 * 1000);
-        
-        // Runde auf ganze Tage auf (mindestens 1 Tag)
-        const days = Math.max(1, Math.ceil(diffDays));
-        
-        // Calculate total cost (100€ per day)
-        const dailyRate = 100; // €
-        const totalCost = days * dailyRate;
-        
-        console.log('Calculation results:', { diffTime, diffDays, days, totalCost });
-        
-        // Update the UI
-        dayCountElement.textContent = days;
-        totalCostElement.textContent = totalCost.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '€';
-        console.log('UI updated with days:', days);
+        // Fetch pricing information if we have a user ID
+        if (userId) {
+            // Make an AJAX request to get pricing for this specific user
+            fetch('../../Helper/get_user_pricing.php?user_id=' + userId)
+                .then(response => response.json())
+                .then(priceInfo => {
+                    if (priceInfo.success) {
+                        // Berechne die Differenz in Millisekunden
+                        const diffTime = Math.abs(endDateTime - startDateTime);
+                        
+                        // Berechne die Anzahl der Tage als Dezimalzahl (z.B. 1,5 Tage)
+                        const diffDays = diffTime / (24 * 60 * 60 * 1000);
+                        
+                        // Runde auf ganze Tage auf (mindestens 1 Tag)
+                        const days = Math.max(1, Math.ceil(diffDays));
+                        
+                        // Calculate total cost based on user rate
+                        const dailyRate = priceInfo.user_rate;
+                        const totalCost = days * dailyRate;
+                        
+                        console.log('Calculation results with user pricing:', {
+                            diffDays, days, dailyRate, totalCost,
+                            rateType: priceInfo.rate_type
+                        });
+                        
+                        // Update the UI
+                        dayCountElement.textContent = days;
+                        
+                        // Format with German locale
+                        const formattedTotal = totalCost.toLocaleString('de-DE', {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                        });
+                        totalCostElement.textContent = formattedTotal + '€';
+                        
+                        // Update the displayed rate and add note for special pricing
+                        const rateElement = totalCostElement.closest('.card-body').querySelector('.daily-rate');
+                        if (rateElement) {
+                            const formattedRate = dailyRate.toLocaleString('de-DE', {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2
+                            });
+                            rateElement.textContent = formattedRate + '€';
+                            
+                            // Clear any existing special pricing notes
+                            const existingNote = totalCostElement.closest('.card-body').querySelector('.pricing-note');
+                            if (existingNote) {
+                                existingNote.remove();
+                            }
+                            
+                            // Add note for special pricing
+                            if (priceInfo.rate_type !== 'normal') {
+                                const noteText = priceInfo.rate_type === 'feuerwehr' ? 
+                                    'Spezialpreis für Feuerwehr' : 
+                                    'Spezialpreis für aktives Mitglied';
+                                
+                                const noteDiv = document.createElement('div');
+                                noteDiv.className = 'pricing-note text-danger mt-2';
+                                noteDiv.innerHTML = `<strong>Hinweis:</strong> ${noteText}`;
+                                
+                                const costInfo = totalCostElement.closest('ul');
+                                if (costInfo) {
+                                    costInfo.insertAdjacentElement('afterend', noteDiv);
+                                }
+                            }
+                        }
+                        
+                        console.log('UI updated with user pricing');
+                    } else {
+                        // Fallback to standard calculation
+                        calculateStandardCost(startDateTime, endDateTime, dayCountElement, totalCostElement);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching user pricing:', error);
+                    calculateStandardCost(startDateTime, endDateTime, dayCountElement, totalCostElement);
+                });
+        } else {
+            // If no user ID, use standard calculation
+            calculateStandardCost(startDateTime, endDateTime, dayCountElement, totalCostElement);
+        }
     } else {
         console.log('One or both dates are missing');
         // Default values if dates not selected
         dayCountElement.textContent = '1';
         totalCostElement.textContent = '100,00€';
     }
+}
+
+// Fallback to standard pricing calculation
+function calculateStandardCost(startDateTime, endDateTime, dayCountElement, totalCostElement) {
+    // Berechne die Differenz in Millisekunden
+    const diffTime = Math.abs(endDateTime - startDateTime);
+    
+    // Berechne die Anzahl der Tage als Dezimalzahl (z.B. 1,5 Tage)
+    const diffDays = diffTime / (24 * 60 * 60 * 1000);
+    
+    // Runde auf ganze Tage auf (mindestens 1 Tag)
+    const days = Math.max(1, Math.ceil(diffDays));
+    
+    // Use standard rate
+    const dailyRate = 100;
+    const totalCost = days * dailyRate;
+    
+    console.log('Standard calculation results:', { diffDays, days, totalCost });
+    
+    // Update the UI
+    dayCountElement.textContent = days;
+    totalCostElement.textContent = totalCost.toLocaleString('de-DE', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    }) + '€';
 }
 
 // Initialisierung beim Laden des Modals

@@ -114,29 +114,24 @@ require_once '../../includes/header.php';
                                         <div class="card mb-3">
                                             <div class="card-body p-3">
                                                 <?php
-                                                // Berechne die Anzahl der Tage
-                                                $startDate = new DateTime($res['start_datetime']);
-                                                $endDate = new DateTime($res['end_datetime']);
+                                                // Die Werte aus der Datenbank anzeigen
+                                                $daysCount = $res['days_count'] ?? 1;
+                                                $basePrice = $res['base_price'] ?? 100.00;
+                                                $totalPrice = $res['total_price'] ?? ($daysCount * $basePrice);
+                                                $depositAmount = $res['deposit_amount'] ?? 100.00;
                                                 
-                                                // Berechne die Differenz in Sekunden
-                                                $diffSeconds = $endDate->getTimestamp() - $startDate->getTimestamp();
-                                                
-                                                // Berechne die Anzahl der Tage als Dezimalzahl
-                                                $diffDays = $diffSeconds / (24 * 60 * 60);
-                                                
-                                                // Runde auf ganze Tage auf (mindestens 1 Tag)
-                                                $days = max(1, ceil($diffDays));
-                                                
-                                                // Berechne Gesamtkosten (100€ pro Tag)
-                                                $totalCost = $days * 100;
+                                                // Formatierte Werte für die Anzeige
+                                                $formattedBasePrice = number_format($basePrice, 2, ',', '.');
+                                                $formattedTotalPrice = number_format($totalPrice, 2, ',', '.');
+                                                $formattedDepositAmount = number_format($depositAmount, 2, ',', '.');
                                                 ?>
                                                 <h6 class="mb-2">Kostenübersicht:</h6>
                                                 <ul class="list-unstyled mb-0">
-                                                    <li>Grundpreis: 100,00€ pro Tag</li>
-                                                    <li>Anzahl Tage: <?php echo $days; ?></li>
-                                                    <li class="border-top mt-2 pt-2"><strong>Gesamtpreis: <?php echo number_format($totalCost, 2, ',', '.'); ?>€</strong></li>
+                                                    <li>Grundpreis: <?php echo $formattedBasePrice; ?>€ pro Tag</li>
+                                                    <li>Anzahl Tage: <?php echo $daysCount; ?></li>
+                                                    <li class="border-top mt-2 pt-2"><strong>Gesamtpreis: <?php echo $formattedTotalPrice; ?>€</strong></li>
                                                 </ul>
-                                                <div class="form-text mt-2">Kaution (100€) nicht im Gesamtpreis enthalten.</div>
+                                                <div class="form-text mt-2">Kaution (<?php echo $formattedDepositAmount; ?>€) nicht im Gesamtpreis enthalten.</div>
                                             </div>
                                         </div>
                                         
@@ -236,29 +231,24 @@ require_once '../../includes/header.php';
                                         <div class="card mb-3">
                                             <div class="card-body p-3">
                                                 <?php
-                                                // Berechne die Anzahl der Tage
-                                                $startDate = new DateTime($res['start_datetime']);
-                                                $endDate = new DateTime($res['end_datetime']);
+                                                // Die Werte aus der Datenbank anzeigen
+                                                $daysCount = $res['days_count'] ?? 1;
+                                                $basePrice = $res['base_price'] ?? 100.00;
+                                                $totalPrice = $res['total_price'] ?? ($daysCount * $basePrice);
+                                                $depositAmount = $res['deposit_amount'] ?? 100.00;
                                                 
-                                                // Berechne die Differenz in Sekunden
-                                                $diffSeconds = $endDate->getTimestamp() - $startDate->getTimestamp();
-                                                
-                                                // Berechne die Anzahl der Tage als Dezimalzahl
-                                                $diffDays = $diffSeconds / (24 * 60 * 60);
-                                                
-                                                // Runde auf ganze Tage auf (mindestens 1 Tag)
-                                                $days = max(1, ceil($diffDays));
-                                                
-                                                // Berechne Gesamtkosten (100€ pro Tag)
-                                                $totalCost = $days * 100;
+                                                // Formatierte Werte für die Anzeige
+                                                $formattedBasePrice = number_format($basePrice, 2, ',', '.');
+                                                $formattedTotalPrice = number_format($totalPrice, 2, ',', '.');
+                                                $formattedDepositAmount = number_format($depositAmount, 2, ',', '.');
                                                 ?>
                                                 <h6 class="mb-2">Kostenübersicht:</h6>
                                                 <ul class="list-unstyled mb-0">
-                                                    <li>Grundpreis: 100,00€ pro Tag</li>
-                                                    <li>Anzahl Tage: <?php echo $days; ?></li>
-                                                    <li class="border-top mt-2 pt-2"><strong>Gesamtpreis: <?php echo number_format($totalCost, 2, ',', '.'); ?>€</strong></li>
+                                                    <li>Grundpreis: <?php echo $formattedBasePrice; ?>€ pro Tag</li>
+                                                    <li>Anzahl Tage: <?php echo $daysCount; ?></li>
+                                                    <li class="border-top mt-2 pt-2"><strong>Gesamtpreis: <?php echo $formattedTotalPrice; ?>€</strong></li>
                                                 </ul>
-                                                <div class="form-text mt-2">Kaution (100€) nicht im Gesamtpreis enthalten.</div>
+                                                <div class="form-text mt-2">Kaution (<?php echo $formattedDepositAmount; ?>€) nicht im Gesamtpreis enthalten.</div>
                                             </div>
                                         </div>
                                         

@@ -6,6 +6,79 @@ class Reservation {
         $this->db = Database::getInstance()->getConnection();
     }
     
+    /**
+     * Retrieves pricing information from the gh_informations table
+     * 
+     * @param int $userId ID of the user to check for special pricing
+     * @return array Pricing information including base price, deposit amount, and calculated rate for the user
+     */
+    public function getPriceInformation($userId = null) {
+        try {
+            // Default values in case the database query fails
+            $priceInfo = [
+                'base_price' => 100.00,
+                'deposit_amount' => 100.00,
+                'user_rate' => 100.00,
+                'rate_type' => 'normal'
+            ];
+            
+            // Get pricing information from gh_informations table
+            $infoStmt = $this->db->prepare("
+                SELECT title, content 
+                FROM gh_informations 
+                WHERE title IN ('MietpreisNormal', 'MietpreisAktivesMitglied', 'MietpreisFeuerwehr', 'Kautionspreis')
+            ");
+            $infoStmt->execute();
+            $pricingData = $infoStmt->fetchAll(PDO::FETCH_KEY_PAIR);
+            
+            // If we have data from the database, update our default values
+            if (!empty($pricingData)) {
+                // Remove the € symbol and replace comma with dot for proper decimal parsing
+                $basePrice = floatval(str_replace(['€', ','], ['', '.'], $pricingData['MietpreisNormal'] ?? '100'));
+                $aktivesPrice = floatval(str_replace(['€', ','], ['', '.'], $pricingData['MietpreisAktivesMitglied'] ?? '50'));
+                $feuerwehrPrice = floatval(str_replace(['€', ','], ['', '.'], $pricingData['MietpreisFeuerwehr'] ?? '0'));
+                $depositAmount = floatval(str_replace(['€', ','], ['', '.'], $pricingData['Kautionspreis'] ?? '100'));
+                
+                $priceInfo['base_price'] = $basePrice;
+                $priceInfo['deposit_amount'] = $depositAmount;
+                $priceInfo['user_rate'] = $basePrice; // Default to normal rate
+            }
+            
+            // If userId is provided, check for special pricing
+            if ($userId) {
+                $userStmt = $this->db->prepare("
+                    SELECT is_AktivesMitglied, is_Feuerwehr 
+                    FROM gh_users 
+                    WHERE id = ?
+                ");
+                $userStmt->execute([$userId]);
+                $userData = $userStmt->fetch(PDO::FETCH_ASSOC);
+                
+                if ($userData) {
+                    if ($userData['is_Feuerwehr']) {
+                        // Feuerwehr has highest priority pricing
+                        $priceInfo['user_rate'] = $feuerwehrPrice ?? 0.00;
+                        $priceInfo['rate_type'] = 'feuerwehr';
+                    } elseif ($userData['is_AktivesMitglied']) {
+                        // Aktives Mitglied has second priority
+                        $priceInfo['user_rate'] = $aktivesPrice ?? 50.00;
+                        $priceInfo['rate_type'] = 'aktives_mitglied';
+                    }
+                }
+            }
+            
+            return $priceInfo;
+        } catch (PDOException $e) {
+            error_log('Error retrieving price information: ' . $e->getMessage());
+            return [
+                'base_price' => 100.00,
+                'deposit_amount' => 100.00,
+                'user_rate' => 100.00,
+                'rate_type' => 'normal'
+            ];
+        }
+    }
+    
     public function create($userId, $startDatetime, $endDatetime, $userMessage = null) {
         // Zuweisung der URL-Variablen
         $myReservationsUrl = 'https://' . $_SERVER['HTTP_HOST'] . getRelativePath('Benutzer/Meine-Reservierungen');
@@ -20,26 +93,42 @@ class Reservation {
                 ];
             }
             
-            // Reservierung erstellen
-            $stmt = $this->db->prepare("
-                INSERT INTO gh_reservations (user_id, start_datetime, end_datetime, user_message) 
-                VALUES (?, ?, ?, ?)
-            ");
-            $stmt->execute([$userId, $startDatetime, $endDatetime, $userMessage]);
-            
-            // Benutzer per E-Mail benachrichtigen
-            $userStmt = $this->db->prepare("SELECT email, first_name, last_name FROM gh_users WHERE id = ?");
-            $userStmt->execute([$userId]);
-            $user = $userStmt->fetch(PDO::FETCH_ASSOC);
-            
             // Kostenberechnung
             $startDate = new DateTime($startDatetime);
             $endDate = new DateTime($endDatetime);
             $diffSeconds = $endDate->getTimestamp() - $startDate->getTimestamp();
             $diffDays = $diffSeconds / (24 * 60 * 60);
             $days = max(1, ceil($diffDays));
-            $totalCost = $days * 100;
-            $formattedCost = number_format($totalCost, 2, ',', '.');
+            
+            // Preisdaten abrufen
+            $priceInfo = $this->getPriceInformation($userId);
+            $userRate = $priceInfo['user_rate'];
+            $basePrice = $priceInfo['base_price'];
+            $depositAmount = $priceInfo['deposit_amount'];
+            $totalCost = $days * $userRate;
+            
+            // Reservierung erstellen mit Preisdaten
+            $stmt = $this->db->prepare("
+                INSERT INTO gh_reservations (
+                    user_id, start_datetime, end_datetime, user_message, 
+                    days_count, base_price, total_price, deposit_amount
+                ) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            ");
+            $stmt->execute([
+                $userId, $startDatetime, $endDatetime, $userMessage, 
+                $days, $userRate, $totalCost, $depositAmount
+            ]);
+            
+            // Formatierte Werte für E-Mail
+            $formattedUserRate = number_format($userRate, 2, ',', '.');
+            $formattedTotalCost = number_format($totalCost, 2, ',', '.');
+            $formattedDepositAmount = number_format($depositAmount, 2, ',', '.');
+            
+            // Benutzer per E-Mail benachrichtigen
+            $userStmt = $this->db->prepare("SELECT email, first_name, last_name FROM gh_users WHERE id = ?");
+            $userStmt->execute([$userId]);
+            $user = $userStmt->fetch(PDO::FETCH_ASSOC);
             
             $subject = 'Reservierungsanfrage für die Grillhütte Waldems Reichenbach';
             $body = '
@@ -75,10 +164,10 @@ class Reservation {
                             
                             <div class="cost-box">
                                 <strong>Kostenübersicht:</strong><br>
-                                Grundpreis pro Tag: 100,00€<br>
+                                Grundpreis pro Tag: ' . $formattedUserRate . '€<br>
                                 Anzahl der Tage: ' . $days . '<br>
-                                <strong>Gesamtpreis: ' . $formattedCost . '€</strong><br>
-                                <small>Hinweis: Die Kaution ist in diesem Preis nicht enthalten.</small>
+                                <strong>Gesamtpreis: ' . $formattedTotalCost . '€</strong><br>
+                                <small>Hinweis: Die Kaution (' . $formattedDepositAmount . '€) ist in diesem Preis nicht enthalten.</small>
                             </div>
                             
                             <p>Wir werden Sie benachrichtigen, sobald Ihre Anfrage bearbeitet wurde. Sie können den Status Ihrer Reservierung auch jederzeit über den folgenden Link überprüfen.</p>
@@ -137,9 +226,20 @@ class Reservation {
                                 
                                 <div class="cost-box">
                                     <strong>Kostenübersicht:</strong><br>
-                                    Grundpreis pro Tag: 100,00€<br>
+                                    Grundpreis pro Tag: ' . $formattedUserRate . '€<br>
                                     Anzahl der Tage: ' . $days . '<br>
-                                    <strong>Gesamtpreis: ' . $formattedCost . '€</strong>
+                                    <strong>Gesamtpreis: ' . $formattedTotalCost . '€</strong><br>';
+                
+                // Spezielle Preishinweise für Administratoren
+                if ($priceInfo['rate_type'] !== 'normal') {
+                    $rateTypeText = $priceInfo['rate_type'] === 'feuerwehr' ? 'Feuerwehr' : 'Aktives Mitglied';
+                    $normalRate = number_format($basePrice * $days, 2, ',', '.');
+                    $adminBody .= '
+                                    <span style="color: #A72920;"><strong>Hinweis:</strong> Spezialpreis für ' . $rateTypeText . ' angewendet!</span><br>
+                                    <small>(Regulärer Preis wäre: ' . $normalRate . '€)</small>';
+                }
+                
+                $adminBody .= '
                                 </div>
                                 
                                 <a href="' . $adminReservationsUrl . '" class="button">Reservierung verwalten</a>
@@ -238,14 +338,16 @@ class Reservation {
         $adminReservationsUrl = 'https://' . $_SERVER['HTTP_HOST'] . getRelativePath('Admin/Reservierungsverwaltung');
 
         try {
-            $reservation = $this->getById($id);
-            if (!$reservation) {
+            // Reservierungsdaten abrufen
+            $reservationData = $this->getById($id);
+            if (!$reservationData) {
                 return [
                     'success' => false,
                     'message' => 'Reservierung nicht gefunden.'
                 ];
             }
             
+            // Status aktualisieren
             $stmt = $this->db->prepare("
                 UPDATE gh_reservations 
                 SET status = ?, admin_message = ? 
@@ -253,22 +355,16 @@ class Reservation {
             ");
             $stmt->execute([$status, $adminMessage, $id]);
             
-            // Berechne die Anzahl der Tage
-            $startDate = new DateTime($reservation['start_datetime']);
-            $endDate = new DateTime($reservation['end_datetime']);
+            // Preisdaten abrufen
+            $daysCount = $reservationData['days_count'] ?? 1;
+            $basePrice = $reservationData['base_price'] ?? 100.00;
+            $totalPrice = $reservationData['total_price'] ?? ($daysCount * $basePrice);
+            $depositAmount = $reservationData['deposit_amount'] ?? 100.00;
             
-            // Berechne die Differenz in Sekunden
-            $diffSeconds = $endDate->getTimestamp() - $startDate->getTimestamp();
-            
-            // Berechne die Anzahl der Tage als Dezimalzahl
-            $diffDays = $diffSeconds / (24 * 60 * 60);
-            
-            // Runde auf ganze Tage auf (mindestens 1 Tag)
-            $days = max(1, ceil($diffDays));
-            
-            // Berechne Gesamtkosten (100€ pro Tag)
-            $totalCost = $days * 100;
-            $formattedCost = number_format($totalCost, 2, ',', '.');
+            // Formatierte Werte für die E-Mail
+            $formattedBasePrice = number_format($basePrice, 2, ',', '.');
+            $formattedTotalPrice = number_format($totalPrice, 2, ',', '.');
+            $formattedDepositAmount = number_format($depositAmount, 2, ',', '.');
             
             $statusText = $status == 'confirmed' ? 'bestätigt' : 'abgelehnt';
             $statusColor = $status == 'confirmed' ? '#28a745' : '#dc3545';
@@ -296,21 +392,21 @@ class Reservation {
                             <h2>Reservierungsstatus aktualisiert</h2>
                         </div>
                         <div class="content">
-                            <h3>Hallo ' . $reservation['first_name'] . ' ' . $reservation['last_name'] . ',</h3>
+                            <h3>Hallo ' . $reservationData['first_name'] . ' ' . $reservationData['last_name'] . ',</h3>
                             
                             <div class="info-box">
                                 <strong>Ihre Reservierungsdetails:</strong><br>
-                                Von: ' . date('d.m.Y H:i', strtotime($reservation['start_datetime'])) . '<br>
-                                Bis: ' . date('d.m.Y H:i', strtotime($reservation['end_datetime'])) . '<br>
+                                Von: ' . date('d.m.Y H:i', strtotime($reservationData['start_datetime'])) . '<br>
+                                Bis: ' . date('d.m.Y H:i', strtotime($reservationData['end_datetime'])) . '<br>
                                 Status: <span class="status-badge">' . ucfirst($statusText) . '</span>
                             </div>
                             
                             <div class="cost-box">
                                 <strong>Kostenübersicht:</strong><br>
-                                Grundpreis pro Tag: 100,00€<br>
-                                Anzahl der Tage: ' . $days . '<br>
-                                <strong>Gesamtpreis: ' . $formattedCost . '€</strong><br>
-                                <small>Hinweis: Die Kaution ist in diesem Preis nicht enthalten.</small>
+                                Grundpreis pro Tag: ' . $formattedBasePrice . '€<br>
+                                Anzahl der Tage: ' . $daysCount . '<br>
+                                <strong>Gesamtpreis: ' . $formattedTotalPrice . '€</strong><br>
+                                <small>Hinweis: Die Kaution (' . $formattedDepositAmount . '€) ist in diesem Preis nicht enthalten.</small>
                             </div>
             ';
             
@@ -338,7 +434,7 @@ class Reservation {
             
             // Benutzer per E-Mail benachrichtigen
             $userStmt = $this->db->prepare("SELECT email, first_name, last_name FROM gh_users WHERE id = ?");
-            $userStmt->execute([$reservation['user_id']]);
+            $userStmt->execute([$reservationData['user_id']]);
             $user = $userStmt->fetch(PDO::FETCH_ASSOC);
             
             sendEmail($user['email'], $subject, $body);
@@ -529,26 +625,42 @@ class Reservation {
                 ];
             }
             
-            // Reservierung erstellen (direkt bestätigt)
+            // Preisberechnung
+            $startDate = new DateTime($startDatetime);
+            $endDate = new DateTime($endDatetime);
+            $diffSeconds = $endDate->getTimestamp() - $startDate->getTimestamp();
+            $diffDays = $diffSeconds / (24 * 60 * 60);
+            $days = max(1, ceil($diffDays));
+            
+            // Preisdaten abrufen
+            $priceInfo = $this->getPriceInformation($userId);
+            $userRate = $priceInfo['user_rate'];
+            $basePrice = $priceInfo['base_price'];
+            $depositAmount = $priceInfo['deposit_amount'];
+            $totalCost = $days * $userRate;
+            
+            // Reservierung erstellen (direkt bestätigt) mit Preisdaten
             $stmt = $this->db->prepare("
-                INSERT INTO gh_reservations (user_id, start_datetime, end_datetime, admin_message, status) 
-                VALUES (?, ?, ?, ?, 'confirmed')
+                INSERT INTO gh_reservations (
+                    user_id, start_datetime, end_datetime, admin_message, status,
+                    days_count, base_price, total_price, deposit_amount
+                ) 
+                VALUES (?, ?, ?, ?, 'confirmed', ?, ?, ?, ?)
             ");
-            $stmt->execute([$userId, $startDatetime, $endDatetime, $adminMessage]);
+            $stmt->execute([
+                $userId, $startDatetime, $endDatetime, $adminMessage,
+                $days, $userRate, $totalCost, $depositAmount
+            ]);
             
             // Benutzer per E-Mail benachrichtigen
             $userStmt = $this->db->prepare("SELECT email, first_name, last_name FROM gh_users WHERE id = ?");
             $userStmt->execute([$userId]);
             $user = $userStmt->fetch(PDO::FETCH_ASSOC);
             
-            // Kostenberechnung
-            $startDate = new DateTime($startDatetime);
-            $endDate = new DateTime($endDatetime);
-            $diffSeconds = $endDate->getTimestamp() - $startDate->getTimestamp();
-            $diffDays = $diffSeconds / (24 * 60 * 60);
-            $days = max(1, ceil($diffDays));
-            $totalCost = $days * 100;
-            $formattedCost = number_format($totalCost, 2, ',', '.');
+            // Formatierte Werte für die E-Mail
+            $formattedUserRate = number_format($userRate, 2, ',', '.');
+            $formattedTotalCost = number_format($totalCost, 2, ',', '.');
+            $formattedDepositAmount = number_format($depositAmount, 2, ',', '.');
             
             $subject = 'Neue Reservierung für die Grillhütte Waldems Reichenbach';
             $body = '
@@ -585,10 +697,10 @@ class Reservation {
                             
                             <div class="cost-box">
                                 <strong>Kostenübersicht:</strong><br>
-                                Grundpreis pro Tag: 100,00€<br>
+                                Grundpreis pro Tag: ' . $formattedUserRate . '€<br>
                                 Anzahl der Tage: ' . $days . '<br>
-                                <strong>Gesamtpreis: ' . $formattedCost . '€</strong><br>
-                                <small>Hinweis: Die Kaution ist in diesem Preis nicht enthalten.</small>
+                                <strong>Gesamtpreis: ' . $formattedTotalCost . '€</strong><br>
+                                <small>Hinweis: Die Kaution (' . $formattedDepositAmount . '€) ist in diesem Preis nicht enthalten.</small>
                             </div>
             ';
             
@@ -636,38 +748,34 @@ class Reservation {
         $adminReservationsUrl = 'https://' . $_SERVER['HTTP_HOST'] . getRelativePath('Admin/Reservierungsverwaltung');
 
         try {
-            $reservation = $this->getById($id);
-            if (!$reservation) {
+            // Reservierungsdaten vor der Stornierung abrufen
+            $reservationData = $this->getById($id);
+            if (!$reservationData) {
                 return [
                     'success' => false,
                     'message' => 'Reservierung nicht gefunden.'
                 ];
             }
             
+            // Reservierung stornieren
             $stmt = $this->db->prepare("UPDATE gh_reservations SET status = 'canceled' WHERE id = ?");
             $stmt->execute([$id]);
             
-            // Berechne die Anzahl der Tage
-            $startDate = new DateTime($reservation['start_datetime']);
-            $endDate = new DateTime($reservation['end_datetime']);
+            // Preisdaten abrufen
+            $daysCount = $reservationData['days_count'];
+            $basePrice = $reservationData['base_price'];
+            $totalPrice = $reservationData['total_price'];
+            $depositAmount = $reservationData['deposit_amount'];
             
-            // Berechne die Differenz in Sekunden
-            $diffSeconds = $endDate->getTimestamp() - $startDate->getTimestamp();
-            
-            // Berechne die Anzahl der Tage als Dezimalzahl
-            $diffDays = $diffSeconds / (24 * 60 * 60);
-            
-            // Runde auf ganze Tage auf (mindestens 1 Tag)
-            $days = max(1, ceil($diffDays));
-            
-            // Berechne Gesamtkosten (100€ pro Tag)
-            $totalCost = $days * 100;
-            $formattedCost = number_format($totalCost, 2, ',', '.');
+            // Formatierte Werte für die E-Mail
+            $formattedBasePrice = number_format($basePrice, 2, ',', '.');
+            $formattedTotalPrice = number_format($totalPrice, 2, ',', '.');
+            $formattedDepositAmount = number_format($depositAmount, 2, ',', '.');
             
             // Benutzer per E-Mail benachrichtigen, falls vom Admin storniert
-            if (isset($_SESSION['is_admin']) && $_SESSION['is_admin'] && $reservation['user_id'] != $_SESSION['user_id']) {
+            if (isset($_SESSION['is_admin']) && $_SESSION['is_admin'] && $reservationData['user_id'] != $_SESSION['user_id']) {
                 $userStmt = $this->db->prepare("SELECT email, first_name, last_name FROM gh_users WHERE id = ?");
-                $userStmt->execute([$reservation['user_id']]);
+                $userStmt->execute([$reservationData['user_id']]);
                 $user = $userStmt->fetch(PDO::FETCH_ASSOC);
                 
                 $subject = 'Stornierung Ihrer Reservierung für die Grillhütte Waldems Reichenbach';
@@ -697,16 +805,16 @@ class Reservation {
                                 
                                 <div class="info-box">
                                     <strong>Stornierte Reservierung:</strong><br>
-                                    Von: ' . date('d.m.Y H:i', strtotime($reservation['start_datetime'])) . '<br>
-                                    Bis: ' . date('d.m.Y H:i', strtotime($reservation['end_datetime'])) . '<br>
+                                    Von: ' . date('d.m.Y H:i', strtotime($reservationData['start_datetime'])) . '<br>
+                                    Bis: ' . date('d.m.Y H:i', strtotime($reservationData['end_datetime'])) . '<br>
                                     Status: <span class="status-badge">Storniert</span>
                                 </div>
                                 
                                 <div class="cost-box">
                                     <strong>Ursprüngliche Kostenübersicht:</strong><br>
-                                    Grundpreis pro Tag: 100,00€<br>
-                                    Anzahl der Tage: ' . $days . '<br>
-                                    <strong>Gesamtpreis: ' . $formattedCost . '€</strong>
+                                    Grundpreis pro Tag: ' . $formattedBasePrice . '€<br>
+                                    Anzahl der Tage: ' . $daysCount . '<br>
+                                    <strong>Gesamtpreis: ' . $formattedTotalPrice . '€</strong>
                                 </div>
                                 
                                 <p>Bei Fragen wenden Sie sich bitte an den Administrator.</p>
@@ -732,7 +840,7 @@ class Reservation {
                 $admins = $adminStmt->fetchAll(PDO::FETCH_ASSOC);
                 
                 if (!empty($admins)) {
-                    $userInfo = $reservation['first_name'] . ' ' . $reservation['last_name'];
+                    $userInfo = $reservationData['first_name'] . ' ' . $reservationData['last_name'];
                     
                     $subject = 'Stornierung einer Reservierung';
                     $body = '
@@ -762,16 +870,16 @@ class Reservation {
                                     <div class="info-box">
                                         <strong>Stornierte Reservierung:</strong><br>
                                         Benutzer: ' . $userInfo . '<br>
-                                        Von: ' . date('d.m.Y H:i', strtotime($reservation['start_datetime'])) . '<br>
-                                        Bis: ' . date('d.m.Y H:i', strtotime($reservation['end_datetime'])) . '<br>
+                                        Von: ' . date('d.m.Y H:i', strtotime($reservationData['start_datetime'])) . '<br>
+                                        Bis: ' . date('d.m.Y H:i', strtotime($reservationData['end_datetime'])) . '<br>
                                         Status: <span class="status-badge">Storniert</span>
                                     </div>
                                     
                                     <div class="cost-box">
                                         <strong>Ursprüngliche Kostenübersicht:</strong><br>
-                                        Grundpreis pro Tag: 100,00€<br>
-                                        Anzahl der Tage: ' . $days . '<br>
-                                        <strong>Gesamtpreis: ' . $formattedCost . '€</strong>
+                                        Grundpreis pro Tag: ' . $formattedBasePrice . '€<br>
+                                        Anzahl der Tage: ' . $daysCount . '<br>
+                                        <strong>Gesamtpreis: ' . $formattedTotalPrice . '€</strong>
                                     </div>
                                     
                                     <a href="' . $adminReservationsUrl . '" class="button">Reservierungen verwalten</a>

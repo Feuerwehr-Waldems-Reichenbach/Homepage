@@ -113,9 +113,15 @@ if (isset($_GET['month']) && isset($_GET['year'])) {
                         <hr>
                         
                         <h5 class="card-title">Informationen zur Grillhütte</h5>
+                        <?php
+                        // Preisdaten abrufen
+                        $priceInfo = $reservation->getPriceInformation();
+                        $basePrice = number_format($priceInfo['base_price'], 2, ',', '.');
+                        $depositAmount = number_format($priceInfo['deposit_amount'], 2, ',', '.');
+                        ?>
                         <ul class="list-unstyled">
-                            <li><strong>Miete:</strong> 100€ pro Tag (12 - 12 Uhr)</li>
-                            <li><strong>Kaution:</strong> 100€</li>
+                            <li><strong>Miete:</strong> <?php echo $basePrice; ?>€ pro Tag (12 - 12 Uhr)</li>
+                            <li><strong>Kaution:</strong> <?php echo $depositAmount; ?>€</li>
                             <li><strong>Rückgabe:</strong> bis spätestens am nächsten Tag 12:00 Uhr</li>
                             <li><strong>Min. Buchungszeitraum:</strong> 1 Tag</li>
                         </ul>
@@ -242,11 +248,11 @@ if (isset($_GET['month']) && isset($_GET['year'])) {
                                     <div class="card">
                                         <div class="card-body p-3">
                                             <ul class="list-unstyled mb-0" id="cost-overview">
-                                                <li>Grundpreis: <span id="base-cost">100,00€</span></li>
+                                                <li>Grundpreis: <span id="base-cost">100,00€</span> pro Tag</li>
                                                 <li>Anzahl Tage: <span id="day-count">1</span></li>
                                                 <li class="border-top mt-2 pt-2"><strong>Gesamtpreis: <span id="total-cost">100,00€</span></strong></li>
                                             </ul>
-                                            <div class="form-text mt-2">Kaution (100€) nicht im Gesamtpreis enthalten.</div>
+                                            <div class="form-text mt-2">Kaution (<?php echo $depositAmount; ?>€) nicht im Gesamtpreis enthalten.</div>
                                         </div>
                                     </div>
                                 </div>
@@ -294,8 +300,8 @@ if (isset($_GET['month']) && isset($_GET['year'])) {
                                     <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#mobileInfoAccordion">
                                         <div class="accordion-body">
                                             <ul class="list-unstyled mb-0">
-                                                <li><strong>Miete:</strong> 100€ pro Tag (12 - 12 Uhr)</li>
-                                                <li><strong>Kaution:</strong> 100€</li>
+                                                <li><strong>Miete:</strong> <?php echo $basePrice; ?>€ pro Tag (12 - 12 Uhr)</li>
+                                                <li><strong>Kaution:</strong> <?php echo $depositAmount; ?>€</li>
                                                 <li><strong>Rückgabe:</strong> bis spätestens am nächsten Tag 12:00 Uhr</li>
                                                 <li><strong>Min. Buchungszeitraum:</strong> 1 Tag</li>
                                             </ul>

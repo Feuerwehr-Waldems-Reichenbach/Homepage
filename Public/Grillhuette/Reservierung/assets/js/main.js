@@ -804,47 +804,115 @@ function updateReservationCosts() {
     const endTimeInput = document.getElementById('end_time');
     const dayCountElement = document.getElementById('day-count');
     const totalCostElement = document.getElementById('total-cost');
+    const baseCostElement = document.getElementById('base-cost');
     
     if (!startDateInput || !endDateInput || !dayCountElement || !totalCostElement) return;
     
     // Only calculate if both dates are selected
     if (startDateInput.value && endDateInput.value) {
-        // Erstelle vollständige Datums-Zeit-Objekte
-        let startDateTime = new Date(startDateInput.value);
-        let endDateTime = new Date(endDateInput.value);
-        
-        // Füge die Uhrzeiten hinzu, falls verfügbar
-        if (startTimeInput && startTimeInput.value) {
-            const [startHours, startMinutes] = startTimeInput.value.split(':').map(Number);
-            startDateTime.setHours(startHours, startMinutes, 0);
-        }
-        
-        if (endTimeInput && endTimeInput.value) {
-            const [endHours, endMinutes] = endTimeInput.value.split(':').map(Number);
-            endDateTime.setHours(endHours, endMinutes, 0);
-        }
-        
-        // Berechne die Differenz in Millisekunden
-        const diffTime = Math.abs(endDateTime - startDateTime);
-        
-        // Berechne die Anzahl der Tage als Dezimalzahl (z.B. 1,5 Tage)
-        const diffDays = diffTime / (24 * 60 * 60 * 1000);
-        
-        // Runde auf ganze Tage auf (mindestens 1 Tag)
-        const days = Math.max(1, Math.ceil(diffDays));
-        
-        // Calculate total cost (100€ per day)
-        const dailyRate = 100; // €
-        const totalCost = days * dailyRate;
-        
-        // Update the UI
-        dayCountElement.textContent = days;
-        totalCostElement.textContent = totalCost.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '€';
+        // Fetch current pricing information via AJAX
+        fetch('Helper/get_pricing_info.php')
+            .then(response => response.json())
+            .then(priceInfo => {
+                // Erstelle vollständige Datums-Zeit-Objekte
+                let startDateTime = new Date(startDateInput.value);
+                let endDateTime = new Date(endDateInput.value);
+                
+                // Füge die Uhrzeiten hinzu, falls verfügbar
+                if (startTimeInput && startTimeInput.value) {
+                    const [startHours, startMinutes] = startTimeInput.value.split(':').map(Number);
+                    startDateTime.setHours(startHours, startMinutes, 0);
+                }
+                
+                if (endTimeInput && endTimeInput.value) {
+                    const [endHours, endMinutes] = endTimeInput.value.split(':').map(Number);
+                    endDateTime.setHours(endHours, endMinutes, 0);
+                }
+                
+                // Berechne die Differenz in Millisekunden
+                const diffTime = Math.abs(endDateTime - startDateTime);
+                
+                // Berechne die Anzahl der Tage als Dezimalzahl (z.B. 1,5 Tage)
+                const diffDays = diffTime / (24 * 60 * 60 * 1000);
+                
+                // Runde auf ganze Tage auf (mindestens 1 Tag)
+                const days = Math.max(1, Math.ceil(diffDays));
+                
+                // Get the user's rate from the price info
+                const dailyRate = priceInfo.user_rate || 100; // Default to 100€ if not available
+                const totalCost = days * dailyRate;
+                
+                // Format for display with German notation (comma for decimal)
+                const formattedRate = dailyRate.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                const formattedTotal = totalCost.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                
+                // Update the UI
+                dayCountElement.textContent = days;
+                baseCostElement.textContent = formattedRate + '€';
+                totalCostElement.textContent = formattedTotal + '€';
+                
+                // If we have special pricing, add a note
+                const costOverview = document.getElementById('cost-overview');
+                if (costOverview) {
+                    // Remove any existing special pricing notes
+                    const existingNote = document.querySelector('.special-price-note');
+                    if (existingNote) {
+                        existingNote.remove();
+                    }
+                    
+                    // Add a special note if using a special rate
+                    if (priceInfo.rate_type !== 'normal') {
+                        const noteText = priceInfo.rate_type === 'feuerwehr' ? 
+                            'Spezialpreis für Feuerwehr' : 'Spezialpreis für aktives Mitglied';
+                        
+                        const specialNote = document.createElement('li');
+                        specialNote.className = 'special-price-note text-success';
+                        specialNote.innerHTML = `<i class="bi bi-check-circle"></i> ${noteText}`;
+                        costOverview.appendChild(specialNote);
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching pricing information:', error);
+                // Fallback to default calculation
+                calculateDefaultCosts(startDateTime, endDateTime, dayCountElement, totalCostElement, baseCostElement);
+            });
     } else {
         // Default values if dates not selected
         dayCountElement.textContent = '1';
-        totalCostElement.textContent = '100,00€';
+        
+        // Try to get default prices
+        fetch('Helper/get_pricing_info.php')
+            .then(response => response.json())
+            .then(priceInfo => {
+                const rate = priceInfo.user_rate || 100;
+                const formattedRate = rate.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                baseCostElement.textContent = formattedRate + '€';
+                totalCostElement.textContent = formattedRate + '€';
+            })
+            .catch(() => {
+                // Hard fallback
+                baseCostElement.textContent = '100,00€';
+                totalCostElement.textContent = '100,00€';
+            });
     }
+}
+
+// Fallback function for calculating costs with default values
+function calculateDefaultCosts(startDateTime, endDateTime, dayCountElement, totalCostElement, baseCostElement) {
+    // Calculate days
+    const diffTime = Math.abs(endDateTime - startDateTime);
+    const diffDays = diffTime / (24 * 60 * 60 * 1000);
+    const days = Math.max(1, Math.ceil(diffDays));
+    
+    // Use default rate of 100€
+    const dailyRate = 100;
+    const totalCost = days * dailyRate;
+    
+    // Update UI
+    dayCountElement.textContent = days;
+    baseCostElement.textContent = '100,00€';
+    totalCostElement.textContent = totalCost.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '€';
 }
 
 // Check if booking meets minimum duration requirement (1 day)
