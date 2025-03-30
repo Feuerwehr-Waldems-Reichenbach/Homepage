@@ -36,34 +36,23 @@ if (!isset($categoriesMap[$activeTab])) {
 $editableCategories = ['grillhuette_info', 'im_preis_enthalten', 'wichtige_hinweise'];
 $systemCategory = 'system';
 
-// Debug-Informationen sammeln
-$debug = [
-    'db_connected' => false,
-    'record_counts' => [],
-    'php_version' => PHP_VERSION,
-    'error_message' => ''
-];
-
 try {
     // Datenbankverbindung testen
     $db = Database::getInstance()->getConnection();
-    $debug['db_connected'] = $db instanceof PDO;
     
     // Anzahl der Datensätze pro Kategorie zählen
     foreach (array_keys($categoriesMap) as $cat) {
         // Anzahl der Datensätze pro Kategorie zählen
         $stmt = $db->prepare("SELECT COUNT(*) FROM gh_informations WHERE category = ?");
         $stmt->execute([$cat]);
-        $debug['record_counts'][$cat] = $stmt->fetchColumn();
     }
     
     // Gesamtzahl der Datensätze
     $stmt = $db->prepare("SELECT COUNT(*) FROM gh_informations");
     $stmt->execute();
-    $debug['record_counts']['total'] = $stmt->fetchColumn();
     
 } catch (Exception $e) {
-    $debug['error_message'] = $e->getMessage();
+
 }
 
 // Alle Informationen abrufen (mit allen Feldern)

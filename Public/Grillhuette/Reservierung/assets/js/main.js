@@ -431,7 +431,7 @@ function loadDayStatuses(month, year) {
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
-            return response.text(); // Erst als Text holen für Debugging
+            return response.text();
         })
         .then(text => {
             try {
