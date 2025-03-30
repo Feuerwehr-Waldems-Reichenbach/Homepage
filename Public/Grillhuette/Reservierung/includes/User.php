@@ -1151,13 +1151,137 @@ class User {
             ];
             
         } catch (PDOException $e) {
-            // Log database error
+            // Log error during email verification
             $this->logSecurityEvent(null, $_SERVER['REMOTE_ADDR'], 'email_verification', 'failure', 
                 ['reason' => 'database_error']);
                 
             return [
                 'success' => false,
                 'message' => 'Ein Fehler ist bei der Verifikation aufgetreten. Bitte versuchen Sie es später erneut.'
+            ];
+        }
+    }
+
+    /**
+     * Sendet einen neuen Bestätigungslink an einen nicht verifizierten Benutzer
+     * 
+     * @param string $email Die E-Mail-Adresse des Benutzers
+     * @return array Ergebnis der Operation mit Erfolgs- und Nachrichtenfeld
+     */
+    public function resendVerificationEmail($email) {
+        try {
+            // Benutzer mit der angegebenen E-Mail-Adresse suchen
+            $stmt = $this->db->prepare("SELECT id, first_name, last_name, is_verified FROM gh_users WHERE email = ?");
+            $stmt->execute([$email]);
+            
+            if ($stmt->rowCount() == 0) {
+                // Log failed verification email resend attempt for non-existent email
+                $this->logSecurityEvent($email, $_SERVER['REMOTE_ADDR'], 'verification_resend', 'failure', 
+                    ['reason' => 'email_not_found']);
+                    
+                return [
+                    'success' => false,
+                    'message' => 'E-Mail-Adresse nicht gefunden.'
+                ];
+            }
+            
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            // Prüfen, ob der Benutzer bereits verifiziert ist
+            if ($user['is_verified'] == 1) {
+                // Log unnecessary verification resend for already verified user
+                $this->logSecurityEvent($email, $_SERVER['REMOTE_ADDR'], 'verification_resend', 'warning', 
+                    ['reason' => 'already_verified']);
+                    
+                return [
+                    'success' => false,
+                    'message' => 'Ihre E-Mail-Adresse ist bereits verifiziert. Sie können sich jetzt anmelden.'
+                ];
+            }
+            
+            // Neuen Verifizierungstoken generieren
+            $verificationToken = generate_token();
+            
+            // Token in der Datenbank aktualisieren
+            $stmt = $this->db->prepare("UPDATE gh_users SET verification_token = ? WHERE id = ?");
+            $stmt->execute([$verificationToken, $user['id']]);
+            
+            // E-Mail zur Verifikation senden
+            $subject = 'Bestätigen Sie Ihre E-Mail-Adresse';
+            $verifyUrl = 'https://' . $_SERVER['HTTP_HOST'] . getRelativePath('Benutzer/Verifizieren') . '?token=' . $verificationToken;
+            
+            $body = '
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <style>
+                        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                        .header { background-color: #A72920; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
+                        .content { background-color: #ffffff; padding: 20px; border-radius: 0 0 5px 5px; border: 1px solid #ddd; }
+                        .button { display: inline-block; padding: 10px 20px; background-color: #A72920; color: white !important; text-decoration: none; border-radius: 5px; margin-top: 20px; }
+                        .info-box { background-color: #f8f9fa; border: 1px solid #ddd; padding: 15px; border-radius: 5px; margin: 20px 0; }
+                        .footer { text-align: center; margin-top: 20px; font-size: 0.9em; color: #666; }
+                    </style>
+                </head>
+                <body>
+                    <div class="container">
+                        <div class="header">
+                            <h2>E-Mail-Adresse bestätigen</h2>
+                        </div>
+                        <div class="content">
+                            <h3>Hallo ' . $user['first_name'] . ' ' . $user['last_name'] . ',</h3>
+                            <p>Sie haben einen neuen Bestätigungslink für Ihre E-Mail-Adresse angefordert.</p>
+                            
+                            <div class="info-box">
+                                <p>Um Ihre Registrierung abzuschließen, klicken Sie bitte auf den folgenden Button:</p>
+                                <a href="' . $verifyUrl . '" class="button">E-Mail-Adresse bestätigen</a>
+                            </div>
+                            
+                            <p>Alternativ können Sie auch diesen Link verwenden:<br>
+                            <a href="' . $verifyUrl . '">' . $verifyUrl . '</a></p>
+                            
+                            <p>Dieser Link ist 24 Stunden gültig.</p>
+                            
+                            <div class="footer">
+                                <p>Falls Sie diesen Link nicht angefordert haben, können Sie diese E-Mail ignorieren.</p>
+                                <p>Ihr Team der Grillhütte Waldems Reichenbach</p>
+                            </div>
+                        </div>
+                    </div>
+                </body>
+                </html>
+            ';
+            
+            $emailResult = sendEmail($email, $subject, $body);
+            
+            if (!$emailResult['success']) {
+                // Log failed verification email resend due to email sending failure
+                $this->logSecurityEvent($email, $_SERVER['REMOTE_ADDR'], 'verification_resend', 'failure', 
+                    ['reason' => 'email_send_failure']);
+                    
+                return [
+                    'success' => false,
+                    'message' => 'E-Mail konnte nicht gesendet werden. Bitte versuchen Sie es später erneut.'
+                ];
+            }
+            
+            // Log successful verification email resend
+            $this->logSecurityEvent($email, $_SERVER['REMOTE_ADDR'], 'verification_resend', 'success');
+            
+            return [
+                'success' => true,
+                'message' => 'Ein neuer Bestätigungslink wurde an Ihre E-Mail-Adresse gesendet.'
+            ];
+            
+        } catch (PDOException $e) {
+            // Log database error during verification email resend
+            $this->logSecurityEvent($email, $_SERVER['REMOTE_ADDR'], 'verification_resend', 'failure', 
+                ['reason' => 'database_error']);
+                
+            return [
+                'success' => false,
+                'message' => 'Ein Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.'
             ];
         }
     }
