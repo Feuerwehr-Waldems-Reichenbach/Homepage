@@ -504,6 +504,8 @@ function prepareEditUserModal(button) {
     document.getElementById('edit_is_aktivesmitglied').checked = isAktivesMitglied;
     document.getElementById('edit_is_feuerwehr').checked = isFeuerwehr;
     document.getElementById('edit_new_password').value = '';
+    
+    // Ensure CSRF token and user ID are correctly set for deletion form
     document.getElementById('delete_user_id').value = userId;
     
     // Eigenes Konto kann nicht gelöscht werden
@@ -519,6 +521,8 @@ function prepareEditUserModal(button) {
 
 function confirmDelete() {
     if (confirm('Sind Sie sicher, dass Sie diesen Benutzer löschen möchten? Alle Daten und Reservierungen dieses Benutzers werden unwiderruflich gelöscht!')) {
+        // Make sure the form has the current CSRF token
+        document.getElementById('deleteUserForm').querySelector('input[name="csrf_token"]').value = "<?php echo generate_csrf_token(); ?>";
         document.getElementById('deleteUserForm').submit();
     }
 }
