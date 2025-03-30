@@ -13,6 +13,13 @@ if (!isset($_SESSION['user_id']) || !isset($_SESSION['is_admin']) || !$_SESSION[
 // User-Objekt initialisieren
 $user = new User();
 
+// Automatische Wartung der Sicherheitslogs durchführen
+$maintenance_result = $user->performLogMaintenance();
+if ($maintenance_result['success'] && $maintenance_result['cleaned_count'] > 0) {
+    $_SESSION['cleanup_message'] = "Automatische Wartung durchgeführt: {$maintenance_result['cleaned_count']} veraltete Protokolleinträge wurden bereinigt.";
+    $_SESSION['cleanup_count'] = $maintenance_result['cleaned_count'];
+}
+
 // Benutzer abrufen für die Anzeige
 $allUsers = $user->getAllUsers();
 
@@ -211,6 +218,18 @@ $pageTitle = 'Benutzer verwalten';
 
 // Header einbinden
 require_once '../../includes/header.php';
+
+// Anzeigen der Wartungsinformation, falls vorhanden
+if (isset($_SESSION['cleanup_message'])) {
+    $cleanup_count = $_SESSION['cleanup_count'] ?? 0;
+    echo '<div class="alert alert-info alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i>
+        ' . $_SESSION['cleanup_message'] . '
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Schließen"></button>
+    </div>';
+    unset($_SESSION['cleanup_message']);
+    unset($_SESSION['cleanup_count']);
+}
 ?>
 
 <div class="row">

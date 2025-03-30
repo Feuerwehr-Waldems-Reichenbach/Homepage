@@ -189,25 +189,66 @@ function checkLoginRateLimit($email) {
     // Speicherort für fehlgeschlagene Versuche
     $db = Database::getInstance()->getConnection();
     
-    // Alte Einträge entfernen (älter als 15 Minuten)
-    $stmt = $db->prepare("DELETE FROM gh_login_attempts WHERE attempt_time < (NOW() - INTERVAL 15 MINUTE)");
+    // Alte Einträge entfernen (älter als 24 Stunden)
+    $stmt = $db->prepare("DELETE FROM gh_login_attempts WHERE attempt_time < (NOW() - INTERVAL 24 HOUR)");
     $stmt->execute();
     
-    // Anzahl der Versuche in den letzten 15 Minuten zählen
-    $stmt = $db->prepare("SELECT COUNT(*) FROM gh_login_attempts WHERE (ip = ? OR email = ?) AND attempt_time > (NOW() - INTERVAL 15 MINUTE)");
-    $stmt->execute([$ip, $email]);
-    $attempts = $stmt->fetchColumn();
+    // Separate Prüfungen für IP und Email durchführen
     
-    // Wenn mehr als 5 Versuche, blockieren
-    if ($attempts >= 5) {
+    // 1. IP-basierte Limitierung (verhindert Brute-Force von einer IP aus)
+    $stmt = $db->prepare("SELECT COUNT(*) FROM gh_login_attempts WHERE ip = ? AND attempt_time > (NOW() - INTERVAL 15 MINUTE)");
+    $stmt->execute([$ip]);
+    $ipAttempts = $stmt->fetchColumn();
+    
+    // 2. Email-basierte Limitierung (schützt bestimmte Konten vor gezielten Angriffen)
+    $stmt = $db->prepare("SELECT COUNT(*) FROM gh_login_attempts WHERE email = ? AND attempt_time > (NOW() - INTERVAL 15 MINUTE)");
+    $stmt->execute([$email]);
+    $emailAttempts = $stmt->fetchColumn();
+    
+    // 3. Prüfen auf wiederholte Angriffsmuster
+    $stmt = $db->prepare("SELECT COUNT(DISTINCT ip) FROM gh_login_attempts WHERE email = ? AND attempt_time > (NOW() - INTERVAL 24 HOUR)");
+    $stmt->execute([$email]);
+    $uniqueIPs = $stmt->fetchColumn();
+    
+    // Schwellwerte für verschiedene Arten von Limits
+    $ipThreshold = 10;      // Versuche pro IP (höher als vorher, aber immer noch begrenzt)
+    $emailThreshold = 5;    // Versuche pro E-Mail (schützt Benutzerkonten)
+    $distributedThreshold = 3; // Anzahl der unterschiedlichen IPs, die als verteilter Angriff gelten
+    
+    // Sperrzeit in Sekunden basierend auf verschiedenen Faktoren bestimmen
+    $lockoutSeconds = 900;  // 15 Minuten als Basis
+    
+    // Progressive Sperrzeiten basierend auf Angriffsmustern
+    if ($uniqueIPs >= $distributedThreshold) {
+        // Bei Anzeichen eines verteilten Angriffs längere Sperrzeit
+        $lockoutSeconds = 3600; // 1 Stunde
+    }
+    
+    if ($emailAttempts > $emailThreshold * 2) {
+        // Bei wiederholten Zugriffsversuchen auf eine E-Mail längere Sperrzeit
+        $lockoutSeconds = 7200; // 2 Stunden
+    }
+    
+    // Ermittle die relevante Sperrzeit basierend auf den Versuchen
+    if ($ipAttempts >= $ipThreshold || $emailAttempts >= $emailThreshold) {
         // Ermittle, wann der erste Versuch stattfand
-        $stmt = $db->prepare("SELECT MIN(attempt_time) FROM gh_login_attempts WHERE (ip = ? OR email = ?) AND attempt_time > (NOW() - INTERVAL 15 MINUTE)");
-        $stmt->execute([$ip, $email]);
+        if ($emailAttempts >= $emailThreshold) {
+            // Bei E-Mail-basierter Sperrung den ersten E-Mail-Versuch verwenden
+            $stmt = $db->prepare("SELECT MIN(attempt_time) FROM gh_login_attempts WHERE email = ? AND attempt_time > (NOW() - INTERVAL 24 HOUR)");
+            $stmt->execute([$email]);
+        } else {
+            // Bei IP-basierter Sperrung den ersten IP-Versuch verwenden
+            $stmt = $db->prepare("SELECT MIN(attempt_time) FROM gh_login_attempts WHERE ip = ? AND attempt_time > (NOW() - INTERVAL 24 HOUR)");
+            $stmt->execute([$ip]);
+        }
         $firstAttempt = $stmt->fetchColumn();
         
         // Berechne verbleibende Sperrzeit in Sekunden
-        $expiryTime = strtotime($firstAttempt) + (15 * 60); // 15 Minuten in Sekunden
+        $expiryTime = strtotime($firstAttempt) + $lockoutSeconds;
         $remainingSeconds = $expiryTime - time();
+        
+        // Sicherheitsmaßnahme: Verzögere die Antwort leicht, um Timing-Angriffe zu erschweren
+        usleep(rand(100000, 300000)); // 100-300ms zufällige Verzögerung
         
         // Gib Informationen zurück für einen benutzerfreundlichen Timer
         return [
@@ -216,6 +257,9 @@ function checkLoginRateLimit($email) {
             'expiry_time' => $expiryTime
         ];
     }
+    
+    // Zufällige kleine Verzögerung, um Timing-Angriffe zu erschweren
+    usleep(rand(50000, 150000)); // 50-150ms zufällige Verzögerung
     
     // Zugriff erlaubt
     return [
