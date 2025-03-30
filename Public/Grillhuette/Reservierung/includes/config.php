@@ -7,6 +7,45 @@ session_start([
     'use_strict_mode' => true     // Strikte Session-ID-Validierung
 ]);
 
+// Absolutes Session-Timeout implementieren
+$session_max_lifetime = 14400; // 4 Stunden in Sekunden
+if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > $session_max_lifetime)) {
+    // Session ist älter als erlaubter Zeitraum - Session zerstören
+    session_unset();
+    session_destroy();
+    
+    // Bereinigter Neustart der Session
+    session_start([
+        'cookie_httponly' => true,
+        'cookie_secure' => isSecureConnection(),
+        'cookie_samesite' => 'Lax',
+        'use_strict_mode' => true
+    ]);
+    
+    // Optional: Weiterleitung zur Login-Seite, wenn gewünscht
+    if (basename($_SERVER['PHP_SELF']) !== 'index.php' && !in_array(basename($_SERVER['PHP_SELF']), ['Anmelden', 'Registrieren', 'Passwort-vergessen', 'Passwort-zuruecksetzen'])) {
+        $_SESSION['flash_message'] = 'Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an.';
+        $_SESSION['flash_type'] = 'warning';
+        $_SESSION['redirect_after_login'] = $_SERVER['REQUEST_URI'];
+        header('Location: ' . APP_ROOT . '/Benutzer/Anmelden/');
+        exit;
+    }
+}
+
+// Periodische Session-ID-Erneuerung für zusätzliche Sicherheit
+$session_renew_period = 1800; // 30 Minuten in Sekunden
+if (isset($_SESSION['last_regeneration']) && (time() - $_SESSION['last_regeneration'] > $session_renew_period)) {
+    // Session-ID regelmäßig erneuern, während Benutzer aktiv ist
+    regenerateSession();
+    $_SESSION['last_regeneration'] = time();
+}
+
+// Aktivitätszeitstempel aktualisieren
+$_SESSION['last_activity'] = time();
+if (!isset($_SESSION['last_regeneration'])) {
+    $_SESSION['last_regeneration'] = time();
+}
+
 // Funktion zur zuverlässigen Überprüfung einer sicheren Verbindung
 function isSecureConnection() {
     // Prüfen verschiedener Server-Variablen, die auf HTTPS hinweisen
