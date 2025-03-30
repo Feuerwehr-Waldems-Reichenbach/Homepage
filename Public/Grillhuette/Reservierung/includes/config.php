@@ -174,6 +174,10 @@ function validatePassword($password) {
         $errors[] = 'Das Passwort muss mindestens eine Zahl enthalten.';
     }
     
+    if (!preg_match('/[^a-zA-Z0-9]/', $password)) {
+        $errors[] = 'Das Passwort muss mindestens ein Sonderzeichen (z.B. !@#$%^&*) enthalten.';
+    }
+    
     return $errors;
 }
 

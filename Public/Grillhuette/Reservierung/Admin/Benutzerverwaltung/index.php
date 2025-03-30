@@ -168,11 +168,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 
                 // Session aktualisieren, wenn der eigene Benutzer aktualisiert wurde
                 if ($result['success'] && $userId === $_SESSION['user_id']) {
-                    $_SESSION['user_email'] = $email;
-                    $_SESSION['user_name'] = $firstName . ' ' . $lastName;
-                    $_SESSION['is_admin'] = $isAdmin;
-                    $_SESSION['is_AktivesMitglied'] = $isAktivesMitglied;
-                    $_SESSION['is_Feuerwehr'] = $isFeuerwehr;
+                    // Session regenerieren für verbesserte Sicherheit
+                    regenerateSession();
+                    
+                    // Session-Daten aktualisieren
+                    $_SESSION['user_name'] = $firstName;
+                    $_SESSION['is_admin'] = (bool)$isAdmin;
+                    $_SESSION['is_verified'] = (bool)$isVerified;
+                    $_SESSION['is_AktivesMitglied'] = (bool)$isAktivesMitglied; 
+                    $_SESSION['is_Feuerwehr'] = (bool)$isFeuerwehr;
                 }
             } else {
                 $_SESSION['flash_message'] = implode('<br>', $errors);
@@ -342,7 +346,7 @@ require_once '../../includes/header.php';
                         <div class="col-md-6 mb-3">
                             <label for="password" class="form-label">Passwort</label>
                             <input type="password" class="form-control" id="password" name="password" required>
-                            <div class="form-text">Mindestens 8 Zeichen.</div>
+                            <div class="form-text">Mindestens 8 Zeichen mit Groß- und Kleinbuchstaben, Zahlen und mindestens einem Sonderzeichen.</div>
                         </div>
                         
                         <div class="col-md-6 mb-3 d-flex align-items-end">
@@ -428,7 +432,7 @@ require_once '../../includes/header.php';
                         <div class="col-md-6 mb-3">
                             <label for="edit_new_password" class="form-label">Neues Passwort (optional)</label>
                             <input type="password" class="form-control" id="edit_new_password" name="new_password">
-                            <div class="form-text">Lassen Sie dieses Feld leer, um das Passwort nicht zu ändern. Andernfalls mindestens 8 Zeichen.</div>
+                            <div class="form-text">Lassen Sie dieses Feld leer, um das Passwort nicht zu ändern. Andernfalls mindestens 8 Zeichen mit Groß- und Kleinbuchstaben, Zahlen und mindestens einem Sonderzeichen.</div>
                         </div>
                         
                         <div class="col-md-6 mb-3 d-flex flex-column justify-content-around">

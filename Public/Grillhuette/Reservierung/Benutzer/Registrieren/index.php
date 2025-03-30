@@ -160,7 +160,7 @@ require_once '../../includes/header.php';
                                     <i class="bi bi-eye"></i>
                                 </button>
                             </div>
-                            <div class="form-text">Mindestens 8 Zeichen.</div>
+                            <div class="form-text">Mindestens 8 Zeichen mit Groß- und Kleinbuchstaben, Zahlen und mindestens einem Sonderzeichen.</div>
                         </div>
                         
                         <div class="col-md-6 mb-3">
