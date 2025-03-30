@@ -690,7 +690,12 @@ function calculateCosts(startDateId, endDateId, dayCountId, totalCostId) {
         if (userId) {
             // Make an AJAX request to get pricing for this specific user
             fetch('../../Helper/get_user_pricing.php?user_id=' + userId)
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Netzwerkfehler beim Abrufen der Preisdaten');
+                    }
+                    return response.json();
+                })
                 .then(priceInfo => {
                     if (priceInfo.success) {
                         // Berechne die Differenz in Millisekunden
@@ -750,11 +755,14 @@ function calculateCosts(startDateId, endDateId, dayCountId, totalCostId) {
                         }
                         
                     } else {
-                        // Fallback to standard calculation
+                        // Fallback to standard calculation with generic error handling
+                        console.log('Preisermittlung nicht erfolgreich. Standardberechnung wird verwendet.');
                         calculateStandardCost(startDateTime, endDateTime, dayCountElement, totalCostElement, defaultBasePrice);
                     }
                 })
                 .catch(error => {
+                    // Generic error handling without revealing implementation details
+                    console.log('Fehler bei der Preisermittlung. Standardberechnung wird verwendet.');
                     calculateStandardCost(startDateTime, endDateTime, dayCountElement, totalCostElement, defaultBasePrice);
                 });
         } else {

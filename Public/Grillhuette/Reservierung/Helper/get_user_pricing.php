@@ -65,7 +65,7 @@ try {
     // Return error with default values
     echo json_encode([
         'success' => false,
-        'message' => 'Ein Fehler ist aufgetreten. Standard-Preise werden verwendet.',
+        'message' => 'Ein Fehler ist aufgetreten. Standardwerte werden verwendet.',
         'user_rate' => 100.00,
         'base_price' => 100.00,
         'deposit_amount' => 100.00,

@@ -445,7 +445,8 @@ function loadDayStatuses(month, year) {
                 updateDayStatuses(response.data);
             } else {
                 if (window.matchMedia("(max-width: 768px)").matches) {
-                    showMobileAlert('Fehler beim Laden der Kalenderdaten: ' + response.message);
+                    // Use generic error message instead of showing server message
+                    showMobileAlert('Fehler beim Laden der Kalenderdaten. Bitte versuchen Sie es später erneut.');
                 }
             }
         })
@@ -456,7 +457,7 @@ function loadDayStatuses(month, year) {
         });
 }
 
-// Show a mobile-friendly alert/toast message
+// Show a mobile-friendly alert/toast message with sanitized content
 function showMobileAlert(message) {
     // Create a toast element if it doesn't exist
     let toast = document.getElementById('mobileToast');
@@ -482,8 +483,10 @@ function showMobileAlert(message) {
         document.body.appendChild(toast);
     }
     
-    // Set message and show toast
-    toast.textContent = message;
+    // Sanitize message to prevent any HTML/script injection
+    const sanitizedMessage = document.createTextNode(message);
+    toast.textContent = ''; // Clear previous content
+    toast.appendChild(sanitizedMessage);
     toast.style.display = 'block';
     
     // Hide toast after 3 seconds
