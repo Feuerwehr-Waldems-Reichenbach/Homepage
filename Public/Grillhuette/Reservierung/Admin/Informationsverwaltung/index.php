@@ -166,69 +166,6 @@ require_once '../../includes/header.php';
     <div class="col-md-12">
         <h1 class="mb-4">Informationen verwalten</h1>
         
-        <?php if (!empty($debug)): ?>
-        <div class="card mb-3">
-            <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">Systeminformationen</h5>
-                <button class="btn btn-sm btn-outline-light" type="button" data-bs-toggle="collapse" data-bs-target="#debugInfo" aria-expanded="false" aria-controls="debugInfo">
-                    Details anzeigen
-                </button>
-            </div>
-            <div class="collapse" id="debugInfo">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h6>Datenbankverbindung</h6>
-                            <p>
-                                Status: 
-                                <?php if ($debug['db_connected']): ?>
-                                    <span class="badge bg-success">Verbunden</span>
-                                <?php else: ?>
-                                    <span class="badge bg-danger">Nicht verbunden</span>
-                                <?php endif; ?>
-                            </p>
-                            
-                            <?php if (!empty($debug['error_message'])): ?>
-                                <div class="alert alert-danger">
-                                    <h6>Fehlermeldung:</h6>
-                                    <pre class="mb-0"><?php echo htmlspecialchars($debug['error_message']); ?></pre>
-                                </div>
-                            <?php endif; ?>
-                            
-                            <p>PHP-Version: <?php echo $debug['php_version']; ?></p>
-                        </div>
-                        
-                        <div class="col-md-6">
-                            <h6>Datensätze in gh_informations</h6>
-                            <table class="table table-sm">
-                                <thead>
-                                    <tr>
-                                        <th>Kategorie</th>
-                                        <th>Anzahl</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php foreach ($debug['record_counts'] as $cat => $count): ?>
-                                        <?php if ($cat !== 'total'): ?>
-                                        <tr>
-                                            <td><?php echo $categoriesMap[$cat] ?? $cat; ?></td>
-                                            <td><?php echo $count; ?></td>
-                                        </tr>
-                                        <?php endif; ?>
-                                    <?php endforeach; ?>
-                                    <tr class="table-secondary">
-                                        <th>Gesamt</th>
-                                        <th><?php echo $debug['record_counts']['total'] ?? 0; ?></th>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <?php endif; ?>
-        
         <div class="alert alert-info mb-4">
             <p class="mb-0">Hier können Sie alle Informationen bearbeiten, die auf der Website angezeigt werden, insbesondere im Willkommensbereich auf der Startseite. Sie können dynamisch weitere Informationen zu den Kategorien "Informationen zur Grillhütte", "Im Preis enthalten" und "Wichtige Hinweise" hinzufügen oder entfernen.</p>
         </div>
