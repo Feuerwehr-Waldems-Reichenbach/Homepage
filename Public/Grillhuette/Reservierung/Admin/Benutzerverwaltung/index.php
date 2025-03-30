@@ -493,13 +493,6 @@ function prepareEditUserModal(button) {
     const isAktivesMitglied = button.getAttribute('data-is-aktivesmitglied') === '1';
     const isFeuerwehr = button.getAttribute('data-is-feuerwehr') === '1';
     
-    // Debug-Ausgabe
-    console.log('User ID:', userId);
-    console.log('isAktivesMitglied attribute:', button.getAttribute('data-is-aktivesmitglied'));
-    console.log('isAktivesMitglied parsed:', isAktivesMitglied);
-    console.log('isFeuerwehr attribute:', button.getAttribute('data-is-feuerwehr'));
-    console.log('isFeuerwehr parsed:', isFeuerwehr);
-    
     // Formularfelder ausfüllen
     document.getElementById('edit_user_id').value = userId;
     document.getElementById('edit_email').value = email;

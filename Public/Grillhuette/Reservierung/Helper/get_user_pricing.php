@@ -50,7 +50,6 @@ try {
     if ($userData && $userData['is_Feuerwehr']) {
         $priceInfo['user_rate'] = 0.00;
         $priceInfo['rate_type'] = 'feuerwehr';
-        error_log("get_user_pricing.php - Forcing Feuerwehr rate to 0.00€ for user $userId");
     }
     
     // Return the data
@@ -62,8 +61,6 @@ try {
         'rate_type' => $priceInfo['rate_type']
     ]);
 } catch (Exception $e) {
-    // Log error but return a generic error message
-    error_log('Error in get_user_pricing.php: ' . $e->getMessage());
     
     // Return error with default values
     echo json_encode([

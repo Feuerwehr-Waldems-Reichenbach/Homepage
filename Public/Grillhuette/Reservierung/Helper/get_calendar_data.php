@@ -48,8 +48,6 @@ try {
         'data' => $calendarData
     ]);
 } catch (Exception $e) {
-    // Fehler protokollieren aber keine detaillierten Informationen nach außen geben
-    error_log('Fehler in get_calendar_data.php: ' . $e->getMessage());
     
     // Generische Fehlermeldung zurückgeben
     http_response_code(500);

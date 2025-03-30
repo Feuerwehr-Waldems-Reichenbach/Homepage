@@ -22,7 +22,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo "<p>{$message}</p>";
         exit;
     } catch (Exception $e) {
-        error_log("Fehler im Kategorien-Update Tool: " . $e->getMessage());
         echo "<h3>Fehler</h3>";
         echo "<p>Ein technischer Fehler ist aufgetreten. Bitte versuchen Sie es später erneut oder kontaktieren Sie den Administrator.</p>";
         exit;
