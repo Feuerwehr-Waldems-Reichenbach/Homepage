@@ -199,15 +199,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     // Runde auf ganze Tage auf (mindestens 1 Tag)
                     $days = max(1, ceil($diffDays));
                     
-                    // Preisdaten aus der Datenbank holen
-                    require_once '../../includes/Reservation.php';
-                    $reservation = new Reservation();
-                    $priceInfo = $reservation->getPriceInformation($userData['id']);
-                    $basePrice = $priceInfo['base_price'];
-                    $depositAmount = $priceInfo['deposit_amount'];
-                    
-                    // Berechne Gesamtkosten mit dynamischem Preis
-                    $totalCost = $days * $basePrice;
+                    // Verwende die gespeicherten Preisdaten aus der Reservierung
+                    $basePrice = isset($res['base_price']) ? $res['base_price'] : 100.00;
+                    $depositAmount = isset($res['deposit_amount']) ? $res['deposit_amount'] : 100.00;
+                    $totalCost = isset($res['total_price']) ? $res['total_price'] : ($days * $basePrice);
                     
                     $emailBody .= '<tr>';
                     $emailBody .= '<td style="padding: 8px; border: 1px solid #ddd;">' . date('d.m.Y H:i', strtotime($res['start_datetime'])) . ' - ' . date('d.m.Y H:i', strtotime($res['end_datetime'])) . '</td>';

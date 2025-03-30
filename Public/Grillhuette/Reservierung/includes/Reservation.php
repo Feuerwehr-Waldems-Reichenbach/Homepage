@@ -1143,7 +1143,7 @@ class Reservation {
                             <div class="content">
                                 <h3>Hallo ' . $user['first_name'] . ' ' . $user['last_name'] . ',</h3>
                                 <p>Ihre Reservierung für die Grillhütte Waldems Reichenbach wurde aktualisiert.</p>
-                                <p><strong>Neuer Zeitraum:</strong> ' . date('d.m.Y H:i', strtotime($startDatetime)) . ' bis ' . date('d.m.Y H:i', strtotime($endDatetime)) . '</p>
+                                <p><strong>Zeitraum:</strong> ' . date('d.m.Y H:i', strtotime($startDatetime)) . ' bis ' . date('d.m.Y H:i', strtotime($endDatetime)) . '</p>
                                 <p><strong>Status:</strong> ' . ucfirst($statusText) . '</p>
                                 ';
                                 if (!empty($adminMessage)) {
