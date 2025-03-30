@@ -45,7 +45,7 @@ require_once __DIR__ . '/config.php';
                                 <a class="nav-link" href="<?php echo getRelativePath('Benutzer/Profil'); ?>">Mein Profil</a>
                             </li>
                             <?php if (isset($_SESSION['is_admin']) && $_SESSION['is_admin']): ?>
-                                <li class="nav-item dropdown">
+                                <li class="nav-item dropdown d-none d-lg-block">
                                     <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                         Administration
                                     </a>
@@ -54,6 +54,25 @@ require_once __DIR__ . '/config.php';
                                         <li><a class="dropdown-item" href="<?php echo getRelativePath('Admin/Benutzerverwaltung'); ?>">Benutzer verwalten</a></li>
                                         <li><a class="dropdown-item" href="<?php echo getRelativePath('Admin/Informationsverwaltung'); ?>">Informationen verwalten</a></li>
                                     </ul>
+                                </li>
+                                <!-- Mobile: Direkte Links statt Dropdown -->
+                                <li class="nav-item d-lg-none">
+                                    <span class="nav-link text-muted ps-2">Administration</span>
+                                </li>
+                                <li class="nav-item d-lg-none">
+                                    <a class="nav-link ps-4" href="<?php echo getRelativePath('Admin/Reservierungsverwaltung'); ?>">
+                                        <i class="bi bi-calendar-check me-2"></i>Reservierungen verwalten
+                                    </a>
+                                </li>
+                                <li class="nav-item d-lg-none">
+                                    <a class="nav-link ps-4" href="<?php echo getRelativePath('Admin/Benutzerverwaltung'); ?>">
+                                        <i class="bi bi-people me-2"></i>Benutzer verwalten
+                                    </a>
+                                </li>
+                                <li class="nav-item d-lg-none">
+                                    <a class="nav-link ps-4" href="<?php echo getRelativePath('Admin/Informationsverwaltung'); ?>">
+                                        <i class="bi bi-info-circle me-2"></i>Informationen verwalten
+                                    </a>
                                 </li>
                             <?php endif; ?>
                         <?php endif; ?>

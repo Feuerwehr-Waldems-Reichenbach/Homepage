@@ -103,13 +103,76 @@ function handleResize() {
 
 // Setup navbar to auto-collapse on mobile after clicking a link
 function setupMobileNavbar() {
-    const navLinks = document.querySelectorAll('.navbar-nav .nav-link');
+    const navLinks = document.querySelectorAll('.navbar-nav .nav-link:not(.dropdown-toggle)');
     const navbarToggler = document.querySelector('.navbar-toggler');
     const navbarCollapse = document.querySelector('.navbar-collapse');
     
     if (navLinks && navbarToggler && navbarCollapse) {
         navLinks.forEach(link => {
             link.addEventListener('click', () => {
+                if (navbarCollapse.classList.contains('show')) {
+                    navbarToggler.click();
+                }
+            });
+        });
+    }
+    
+    // Spezielles Handling für Dropdown-Toggles
+    const dropdownToggles = document.querySelectorAll('.navbar-nav .dropdown-toggle');
+    if (dropdownToggles) {
+        dropdownToggles.forEach(toggle => {
+            toggle.addEventListener('click', (e) => {
+                e.preventDefault(); // Verhindert das Standardverhalten
+                e.stopPropagation(); // Verhindert die Ausbreitung des Events
+                
+                // Finde das entsprechende Dropdown-Menü
+                const dropdownMenu = toggle.nextElementSibling;
+                if (dropdownMenu && dropdownMenu.classList.contains('dropdown-menu')) {
+                    // Toggle das Dropdown-Menü
+                    if (dropdownMenu.style.display === 'block') {
+                        dropdownMenu.style.display = 'none';
+                        toggle.classList.remove('show');
+                    } else {
+                        // Erst alle anderen schließen
+                        document.querySelectorAll('.dropdown-menu').forEach(menu => {
+                            if (menu !== dropdownMenu) {
+                                menu.style.display = 'none';
+                                const parentToggle = menu.previousElementSibling;
+                                if (parentToggle) {
+                                    parentToggle.classList.remove('show');
+                                }
+                            }
+                        });
+                        
+                        dropdownMenu.style.display = 'block';
+                        toggle.classList.add('show');
+                    }
+                }
+            });
+        });
+        
+        // Dropdown-Menü schließen, wenn irgendwo außerhalb geklickt wird
+        document.addEventListener('click', (e) => {
+            const isDropdownToggle = e.target.classList.contains('dropdown-toggle') || 
+                                     e.target.closest('.dropdown-toggle');
+            const isDropdownMenu = e.target.classList.contains('dropdown-menu') || 
+                                  e.target.closest('.dropdown-menu');
+            
+            if (!isDropdownToggle && !isDropdownMenu) {
+                document.querySelectorAll('.dropdown-menu').forEach(menu => {
+                    menu.style.display = 'none';
+                    const parentToggle = menu.previousElementSibling;
+                    if (parentToggle) {
+                        parentToggle.classList.remove('show');
+                    }
+                });
+            }
+        });
+        
+        // Event-Listener für Dropdown-Items
+        const dropdownItems = document.querySelectorAll('.dropdown-menu .dropdown-item');
+        dropdownItems.forEach(item => {
+            item.addEventListener('click', () => {
                 if (navbarCollapse.classList.contains('show')) {
                     navbarToggler.click();
                 }

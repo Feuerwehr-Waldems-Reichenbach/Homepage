@@ -89,20 +89,90 @@ body {
         margin: 0;
         padding: 0;
         position: static;
+        width: 100%; /* Ensure full width in mobile view */
+        left: 0; /* Ensure menu starts at left edge */
+        right: auto; /* Override any right positioning */
+        display: none; /* Hide by default for JS control */
+    }
+    
+    /* Ensure dropdown toggle is properly aligned */
+    .nav-link.dropdown-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        text-align: left;
+    }
+    
+    /* Add caret to dropdown toggle */
+    .nav-link.dropdown-toggle::after {
+        display: inline-block;
+        margin-left: 0.255em;
+        vertical-align: 0.255em;
+        content: "";
+        border-top: 0.3em solid;
+        border-right: 0.3em solid transparent;
+        border-bottom: 0;
+        border-left: 0.3em solid transparent;
+        transition: transform 0.2s ease;
+    }
+    
+    /* Rotate caret when dropdown is open */
+    .nav-link.dropdown-toggle.show::after {
+        transform: rotate(180deg);
     }
     
     .dropdown-item {
         color: rgba(255, 255, 255, 0.8);
-        padding: 0.75rem 2rem;
+        padding: 0.75rem 1rem; /* Reduce horizontal padding */
+        text-align: left; /* Ensure text is left-aligned */
+        max-width: 100%; /* Prevent overflow */
+        white-space: normal; /* Allow text to wrap */
+        min-height: 44px; /* Better touch target */
+        display: flex;
+        align-items: center;
     }
     
-    .dropdown-item:hover {
+    .dropdown-item:hover, .dropdown-item:active, .dropdown-item:focus {
         background-color: rgba(255, 255, 255, 0.1);
+        color: white;
+    }
+    
+    /* Style for active dropdown items */
+    .dropdown-item.active {
+        background-color: rgba(255, 255, 255, 0.2);
+        color: white;
     }
     
     /* Hide all separators in mobile */
     .welcome-item::after {
         display: none;
+    }
+    
+    /* Admin section styles in mobile menu */
+    .nav-link.text-muted {
+        color: rgba(255, 255, 255, 0.6) !important;
+        font-weight: 600;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-top: 0.5rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        padding-top: 1rem;
+    }
+    
+    /* Admin links with indentation */
+    .nav-link.ps-4 {
+        padding-left: 1.5rem !important;
+        font-size: 0.9rem;
+    }
+    
+    .nav-link.ps-4 i {
+        opacity: 0.8;
+    }
+    
+    .nav-link.ps-4:hover {
+        background-color: rgba(255, 255, 255, 0.1);
     }
 }
 
