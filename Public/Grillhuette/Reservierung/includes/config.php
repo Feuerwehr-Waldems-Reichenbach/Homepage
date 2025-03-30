@@ -35,9 +35,44 @@ define('APP_ROOT', '/Grillhuette/Reservierung');
 
 // URL-Basis für Links zwischen Seiten
 function getRelativePath($targetPage) {
-    // Sanitize input to prevent directory traversal
-    $targetPage = str_replace(['../', '..\\', './', '.\\'], '', $targetPage);
+    // Comprehensive sanitization to prevent directory traversal
+    
+    // 1. Normalize input by decoding any URL-encoded values that might hide traversal attempts
+    $targetPage = urldecode($targetPage);
+    
+    // 2. Remove all variations of directory traversal patterns
+    // This includes standard, encoded, and double-encoded versions
+    $patterns = [
+        // Standard traversal patterns
+        '../', '..\\', './', '.\\',
+        // URL encoded variations
+        '%2e%2e%2f', '%2e%2e/', '..%2f', '%2e%2e%5c', '%2e%2e\\', '..%5c',
+        '%2e/', '.%2f', '%2e\\', '.%5c',
+        // Double-encoded variations
+        '%252e%252e%252f', '%252e%252e/', '..%252f', '%252e%252e%255c', '%252e%252e\\', '..%255c',
+        '%252e/', '.%252f', '%252e\\', '.%255c',
+        // Unicode/alternate representations
+        '..%c0%af', '..%c1%9c', '..%c1%pc', '..%%32%66', '..%%35%63', '..%%35c',
+        // Null byte attacks
+        '../%00', '..\\%00', './%00', '.\\%00',
+        // Other potential bypass attempts
+        '....///', '...\\\\', '....\\',
+    ];
+    
+    $targetPage = str_ireplace($patterns, '', $targetPage);
+    
+    // 3. Only allow alphanumeric characters, hyphens, and forward slashes
     $targetPage = preg_replace('/[^a-zA-Z0-9\-\/]/', '', $targetPage);
+    
+    // 4. Remove any sequences that could still be problematic
+    $targetPage = preg_replace('/\/+/', '/', $targetPage); // Replace multiple slashes with single slash
+    $targetPage = preg_replace('/^\//', '', $targetPage);  // Remove leading slash
+    
+    // 5. Validate final path doesn't start with suspicious patterns
+    if (preg_match('/^(etc|tmp|proc|sys|var|dev|bin|sbin|usr|lib|root|home)\//', $targetPage)) {
+        // If it still contains sensitive system directories, return a safe default
+        $targetPage = 'home';
+    }
     
     // Basis-URL ist immer gleich - bezogen auf die APP_ROOT
     if ($targetPage === 'home') {
