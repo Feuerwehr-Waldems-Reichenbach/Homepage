@@ -106,51 +106,86 @@ class User {
     
     public function login($email, $password) {
         try {
+            // Email validieren
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                return [
+                    'success' => false,
+                    'message' => 'Ungültige E-Mail-Adresse.'
+                ];
+            }
+            
+            // Rate-Limiting prüfen
+            if (!checkLoginRateLimit($email)) {
+                // Verzögerung, um Timing-Angriffe zu erschweren
+                sleep(2);
+                return [
+                    'success' => false,
+                    'message' => 'Zu viele Anmeldeversuche. Bitte versuchen Sie es später erneut.'
+                ];
+            }
+            
+            // Benutzer über E-Mail suchen
             $stmt = $this->db->prepare("SELECT * FROM gh_users WHERE email = ?");
             $stmt->execute([$email]);
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
             
+            // Benutzer nicht gefunden
             if (!$user) {
+                // Fehlgeschlagenen Login protokollieren
+                logFailedLogin($email);
+                
+                // Verzögerung, um Timing-Angriffe zu erschweren
+                sleep(1);
+                
                 return [
                     'success' => false,
-                    'message' => 'Ungültige E-Mail-Adresse oder Passwort.'
+                    'message' => 'Ungültige Zugangsdaten.'
                 ];
             }
             
+            // Passwort überprüfen
             if (!password_verify($password, $user['password'])) {
+                // Fehlgeschlagenen Login protokollieren
+                logFailedLogin($email);
+                
+                // Verzögerung, um Timing-Angriffe zu erschweren
+                sleep(1);
+                
                 return [
                     'success' => false,
-                    'message' => 'Ungültige E-Mail-Adresse oder Passwort.'
+                    'message' => 'Ungültige Zugangsdaten.'
                 ];
             }
             
-            if ($user['is_verified'] == 0) {
+            // Prüfen, ob Benutzer verifiziert ist
+            if (!$user['is_verified']) {
                 return [
                     'success' => false,
-                    'message' => 'Bitte bestätigen Sie zuerst Ihre E-Mail-Adresse.'
+                    'message' => 'Bitte bestätigen Sie zuerst Ihre E-Mail-Adresse. Prüfen Sie Ihren Posteingang oder <a href="' . getRelativePath('Benutzer/Email-Verifizierung') . '">fordern Sie einen neuen Bestätigungslink an</a>.'
                 ];
             }
             
-            // Benutzerinformationen in der Session speichern
+            // Benutzer einloggen
             $_SESSION['user_id'] = $user['id'];
-            $_SESSION['user_email'] = $user['email'];
-            $_SESSION['user_name'] = $user['first_name'] . ' ' . $user['last_name'];
-            $_SESSION['is_admin'] = $user['is_admin'];
-            $_SESSION['is_verified'] = $user['is_verified'];
-            $_SESSION['is_AktivesMitglied'] = $user['is_AktivesMitglied'] ?? 0;
-            $_SESSION['is_Feuerwehr'] = $user['is_Feuerwehr'] ?? 0;
+            $_SESSION['user_name'] = $user['first_name'];
+            $_SESSION['is_admin'] = (bool)$user['is_admin'];
+            $_SESSION['is_verified'] = (bool)$user['is_verified'];
+            $_SESSION['is_Feuerwehr'] = (bool)$user['is_Feuerwehr'];
+            $_SESSION['is_aktives_Mitglied'] = (bool)$user['is_aktives_Mitglied'];
+            
+            // Login-Timestamp aktualisieren
+            $stmt = $this->db->prepare("UPDATE gh_users SET last_login = NOW() WHERE id = ?");
+            $stmt->execute([$user['id']]);
             
             return [
                 'success' => true,
-                'message' => 'Login erfolgreich.',
-                'is_admin' => $user['is_admin']
+                'message' => 'Erfolgreich angemeldet.'
             ];
-            
         } catch (PDOException $e) {
-            error_log('Fehler beim Login: ' . $e->getMessage());
+            error_log('Login error: ' . $e->getMessage());
             return [
                 'success' => false,
-                'message' => 'Ein Fehler ist beim Login aufgetreten. Bitte versuchen Sie es später erneut.'
+                'message' => 'Ein Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.'
             ];
         }
     }
@@ -189,13 +224,23 @@ class User {
     
     public function requestPasswordReset($email) {
         try {
-            $stmt = $this->db->prepare("SELECT id, first_name, last_name FROM gh_users WHERE email = ? AND is_verified = 1");
+            // E-Mail validieren
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                return [
+                    'success' => false,
+                    'message' => 'Bitte geben Sie eine gültige E-Mail-Adresse ein.'
+                ];
+            }
+
+            // Benutzer über E-Mail suchen
+            $stmt = $this->db->prepare("SELECT * FROM gh_users WHERE email = ?");
             $stmt->execute([$email]);
             
             if ($stmt->rowCount() == 0) {
+                // Zur Vermeidung von User Enumeration trotzdem Erfolg zurückgeben
                 return [
-                    'success' => false,
-                    'message' => 'Kein aktiver Benutzer mit dieser E-Mail-Adresse gefunden.'
+                    'success' => true,
+                    'message' => 'Eine E-Mail mit Anweisungen zum Zurücksetzen Ihres Passworts wurde an die angegebene Adresse gesendet.'
                 ];
             }
             
@@ -207,7 +252,7 @@ class User {
             
             // Neues Token generieren
             $token = generate_token();
-            $expiresAt = date('Y-m-d H:i:s', strtotime('+1 hour'));
+            $expiresAt = date('Y-m-d H:i:s', strtotime('+2 hours')); // 2 Stunden gültig
             
             // Token speichern
             $stmt = $this->db->prepare("INSERT INTO gh_password_reset (user_id, token, expires_at) VALUES (?, ?, ?)");
@@ -248,7 +293,7 @@ class User {
                             <p>Alternativ können Sie auch diesen Link verwenden:<br>
                             <a href="' . $resetUrl . '">' . $resetUrl . '</a></p>
                             
-                            <p>Dieser Link ist 1 Stunde gültig.</p>
+                            <p>Dieser Link ist 2 Stunden gültig.</p>
                             
                             <div class="footer">
                                 <p>Falls Sie keine Anfrage zum Zurücksetzen Ihres Passworts gestellt haben, können Sie diese E-Mail ignorieren.</p>

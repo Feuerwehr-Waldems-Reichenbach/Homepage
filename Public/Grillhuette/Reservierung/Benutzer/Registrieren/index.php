@@ -43,8 +43,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         if (empty($password)) {
             $errors[] = 'Bitte geben Sie ein Passwort ein.';
-        } elseif (strlen($password) < 8) {
-            $errors[] = 'Das Passwort muss mindestens 8 Zeichen lang sein.';
+        } else {
+            // Erweiterte Passwortvalidierung
+            $passwordErrors = validatePassword($password);
+            if (!empty($passwordErrors)) {
+                $errors = array_merge($errors, $passwordErrors);
+            }
         }
         
         if ($password !== $password_confirm) {

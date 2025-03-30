@@ -12,6 +12,14 @@ if (!isset($_SESSION['user_id']) || !isset($_SESSION['is_verified']) || !$_SESSI
 
 // POST-Anfrage prüfen
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // CSRF-Token überprüfen
+    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+        $_SESSION['flash_message'] = 'Ungültige Anfrage. Bitte versuchen Sie es erneut.';
+        $_SESSION['flash_type'] = 'danger';
+        header('Location: ' . getRelativePath('home'));
+        exit;
+    }
+
     // Formularfelder validieren
     $startDate = isset($_POST['start_date']) ? trim($_POST['start_date']) : '';
     $endDate = isset($_POST['end_date']) ? trim($_POST['end_date']) : '';

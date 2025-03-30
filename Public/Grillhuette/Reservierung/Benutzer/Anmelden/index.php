@@ -29,6 +29,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $errors[] = 'Bitte geben Sie Ihr Passwort ein.';
         }
         
+        // Rate-Limiting prüfen
+        if (empty($errors)) {
+            $rateLimitCheck = checkLoginRateLimit($email);
+            if (!$rateLimitCheck['allowed']) {
+                // Setze die Sperrzeitinformationen in die Session
+                $_SESSION['lockout_expiry'] = $rateLimitCheck['expiry_time'];
+                $_SESSION['lockout_remaining'] = $rateLimitCheck['remaining_seconds'];
+                
+                $minutes = floor($rateLimitCheck['remaining_seconds'] / 60);
+                $seconds = $rateLimitCheck['remaining_seconds'] % 60;
+                $errors[] = "Zu viele Anmeldeversuche. Bitte warten Sie noch {$minutes} Minute(n) und {$seconds} Sekunde(n), bevor Sie es erneut versuchen.";
+                
+                // Zusätzlich verzögern, um Timing-Angriffe zu erschweren
+                sleep(2);
+            }
+        }
+        
         // Wenn keine Fehler, Login versuchen
         if (empty($errors)) {
             $user = new User();
@@ -42,8 +59,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 header('Location: ' . $redirect);
                 exit;
             } else {
+                // Fehlgeschlagenen Login protokollieren
+                logFailedLogin($email);
+                
                 $_SESSION['login_error'] = $result['message'];
                 $_SESSION['login_email'] = $email; // Email für Wiederanzeige speichern
+                
+                // Verzögerung hinzufügen, um Brute-Force zu erschweren
+                sleep(1);
             }
         } else {
             $_SESSION['login_error'] = implode('<br>', $errors);
@@ -68,6 +91,13 @@ if (isset($_SESSION['login_error'])) {
 if (isset($_SESSION['login_email'])) {
     $email = $_SESSION['login_email'];
     unset($_SESSION['login_email']);
+}
+
+// Prüfe, ob die Sperrzeit abgelaufen ist
+if (isset($_SESSION['lockout_expiry']) && time() > $_SESSION['lockout_expiry']) {
+    // Sperrzeit ist abgelaufen, entferne die Variablen
+    unset($_SESSION['lockout_expiry']);
+    unset($_SESSION['lockout_remaining']);
 }
 
 // Titel für die Seite
@@ -135,6 +165,42 @@ document.addEventListener('DOMContentLoaded', function() {
         this.querySelector('i').classList.toggle('bi-eye');
         this.querySelector('i').classList.toggle('bi-eye-slash');
     });
+    
+    // Timer für die Sperrzeit
+    <?php if (!empty($error) && strpos($error, 'Zu viele Anmeldeversuche') !== false && isset($_SESSION['lockout_expiry'])): ?>
+    const countdownElement = document.createElement('div');
+    countdownElement.classList.add('mt-2', 'text-center', 'fw-bold');
+    
+    // Füge den Countdown zur Fehlermeldung hinzu
+    const alertElement = document.querySelector('.alert-danger');
+    if (alertElement) {
+        alertElement.appendChild(countdownElement);
+    }
+    
+    // Funktion zum Aktualisieren des Timers
+    function updateTimer() {
+        const now = Math.floor(Date.now() / 1000);
+        const expiry = <?php echo isset($_SESSION['lockout_expiry']) ? $_SESSION['lockout_expiry'] : 0; ?>;
+        const remaining = Math.max(0, expiry - now);
+        
+        if (remaining <= 0) {
+            countdownElement.innerHTML = 'Die Sperrzeit ist abgelaufen. Sie können sich jetzt wieder anmelden.';
+            setTimeout(() => {
+                window.location.reload();
+            }, 1500);
+            return;
+        }
+        
+        const minutes = Math.floor(remaining / 60);
+        const seconds = remaining % 60;
+        countdownElement.innerHTML = `Verbleibende Sperrzeit: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+        
+        setTimeout(updateTimer, 1000);
+    }
+    
+    // Starte den Timer
+    updateTimer();
+    <?php endif; ?>
 });
 </script>
 

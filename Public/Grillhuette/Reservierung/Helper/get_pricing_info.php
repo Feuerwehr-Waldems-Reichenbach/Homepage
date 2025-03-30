@@ -10,26 +10,17 @@ try {
     $reservation = new Reservation();
     
     // Get user ID from session if logged in
-    $userId = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
+    $userId = isset($_SESSION['user_id']) ? intval($_SESSION['user_id']) : null;
     
-    // Debug: Log user session information
-    error_log("get_pricing_info.php - User ID: " . ($userId ? $userId : 'not logged in'));
-    if (isset($_SESSION['is_Feuerwehr'])) {
-        error_log("get_pricing_info.php - User is_Feuerwehr: " . ($_SESSION['is_Feuerwehr'] ? 'true' : 'false'));
+    // Sicherheitsprüfung: Nur validierte user_id verwenden, keine Parameter von außen akzeptieren
+    if ($userId !== null && $userId <= 0) {
+        throw new Exception('Ungültige Benutzer-ID.');
     }
     
     // Get pricing information for the current user
     $priceInfo = $reservation->getPriceInformation($userId);
     
-    // Debug: Log pricing result
-    error_log("get_pricing_info.php - User rate: {$priceInfo['user_rate']}€, Rate type: {$priceInfo['rate_type']}");
-    
-    // For Feuerwehr users, always ensure rate is 0
-    if (isset($_SESSION['is_Feuerwehr']) && $_SESSION['is_Feuerwehr']) {
-        $priceInfo['user_rate'] = 0.00;
-        $priceInfo['rate_type'] = 'feuerwehr';
-        error_log("get_pricing_info.php - Forcing Feuerwehr rate to 0.00€");
-    }
+    // Preise werden jetzt komplett serverseitig berechnet, keine manuelle Anpassung mehr
     
     // Return the data
     echo json_encode([
@@ -40,17 +31,14 @@ try {
         'rate_type' => $priceInfo['rate_type']
     ]);
 } catch (Exception $e) {
-    // Log error but return a generic error message
+    // Log error but don't expose detailed error information
     error_log('Error in get_pricing_info.php: ' . $e->getMessage());
     
     // Return error with default values
+    http_response_code(400); // Bad request
     echo json_encode([
         'success' => false,
-        'user_rate' => 100.00,
-        'base_price' => 100.00,
-        'deposit_amount' => 100.00,
-        'rate_type' => 'normal',
-        'message' => 'Ein Fehler ist aufgetreten. Standard-Preise werden verwendet.'
+        'message' => 'Ein Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.'
     ]);
 }
 ?> 
