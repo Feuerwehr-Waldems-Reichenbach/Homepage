@@ -46,6 +46,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['flash_type'] = $result['success'] ? 'success' : 'danger';
         }
         
+        // Reservierung löschen
+        if (isset($_POST['delete_reservation'])) {
+            $reservationId = isset($_POST['reservation_id']) ? intval($_POST['reservation_id']) : 0;
+            
+            // Überprüfen, ob die Reservierung dem aktuellen Benutzer gehört
+            $reservation = new Reservation();
+            $reservationData = $reservation->getById($reservationId);
+            
+            if ($reservationData && $reservationData['user_id'] == $_SESSION['user_id']) {
+                // Sicherstellen, dass es eine vergangene oder stornierte Reservierung ist
+                if ($reservationData['status'] === 'canceled' || strtotime($reservationData['end_datetime']) < time()) {
+                    $result = $reservation->deleteReservation($reservationId);
+                    
+                    $_SESSION['flash_message'] = $result['message'];
+                    $_SESSION['flash_type'] = $result['success'] ? 'success' : 'danger';
+                } else {
+                    $_SESSION['flash_message'] = 'Nur vergangene oder stornierte Reservierungen können gelöscht werden.';
+                    $_SESSION['flash_type'] = 'danger';
+                }
+            } else {
+                $_SESSION['flash_message'] = 'Reservierung konnte nicht gefunden werden oder gehört nicht zu Ihrem Konto.';
+                $_SESSION['flash_type'] = 'danger';
+            }
+        }
+        
         // PRG-Muster: Umleiten nach POST, um erneutes Absenden bei Neuladen zu verhindern
         header('Location: ' . getRelativePath('Benutzer/Meine-Reservierungen'));
         exit;
@@ -265,6 +290,16 @@ require_once '../../includes/header.php';
                                                 <p><?php echo nl2br(escape($res['admin_message'])); ?></p>
                                             </div>
                                         <?php endif; ?>
+                                        
+                                        <!-- Nur Löschen ist bei vergangenen/stornierten Reservierungen möglich -->
+                                        <form method="post">
+                                            <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
+                                            <input type="hidden" name="reservation_id" value="<?php echo $res['id']; ?>">
+                                            
+                                            <div class="d-grid">
+                                                <button type="submit" name="delete_reservation" class="btn btn-outline-danger" onclick="return confirm('Sind Sie sicher, dass Sie diese Reservierung endgültig löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.');">Reservierung löschen</button>
+                                            </div>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
