@@ -275,6 +275,8 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
                         </div>
                         <div class="card-body">
                             <form id="reservationForm" method="post" action="<?php echo getRelativePath('Erstellen'); ?>">
+                                <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
+                                
                                 <div class="mb-3">
                                     <label for="start_date" class="form-label">Startdatum</label>
                                     <input type="text" class="form-control" id="start_date" name="start_date" readonly required>
