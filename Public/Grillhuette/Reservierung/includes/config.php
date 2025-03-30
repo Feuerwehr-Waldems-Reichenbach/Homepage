@@ -2,10 +2,37 @@
 // Session starten mit sicheren Einstellungen
 session_start([
     'cookie_httponly' => true,    // Verhindert Zugriff auf Session-Cookie über JavaScript
-    'cookie_secure' => isset($_SERVER['HTTPS']), // Nur über HTTPS senden
+    'cookie_secure' => isSecureConnection(), // Sicherere Überprüfung auf HTTPS-Verbindung
     'cookie_samesite' => 'Lax',   // SameSite-Schutz gegen CSRF
     'use_strict_mode' => true     // Strikte Session-ID-Validierung
 ]);
+
+// Funktion zur zuverlässigen Überprüfung einer sicheren Verbindung
+function isSecureConnection() {
+    // Prüfen verschiedener Server-Variablen, die auf HTTPS hinweisen
+    return (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+        || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https')
+        || (isset($_SERVER['HTTP_FRONT_END_HTTPS']) && $_SERVER['HTTP_FRONT_END_HTTPS'] === 'on')
+        || (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443)
+        || (isset($_SERVER['REQUEST_SCHEME']) && $_SERVER['REQUEST_SCHEME'] === 'https');
+}
+
+// Funktion zur Session-Regeneration nach kritischen Aktionen
+function regenerateSession() {
+    // Aktuellen Sessiondaten sichern
+    $sessionData = $_SESSION;
+    
+    // Session-ID regenerieren und alte Session löschen
+    session_regenerate_id(true);
+    
+    // Sessiondaten wiederherstellen
+    $_SESSION = $sessionData;
+    
+    // CSRF-Token nach Session-Regeneration erneuern
+    generate_csrf_token(true);
+    
+    return true;
+}
 
 // Fehlermeldungen nur im Entwicklungsmodus anzeigen
 $isDevMode = false; // Auf false setzen für Produktion
@@ -110,8 +137,8 @@ if (file_exists($emailPath)) {
 // Hilfsfunktionen
 
 // CSRF-Token generieren
-function generate_csrf_token() {
-    if (!isset($_SESSION['csrf_token'])) {
+function generate_csrf_token($force_refresh = false) {
+    if (!isset($_SESSION['csrf_token']) || $force_refresh) {
         $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
     }
     return $_SESSION['csrf_token'];

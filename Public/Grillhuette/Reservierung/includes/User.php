@@ -164,6 +164,9 @@ class User {
                 ];
             }
             
+            // Session erneuern, um Session-Fixation-Angriffe zu verhindern
+            regenerateSession();
+            
             // Benutzer einloggen
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_name'] = $user['first_name'];
@@ -564,6 +567,15 @@ class User {
             $stmt = $this->db->prepare("UPDATE gh_users SET is_admin = ? WHERE id = ?");
             $stmt->execute([$newStatus, $userId]);
             
+            // Wenn der aktuell eingeloggte Benutzer betroffen ist, Session aktualisieren
+            if (isset($_SESSION['user_id']) && $_SESSION['user_id'] == $userId) {
+                // Session regenerieren für Sicherheit
+                regenerateSession();
+                
+                // Admin-Status in der Session aktualisieren
+                $_SESSION['is_admin'] = (bool)$newStatus;
+            }
+            
             return [
                 'success' => true,
                 'message' => 'Administrator-Status geändert.',
@@ -716,6 +728,28 @@ class User {
             // Update ausführen
             $stmt = $this->db->prepare($sql);
             $stmt->execute($params);
+            
+            // Wenn der aktuell eingeloggte Benutzer betroffen ist, Session aktualisieren
+            if (isset($_SESSION['user_id']) && $_SESSION['user_id'] == $userId) {
+                // Prüfen, ob privilegierte Attribute geändert wurden
+                $hasPrivilegedChanges = ($user['is_admin'] != $isAdmin || 
+                                         $user['is_verified'] != $isVerified ||
+                                         $user['is_AktivesMitglied'] != $isAktivesMitglied ||
+                                         $user['is_Feuerwehr'] != $isFeuerwehr ||
+                                         !empty($newPassword));
+                
+                // Session bei Privilegienänderungen oder kritischen Feldern regenerieren
+                if ($hasPrivilegedChanges) {
+                    regenerateSession();
+                }
+                
+                // Session-Daten aktualisieren
+                $_SESSION['user_name'] = $firstName;
+                $_SESSION['is_admin'] = (bool)$isAdmin;
+                $_SESSION['is_verified'] = (bool)$isVerified;
+                $_SESSION['is_aktives_Mitglied'] = (bool)$isAktivesMitglied;
+                $_SESSION['is_Feuerwehr'] = (bool)$isFeuerwehr;
+            }
             
             return [
                 'success' => true,
