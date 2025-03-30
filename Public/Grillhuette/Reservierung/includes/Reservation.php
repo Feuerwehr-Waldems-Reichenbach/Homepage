@@ -1073,13 +1073,31 @@ class Reservation {
                 }
             }
             
-            // Reservierung aktualisieren
+            // Preisberechnung basierend auf dem neuen Zeitraum
+            $startDate = new DateTime($startDatetime);
+            $endDate = new DateTime($endDatetime);
+            $diffSeconds = $endDate->getTimestamp() - $startDate->getTimestamp();
+            $diffDays = $diffSeconds / (24 * 60 * 60);
+            $days = max(1, ceil($diffDays));
+            
+            // Preisdaten abrufen
+            $priceInfo = $this->getPriceInformation($userId);
+            $userRate = $priceInfo['user_rate'];
+            $basePrice = $priceInfo['base_price'];
+            $depositAmount = $priceInfo['deposit_amount'];
+            $totalCost = $days * $userRate;
+            
+            // Reservierung aktualisieren mit aktualisierten Preisdaten
             $stmt = $this->db->prepare("
                 UPDATE gh_reservations 
-                SET user_id = ?, start_datetime = ?, end_datetime = ?, admin_message = ?, status = ? 
+                SET user_id = ?, start_datetime = ?, end_datetime = ?, admin_message = ?, status = ?,
+                    days_count = ?, base_price = ?, total_price = ?, deposit_amount = ?
                 WHERE id = ?
             ");
-            $stmt->execute([$userId, $startDatetime, $endDatetime, $adminMessage, $status, $id]);
+            $stmt->execute([
+                $userId, $startDatetime, $endDatetime, $adminMessage, $status,
+                $days, $userRate, $totalCost, $depositAmount, $id
+            ]);
             
             // Benutzer-Informationen abrufen
             $userStmt = $this->db->prepare("SELECT email, first_name, last_name FROM gh_users WHERE id = ?");
