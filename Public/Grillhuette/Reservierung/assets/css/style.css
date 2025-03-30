@@ -207,6 +207,27 @@ body {
         position: relative;
     }
     
+    /* Filter buttons in card headers for desktop - compact at right edge */
+    .filter-buttons {
+        width: auto !important;
+        flex-wrap: nowrap !important;
+    }
+    
+    .filter-buttons .btn {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+    }
+    
+    /* Filter buttons in card headers for desktop */
+    .card-header .btn-group.btn-group-sm .btn {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+    }
+    
+    .card-header .btn-group.btn-group-sm {
+        width: auto !important;
+    }
+    
     /* Brand separator */
     .navbar-brand.d-lg-welcome-separator::after {
         content: "";
@@ -583,6 +604,52 @@ body {
         padding-right: 15px;
     }
     
+    /* Mobile filter buttons styles */
+    .filter-buttons {
+        width: 100% !important;
+        flex-wrap: wrap !important;
+        display: flex;
+        gap: 0.25rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .filter-buttons .btn {
+        border-radius: 0.25rem !important;
+        margin-right: 0.25rem;
+        margin-bottom: 0.25rem;
+        flex: 1 0 auto;
+        min-width: 48%;
+        text-align: center;
+        font-size: 0.875rem;
+        padding: 0.375rem 0.5rem;
+    }
+    
+    /* Fix für btn-group-sm auf Mobilgeräten */
+    .card-header .btn-group.btn-group-sm {
+        width: 100% !important;
+    }
+    
+    /* Responsive filter buttons for reservation management */
+    .card-header .btn-group.flex-wrap, 
+    .card-header .btn-group.btn-group-sm.flex-wrap {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.25rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .card-header .btn-group.flex-wrap .btn,
+    .card-header .btn-group.btn-group-sm.flex-wrap .btn {
+        border-radius: 0.25rem !important;
+        margin-right: 0.25rem;
+        margin-bottom: 0.25rem;
+        flex: 1 0 auto;
+        min-width: 48%;
+        text-align: center;
+        font-size: 0.875rem;
+        padding: 0.375rem 0.5rem;
+    }
+    
     /* Calendar adjustments */
     .calendar th, .calendar td {
         padding: 5px;
@@ -709,10 +776,23 @@ body {
         font-size: 1rem;
     }
     
+    /* Extra small filter buttons */
+    .filter-buttons .btn {
+        font-size: 0.8rem;
+        padding: 0.375rem 0.5rem;
+        min-width: 45%;
+    }
+    
     /* Make buttons full width on very small screens */
     .btn {
         display: block;
         width: 100%;
+    }
+    
+    /* Exception for filter buttons in btn-group */
+    .btn-group.flex-wrap .btn {
+        display: inline-flex;
+        width: auto;
     }
     
     .modal-footer {
