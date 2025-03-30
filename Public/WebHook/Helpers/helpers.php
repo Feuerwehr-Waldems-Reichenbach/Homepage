@@ -178,7 +178,8 @@ function insertEinsatz($conn, $params)
     ])) {
         return [true, "Einsatz erfolgreich eingetragen."];
     } else {
-        return [false, "Fehler beim Einfügen: " . implode(", ", $stmtInsert->errorInfo())];
+        error_log("Fehler beim Einfügen des Einsatzes: " . implode(", ", $stmtInsert->errorInfo()));
+        return [false, "Fehler beim Einfügen des Einsatzes. Bitte kontaktieren Sie den Administrator."];
     }
 }
 
@@ -199,7 +200,8 @@ function updateEinsatz($conn, $params)
         if ($stmtUpdate->execute([$params['datum'], $params['einsatzID']])) {
             return [true, "Einsatz erfolgreich aktualisiert."];
         } else {
-            return [false, "Fehler beim Aktualisieren: " . implode(", ", $stmtUpdate->errorInfo())];
+            error_log("Fehler beim Aktualisieren des Einsatzes: " . implode(", ", $stmtUpdate->errorInfo()));
+            return [false, "Fehler beim Aktualisieren des Einsatzes. Bitte kontaktieren Sie den Administrator."];
         }
     } else {
         // Wenn nicht beendet, aktualisiere nur die Kategorie, falls nötig
@@ -209,7 +211,8 @@ function updateEinsatz($conn, $params)
         if ($stmtUpdate->execute([$params['kategorie'], $params['einsatzID']])) {
             return [true, "Einsatz existiert bereits und ist noch nicht beendet."];
         } else {
-            return [false, "Fehler beim Aktualisieren der Kategorie: " . implode(", ", $stmtUpdate->errorInfo())];
+            error_log("Fehler beim Aktualisieren der Kategorie: " . implode(", ", $stmtUpdate->errorInfo()));
+            return [false, "Fehler beim Aktualisieren der Kategorie. Bitte kontaktieren Sie den Administrator."];
         }
     }
 }
