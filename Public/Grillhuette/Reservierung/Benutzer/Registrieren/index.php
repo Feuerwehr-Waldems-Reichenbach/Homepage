@@ -176,7 +176,7 @@ require_once '../../includes/header.php';
                     
                     <div class="mb-3 form-check">
                         <input type="checkbox" class="form-check-input" id="terms" name="terms" required>
-                        <label class="form-check-label" for="terms">Ich akzeptiere die Nutzungsbedingungen und Datenschutzrichtlinien.</label>
+                        <label class="form-check-label" for="terms">Ich akzeptiere die <a href="<?php echo getRelativePath('Nutzungsbedingungen'); ?>" target="_blank">Nutzungsbedingungen</a> und <a href="/Datenschutz" target="_blank">Datenschutzrichtlinien</a>.</label>
                     </div>
                     
                     <button type="submit" class="btn btn-primary">Registrieren</button>
