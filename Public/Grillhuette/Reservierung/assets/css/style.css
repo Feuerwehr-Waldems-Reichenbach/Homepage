@@ -1,0 +1,834 @@
+/* Main styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+    color: #343a40;
+    line-height: 1.6;
+}
+
+/* Navbar base styles - prevent truncation */
+.navbar-brand {
+    font-weight: 700;
+    font-size: 1rem; /* Smaller base size */
+    white-space: normal; /* Allow text wrapping */
+    line-height: 1.2;
+    width: auto;
+    max-width: 200px; /* Limit width on small screens */
+}
+
+/* Nav items should shrink and wrap if needed */
+.navbar-nav .nav-item {
+    min-width: 0; /* Override any min-width */
+    display: flex;
+    flex-shrink: 1;
+}
+
+.navbar-nav .nav-link {
+    white-space: normal; /* Allow text wrapping */
+    padding: 0.5rem 0.35rem; /* Smaller padding by default */
+    display: flex;
+    align-items: center;
+    font-size: 0.9rem; /* Slightly smaller text */
+}
+
+/* Welcome message styling */
+.user-welcome {
+    color: rgba(255, 255, 255, 0.8);
+    font-style: italic;
+    padding-right: 0.5rem;
+}
+
+/* Desktop welcome item with separator */
+.welcome-item {
+    position: relative;
+}
+
+.welcome-item::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 25%;
+    height: 50%;
+    width: 1px;
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Fix dropdown alignment */
+.dropdown-menu {
+    position: absolute;
+    left: 0;
+    right: auto;
+}
+
+/* Hamburger menu styles */
+@media (max-width: 991.98px) {
+    /* Fixed hamburger menu */
+    .navbar-collapse {
+        padding-top: 0.5rem;
+    }
+    
+    /* Make menu items take full width */
+    .navbar-nav {
+        width: 100%;
+    }
+    
+    .navbar-nav .nav-item {
+        width: 100%;
+        margin: 0;
+    }
+    
+    .navbar-nav .nav-link {
+        padding: 0.75rem 1rem;
+        width: 100%;
+    }
+    
+    /* Fix dropdown menu */
+    .dropdown-menu {
+        background-color: rgba(0, 0, 0, 0.1);
+        border: none;
+        margin: 0;
+        padding: 0;
+        position: static;
+        width: 100%; /* Ensure full width in mobile view */
+        left: 0; /* Ensure menu starts at left edge */
+        right: auto; /* Override any right positioning */
+        display: none; /* Hide by default for JS control */
+    }
+    
+    /* Ensure dropdown toggle is properly aligned */
+    .nav-link.dropdown-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        text-align: left;
+    }
+    
+    /* Add caret to dropdown toggle */
+    .nav-link.dropdown-toggle::after {
+        display: inline-block;
+        margin-left: 0.255em;
+        vertical-align: 0.255em;
+        content: "";
+        border-top: 0.3em solid;
+        border-right: 0.3em solid transparent;
+        border-bottom: 0;
+        border-left: 0.3em solid transparent;
+        transition: transform 0.2s ease;
+    }
+    
+    /* Rotate caret when dropdown is open */
+    .nav-link.dropdown-toggle.show::after {
+        transform: rotate(180deg);
+    }
+    
+    .dropdown-item {
+        color: rgba(255, 255, 255, 0.8);
+        padding: 0.75rem 1rem; /* Reduce horizontal padding */
+        text-align: left; /* Ensure text is left-aligned */
+        max-width: 100%; /* Prevent overflow */
+        white-space: normal; /* Allow text to wrap */
+        min-height: 44px; /* Better touch target */
+        display: flex;
+        align-items: center;
+    }
+    
+    .dropdown-item:hover, .dropdown-item:active, .dropdown-item:focus {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: white;
+    }
+    
+    /* Style for active dropdown items */
+    .dropdown-item.active {
+        background-color: rgba(255, 255, 255, 0.2);
+        color: white;
+    }
+    
+    /* Hide all separators in mobile */
+    .welcome-item::after {
+        display: none;
+    }
+    
+    /* Admin section styles in mobile menu */
+    .nav-link.text-muted {
+        color: rgba(255, 255, 255, 0.6) !important;
+        font-weight: 600;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-top: 0.5rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        padding-top: 1rem;
+    }
+    
+    /* Admin links with indentation */
+    .nav-link.ps-4 {
+        padding-left: 1.5rem !important;
+        font-size: 0.9rem;
+    }
+    
+    .nav-link.ps-4 i {
+        opacity: 0.8;
+    }
+    
+    .nav-link.ps-4:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+}
+
+/* Small screens */
+@media (max-width: 575.98px) {
+    .navbar-brand {
+        max-width: 180px;
+        font-size: 0.9rem;
+    }
+    
+    .navbar-toggler {
+        padding: 0.25rem 0.5rem;
+    }
+    
+    .navbar > .container {
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+}
+
+/* Desktop styles */
+@media (min-width: 992px) {
+    /* Navbar structure improvements */
+    .navbar {
+        padding: 0.5rem;
+    }
+    
+    .navbar-brand {
+        max-width: none;
+        font-size: 1.2rem;
+        margin-right: 1rem;
+        position: relative;
+    }
+    
+    /* Filter buttons in card headers for desktop - compact at right edge */
+    .filter-buttons {
+        width: auto !important;
+        flex-wrap: nowrap !important;
+    }
+    
+    .filter-buttons .btn {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+    }
+    
+    /* Filter buttons in card headers for desktop */
+    .card-header .btn-group.btn-group-sm .btn {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+    }
+    
+    .card-header .btn-group.btn-group-sm {
+        width: auto !important;
+    }
+    
+    /* Brand separator */
+    .navbar-brand.d-lg-welcome-separator::after {
+        content: "";
+        position: absolute;
+        right: -0.5rem;
+        top: 25%;
+        height: 50%;
+        width: 1px;
+        background-color: rgba(255, 255, 255, 0.3);
+    }
+    
+    /* Nav item separators */
+    .navbar-nav .nav-item {
+        margin-right: 0.25rem;
+        position: relative;
+    }
+    
+    .navbar-nav .nav-item:not(:last-child)::after {
+        content: "";
+        position: absolute;
+        right: -0.15rem;
+        top: 25%;
+        height: 50%;
+        width: 1px;
+        background-color: rgba(255, 255, 255, 0.3);
+    }
+    
+    /* Nav link styling */
+    .navbar-expand-lg .navbar-nav .nav-link {
+        padding: 0.4rem 0.5rem;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+        margin: 0 0.05rem;
+        font-size: 0.95rem;
+    }
+    
+    .navbar-expand-lg .navbar-nav .nav-link:hover {
+        background-color: rgba(255, 255, 255, 0.15);
+        color: #fff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Dropdown styling */
+    .dropdown-menu {
+        min-width: 180px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        border: none;
+        border-radius: 6px;
+        margin-top: 0.5rem;
+    }
+    
+    .dropdown-item {
+        padding: 0.5rem 1rem;
+    }
+    
+    /* Container optimization */
+    .container {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    
+    /* Welcome message styling */
+    .user-welcome {
+        max-width: 150px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-right: 0.25rem;
+    }
+}
+
+/* Larger screens */
+@media (min-width: 1400px) {
+    .container {
+        max-width: 1400px;
+    }
+    
+    .navbar-brand {
+        font-size: 1.5rem;
+        margin-right: 2rem;
+    }
+    
+    .navbar-expand-lg .navbar-nav .nav-link {
+        padding: 0.5rem 0.75rem;
+        margin-right: 0.3rem;
+        font-size: 1rem;
+    }
+    
+    .user-welcome {
+        max-width: none;
+    }
+}
+
+/* Calendar styles */
+.calendar-container {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 30px;
+    overflow-x: auto; /* Allow horizontal scrolling on small screens */
+}
+
+.calendar {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 320px; /* Ensure minimum width for small screens */
+}
+
+.calendar th, .calendar td {
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #dee2e6;
+}
+
+.calendar th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+}
+
+.calendar .day {
+    height: 60px;
+    width: calc(100% / 7);
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.calendar .day:hover {
+    background-color: #f8f9fa;
+}
+
+.calendar .day.today {
+    background-color: #e8f4f8;
+    font-weight: bold;
+}
+
+.calendar .day.free {
+    background-color: #d4edda;
+}
+
+.calendar .day.pending {
+    background-color: #fff3cd;
+    cursor: not-allowed;
+    opacity: 0.8;
+}
+
+.calendar .day.booked {
+    background-color: #f8d7da;
+    cursor: not-allowed;
+    opacity: 0.8;
+}
+
+/* Past days should not be selectable */
+.calendar .day.past {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: #f8f9fa;
+}
+
+.calendar .day.selected {
+    background-color: #cce5ff;
+    border: 2px solid #0d6efd;
+}
+
+.calendar .day.other-month {
+    color: #adb5bd;
+    background-color: #f8f9fa;
+}
+
+.calendar .date-number {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    font-size: 0.8em;
+}
+
+/* Card styles */
+.card {
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+    margin-bottom: 20px;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    font-weight: 600;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+}
+
+/* Modal styling */
+.modal-content {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.modal-header {
+    border-bottom: 1px solid #eee;
+    background-color: #f8f9fa;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    padding: 1rem 1.5rem;
+}
+
+.modal-footer {
+    border-top: 1px solid #eee;
+    background-color: #f8f9fa;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    padding: 1rem 1.5rem;
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+#loginRequiredModal .modal-content {
+    overflow: hidden;
+}
+
+#loginRequiredModal .modal-header {
+    position: relative;
+}
+
+#loginRequiredModal .modal-header::after {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(to right, #0d6efd, #6610f2);
+}
+
+#loginRequiredModal .btn {
+    transition: all 0.3s;
+}
+
+#loginRequiredModal .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Reservation status */
+.status-badge {
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    font-weight: 600;
+}
+
+.status-pending {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.status-confirmed {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.status-canceled {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+/* Form styles */
+.form-control, .form-select {
+    border-radius: 4px;
+    border: 1px solid #ced4da;
+    padding: 10px 15px;
+}
+
+.form-control:focus, .form-select:focus {
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    border-color: #86b7fe;
+}
+
+.btn {
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.btn-primary {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.btn-primary:hover {
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
+}
+
+.btn-success {
+    background-color: #198754;
+    border-color: #198754;
+}
+
+.btn-success:hover {
+    background-color: #157347;
+    border-color: #146c43;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+.btn-danger:hover {
+    background-color: #bb2d3b;
+    border-color: #b02a37;
+}
+
+/* Utility classes */
+.message-box {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.admin-message {
+    background-color: #e8f4f8;
+}
+
+.user-message {
+    background-color: #f0f0f0;
+}
+
+/* Better button layout in reservation management */
+.gap-2 {
+    gap: 0.75rem !important;
+}
+
+/* Ensure buttons have equal height and width distribution */
+.flex-grow-1 {
+    min-width: 160px;
+}
+
+/* When buttons stack on small screens */
+@media (max-width: 576px) {
+    .d-flex.flex-wrap.gap-2 {
+        flex-direction: column;
+    }
+    
+    .d-flex.flex-wrap.gap-2 .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    
+    .flex-grow-1 {
+        min-width: 100%;
+    }
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+    /* General spacing adjustments */
+    body {
+        padding-bottom: 60px; /* Extra padding for mobile scroll */
+    }
+    
+    .container {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    
+    /* Mobile filter buttons styles */
+    .filter-buttons {
+        width: 100% !important;
+        flex-wrap: wrap !important;
+        display: flex;
+        gap: 0.25rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .filter-buttons .btn {
+        border-radius: 0.25rem !important;
+        margin-right: 0.25rem;
+        margin-bottom: 0.25rem;
+        flex: 1 0 auto;
+        min-width: 48%;
+        text-align: center;
+        font-size: 0.875rem;
+        padding: 0.375rem 0.5rem;
+    }
+    
+    /* Fix für btn-group-sm auf Mobilgeräten */
+    .card-header .btn-group.btn-group-sm {
+        width: 100% !important;
+    }
+    
+    /* Responsive filter buttons for reservation management */
+    .card-header .btn-group.flex-wrap, 
+    .card-header .btn-group.btn-group-sm.flex-wrap {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.25rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .card-header .btn-group.flex-wrap .btn,
+    .card-header .btn-group.btn-group-sm.flex-wrap .btn {
+        border-radius: 0.25rem !important;
+        margin-right: 0.25rem;
+        margin-bottom: 0.25rem;
+        flex: 1 0 auto;
+        min-width: 48%;
+        text-align: center;
+        font-size: 0.875rem;
+        padding: 0.375rem 0.5rem;
+    }
+    
+    /* Calendar adjustments */
+    .calendar th, .calendar td {
+        padding: 5px;
+    }
+
+    .calendar .day {
+        height: 50px;
+        min-width: 40px; /* Ensure minimum touchable area */
+    }
+    
+    /* Make month navigation more touch-friendly */
+    #prevMonth, #nextMonth {
+        padding: 8px 12px;
+        font-size: 0.9rem;
+    }
+    
+    /* Adjust card layouts */
+    .card-body {
+        padding: 15px;
+    }
+    
+    /* Form elements should be larger for touch */
+    .form-control, .form-select, .btn {
+        padding: 12px 15px;
+        font-size: 16px; /* Prevent zoom on iOS */
+    }
+    
+    /* Table overflows */
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    /* Adjust column widths for better stacking */
+    .col-md-6 {
+        margin-bottom: 15px;
+    }
+    
+    /* Modal adjustments */
+    .modal-dialog {
+        margin: 10px;
+    }
+    
+    .modal-body {
+        padding: 15px;
+    }
+    
+    /* Smaller buttons on mobile */
+    .btn-sm {
+        padding: 5px 10px;
+        font-size: 0.8rem;
+    }
+    
+    /* Brand adjustments */
+    .navbar-brand {
+        font-size: 1.2rem;
+        max-width: 80%;
+    }
+    
+    /* Fix column spacing in forms */
+    .row > .col-md-4, .row > .col-md-6, .row > .col-md-8 {
+        margin-bottom: 15px;
+    }
+    
+    /* Adjust form spacing */
+    .mb-3 {
+        margin-bottom: 0.75rem !important;
+    }
+    
+    /* Make all interactive elements more touch-friendly */
+    a, button, .nav-link {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+    }
+    
+    /* Flatpickr adjustments for better mobile experience */
+    .flatpickr-calendar {
+        width: 307.875px !important;
+        font-size: 16px;
+    }
+}
+
+/* Tablet optimizations - to match mobile layout */
+@media (min-width: 769px) and (max-width: 991px) {
+    /* Calendar and form layout should match mobile */
+    .calendar .day {
+        height: 50px;
+        min-width: 40px;
+    }
+    
+    /* Form elements should be larger for touch */
+    .form-control, .form-select, .btn {
+        padding: 12px 15px;
+        font-size: 16px; 
+    }
+    
+    /* Fix column spacing in forms */
+    .row > .col-md-4, .row > .col-md-6, .row > .col-md-8 {
+        margin-bottom: 15px;
+    }
+    
+    /* Adjust form spacing */
+    .mb-3 {
+        margin-bottom: 0.75rem !important;
+    }
+}
+
+/* Very small mobile devices */
+@media (max-width: 480px) {
+    h1 {
+        font-size: 1.5rem;
+    }
+    
+    h2, h3 {
+        font-size: 1.3rem;
+    }
+    
+    .card-header h4, .card-header h5 {
+        font-size: 1.1rem;
+    }
+    
+    .navbar-brand {
+        font-size: 1rem;
+    }
+    
+    /* Extra small filter buttons */
+    .filter-buttons .btn {
+        font-size: 0.8rem;
+        padding: 0.375rem 0.5rem;
+        min-width: 45%;
+    }
+    
+    /* Make buttons full width on very small screens */
+    .btn {
+        display: block;
+        width: 100%;
+    }
+    
+    /* Exception for filter buttons in btn-group */
+    .btn-group.flex-wrap .btn {
+        display: inline-flex;
+        width: auto;
+    }
+    
+    .modal-footer {
+        display: block;
+    }
+    
+    .modal-footer .btn {
+        margin-top: 10px;
+    }
+    
+    /* Calendar adjustments for very small screens */
+    #monthYear {
+        font-size: 1.1rem;
+    }
+    
+    #prevMonth, #nextMonth {
+        padding: 4px 8px;
+    }
+    
+    .calendar .day {
+        height: 40px;
+        font-size: 0.8rem;
+        min-width: 30px;
+    }
+    
+    /* Additional padding at the bottom for iOS Safari */
+    body {
+        padding-bottom: 80px;
+    }
+}
+
+/* Fix for iPhone X and newer with safe area insets */
+@supports (padding: max(0px)) {
+    body {
+        padding-bottom: max(30px, env(safe-area-inset-bottom));
+        padding-left: env(safe-area-inset-left);
+        padding-right: env(safe-area-inset-right);
+    }
+} 

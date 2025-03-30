@@ -70,8 +70,7 @@ function sendEmail($to, $subject, $body) {
         error_log("E-Mail-Versand fehlgeschlagen: " . $mail->ErrorInfo);
         return [
             'success' => false,
-            'message' => 'E-Mail konnte nicht gesendet werden',
-            'error' => $mail->ErrorInfo
+            'message' => 'E-Mail konnte nicht gesendet werden. Bitte versuchen Sie es später erneut.'
         ];
     }
 }
