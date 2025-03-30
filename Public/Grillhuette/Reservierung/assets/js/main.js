@@ -359,44 +359,46 @@ function loadDayStatuses(month, year) {
     
     console.log(`Loading calendar data for ${year}-${formattedMonth}`);
     
-    // Create AJAX request
-    const xhr = new XMLHttpRequest();
-    // Statt die Basis-URL selbst zu berechnen, verwenden wir den Pfad zur Helper-Datei
-    xhr.open('GET', `Helper/get_calendar_data.php?month=${formattedMonth}&year=${year}`, true);
+    // Klare URL mit vollständigem Pfad erstellen, um Pfadprobleme zu vermeiden
+    const ajaxUrl = `Helper/get_calendar_data.php?month=${formattedMonth}&year=${year}`;
     
-    xhr.onload = function() {
-        if (this.status === 200) {
+    console.log('Request URL:', ajaxUrl);
+    
+    // Verwende fetch statt XMLHttpRequest für bessere Fehlerbehandlung
+    fetch(ajaxUrl)
+        .then(response => {
+            console.log('Response status:', response.status);
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.text(); // Erst als Text holen für Debugging
+        })
+        .then(text => {
+            console.log('Raw response:', text);
             try {
-                const response = JSON.parse(this.responseText);
-                console.log('Calendar data received:', response);
-                if (response.success) {
-                    updateDayStatuses(response.data);
-                } else {
-                    console.error('Error loading calendar data:', response.message);
-                    // Display error for mobile users with toast or alert
-                    if (window.matchMedia("(max-width: 768px)").matches) {
-                        showMobileAlert('Fehler beim Laden der Kalenderdaten. Bitte versuchen Sie es später erneut.');
-                    }
-                }
+                return JSON.parse(text); // Dann als JSON parsen
             } catch (e) {
-                console.error('Error parsing calendar data:', e, this.responseText);
-                // Display parse error for mobile users
+                console.error('JSON parse error:', e);
+                throw new Error('Invalid JSON response');
+            }
+        })
+        .then(response => {
+            console.log('Parsed data:', response);
+            if (response.success) {
+                updateDayStatuses(response.data);
+            } else {
+                console.error('Error in response:', response.message);
                 if (window.matchMedia("(max-width: 768px)").matches) {
-                    showMobileAlert('Fehler beim Laden der Kalenderdaten. Bitte versuchen Sie es später erneut.');
+                    showMobileAlert('Fehler beim Laden der Kalenderdaten: ' + response.message);
                 }
             }
-        }
-    };
-    
-    xhr.onerror = function() {
-        console.error('AJAX request failed');
-        // Show network error to mobile users
-        if (window.matchMedia("(max-width: 768px)").matches) {
-            showMobileAlert('Netzwerkfehler. Bitte überprüfen Sie Ihre Internetverbindung.');
-        }
-    };
-    
-    xhr.send();
+        })
+        .catch(error => {
+            console.error('Calendar data fetch error:', error);
+            if (window.matchMedia("(max-width: 768px)").matches) {
+                showMobileAlert('Fehler beim Laden der Kalenderdaten. Bitte versuchen Sie es später erneut.');
+            }
+        });
 }
 
 // Show a mobile-friendly alert/toast message
@@ -439,6 +441,24 @@ function showMobileAlert(message) {
 function updateDayStatuses(statusData) {
     if (!statusData) return;
     
+    console.log('Updating day statuses with data:', statusData);
+    
+    // Verifiziere, dass die zurückgegebenen Daten zum aktuellen Monat/Jahr passen
+    const dates = Object.keys(statusData);
+    if (dates.length > 0) {
+        // Prüfe das erste Datum, um den zurückgegebenen Monat zu erkennen
+        const firstDate = dates[0];
+        const receivedMonth = firstDate.split('-')[1]; // Format ist YYYY-MM-DD
+        
+        // Prüfe, ob der Monat im Datums-Key mit dem erwarteten Monat übereinstimmt
+        const expectedMonth = document.getElementById('month').value.toString().padStart(2, '0');
+        console.log(`Received month: ${receivedMonth}, Expected month: ${expectedMonth}`);
+        
+        if (receivedMonth !== expectedMonth) {
+            console.warn(`Month mismatch: Received data for month ${receivedMonth} but expected ${expectedMonth}`);
+        }
+    }
+    
     // Get today's date for comparison
     const today = new Date();
     today.setHours(0, 0, 0, 0); // Reset time part for comparison
@@ -467,6 +487,7 @@ function updateDayStatuses(statusData) {
         const dayElement = document.querySelector(`.day[data-date="${date}"]`);
         
         if (dayElement) {
+            console.log(`Setting day ${date} to status: ${status}`);
             // For non-past days, update status
             if (!dayElement.classList.contains('past')) {
                 // Remove status classes but keep past if it's set
@@ -474,6 +495,8 @@ function updateDayStatuses(statusData) {
                 // Add the new status class
                 dayElement.classList.add(status);
             }
+        } else {
+            console.log(`Day element not found for date: ${date}`);
         }
     });
 }

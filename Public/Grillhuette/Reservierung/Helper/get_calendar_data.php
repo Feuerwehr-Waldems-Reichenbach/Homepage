@@ -6,8 +6,8 @@ require_once '../includes/Reservation.php';
 header('Content-Type: application/json');
 
 // Monat und Jahr aus der Anfrage holen
-$month = isset($_GET['month']) ? filter_var($_GET['month'], FILTER_VALIDATE_INT) : date('n');
-$year = isset($_GET['year']) ? filter_var($_GET['year'], FILTER_VALIDATE_INT) : date('Y');
+$month = isset($_GET['month']) ? intval($_GET['month']) : date('n');
+$year = isset($_GET['year']) ? intval($_GET['year']) : date('Y');
 
 // Validieren
 if ($month === false || $month < 1 || $month > 12) {
