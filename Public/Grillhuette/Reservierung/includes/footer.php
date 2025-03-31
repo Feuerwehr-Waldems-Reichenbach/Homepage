@@ -2,22 +2,62 @@
 
     <footer class="bg-dark text-white py-4 mt-5">
         <div class="container">
-            <div class="row">
-                <div class="col-12 col-md-6 mb-3 mb-md-0">
-                    <h5 class="mb-2">Grillhütte Reichenbach</h5>
-                    <p class="mb-0">Ein Service der Feuerwehr Waldems-Reichenbach</p>
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="map-wrapper">
+                        <div class="map-header d-flex justify-content-between align-items-center mb-2">
+                            <h5 class="m-0"><i class="bi bi-geo-alt-fill me-2"></i>Standort Grillhütte Reichenbach</h5>
+                            <a href="https://goo.gl/maps/xDVCv6XdRXdKwKsG7" target="_blank" class="btn btn-sm btn-outline-light">
+                                <i class="bi bi-box-arrow-up-right me-1"></i>Google Maps öffnen
+                            </a>
+                        </div>
+                        <div class="map-container rounded shadow-sm overflow-hidden">
+                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d5132.282750261533!2d8.371175454928999!3d50.268477518526375!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47bdb1bf3444aa6f%3A0x53abe310515b94df!2sGrillh%C3%BCtte%20Reichenbach!5e1!3m2!1sde!2sde!4v1743380028454!5m2!1sde!2sde" width="100%" height="250" style="border:0; display:block;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Standort Grillhütte Reichenbach"></iframe>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-12 col-md-6 text-md-end">
+            </div>
+            
+            <div class="row pt-3 border-top border-secondary">
+                <div class="col-md-6 mb-3 mb-md-0">
+                    <div class="d-flex flex-column h-100">
+                        <h5 class="mb-2">Grillhütte Reichenbach</h5>
+                        <p class="mb-0">Ein Service der Feuerwehr Waldems-Reichenbach</p>
+                        
+                        <div class="contact-info mt-3">
+                            <div class="d-flex align-items-start mb-2">
+                                <i class="bi bi-geo-alt-fill me-2 mt-1 text-danger"></i>
+                                <span>Am Dorfgemeinschaftshaus 1<br>65529 Waldems</span>
+                            </div>
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-envelope-fill me-2 text-danger"></i>
+                                <a href="mailto:info@feuerwehr-waldems-reichenbach.de" class="text-white text-decoration-none hover-underline">info@feuerwehr-waldems-reichenbach.de</a>
+                            </div>
+                        </div>
+                        
+                        <div class="social-links mt-3">
+                            <a href="https://www.facebook.com/groups/163127135137/" target="_blank" class="text-white me-3" title="Facebook">
+                                <i class="bi bi-facebook fs-5"></i>
+                            </a>
+                            <a href="https://www.instagram.com/feuerwehrreichenbach/" target="_blank" class="text-white me-3" title="Instagram">
+                                <i class="bi bi-instagram fs-5"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 text-md-end">
                     <p class="mb-2 mb-md-0">&copy; <?php echo date('Y'); ?> Feuerwehr Waldems-Reichenbach</p>
-                    <!-- Mobile-optimized footer links -->
-                    <div class="d-flex flex-wrap justify-content-center justify-content-md-end mt-2">
-                        <a href="/Grillhuette" class="text-white me-3 mb-2">Informationen</a>
-                        <a href="<?php echo getRelativePath('home'); ?>" class="text-white me-3 mb-2">Startseite</a>
-                        <?php if (isset($_SESSION['user_id'])): ?>
-                            <a href="<?php echo getRelativePath('Benutzer/Meine-Reservierungen'); ?>" class="text-white me-3 mb-2">Meine Reservierungen</a>
-                        <?php else: ?>
-                            <a href="<?php echo getRelativePath('Benutzer/Anmelden'); ?>" class="text-white me-3 mb-2">Anmelden</a>
-                        <?php endif; ?>
+                    <!-- Footer links -->
+                    <div class="d-flex flex-wrap justify-content-start justify-content-md-end mt-2 footer-links">
+                        <a href="<?php echo getRelativePath('Nutzungsbedingungen'); ?>" class="text-white me-3 mb-2">
+                            <i class="bi bi-file-text me-1"></i>Nutzungsbedingungen
+                        </a>
+                        <a href="/Datenschutz" class="text-white me-3 mb-2">
+                            <i class="bi bi-shield-lock me-1"></i>Datenschutz
+                        </a>
+                        <a href="/Impressum" class="text-white mb-2">
+                            <i class="bi bi-info-circle me-1"></i>Impressum
+                        </a>
                     </div>
                 </div>
             </div>
