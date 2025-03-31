@@ -78,16 +78,12 @@ class Reservation {
                         // Aktives Mitglied has second priority
                         $priceInfo['user_rate'] = $aktivesPrice;
                         $priceInfo['rate_type'] = 'aktives_mitglied';
-                    }
-                    
-                    // Log for debugging purposes
-                    error_log("User $userId pricing: rate={$priceInfo['user_rate']}, type={$priceInfo['rate_type']}, isFeuerwehr=$isFeuerwehr");
+                    }                   
                 }
             }
             
             return $priceInfo;
         } catch (PDOException $e) {
-            error_log('Error retrieving price information: ' . $e->getMessage());
             return [
                 'base_price' => 100.00,
                 'deposit_amount' => 100.00,
@@ -167,7 +163,7 @@ class Reservation {
                 <body>
                     <div class="container">
                         <div class="header">
-                            <h2>Reservierungsbestätigung</h2>
+                            <h2>Reservierungsanfrage</h2>
                         </div>
                         <div class="content">
                             <h3>Hallo ' . $user['first_name'] . ' ' . $user['last_name'] . ',</h3>
@@ -282,7 +278,6 @@ class Reservation {
             ];
             
         } catch (PDOException $e) {
-            error_log('Fehler beim Erstellen der Reservierung: ' . $e->getMessage());
             return [
                 'success' => false,
                 'message' => 'Ein technischer Fehler ist aufgetreten. Bitte versuchen Sie es später erneut oder kontaktieren Sie den Support.'
@@ -463,7 +458,6 @@ class Reservation {
             ];
             
         } catch (PDOException $e) {
-            error_log('Fehler beim Aktualisieren des Status: ' . $e->getMessage());
             return [
                 'success' => false,
                 'message' => 'Ein Fehler ist aufgetreten. Die Statusänderung konnte nicht gespeichert werden.'
@@ -546,7 +540,6 @@ class Reservation {
             ];
             
         } catch (PDOException $e) {
-            error_log('Fehler beim Hinzufügen der Nachricht: ' . $e->getMessage());
             return [
                 'success' => false,
                 'message' => 'Die Nachricht konnte nicht gespeichert werden. Bitte versuchen Sie es später erneut.'
@@ -621,7 +614,6 @@ class Reservation {
             ];
             
         } catch (PDOException $e) {
-            error_log('Fehler beim Hinzufügen der Admin-Nachricht: ' . $e->getMessage());
             return [
                 'success' => false,
                 'message' => 'Die Admin-Nachricht konnte nicht gespeichert werden. Bitte versuchen Sie es später erneut.'
@@ -752,7 +744,6 @@ class Reservation {
             ];
             
         } catch (PDOException $e) {
-            error_log('Fehler beim Erstellen der Reservierung: ' . $e->getMessage());
             return [
                 'success' => false,
                 'message' => 'Die Reservierung konnte nicht erstellt werden. Bitte versuchen Sie es später erneut.'
@@ -923,7 +914,6 @@ class Reservation {
             ];
             
         } catch (PDOException $e) {
-            error_log('Fehler beim Stornieren der Reservierung: ' . $e->getMessage());
             return [
                 'success' => false,
                 'message' => 'Die Reservierung konnte nicht storniert werden. Bitte versuchen Sie es später erneut.'
@@ -950,7 +940,6 @@ class Reservation {
             $stmt->execute([$startDate, $endDate, $startDate, $endDate, $startDate, $endDate]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            error_log('Fehler beim Abrufen der Reservierungen: ' . $e->getMessage());
             return [];
         }
     }
@@ -1038,7 +1027,6 @@ class Reservation {
                 'message' => 'Alle Reservierungen des Benutzers wurden gelöscht.'
             ];
         } catch (PDOException $e) {
-            error_log('Fehler beim Löschen der Reservierungen: ' . $e->getMessage());
             return [
                 'success' => false,
                 'message' => 'Die Reservierungen konnten nicht gelöscht werden. Bitte versuchen Sie es später erneut.'
@@ -1085,13 +1073,31 @@ class Reservation {
                 }
             }
             
-            // Reservierung aktualisieren
+            // Preisberechnung basierend auf dem neuen Zeitraum
+            $startDate = new DateTime($startDatetime);
+            $endDate = new DateTime($endDatetime);
+            $diffSeconds = $endDate->getTimestamp() - $startDate->getTimestamp();
+            $diffDays = $diffSeconds / (24 * 60 * 60);
+            $days = max(1, ceil($diffDays));
+            
+            // Preisdaten abrufen
+            $priceInfo = $this->getPriceInformation($userId);
+            $userRate = $priceInfo['user_rate'];
+            $basePrice = $priceInfo['base_price'];
+            $depositAmount = $priceInfo['deposit_amount'];
+            $totalCost = $days * $userRate;
+            
+            // Reservierung aktualisieren mit aktualisierten Preisdaten
             $stmt = $this->db->prepare("
                 UPDATE gh_reservations 
-                SET user_id = ?, start_datetime = ?, end_datetime = ?, admin_message = ?, status = ? 
+                SET user_id = ?, start_datetime = ?, end_datetime = ?, admin_message = ?, status = ?,
+                    days_count = ?, base_price = ?, total_price = ?, deposit_amount = ?
                 WHERE id = ?
             ");
-            $stmt->execute([$userId, $startDatetime, $endDatetime, $adminMessage, $status, $id]);
+            $stmt->execute([
+                $userId, $startDatetime, $endDatetime, $adminMessage, $status,
+                $days, $userRate, $totalCost, $depositAmount, $id
+            ]);
             
             // Benutzer-Informationen abrufen
             $userStmt = $this->db->prepare("SELECT email, first_name, last_name FROM gh_users WHERE id = ?");
@@ -1178,7 +1184,6 @@ class Reservation {
             ];
             
         } catch (PDOException $e) {
-            error_log('Fehler beim Aktualisieren der Reservierung: ' . $e->getMessage());
             return [
                 'success' => false,
                 'message' => 'Die Reservierung konnte nicht aktualisiert werden. Bitte versuchen Sie es später erneut.'
@@ -1251,7 +1256,6 @@ class Reservation {
             ];
             
         } catch (PDOException $e) {
-            error_log('Fehler beim Löschen der Reservierung: ' . $e->getMessage());
             return [
                 'success' => false,
                 'message' => 'Die Reservierung konnte nicht gelöscht werden. Bitte versuchen Sie es später erneut.'
@@ -1292,7 +1296,6 @@ class Reservation {
             // Daten als Key-Value-Paare abrufen
             return $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
         } catch (PDOException $e) {
-            error_log('Fehler beim Abrufen der Systemeinstellungen: ' . $e->getMessage());
             return [];
         }
     }
@@ -1320,14 +1323,10 @@ class Reservation {
                 $stmt->execute([$category]);
             }
             
-            // Debug-Ausgabe für Fehlersuche
-            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            error_log("getAllSystemInformationRecords results: " . count($results) . " records");
-            
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);            
             // Leeres Array als Fallback, falls keine Ergebnisse
             return $results ?: [];
         } catch (PDOException $e) {
-            error_log('Fehler beim Abrufen der Systeminformationen: ' . $e->getMessage());
             return [];
         }
     }
@@ -1373,7 +1372,6 @@ class Reservation {
                 ];
             }
         } catch (PDOException $e) {
-            error_log('Fehler beim Hinzufügen der Information: ' . $e->getMessage());
             return [
                 'success' => false,
                 'message' => 'Datenbankfehler beim Hinzufügen der Information: ' . $e->getMessage()
@@ -1392,9 +1390,6 @@ class Reservation {
      */
     public function updateInformation($id, $content, $category = null, $sortOrder = null) {
         try {
-            // Debug-Logging für Parameter
-            error_log("updateInformation called with id=$id, content=$content, category=$category, sortOrder=$sortOrder");
-            
             // Prüfen Sie, ob es sich um einen System-Eintrag handelt
             $checkStmt = $this->db->prepare("SELECT category FROM gh_informations WHERE id = ?");
             $checkStmt->execute([$id]);
@@ -1413,14 +1408,11 @@ class Reservation {
             if ($sortOrder !== null && $entryCategory !== 'system') {
                 $sql .= ", sort_order = ?";
                 $params[] = $sortOrder;
-                error_log("Setting sort_order=$sortOrder for id=$id");
             }
             
             $sql .= " WHERE id = ?";
             $params[] = $id;
             
-            // Debug-Logging für SQL
-            error_log("SQL: $sql with params: " . implode(", ", $params));
             
             $stmt = $this->db->prepare($sql);
             $success = $stmt->execute($params);
@@ -1437,7 +1429,6 @@ class Reservation {
                 ];
             }
         } catch (PDOException $e) {
-            error_log('Fehler beim Aktualisieren der Information: ' . $e->getMessage());
             return [
                 'success' => false,
                 'message' => 'Datenbankfehler beim Aktualisieren der Information: ' . $e->getMessage()
@@ -1480,7 +1471,6 @@ class Reservation {
                 ];
             }
         } catch (PDOException $e) {
-            error_log('Fehler beim Löschen der Information: ' . $e->getMessage());
             return [
                 'success' => false,
                 'message' => 'Datenbankfehler beim Löschen der Information.'
@@ -1512,14 +1502,11 @@ class Reservation {
                 $stmt->execute([$category]);
             }
             
-            // Debug-Ausgabe für Fehlersuche
             $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            error_log("getSystemInformationByCreationTime results: " . count($results) . " records");
             
             // Leeres Array als Fallback, falls keine Ergebnisse
             return $results ?: [];
         } catch (PDOException $e) {
-            error_log('Fehler beim Abrufen der Systeminformationen: ' . $e->getMessage());
             return [];
         }
     }

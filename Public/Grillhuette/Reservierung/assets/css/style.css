@@ -4,6 +4,8 @@ body {
     background-color: #f8f9fa;
     color: #343a40;
     line-height: 1.6;
+    padding: 0; /* Reset any padding */
+    margin: 0; /* Ensure no margins */
 }
 
 /* Navbar base styles - prevent truncation */
@@ -827,8 +829,14 @@ body {
 /* Fix for iPhone X and newer with safe area insets */
 @supports (padding: max(0px)) {
     body {
-        padding-bottom: max(30px, env(safe-area-inset-bottom));
-        padding-left: env(safe-area-inset-left);
-        padding-right: env(safe-area-inset-right);
+        padding: 0 !important; /* Force override any padding */
+        padding-left: env(safe-area-inset-left) !important;
+        padding-right: env(safe-area-inset-right) !important;
+        margin-bottom: 0 !important;
+    }
+    
+    footer {
+        padding-bottom: max(1.5rem, env(safe-area-inset-bottom)); /* Add padding to footer instead */
+        margin-bottom: 0 !important;
     }
 } 

@@ -89,7 +89,6 @@ try {
         echo $message;
     }
 } catch (PDOException $e) {
-    error_log("Fehler bei der Datenbankabfrage im WebHook: " . $e->getMessage());
     echo "Ein technischer Fehler ist aufgetreten. Bitte kontaktieren Sie den Administrator.";
 }
 ?>

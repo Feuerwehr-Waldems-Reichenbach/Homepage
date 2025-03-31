@@ -67,7 +67,6 @@ function sendEmail($to, $subject, $body) {
             'message' => 'E-Mail wurde erfolgreich versendet'
         ];
     } catch (Exception $e) {
-        error_log("E-Mail-Versand fehlgeschlagen: " . $mail->ErrorInfo);
         return [
             'success' => false,
             'message' => 'E-Mail konnte nicht gesendet werden. Bitte versuchen Sie es später erneut.'

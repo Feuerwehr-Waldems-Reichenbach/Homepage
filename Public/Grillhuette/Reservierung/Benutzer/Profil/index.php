@@ -378,7 +378,7 @@ require_once '../../includes/header.php';
                                         <i class="bi bi-eye"></i>
                                     </button>
                                 </div>
-                                <div class="form-text">Mindestens 8 Zeichen.</div>
+                                <div class="form-text">Mindestens 8 Zeichen mit Groß- und Kleinbuchstaben, Zahlen und mindestens einem Sonderzeichen.</div>
                             </div>
                             
                             <div class="mb-3">
@@ -461,7 +461,7 @@ require_once '../../includes/header.php';
                     <div class="card-body">
                         <p class="text-danger"><strong>Warnung:</strong> Diese Aktion kann nicht rückgängig gemacht werden. Alle Ihre Daten und Reservierungen werden dauerhaft gelöscht.</p>
                         
-                        <form method="post" onsubmit="return confirm('Sind Sie sicher, dass Sie Ihr Profil und alle zugehörigen Daten löschen möchten? Diese Aktion kann NICHT rückgängig gemacht werden!');">
+                        <form method="post" id="deleteProfileForm" onsubmit="return confirmDeleteProfile(event);">
                             <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
                             <input type="hidden" name="delete_profile" value="1">
                             
@@ -516,6 +516,31 @@ document.addEventListener('DOMContentLoaded', function() {
     setupPasswordToggle('toggleEmailPassword', 'email_password');
     setupPasswordToggle('toggleDeletePassword', 'delete_password');
 });
+
+// Function to confirm profile deletion with enhanced security
+function confirmDeleteProfile(event) {
+    event.preventDefault();
+    
+    // Check that password is entered
+    const passwordField = document.getElementById('delete_password');
+    if (!passwordField.value) {
+        alert('Bitte geben Sie Ihr Passwort ein, um die Löschung zu bestätigen.');
+        return false;
+    }
+    
+    // Double confirmation with explicit warning
+    if (confirm('WARNUNG: Sie sind dabei, Ihr Profil zu löschen. Diese Aktion KANN NICHT rückgängig gemacht werden!\n\nAlle Ihre Daten und Reservierungen werden dauerhaft gelöscht.\n\nSind Sie wirklich sicher?')) {
+        // Update CSRF token to ensure it's fresh
+        const csrfInput = document.querySelector('#deleteProfileForm input[name="csrf_token"]');
+        // Use the current token from PHP
+        csrfInput.value = "<?php echo generate_csrf_token(); ?>";
+        
+        // Submit the form
+        document.getElementById('deleteProfileForm').submit();
+    }
+    
+    return false;
+}
 </script>
 
 <?php require_once '../../includes/footer.php'; ?> 

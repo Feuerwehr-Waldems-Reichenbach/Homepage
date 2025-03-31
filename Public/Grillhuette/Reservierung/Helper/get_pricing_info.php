@@ -31,8 +31,6 @@ try {
         'rate_type' => $priceInfo['rate_type']
     ]);
 } catch (Exception $e) {
-    // Log error but don't expose detailed error information
-    error_log('Error in get_pricing_info.php: ' . $e->getMessage());
     
     // Return error with default values
     http_response_code(400); // Bad request

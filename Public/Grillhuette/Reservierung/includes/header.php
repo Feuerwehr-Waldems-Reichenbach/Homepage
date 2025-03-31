@@ -1,5 +1,41 @@
 <?php
 require_once __DIR__ . '/config.php';
+
+// Content Security Policy definieren
+$cspHeader = "Content-Security-Policy: ".
+    "default-src 'self'; ".
+    "script-src 'self' https://cdn.jsdelivr.net/npm/ https://cdn.jsdelivr.net/npm/flatpickr/ https://cdn.jsdelivr.net/npm/moment@2.29.4/ 'unsafe-inline' https://www.google.com/maps/ https://maps.googleapis.com; ".
+    "style-src 'self' https://cdn.jsdelivr.net/npm/ https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/ https://cdn.jsdelivr.net/npm/flatpickr/ 'unsafe-inline'; ".
+    "img-src 'self' data: https://www.google.com/maps/ https://*.googleapis.com https://*.gstatic.com; ".
+    "font-src 'self' https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/; ".
+    "connect-src 'self'; ".
+    "frame-src 'self' https://www.google.com/maps/ https://maps.googleapis.com; ".
+    "object-src 'none'; ".
+    "base-uri 'self'; ".
+    "form-action 'self'; ".
+    "frame-ancestors 'none'; ".
+    "upgrade-insecure-requests;";
+
+// Content Security Policy für den Meta-Tag (ohne frame-ancestors)
+$cspMeta = "default-src 'self'; ".
+    "script-src 'self' https://cdn.jsdelivr.net/npm/ https://cdn.jsdelivr.net/npm/flatpickr/ https://cdn.jsdelivr.net/npm/moment@2.29.4/ 'unsafe-inline' https://www.google.com/maps/ https://maps.googleapis.com; ".
+    "style-src 'self' https://cdn.jsdelivr.net/npm/ https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/ https://cdn.jsdelivr.net/npm/flatpickr/ 'unsafe-inline'; ".
+    "img-src 'self' data: https://www.google.com/maps/ https://*.googleapis.com https://*.gstatic.com; ".
+    "font-src 'self' https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/; ".
+    "connect-src 'self'; ".
+    "frame-src 'self' https://www.google.com/maps/ https://maps.googleapis.com; ".
+    "object-src 'none'; ".
+    "base-uri 'self'; ".
+    "form-action 'self'; ".
+    "upgrade-insecure-requests;";
+
+// Weitere Sicherheits-Header
+header($cspHeader);
+header("X-Content-Type-Options: nosniff");
+header("X-Frame-Options: DENY");
+header("X-XSS-Protection: 1; mode=block");
+header("Referrer-Policy: strict-origin-when-cross-origin");
+header("Permissions-Policy: geolocation=(), camera=(), microphone=()");
 ?>
 <!DOCTYPE html>
 <html lang="de">
@@ -9,6 +45,7 @@ require_once __DIR__ . '/config.php';
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#343a40">
+    <meta http-equiv="Content-Security-Policy" content="<?php echo $cspMeta; ?>">
     <title>Reservierungssystem der Grillhütte Waldems Reichenbach</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">

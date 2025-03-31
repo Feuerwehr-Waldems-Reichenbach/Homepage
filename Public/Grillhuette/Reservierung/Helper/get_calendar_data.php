@@ -48,14 +48,12 @@ try {
         'data' => $calendarData
     ]);
 } catch (Exception $e) {
-    // Fehler protokollieren aber keine detaillierten Informationen nach außen geben
-    error_log('Fehler in get_calendar_data.php: ' . $e->getMessage());
     
     // Generische Fehlermeldung zurückgeben
     http_response_code(500);
     echo json_encode([
         'success' => false,
-        'message' => 'Ein Fehler ist bei der Kalenderdatenverarbeitung aufgetreten.'
+        'message' => 'Ein Fehler ist bei der Verarbeitung aufgetreten. Bitte versuchen Sie es später erneut.'
     ]);
 }
 ?> 

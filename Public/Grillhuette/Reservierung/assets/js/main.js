@@ -420,51 +420,44 @@ function loadDayStatuses(month, year) {
     // Format month with leading zero if needed
     const formattedMonth = month.toString().padStart(2, '0');
     
-    console.log(`Loading calendar data for ${year}-${formattedMonth}`);
     
     // Klare URL mit vollständigem Pfad erstellen, um Pfadprobleme zu vermeiden
     const ajaxUrl = `Helper/get_calendar_data.php?month=${formattedMonth}&year=${year}`;
     
-    console.log('Request URL:', ajaxUrl);
     
     // Verwende fetch statt XMLHttpRequest für bessere Fehlerbehandlung
     fetch(ajaxUrl)
         .then(response => {
-            console.log('Response status:', response.status);
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
-            return response.text(); // Erst als Text holen für Debugging
+            return response.text();
         })
         .then(text => {
-            console.log('Raw response:', text);
             try {
                 return JSON.parse(text); // Dann als JSON parsen
             } catch (e) {
-                console.error('JSON parse error:', e);
                 throw new Error('Invalid JSON response');
             }
         })
         .then(response => {
-            console.log('Parsed data:', response);
             if (response.success) {
                 updateDayStatuses(response.data);
             } else {
-                console.error('Error in response:', response.message);
                 if (window.matchMedia("(max-width: 768px)").matches) {
-                    showMobileAlert('Fehler beim Laden der Kalenderdaten: ' + response.message);
+                    // Use generic error message instead of showing server message
+                    showMobileAlert('Fehler beim Laden der Kalenderdaten. Bitte versuchen Sie es später erneut.');
                 }
             }
         })
         .catch(error => {
-            console.error('Calendar data fetch error:', error);
             if (window.matchMedia("(max-width: 768px)").matches) {
                 showMobileAlert('Fehler beim Laden der Kalenderdaten. Bitte versuchen Sie es später erneut.');
             }
         });
 }
 
-// Show a mobile-friendly alert/toast message
+// Show a mobile-friendly alert/toast message with sanitized content
 function showMobileAlert(message) {
     // Create a toast element if it doesn't exist
     let toast = document.getElementById('mobileToast');
@@ -490,8 +483,10 @@ function showMobileAlert(message) {
         document.body.appendChild(toast);
     }
     
-    // Set message and show toast
-    toast.textContent = message;
+    // Sanitize message to prevent any HTML/script injection
+    const sanitizedMessage = document.createTextNode(message);
+    toast.textContent = ''; // Clear previous content
+    toast.appendChild(sanitizedMessage);
     toast.style.display = 'block';
     
     // Hide toast after 3 seconds
@@ -504,7 +499,6 @@ function showMobileAlert(message) {
 function updateDayStatuses(statusData) {
     if (!statusData) return;
     
-    console.log('Updating day statuses with data:', statusData);
     
     // Verifiziere, dass die zurückgegebenen Daten zum aktuellen Monat/Jahr passen
     const dates = Object.keys(statusData);
@@ -515,10 +509,8 @@ function updateDayStatuses(statusData) {
         
         // Prüfe, ob der Monat im Datums-Key mit dem erwarteten Monat übereinstimmt
         const expectedMonth = document.getElementById('month').value.toString().padStart(2, '0');
-        console.log(`Received month: ${receivedMonth}, Expected month: ${expectedMonth}`);
         
         if (receivedMonth !== expectedMonth) {
-            console.warn(`Month mismatch: Received data for month ${receivedMonth} but expected ${expectedMonth}`);
         }
     }
     
@@ -550,7 +542,6 @@ function updateDayStatuses(statusData) {
         const dayElement = document.querySelector(`.day[data-date="${date}"]`);
         
         if (dayElement) {
-            console.log(`Setting day ${date} to status: ${status}`);
             // For non-past days, update status
             if (!dayElement.classList.contains('past')) {
                 // Remove status classes but keep past if it's set
@@ -559,7 +550,6 @@ function updateDayStatuses(statusData) {
                 dayElement.classList.add(status);
             }
         } else {
-            console.log(`Day element not found for date: ${date}`);
         }
     });
 }
@@ -574,7 +564,6 @@ function isSelectable(dayElement) {
     
     // Check if it's a past date (before today)
     if (date < today) {
-        console.log('Date is in the past and not selectable:', dateStr);
         
         // Show feedback on mobile
         if (window.matchMedia("(max-width: 768px)").matches) {
@@ -589,7 +578,6 @@ function isSelectable(dayElement) {
         // For dates with pending or booked status, we might need an extra check
         // to see if the time slot is partially available
         // This would require additional logic with backend communication
-        console.log('Date is not free:', dateStr);
         
         // Show feedback on mobile
         if (window.matchMedia("(max-width: 768px)").matches) {
@@ -708,7 +696,6 @@ function highlightDateRange(startDate, endDate) {
             if (!isSelectable(dayElement) && formattedDate !== startDate && formattedDate !== endDate) {
                 // If we encounter a non-selectable day in the range, we have a problem
                 allDaysInRangeAreSelectable = false;
-                console.warn(`Date range contains unavailable day: ${formattedDate}`);
                 
                 // We'll still highlight what we can up to this point
                 dayElement.classList.add('selected');
@@ -960,7 +947,6 @@ function updateReservationCosts() {
                 }
             })
             .catch(error => {
-                console.error('Error fetching pricing information:', error);
                 // Fallback to default calculation
                 calculateDefaultCosts(startDateTime, endDateTime, dayCountElement, totalCostElement, baseCostElement);
             });
