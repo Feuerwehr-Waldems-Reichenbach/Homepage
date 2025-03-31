@@ -16,6 +16,19 @@ $cspHeader = "Content-Security-Policy: ".
     "frame-ancestors 'none'; ".
     "upgrade-insecure-requests;";
 
+// Content Security Policy für den Meta-Tag (ohne frame-ancestors)
+$cspMeta = "default-src 'self'; ".
+    "script-src 'self' https://cdn.jsdelivr.net/npm/ https://cdn.jsdelivr.net/npm/flatpickr/ https://cdn.jsdelivr.net/npm/moment@2.29.4/ 'unsafe-inline' https://www.google.com/maps/ https://maps.googleapis.com; ".
+    "style-src 'self' https://cdn.jsdelivr.net/npm/ https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/ https://cdn.jsdelivr.net/npm/flatpickr/ 'unsafe-inline'; ".
+    "img-src 'self' data: https://www.google.com/maps/ https://*.googleapis.com https://*.gstatic.com; ".
+    "font-src 'self' https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/; ".
+    "connect-src 'self'; ".
+    "frame-src 'self' https://www.google.com/maps/ https://maps.googleapis.com; ".
+    "object-src 'none'; ".
+    "base-uri 'self'; ".
+    "form-action 'self'; ".
+    "upgrade-insecure-requests;";
+
 // Weitere Sicherheits-Header
 header($cspHeader);
 header("X-Content-Type-Options: nosniff");
@@ -32,7 +45,7 @@ header("Permissions-Policy: geolocation=(), camera=(), microphone=()");
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#343a40">
-    <meta http-equiv="Content-Security-Policy" content="<?php echo trim(str_replace('Content-Security-Policy: ', '', $cspHeader)); ?>">
+    <meta http-equiv="Content-Security-Policy" content="<?php echo $cspMeta; ?>">
     <title>Reservierungssystem der Grillhütte Waldems Reichenbach</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
