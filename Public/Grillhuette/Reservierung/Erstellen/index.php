@@ -28,6 +28,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $message = isset($_POST['message']) ? trim($_POST['message']) : null;
     $receiptRequested = isset($_POST['receipt_requested']) ? 1 : 0;
     
+    // New fields for public events
+    $isPublic = isset($_POST['is_public']) ? 1 : 0;
+    $eventName = null;
+    $displayStartDate = null;
+    $displayEndDate = null;
+    
+    // Only process these if it's a public event
+    if ($isPublic) {
+        $eventName = isset($_POST['event_name']) ? trim($_POST['event_name']) : null;
+        $displayStartDate = isset($_POST['display_start_date']) ? trim($_POST['display_start_date']) : null;
+        $displayEndDate = isset($_POST['display_end_date']) ? trim($_POST['display_end_date']) : null;
+        
+        // Validate event name for public events
+        if (empty($eventName)) {
+            $_SESSION['flash_message'] = 'Bitte geben Sie einen Veranstaltungsnamen für öffentliche Reservierungen ein.';
+            $_SESSION['flash_type'] = 'danger';
+            header('Location: ' . getRelativePath('home'));
+            exit;
+        }
+        
+        // Validate display dates
+        if (empty($displayStartDate) || empty($displayEndDate)) {
+            $_SESSION['flash_message'] = 'Bitte wählen Sie ein Anzeige-Start und -Enddatum für öffentliche Reservierungen.';
+            $_SESSION['flash_type'] = 'danger';
+            header('Location: ' . getRelativePath('home'));
+            exit;
+        }
+        
+        // Validate that display dates are within reservation period
+        if (strtotime($displayStartDate) < strtotime($startDate) || 
+            strtotime($displayEndDate) > strtotime($endDate)) {
+            $_SESSION['flash_message'] = 'Die Anzeigedaten müssen innerhalb des Reservierungszeitraums liegen.';
+            $_SESSION['flash_type'] = 'danger';
+            header('Location: ' . getRelativePath('home'));
+            exit;
+        }
+    }
+    
     // Datumsvalidierung
     if (empty($startDate) || empty($endDate)) {
         $_SESSION['flash_message'] = 'Bitte wählen Sie ein Start- und Enddatum aus.';
@@ -79,7 +117,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     // Reservierung erstellen
     $reservation = new Reservation();
-    $result = $reservation->create($_SESSION['user_id'], $startDatetime, $endDatetime, $message, $receiptRequested);
+    $result = $reservation->create(
+        $_SESSION['user_id'], 
+        $startDatetime, 
+        $endDatetime, 
+        $message, 
+        $receiptRequested,
+        $isPublic,
+        $eventName,
+        $displayStartDate,
+        $displayEndDate
+    );
     
     if ($result['success']) {
         $_SESSION['flash_message'] = $result['message'];

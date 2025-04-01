@@ -103,7 +103,8 @@ class Reservation {
      * @param int $receiptRequested Whether a receipt is requested (1) or not (0)
      * @return array Result with success flag and message
      */
-    public function create($userId, $startDatetime, $endDatetime, $userMessage = null, $receiptRequested = 0) {
+    public function create($userId, $startDatetime, $endDatetime, $userMessage = null, $receiptRequested = 0, 
+                   $isPublic = 0, $eventName = null, $displayStartDate = null, $displayEndDate = null) {
         // Zuweisung der URL-Variablen
         $myReservationsUrl = 'https://' . $_SERVER['HTTP_HOST'] . getRelativePath('Benutzer/Meine-Reservierungen');
         $adminReservationsUrl = 'https://' . $_SERVER['HTTP_HOST'] . getRelativePath('Admin/Reservierungsverwaltung');
@@ -135,13 +136,15 @@ class Reservation {
             $stmt = $this->db->prepare("
                 INSERT INTO gh_reservations (
                     user_id, start_datetime, end_datetime, user_message, 
-                    days_count, base_price, total_price, deposit_amount, receipt_requested
+                    days_count, base_price, total_price, deposit_amount, receipt_requested,
+                    is_public, event_name, display_event_name_on_calendar_start_date, display_event_name_on_calendar_end_date
                 ) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ");
             $stmt->execute([
                 $userId, $startDatetime, $endDatetime, $userMessage, 
-                $days, $userRate, $totalCost, $depositAmount, $receiptRequested
+                $days, $userRate, $totalCost, $depositAmount, $receiptRequested,
+                $isPublic, $eventName, $displayStartDate, $displayEndDate
             ]);
             
             // Formatierte Werte für E-Mail
@@ -642,7 +645,8 @@ class Reservation {
      * @param int $receiptRequested Whether a receipt is requested (1) or not (0)
      * @return array Result with success flag and message
      */
-    public function createByAdmin($userId, $startDatetime, $endDatetime, $adminMessage = null, $receiptRequested = 0) {
+    public function createByAdmin($userId, $startDatetime, $endDatetime, $adminMessage = null, $receiptRequested = 0,
+                       $isPublic = 0, $eventName = null, $displayStartDate = null, $displayEndDate = null) {
         // Zuweisung der URL-Variablen
         $myReservationsUrl = 'https://' . $_SERVER['HTTP_HOST'] . getRelativePath('Benutzer/Meine-Reservierungen');
         $adminReservationsUrl = 'https://' . $_SERVER['HTTP_HOST'] . getRelativePath('Admin/Reservierungsverwaltung');
@@ -674,13 +678,15 @@ class Reservation {
             $stmt = $this->db->prepare("
                 INSERT INTO gh_reservations (
                     user_id, start_datetime, end_datetime, admin_message, status,
-                    days_count, base_price, total_price, deposit_amount, receipt_requested
+                    days_count, base_price, total_price, deposit_amount, receipt_requested,
+                    is_public, event_name, display_event_name_on_calendar_start_date, display_event_name_on_calendar_end_date
                 ) 
-                VALUES (?, ?, ?, ?, 'confirmed', ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, 'confirmed', ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ");
             $stmt->execute([
                 $userId, $startDatetime, $endDatetime, $adminMessage,
-                $days, $userRate, $totalCost, $depositAmount, $receiptRequested
+                $days, $userRate, $totalCost, $depositAmount, $receiptRequested,
+                $isPublic, $eventName, $displayStartDate, $displayEndDate
             ]);
             
             // Benutzer per E-Mail benachrichtigen
@@ -997,7 +1003,8 @@ class Reservation {
         try {
             // Reservierungen für diesen Tag abrufen
             $stmt = $this->db->prepare("
-                SELECT id, start_datetime, end_datetime, status 
+                SELECT id, start_datetime, end_datetime, status, is_public, event_name,
+                       display_event_name_on_calendar_start_date, display_event_name_on_calendar_end_date
                 FROM gh_reservations 
                 WHERE 
                     status IN ('confirmed', 'pending') AND
@@ -1016,16 +1023,42 @@ class Reservation {
             
             $hasConfirmed = false;
             $hasPending = false;
+            $hasPublicEvent = false;
+            $eventName = null;
             
             foreach ($reservations as $reservation) {
                 if ($reservation['status'] == 'confirmed') {
                     $hasConfirmed = true;
+                    
+                    // Prüfen, ob es eine öffentliche Reservierung mit Eventanzeige für diesen Tag ist
+                    if ($reservation['is_public'] == 1 && !empty($reservation['event_name'])) {
+                        $displayStartDate = !empty($reservation['display_event_name_on_calendar_start_date']) 
+                            ? date('Y-m-d', strtotime($reservation['display_event_name_on_calendar_start_date'])) 
+                            : date('Y-m-d', strtotime($reservation['start_datetime']));
+                            
+                        $displayEndDate = !empty($reservation['display_event_name_on_calendar_end_date']) 
+                            ? date('Y-m-d', strtotime($reservation['display_event_name_on_calendar_end_date'])) 
+                            : date('Y-m-d', strtotime($reservation['end_datetime']));
+                        
+                        // Prüfen, ob das aktuelle Datum im Anzeigebereich liegt
+                        if ($date >= $displayStartDate && $date <= $displayEndDate) {
+                            $hasPublicEvent = true;
+                            $eventName = $reservation['event_name'];
+                        }
+                    }
                 } else if ($reservation['status'] == 'pending') {
                     $hasPending = true;
                 }
             }
             
+            // Rückgabe mit Event-Informationen
             if ($hasConfirmed) {
+                if ($hasPublicEvent) {
+                    return [
+                        'status' => 'public_event',
+                        'event_name' => $eventName
+                    ];
+                }
                 return 'booked'; // Belegt (bestätigt)
             } else if ($hasPending) {
                 return 'pending'; // Ausstehend (noch nicht bestätigt)
@@ -1067,10 +1100,14 @@ class Reservation {
      * @param int $receiptRequested Whether a receipt is requested (1) or not (0)
      * @return array Result with success flag and message
      */
-    public function updateReservation($id, $userId, $startDatetime, $endDatetime, $adminMessage = null, $status = 'pending', $receiptRequested = null) {
+    public function updateReservation($id, $userId, $startDatetime, $endDatetime, $adminMessage = null, 
+                          $status = 'pending', $receiptRequested = null, $isPublic = null, 
+                          $eventName = null, $displayStartDate = null, $displayEndDate = null) {
         try {
             // Überprüfen, ob die Reservierung existiert
-            $stmt = $this->db->prepare("SELECT id, status, receipt_requested FROM gh_reservations WHERE id = ?");
+            $stmt = $this->db->prepare("SELECT id, status, receipt_requested, is_public, event_name, 
+                                       display_event_name_on_calendar_start_date, display_event_name_on_calendar_end_date 
+                                       FROM gh_reservations WHERE id = ?");
             $stmt->execute([$id]);
             $currentReservation = $stmt->fetch(PDO::FETCH_ASSOC);
             
@@ -1081,11 +1118,35 @@ class Reservation {
                 ];
             }
 
-            // Wenn receipt_requested nicht explizit angegeben wurde, verwenden wir den aktuellen Wert
+            // Wenn optionale Parameter nicht explizit angegeben wurden, verwenden wir die aktuellen Werte
             if ($receiptRequested === null) {
                 $receiptRequested = $currentReservation['receipt_requested'] ?? 0;
             }
-
+            
+            if ($isPublic === null) {
+                $isPublic = $currentReservation['is_public'] ?? 0;
+            }
+            
+            if ($eventName === null) {
+                $eventName = $currentReservation['event_name'] ?? null;
+            }
+            
+            if ($displayStartDate === null) {
+                $displayStartDate = $currentReservation['display_event_name_on_calendar_start_date'] ?? null;
+            }
+            
+            if ($displayEndDate === null) {
+                $displayEndDate = $currentReservation['display_event_name_on_calendar_end_date'] ?? null;
+            }
+            
+            // Validierung für öffentliche Events
+            if ($isPublic && empty($eventName)) {
+                return [
+                    'success' => false,
+                    'message' => 'Für öffentliche Reservierungen muss ein Veranstaltungsname angegeben werden.'
+                ];
+            }
+            
             // Wenn der Status auf "confirmed" gesetzt werden soll, prüfen ob der Zeitraum verfügbar ist
             if ($status === 'confirmed') {
                 // Prüfen ob es andere bestätigte oder ausstehende Reservierungen im gleichen Zeitraum gibt
@@ -1130,12 +1191,16 @@ class Reservation {
             $stmt = $this->db->prepare("
                 UPDATE gh_reservations 
                 SET user_id = ?, start_datetime = ?, end_datetime = ?, admin_message = ?, status = ?,
-                    days_count = ?, base_price = ?, total_price = ?, deposit_amount = ?, receipt_requested = ?
+                    days_count = ?, base_price = ?, total_price = ?, deposit_amount = ?, receipt_requested = ?,
+                    is_public = ?, event_name = ?, display_event_name_on_calendar_start_date = ?, 
+                    display_event_name_on_calendar_end_date = ?
                 WHERE id = ?
             ");
             $stmt->execute([
                 $userId, $startDatetime, $endDatetime, $adminMessage, $status,
-                $days, $userRate, $totalCost, $depositAmount, $receiptRequested, $id
+                $days, $userRate, $totalCost, $depositAmount, $receiptRequested,
+                $isPublic, $eventName, $displayStartDate, $displayEndDate,
+                $id
             ]);
             
             // Benutzer-Informationen abrufen

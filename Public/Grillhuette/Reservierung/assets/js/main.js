@@ -524,7 +524,11 @@ function updateDayStatuses(statusData) {
         const date = new Date(dateStr);
         
         // Remove all status classes except other-month
-        dayElement.classList.remove('free', 'pending', 'booked', 'past');
+        dayElement.classList.remove('free', 'pending', 'booked', 'past', 'public-event');
+        
+        // Remove event name tooltip and data
+        dayElement.dataset.eventName = '';
+        dayElement.title = '';
         
         // Add free by default
         dayElement.classList.add('free');
@@ -538,18 +542,38 @@ function updateDayStatuses(statusData) {
     
     // Then update with statuses from the server
     Object.keys(statusData).forEach(date => {
-        const status = statusData[date];
+        const statusInfo = statusData[date];
         const dayElement = document.querySelector(`.day[data-date="${date}"]`);
         
         if (dayElement) {
+            // Remove status classes but keep past if it's set
+            dayElement.classList.remove('free', 'pending', 'booked', 'public-event');
+            
             // For non-past days, update status
             if (!dayElement.classList.contains('past')) {
-                // Remove status classes but keep past if it's set
-                dayElement.classList.remove('free', 'pending', 'booked');
-                // Add the new status class
-                dayElement.classList.add(status);
+                // Check if we have an object with a status and event_name
+                if (typeof statusInfo === 'object' && statusInfo.status === 'public_event') {
+                    // For public event, use a special class
+                    dayElement.classList.add('public-event');
+                    
+                    // Add event name as tooltip and data attribute
+                    if (statusInfo.event_name) {
+                        dayElement.dataset.eventName = statusInfo.event_name;
+                        dayElement.title = statusInfo.event_name;
+                        
+                        // Add a small indicator for the event name
+                        if (!dayElement.querySelector('.event-indicator')) {
+                            const indicator = document.createElement('span');
+                            indicator.className = 'event-indicator';
+                            indicator.textContent = statusInfo.event_name.substring(0, 1); // First letter
+                            dayElement.appendChild(indicator);
+                        }
+                    }
+                } else {
+                    // Add the normal status class
+                    dayElement.classList.add(statusInfo);
+                }
             }
-        } else {
         }
     });
 }
@@ -573,15 +597,21 @@ function isSelectable(dayElement) {
         return false;
     }
     
-    // Check if the day has booked or pending status
-    if (dayElement.classList.contains('booked') || dayElement.classList.contains('pending')) {
-        // For dates with pending or booked status, we might need an extra check
-        // to see if the time slot is partially available
-        // This would require additional logic with backend communication
+    // Check if the day has booked, pending, or public-event status
+    if (dayElement.classList.contains('booked') || 
+        dayElement.classList.contains('pending') || 
+        dayElement.classList.contains('public-event')) {
         
-        // Show feedback on mobile
+        // For dates with special status, show appropriate message
         if (window.matchMedia("(max-width: 768px)").matches) {
-            showMobileAlert('Dieses Datum ist bereits reserviert oder angefragt.');
+            let message = 'Dieses Datum ist bereits reserviert oder angefragt.';
+            
+            // If it's a public event, show the event name
+            if (dayElement.classList.contains('public-event') && dayElement.dataset.eventName) {
+                message = `Dieses Datum ist für "${dayElement.dataset.eventName}" reserviert.`;
+            }
+            
+            showMobileAlert(message);
         }
         
         return false;
