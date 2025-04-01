@@ -61,6 +61,40 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
             <!-- Kalender Container - volle Breite auf mobil, 2/3 auf Desktop -->
             <div class="col-12 col-lg-8 mb-4">
                 <div class="calendar-container">
+                    <style>
+                        /* Kalender-Styling */
+                        .day.public-event {
+                            background-color: #b8e0d2; /* Grün-bläuliche Farbe für öffentliche Events */
+                            color: #333;
+                            position: relative;
+                        }
+                        
+                        .day .event-indicator {
+                            position: absolute;
+                            bottom: 0;
+                            left: 0;
+                            right: 0;
+                            font-size: 10px;
+                            background-color: #5a8c7b;
+                            color: white;
+                            padding: 2px;
+                            text-align: center;
+                            white-space: nowrap;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                            max-width: 100%;
+                        }
+                        
+                        /* Mobile Legend */
+                        @media (max-width: 991.98px) {
+                            .mobile-legend .public-event-indicator {
+                                width: 15px;
+                                height: 15px;
+                                background-color: #b8e0d2;
+                                border-radius: 3px;
+                            }
+                        }
+                    </style>
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <button id="prevMonth" class="btn btn-outline-secondary">
                             <i class="bi bi-chevron-left"></i> <span class="d-none d-md-inline">Vorheriger Monat</span>
@@ -91,7 +125,7 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
                     <div class="card">
                         <div class="card-body p-3">
                             <h5 class="card-title h6 mb-2">Legende:</h5>
-                            <div class="d-flex flex-wrap">
+                            <div class="d-flex flex-wrap mobile-legend">
                                 <div class="me-3 mb-2">
                                     <div class="d-flex align-items-center">
                                         <div class="me-1" style="width: 15px; height: 15px; background-color: #d4edda; border-radius: 3px;"></div>
@@ -104,10 +138,16 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
                                         <small>Angefragt</small>
                                     </div>
                                 </div>
-                                <div class="mb-2">
+                                <div class="me-3 mb-2">
                                     <div class="d-flex align-items-center">
                                         <div class="me-1" style="width: 15px; height: 15px; background-color: #f8d7da; border-radius: 3px;"></div>
                                         <small>Belegt</small>
+                                    </div>
+                                </div>
+                                <div class="mb-2">
+                                    <div class="d-flex align-items-center">
+                                        <div class="me-1 public-event-indicator" style="width: 15px; height: 15px; background-color: #b8e0d2; border-radius: 3px;"></div>
+                                        <small>Veranstaltung</small>
                                     </div>
                                 </div>
                             </div>
@@ -124,22 +164,28 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
                         <p><?php echo $infoData['WillkommensUntertext'] ?? 'Hier können Sie freie Termine einsehen und eine Reservierung vornehmen.'; ?></p>
                         
                         <div class="row mb-3">
-                            <div class="col-md-4 mb-2">
+                            <div class="col-md-3 mb-2">
                                 <div class="d-flex align-items-center">
                                     <div class="me-2" style="width: 20px; height: 20px; background-color: #d4edda; border-radius: 3px;"></div>
                                     <span>Frei</span>
                                 </div>
                             </div>
-                            <div class="col-md-4 mb-2">
+                            <div class="col-md-3 mb-2">
                                 <div class="d-flex align-items-center">
                                     <div class="me-2" style="width: 20px; height: 20px; background-color: #fff3cd; border-radius: 3px;"></div>
-                                    <span>Anfrage in Bearbeitung</span>
+                                    <span>Angefragt</span>
                                 </div>
                             </div>
-                            <div class="col-md-4 mb-2">
+                            <div class="col-md-3 mb-2">
                                 <div class="d-flex align-items-center">
                                     <div class="me-2" style="width: 20px; height: 20px; background-color: #f8d7da; border-radius: 3px;"></div>
                                     <span>Belegt</span>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <div class="d-flex align-items-center">
+                                    <div class="me-2" style="width: 20px; height: 20px; background-color: #b8e0d2; border-radius: 3px;"></div>
+                                    <span>Veranstaltung</span>
                                 </div>
                             </div>
                         </div>
@@ -266,6 +312,34 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
                         }, true);
                     }
                     <?php endif; ?>
+
+                    // Public event toggle
+                    const isPublicCheckbox = document.getElementById('is_public');
+                    const publicEventDetails = document.getElementById('public-event-details');
+                    
+                    if (isPublicCheckbox && publicEventDetails) {
+                        isPublicCheckbox.addEventListener('change', function() {
+                            publicEventDetails.style.display = this.checked ? 'block' : 'none';
+                            
+                            // If unchecked, clear the fields
+                            if (!this.checked) {
+                                document.getElementById('event_name').value = '';
+                                document.getElementById('display_start_date').value = '';
+                                document.getElementById('display_end_date').value = '';
+                            } else {
+                                // Initialize with the start and end dates
+                                const startDate = document.getElementById('start_date');
+                                const endDate = document.getElementById('end_date');
+                                
+                                if (startDate && startDate.value) {
+                                    document.getElementById('display_start_date').value = startDate.value;
+                                }
+                                if (endDate && endDate.value) {
+                                    document.getElementById('display_end_date').value = endDate.value;
+                                }
+                            }
+                        });
+                    }
                 });
                 </script>
             </div>
@@ -302,6 +376,42 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
                                 <div class="mb-3 form-check">
                                     <input type="checkbox" class="form-check-input" id="receipt_requested" name="receipt_requested" value="1">
                                     <label class="form-check-label" for="receipt_requested">Quittung für die Reservierung gewünscht</label>
+                                </div>
+                                
+                                <div class="mb-3 form-check">
+                                    <input type="checkbox" class="form-check-input" id="is_public" name="is_public" value="1">
+                                    <label class="form-check-label" for="is_public">Öffentliche Reservierung (im Kalender sichtbar)</label>
+                                </div>
+                                
+                                <div id="public-event-details" style="display: none;">
+                                    <div class="mb-3">
+                                        <label for="event_name" class="form-label">Name der Veranstaltung</label>
+                                        <input type="text" class="form-control" id="event_name" name="event_name" maxlength="255" placeholder="z.B. Grillfest">
+                                    </div>
+
+                                    <div class="mb-3 form-check">
+                                        <input type="checkbox" class="form-check-input" id="show_date_range" name="show_date_range">
+                                        <label class="form-check-label" for="show_date_range">Veranstaltung geht über mehrere Tage</label>
+                                    </div>
+                                    
+                                    <div id="single-day-field" class="mb-3">
+                                        <label for="event_day" class="form-label">Veranstaltungstag</label>
+                                        <input type="text" class="form-control date-picker" id="event_day" name="event_day">
+                                        <div class="form-text">An diesem Tag wird die Veranstaltung im Kalender angezeigt.</div>
+                                    </div>
+                                    
+                                    <div id="date-range-fields" style="display: none;">
+                                        <div class="mb-3">
+                                            <label for="display_start_date" class="form-label">Veranstaltung anzeigen von</label>
+                                            <input type="text" class="form-control date-picker" id="display_start_date" name="display_start_date">
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label for="display_end_date" class="form-label">Veranstaltung anzeigen bis</label>
+                                            <input type="text" class="form-control date-picker" id="display_end_date" name="display_end_date">
+                                            <div class="form-text">In diesem Zeitraum wird die Veranstaltung im Kalender angezeigt.</div>
+                                        </div>
+                                    </div>
                                 </div>
                                 
                                 <div class="mb-3">

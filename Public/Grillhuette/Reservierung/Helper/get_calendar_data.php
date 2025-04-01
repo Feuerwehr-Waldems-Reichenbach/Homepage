@@ -35,11 +35,19 @@ try {
         // Format: YYYY-MM-DD
         $date = sprintf('%04d-%02d-%02d', $year, $month, $day);
         
-        // Status des Tages abrufen (free, pending, booked)
-        $status = $reservation->getReservationDayStatus($date);
+        // Status des Tages abrufen (free, pending, booked oder array mit ['status' => 'public_event', 'event_name' => 'Name'])
+        $dayStatus = $reservation->getReservationDayStatus($date);
         
-        // In das Array einfügen
-        $calendarData[$date] = $status;
+        if (is_array($dayStatus)) {
+            // Wenn es ein öffentliches Event ist, speichere Status und Event-Namen
+            $calendarData[$date] = [
+                'status' => $dayStatus['status'],
+                'event_name' => $dayStatus['event_name']
+            ];
+        } else {
+            // Ansonsten nur den Status
+            $calendarData[$date] = $dayStatus;
+        }
     }
     
     // JSON-Antwort senden

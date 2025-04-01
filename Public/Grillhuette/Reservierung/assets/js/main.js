@@ -221,6 +221,182 @@ function initializeDatePickers() {
             });
         });
     }
+
+    // Initialize flatpickr for display date fields
+    const displayStartPicker = flatpickr('#display_start_date', {
+        locale: "de",
+        dateFormat: "Y-m-d",
+        altInput: true,
+        altFormat: "j. F Y",
+        minDate: "today",
+        disableMobile: "true",
+        onChange: function(selectedDates, dateStr) {
+            // Update min date of display end picker
+            if (selectedDates[0]) {
+                displayEndPicker.set('minDate', selectedDates[0]);
+            }
+        },
+        onOpen: function(selectedDates, dateStr, instance) {
+            // Update allowed date range when picker opens
+            const startDate = document.getElementById('start_date').value;
+            const endDate = document.getElementById('end_date').value;
+            
+            if (startDate && endDate) {
+                instance.set('minDate', startDate);
+                instance.set('maxDate', endDate);
+            }
+        }
+    });
+
+    const displayEndPicker = flatpickr('#display_end_date', {
+        locale: "de",
+        dateFormat: "Y-m-d",
+        altInput: true,
+        altFormat: "j. F Y",
+        minDate: "today",
+        disableMobile: "true",
+        onOpen: function(selectedDates, dateStr, instance) {
+            // Update allowed date range when picker opens
+            const startDate = document.getElementById('start_date').value;
+            const endDate = document.getElementById('end_date').value;
+            const displayStart = document.getElementById('display_start_date').value;
+            
+            if (startDate && endDate) {
+                // Minimum date is either the reservation start date or the display start date
+                instance.set('minDate', displayStart || startDate);
+                instance.set('maxDate', endDate);
+            }
+        }
+    });
+
+    // Handle public event checkbox and date range toggle
+    const isPublicCheckbox = document.getElementById('is_public');
+    const showDateRangeCheckbox = document.getElementById('show_date_range');
+    const publicEventDetails = document.getElementById('public-event-details');
+    const singleDayField = document.getElementById('single-day-field');
+    const dateRangeFields = document.getElementById('date-range-fields');
+    const startDateInput = document.getElementById('start_date');
+    const endDateInput = document.getElementById('end_date');
+    const eventDayInput = document.getElementById('event_day');
+    const displayStartInput = document.getElementById('display_start_date');
+    const displayEndInput = document.getElementById('display_end_date');
+
+    // Initialize flatpickr for the event day field
+    const eventDayPicker = flatpickr('#event_day', {
+        locale: "de",
+        dateFormat: "Y-m-d",
+        altInput: true,
+        altFormat: "j. F Y",
+        minDate: "today",
+        disableMobile: "true",
+        onChange: function(selectedDates, dateStr) {
+            // When single day is selected, update both display date fields
+            if (selectedDates[0]) {
+                displayStartInput.value = dateStr;
+                displayEndInput.value = dateStr;
+            }
+        },
+        onOpen: function(selectedDates, dateStr, instance) {
+            // Update allowed date range when picker opens
+            const startDate = startDateInput.value;
+            const endDate = endDateInput.value;
+            
+            if (startDate && endDate) {
+                instance.set('minDate', startDate);
+                instance.set('maxDate', endDate);
+            }
+        }
+    });
+
+    if (isPublicCheckbox && publicEventDetails) {
+        isPublicCheckbox.addEventListener('change', function() {
+            publicEventDetails.style.display = this.checked ? 'block' : 'none';
+            if (this.checked && startDateInput.value) {
+                // Set the single day display date to the reservation start date if not set
+                if (!eventDayInput.value) {
+                    eventDayPicker.setDate(startDateInput.value);
+                }
+            }
+        });
+    }
+
+    if (showDateRangeCheckbox && dateRangeFields) {
+        showDateRangeCheckbox.addEventListener('change', function() {
+            dateRangeFields.style.display = this.checked ? 'block' : 'none';
+            singleDayField.style.display = this.checked ? 'none' : 'block';
+            
+            if (this.checked) {
+                // When switching to date range, if we have a single day selected,
+                // use it as the start and end date
+                if (eventDayInput.value) {
+                    displayStartPicker.setDate(eventDayInput.value);
+                    displayEndPicker.setDate(eventDayInput.value);
+                }
+            } else {
+                // When switching back to single day, use the start date if set
+                if (displayStartInput.value) {
+                    eventDayPicker.setDate(displayStartInput.value);
+                }
+                // Make sure both display dates are set to the single day
+                if (eventDayInput.value) {
+                    displayStartInput.value = eventDayInput.value;
+                    displayEndInput.value = eventDayInput.value;
+                }
+            }
+        });
+    }
+
+    // Update display date constraints when reservation dates change
+    if (startDateInput && endDateInput) {
+        const updateDisplayDateConstraints = function() {
+            const startDate = startDateInput.value;
+            const endDate = endDateInput.value;
+            const isDateRange = showDateRangeCheckbox && showDateRangeCheckbox.checked;
+
+            if (startDate && endDate) {
+                // Update constraints for the event day picker
+                eventDayPicker.set('minDate', startDate);
+                eventDayPicker.set('maxDate', endDate);
+
+                if (isDateRange) {
+                    // Update constraints for range pickers
+                    displayStartPicker.set('minDate', startDate);
+                    displayStartPicker.set('maxDate', endDate);
+                    displayEndPicker.set('minDate', displayStartInput.value || startDate);
+                    displayEndPicker.set('maxDate', endDate);
+
+                    // Validate and clear range dates if needed
+                    if (displayStartInput.value) {
+                        const displayStartDate = new Date(displayStartInput.value);
+                        const reservationStartDate = new Date(startDate);
+                        const reservationEndDate = new Date(endDate);
+                        
+                        if (displayStartDate < reservationStartDate || displayStartDate > reservationEndDate) {
+                            displayStartPicker.clear();
+                            displayEndPicker.clear();
+                        }
+                    }
+                } else {
+                    // Validate and clear single day if needed
+                    if (eventDayInput.value) {
+                        const eventDay = new Date(eventDayInput.value);
+                        const reservationStartDate = new Date(startDate);
+                        const reservationEndDate = new Date(endDate);
+                        
+                        if (eventDay < reservationStartDate || eventDay > reservationEndDate) {
+                            eventDayPicker.clear();
+                            displayStartInput.value = '';
+                            displayEndInput.value = '';
+                        }
+                    }
+                }
+            }
+        };
+
+        // Listen for changes to reservation dates
+        startDateInput.addEventListener('change', updateDisplayDateConstraints);
+        endDateInput.addEventListener('change', updateDisplayDateConstraints);
+    }
 }
 
 // Initialize and render the calendar
@@ -524,7 +700,11 @@ function updateDayStatuses(statusData) {
         const date = new Date(dateStr);
         
         // Remove all status classes except other-month
-        dayElement.classList.remove('free', 'pending', 'booked', 'past');
+        dayElement.classList.remove('free', 'pending', 'booked', 'past', 'public-event');
+        
+        // Remove event name tooltip and data
+        dayElement.dataset.eventName = '';
+        dayElement.title = '';
         
         // Add free by default
         dayElement.classList.add('free');
@@ -538,18 +718,38 @@ function updateDayStatuses(statusData) {
     
     // Then update with statuses from the server
     Object.keys(statusData).forEach(date => {
-        const status = statusData[date];
+        const statusInfo = statusData[date];
         const dayElement = document.querySelector(`.day[data-date="${date}"]`);
         
         if (dayElement) {
+            // Remove status classes but keep past if it's set
+            dayElement.classList.remove('free', 'pending', 'booked', 'public-event');
+            
             // For non-past days, update status
             if (!dayElement.classList.contains('past')) {
-                // Remove status classes but keep past if it's set
-                dayElement.classList.remove('free', 'pending', 'booked');
-                // Add the new status class
-                dayElement.classList.add(status);
+                // Check if we have an object with a status and event_name
+                if (typeof statusInfo === 'object' && statusInfo.status === 'public_event') {
+                    // For public event, use a special class
+                    dayElement.classList.add('public-event');
+                    
+                    // Add event name as tooltip and data attribute
+                    if (statusInfo.event_name) {
+                        dayElement.dataset.eventName = statusInfo.event_name;
+                        dayElement.title = statusInfo.event_name;
+                        
+                        // Add a small indicator for the event name
+                        if (!dayElement.querySelector('.event-indicator')) {
+                            const indicator = document.createElement('span');
+                            indicator.className = 'event-indicator';
+                            indicator.textContent = statusInfo.event_name; // Vollständiger Veranstaltungsname
+                            dayElement.appendChild(indicator);
+                        }
+                    }
+                } else {
+                    // Add the normal status class
+                    dayElement.classList.add(statusInfo);
+                }
             }
-        } else {
         }
     });
 }
@@ -573,15 +773,21 @@ function isSelectable(dayElement) {
         return false;
     }
     
-    // Check if the day has booked or pending status
-    if (dayElement.classList.contains('booked') || dayElement.classList.contains('pending')) {
-        // For dates with pending or booked status, we might need an extra check
-        // to see if the time slot is partially available
-        // This would require additional logic with backend communication
+    // Check if the day has booked, pending, or public-event status
+    if (dayElement.classList.contains('booked') || 
+        dayElement.classList.contains('pending') || 
+        dayElement.classList.contains('public-event')) {
         
-        // Show feedback on mobile
+        // For dates with special status, show appropriate message
         if (window.matchMedia("(max-width: 768px)").matches) {
-            showMobileAlert('Dieses Datum ist bereits reserviert oder angefragt.');
+            let message = 'Dieses Datum ist bereits reserviert oder angefragt.';
+            
+            // If it's a public event, show the event name
+            if (dayElement.classList.contains('public-event') && dayElement.dataset.eventName) {
+                message = `Dieses Datum ist für "${dayElement.dataset.eventName}" reserviert.`;
+            }
+            
+            showMobileAlert(message);
         }
         
         return false;
@@ -758,6 +964,12 @@ function setupReservationSelection() {
     reservationForm.addEventListener('submit', function(event) {
         const startDate = document.getElementById('start_date');
         const endDate = document.getElementById('end_date');
+        const isPublicCheckbox = document.getElementById('is_public');
+        const showDateRangeCheckbox = document.getElementById('show_date_range');
+        const publicEventDetails = document.getElementById('public-event-details');
+        const singleDayField = document.getElementById('single-day-field');
+        const dateRangeFields = document.getElementById('date-range-fields');
+        const eventName = document.getElementById('event_name');
         
         if (!startDate.value) {
             event.preventDefault();
@@ -784,19 +996,67 @@ function setupReservationSelection() {
             
             return false;
         }
-        
-        // Check if booking is at least 1 day
-        if (!isMinimumBookingDuration(startDate.value, endDate.value)) {
-            event.preventDefault();
-            const message = 'Der Mindestbuchungszeitraum beträgt 1 Tag.';
-            
-            if (window.matchMedia("(max-width: 768px)").matches) {
-                showMobileAlert(message);
-            } else {
-                alert(message);
+
+        // Validate public event fields if public checkbox is checked
+        if (isPublicCheckbox && isPublicCheckbox.checked) {
+            if (!eventName || !eventName.value.trim()) {
+                event.preventDefault();
+                const message = 'Bitte geben Sie einen Veranstaltungsnamen ein.';
+                if (window.matchMedia("(max-width: 768px)").matches) {
+                    showMobileAlert(message);
+                } else {
+                    alert(message);
+                }
+                return false;
             }
+
+            const isDateRange = showDateRangeCheckbox && showDateRangeCheckbox.checked;
             
-            return false;
+            if (!isDateRange && !eventDayInput.value) {
+                event.preventDefault();
+                const message = 'Bitte wählen Sie den Veranstaltungstag aus.';
+                if (window.matchMedia("(max-width: 768px)").matches) {
+                    showMobileAlert(message);
+                } else {
+                    alert(message);
+                }
+                return false;
+            }
+
+            if (isDateRange && (!displayStartInput.value || !displayEndInput.value)) {
+                event.preventDefault();
+                const message = 'Bitte wählen Sie Start- und Enddatum für den Veranstaltungszeitraum aus.';
+                if (window.matchMedia("(max-width: 768px)").matches) {
+                    showMobileAlert(message);
+                } else {
+                    alert(message);
+                }
+                return false;
+            }
+
+            // Validate dates are within reservation period
+            const reservationStart = new Date(startDate.value);
+            const reservationEnd = new Date(endDate.value);
+            let displayStart, displayEnd;
+
+            if (isDateRange) {
+                displayStart = new Date(displayStartInput.value);
+                displayEnd = new Date(displayEndInput.value);
+            } else {
+                displayStart = new Date(eventDayInput.value);
+                displayEnd = new Date(eventDayInput.value);
+            }
+
+            if (displayStart < reservationStart || displayEnd > reservationEnd) {
+                event.preventDefault();
+                const message = 'Die Veranstaltungstage müssen innerhalb des Reservierungszeitraums liegen.';
+                if (window.matchMedia("(max-width: 768px)").matches) {
+                    showMobileAlert(message);
+                } else {
+                    alert(message);
+                }
+                return false;
+            }
         }
         
         // Validate that all days in the range are available
@@ -1033,35 +1293,3 @@ function calculateDefaultCosts(startDateTime, endDateTime, dayCountElement, tota
     baseCostElement.textContent = formattedRate + '€';
     totalCostElement.textContent = formattedTotal + '€';
 }
-
-// Check if booking meets minimum duration requirement (1 day)
-function isMinimumBookingDuration(startDateStr, endDateStr) {
-    if (!startDateStr || !endDateStr) return false;
-    
-    const startTimeInput = document.getElementById('start_time');
-    const endTimeInput = document.getElementById('end_time');
-    
-    // Erstelle vollständige Datums-Zeit-Objekte
-    let startDateTime = new Date(startDateStr);
-    let endDateTime = new Date(endDateStr);
-    
-    // Füge die Uhrzeiten hinzu, falls verfügbar
-    if (startTimeInput && startTimeInput.value) {
-        const [startHours, startMinutes] = startTimeInput.value.split(':').map(Number);
-        startDateTime.setHours(startHours, startMinutes, 0);
-    }
-    
-    if (endTimeInput && endTimeInput.value) {
-        const [endHours, endMinutes] = endTimeInput.value.split(':').map(Number);
-        endDateTime.setHours(endHours, endMinutes, 0);
-    }
-    
-    // Berechne die Differenz in Millisekunden
-    const diffTime = Math.abs(endDateTime - startDateTime);
-    
-    // Berechne die Anzahl der Tage als Dezimalzahl
-    const diffDays = diffTime / (24 * 60 * 60 * 1000);
-    
-    // Prüfe, ob mindestens 1 Tag gebucht wird
-    return diffDays >= 1;
-} 
