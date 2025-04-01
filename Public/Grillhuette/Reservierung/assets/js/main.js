@@ -235,6 +235,16 @@ function initializeDatePickers() {
             if (selectedDates[0]) {
                 displayEndPicker.set('minDate', selectedDates[0]);
             }
+        },
+        onOpen: function(selectedDates, dateStr, instance) {
+            // Update allowed date range when picker opens
+            const startDate = document.getElementById('start_date').value;
+            const endDate = document.getElementById('end_date').value;
+            
+            if (startDate && endDate) {
+                instance.set('minDate', startDate);
+                instance.set('maxDate', endDate);
+            }
         }
     });
 
@@ -244,7 +254,19 @@ function initializeDatePickers() {
         altInput: true,
         altFormat: "j. F Y",
         minDate: "today",
-        disableMobile: "true"
+        disableMobile: "true",
+        onOpen: function(selectedDates, dateStr, instance) {
+            // Update allowed date range when picker opens
+            const startDate = document.getElementById('start_date').value;
+            const endDate = document.getElementById('end_date').value;
+            const displayStart = document.getElementById('display_start_date').value;
+            
+            if (startDate && endDate) {
+                // Minimum date is either the reservation start date or the display start date
+                instance.set('minDate', displayStart || startDate);
+                instance.set('maxDate', endDate);
+            }
+        }
     });
 
     // Handle public event checkbox
@@ -273,16 +295,41 @@ function initializeDatePickers() {
     // Update display date constraints when reservation dates change
     if (startDateInput && endDateInput) {
         const updateDisplayDateConstraints = function() {
-            if (startDateInput.value) {
-                displayStartPicker.set('minDate', startDateInput.value);
-                displayStartPicker.set('maxDate', endDateInput.value);
-            }
-            if (endDateInput.value) {
-                displayEndPicker.set('minDate', startDateInput.value);
-                displayEndPicker.set('maxDate', endDateInput.value);
+            const startDate = startDateInput.value;
+            const endDate = endDateInput.value;
+            const displayStart = displayStartInput.value;
+            const displayEnd = displayEndInput.value;
+
+            if (startDate && endDate) {
+                // Update constraints for both pickers
+                displayStartPicker.set('minDate', startDate);
+                displayStartPicker.set('maxDate', endDate);
+                displayEndPicker.set('minDate', displayStart || startDate);
+                displayEndPicker.set('maxDate', endDate);
+
+                // If current display dates are outside the new reservation range, clear them
+                if (displayStart) {
+                    const displayStartDate = new Date(displayStart);
+                    const reservationStartDate = new Date(startDate);
+                    const reservationEndDate = new Date(endDate);
+                    
+                    if (displayStartDate < reservationStartDate || displayStartDate > reservationEndDate) {
+                        displayStartPicker.clear();
+                    }
+                }
+                
+                if (displayEnd) {
+                    const displayEndDate = new Date(displayEnd);
+                    const reservationEndDate = new Date(endDate);
+                    
+                    if (displayEndDate > reservationEndDate) {
+                        displayEndPicker.clear();
+                    }
+                }
             }
         };
 
+        // Listen for changes to reservation dates
         startDateInput.addEventListener('change', updateDisplayDateConstraints);
         endDateInput.addEventListener('change', updateDisplayDateConstraints);
     }
