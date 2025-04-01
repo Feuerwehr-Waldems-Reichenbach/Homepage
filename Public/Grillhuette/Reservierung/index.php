@@ -71,17 +71,18 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
                         
                         .day .event-indicator {
                             position: absolute;
-                            bottom: 2px;
-                            right: 2px;
+                            bottom: 0;
+                            left: 0;
+                            right: 0;
                             font-size: 10px;
                             background-color: #5a8c7b;
                             color: white;
-                            width: 16px;
-                            height: 16px;
-                            border-radius: 50%;
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
+                            padding: 2px;
+                            text-align: center;
+                            white-space: nowrap;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                            max-width: 100%;
                         }
                         
                         /* Mobile Legend */

@@ -565,7 +565,7 @@ function updateDayStatuses(statusData) {
                         if (!dayElement.querySelector('.event-indicator')) {
                             const indicator = document.createElement('span');
                             indicator.className = 'event-indicator';
-                            indicator.textContent = statusInfo.event_name.substring(0, 1); // First letter
+                            indicator.textContent = statusInfo.event_name; // Vollständiger Veranstaltungsname
                             dayElement.appendChild(indicator);
                         }
                     }
