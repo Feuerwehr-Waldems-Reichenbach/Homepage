@@ -1614,5 +1614,87 @@ class Reservation {
             return [];
         }
     }
+    
+    /**
+     * Updates only the public event details of a reservation
+     * This allows users to modify their public event name and display dates without
+     * changing the core reservation details
+     * 
+     * @param int $id Reservation ID
+     * @param string $eventName Name of the public event
+     * @param string $displayStartDate Start date for displaying the event on the calendar
+     * @param string $displayEndDate End date for displaying the event on the calendar
+     * @return array Result with success flag and message
+     */
+    public function updatePublicEvent($id, $eventName, $displayStartDate, $displayEndDate) {
+        try {
+            // Überprüfen, ob die Reservierung existiert und dem aktuellen Benutzer gehört
+            $stmt = $this->db->prepare("SELECT id, user_id, start_datetime, end_datetime, status, is_public 
+                                      FROM gh_reservations WHERE id = ?");
+            $stmt->execute([$id]);
+            $reservation = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if (!$reservation) {
+                return [
+                    'success' => false,
+                    'message' => 'Reservierung nicht gefunden.'
+                ];
+            }
+            
+            // Sicherstellen, dass die Reservierung dem aktuellen Benutzer gehört
+            if ($reservation['user_id'] != $_SESSION['user_id']) {
+                return [
+                    'success' => false,
+                    'message' => 'Sie sind nicht berechtigt, diese Reservierung zu bearbeiten.'
+                ];
+            }
+            
+            // Sicherstellen, dass es sich um eine öffentliche Reservierung handelt
+            if (!$reservation['is_public']) {
+                return [
+                    'success' => false,
+                    'message' => 'Nur öffentliche Reservierungen können auf diese Weise bearbeitet werden.'
+                ];
+            }
+            
+            // Prüfen ob die Anzeigedaten innerhalb des Reservierungszeitraums liegen
+            $resStartDate = date('Y-m-d', strtotime($reservation['start_datetime']));
+            $resEndDate = date('Y-m-d', strtotime($reservation['end_datetime']));
+            
+            if (strtotime($displayStartDate) < strtotime($resStartDate) || 
+                strtotime($displayEndDate) > strtotime($resEndDate)) {
+                return [
+                    'success' => false,
+                    'message' => 'Die Anzeigedaten müssen innerhalb des Reservierungszeitraums liegen.'
+                ];
+            }
+            
+            // Nur die Veranstaltungsdaten aktualisieren
+            $stmt = $this->db->prepare("
+                UPDATE gh_reservations 
+                SET event_name = ?,
+                    display_event_name_on_calendar_start_date = ?, 
+                    display_event_name_on_calendar_end_date = ?
+                WHERE id = ?
+            ");
+            $stmt->execute([
+                $eventName,
+                $displayStartDate,
+                $displayEndDate,
+                $id
+            ]);
+            
+            return [
+                'success' => true,
+                'message' => 'Die Veranstaltungsdaten wurden erfolgreich aktualisiert.'
+            ];
+            
+        } catch (PDOException $e) {
+            return [
+                'success' => false,
+                'message' => 'Fehler beim Aktualisieren der Veranstaltungsdaten. Bitte versuchen Sie es später erneut.'
+            ];
+        }
+    }
 }
 ?> 
