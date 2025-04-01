@@ -33,6 +33,8 @@ $infoKeys = [
     'ImPreisEnthaltenBiertische',
     'WichtigerHinweis1',
     'WichtigerHinweis2',
+    'WichtigerHinweis3',
+    'WichtigerHinweis4',
     'VerwaltungspersonVorname',
     'VerwaltungspersonNachname',
     'VerwaltungspersonEmail',
@@ -191,8 +193,10 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
                                 } else {
                                     // Fallback für alte Einträge
                                     ?>
-                                    <li><?php echo $infoData['WichtigerHinweis1'] ?? 'Die Grillhütte sowie die Toiletten sind sauber zu verlassen'; ?></li>
-                                    <li><?php echo $infoData['WichtigerHinweis2'] ?? 'Müll ist selbst zu entsorgen'; ?></li>
+                                    <li><?php echo $infoData['WichtigerHinweis1'] ?? 'Es ist ausschließlich Barzahlung möglich'; ?></li>
+                                    <li><?php echo $infoData['WichtigerHinweis2'] ?? 'Bitte beachten Sie, dass in den kälteren Monaten (ca. Oktober bis März) die Toiletten möglicherweise nicht nutzbar sind, da das Wasser abgestellt wird. Der genaue Zeitraum kann variieren.'; ?></li>
+                                    <li><?php echo $infoData['WichtigerHinweis3'] ?? 'Die Grillhütte sowie die Toiletten sind sauber zu verlassen'; ?></li>
+                                    <li><?php echo $infoData['WichtigerHinweis4'] ?? 'Müll ist selbst zu entsorgen'; ?></li>
                                 <?php } ?>
                             </ul>
                         </div>
@@ -426,8 +430,10 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
                                                     endforeach;
                                                 } else {
                                                     ?>
-                                                    <li><?php echo $infoData['WichtigerHinweis1'] ?? 'Die Grillhütte sowie die Toiletten sind sauber zu verlassen'; ?></li>
-                                                    <li><?php echo $infoData['WichtigerHinweis2'] ?? 'Müll ist selbst zu entsorgen'; ?></li>
+                                                    <li><?php echo $infoData['WichtigerHinweis1'] ?? 'Es ist ausschließlich Barzahlung möglich'; ?></li>
+                                                    <li><?php echo $infoData['WichtigerHinweis2'] ?? 'Bitte beachten Sie, dass in den kälteren Monaten (ca. Oktober bis März) die Toiletten möglicherweise nicht nutzbar sind, da das Wasser abgestellt wird. Der genaue Zeitraum kann variieren.'; ?></li>
+                                                    <li><?php echo $infoData['WichtigerHinweis3'] ?? 'Die Grillhütte sowie die Toiletten sind sauber zu verlassen'; ?></li>
+                                                    <li><?php echo $infoData['WichtigerHinweis4'] ?? 'Müll ist selbst zu entsorgen'; ?></li>
                                                 <?php } ?>
                                             </ul>
                                         </div>
