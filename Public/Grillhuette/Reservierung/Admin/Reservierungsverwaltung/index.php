@@ -737,7 +737,7 @@ require_once '../../includes/header.php';
                     
                     <div class="mb-3 form-check">
                         <input type="checkbox" class="form-check-input" id="edit_is_public" name="is_public" value="1">
-                        <label class="form-label" for="edit_is_public">Öffentliche Reservierung (im Kalender sichtbar)</label>
+                        <label class="form-check-label" for="edit_is_public">Öffentliche Reservierung (im Kalender sichtbar)</label>
                     </div>
                     
                     <div id="edit_public-event-details" style="display: none;">
@@ -911,9 +911,6 @@ function prepareEditModal(button) {
     
     // Kostenberechnung aktualisieren
     updateEditCosts();
-    
-    // Öffentliche Veranstaltungsdetails anzeigen/ausblenden
-    togglePublicEventDetails('edit');
 }
 
 function confirmDeleteReservation() {
@@ -1154,9 +1151,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Handle public event checkbox for edit form
     const editIsPublicCheckbox = document.getElementById('edit_is_public');
     const editShowDateRangeCheckbox = document.getElementById('edit_show_date_range');
-    const editPublicEventDetails = document.getElementById('edit-public-event-details');
-    const editSingleDayField = document.getElementById('edit-single-day-field');
-    const editDateRangeFields = document.getElementById('edit-date-range-fields');
+    const editPublicEventDetails = document.getElementById('edit_public-event-details');
+    const editSingleDayField = document.getElementById('edit_single-day-field');
+    const editDateRangeFields = document.getElementById('edit_date-range-fields');
     
     if (editIsPublicCheckbox && editPublicEventDetails) {
         editIsPublicCheckbox.addEventListener('change', function() {
@@ -1293,6 +1290,45 @@ document.addEventListener('DOMContentLoaded', function() {
             if (eventDayField._flatpickr) eventDayField._flatpickr.destroy();
             if (displayStartDateField._flatpickr) displayStartDateField._flatpickr.destroy();
             if (displayEndDateField._flatpickr) displayEndDateField._flatpickr.destroy();
+            
+            // Event-Handler für die Checkbox einrichten
+            const editIsPublicCheckbox = document.getElementById('edit_is_public');
+            const editShowDateRangeCheckbox = document.getElementById('edit_show_date_range');
+            const editPublicEventDetails = document.getElementById('edit_public-event-details');
+            const editSingleDayField = document.getElementById('edit_single-day-field');
+            const editDateRangeFields = document.getElementById('edit_date-range-fields');
+            
+            // Handler für die öffentliche Veranstaltungs-Checkbox
+            if (editIsPublicCheckbox) {
+                editIsPublicCheckbox.addEventListener('change', function() {
+                    if (editPublicEventDetails) {
+                        editPublicEventDetails.style.display = this.checked ? 'block' : 'none';
+                    }
+                });
+            }
+            
+            // Handler für die Datumsbereich-Checkbox
+            if (editShowDateRangeCheckbox) {
+                editShowDateRangeCheckbox.addEventListener('change', function() {
+                    if (editSingleDayField) {
+                        editSingleDayField.style.display = this.checked ? 'none' : 'block';
+                    }
+                    if (editDateRangeFields) {
+                        editDateRangeFields.style.display = this.checked ? 'block' : 'none';
+                    }
+                    
+                    // Synchronisiere die Daten, wenn nötig
+                    if (this.checked && eventDayField && eventDayField.value) {
+                        // Wenn wir auf Datumsbereich umschalten und ein Tag ausgewählt ist,
+                        // verwende diesen für Start und Ende
+                        displayStartDateField.value = eventDayField.value;
+                        displayEndDateField.value = eventDayField.value;
+                    } else if (!this.checked && displayStartDateField && displayStartDateField.value) {
+                        // Wenn wir auf Einzeltag umschalten, verwende das Startdatum
+                        eventDayField.value = displayStartDateField.value;
+                    }
+                });
+            }
             
             // Date picker für Startdatum und Enddatum
             flatpickr('#edit_start_date', {
