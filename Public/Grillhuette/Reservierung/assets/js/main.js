@@ -269,24 +269,78 @@ function initializeDatePickers() {
         }
     });
 
-    // Handle public event checkbox
+    // Handle public event checkbox and date range toggle
     const isPublicCheckbox = document.getElementById('is_public');
+    const showDateRangeCheckbox = document.getElementById('show_date_range');
     const publicEventDetails = document.getElementById('public-event-details');
+    const singleDayField = document.getElementById('single-day-field');
+    const dateRangeFields = document.getElementById('date-range-fields');
     const startDateInput = document.getElementById('start_date');
     const endDateInput = document.getElementById('end_date');
+    const eventDayInput = document.getElementById('event_day');
     const displayStartInput = document.getElementById('display_start_date');
     const displayEndInput = document.getElementById('display_end_date');
+
+    // Initialize flatpickr for the event day field
+    const eventDayPicker = flatpickr('#event_day', {
+        locale: "de",
+        dateFormat: "Y-m-d",
+        altInput: true,
+        altFormat: "j. F Y",
+        minDate: "today",
+        disableMobile: "true",
+        onChange: function(selectedDates, dateStr) {
+            // When single day is selected, update both display date fields
+            if (selectedDates[0]) {
+                displayStartInput.value = dateStr;
+                displayEndInput.value = dateStr;
+            }
+        },
+        onOpen: function(selectedDates, dateStr, instance) {
+            // Update allowed date range when picker opens
+            const startDate = startDateInput.value;
+            const endDate = endDateInput.value;
+            
+            if (startDate && endDate) {
+                instance.set('minDate', startDate);
+                instance.set('maxDate', endDate);
+            }
+        }
+    });
 
     if (isPublicCheckbox && publicEventDetails) {
         isPublicCheckbox.addEventListener('change', function() {
             publicEventDetails.style.display = this.checked ? 'block' : 'none';
-            if (this.checked && startDateInput.value && endDateInput.value) {
-                // Only set display dates if they haven't been manually changed
-                if (!displayStartInput.value) {
-                    displayStartPicker.setDate(startDateInput.value);
+            if (this.checked && startDateInput.value) {
+                // Set the single day display date to the reservation start date if not set
+                if (!eventDayInput.value) {
+                    eventDayPicker.setDate(startDateInput.value);
                 }
-                if (!displayEndInput.value) {
-                    displayEndPicker.setDate(endDateInput.value);
+            }
+        });
+    }
+
+    if (showDateRangeCheckbox && dateRangeFields) {
+        showDateRangeCheckbox.addEventListener('change', function() {
+            dateRangeFields.style.display = this.checked ? 'block' : 'none';
+            singleDayField.style.display = this.checked ? 'none' : 'block';
+            
+            if (this.checked) {
+                // When switching to date range, if we have a single day selected,
+                // use it as the start and end date
+                if (eventDayInput.value) {
+                    displayStartPicker.setDate(eventDayInput.value);
+                    displayEndPicker.setDate(eventDayInput.value);
+                }
+            } else {
+                // When switching back to single day, use the start date if set
+                if (displayStartInput.value) {
+                    eventDayPicker.setDate(displayStartInput.value);
+                }
+                // Make sure both display dates are set to the single day
+                if (eventDayInput.value) {
+                    displayStartInput.value = eventDayInput.value;
+                    displayEndInput.value = eventDayInput.value;
                 }
             }
         });
@@ -297,33 +351,43 @@ function initializeDatePickers() {
         const updateDisplayDateConstraints = function() {
             const startDate = startDateInput.value;
             const endDate = endDateInput.value;
-            const displayStart = displayStartInput.value;
-            const displayEnd = displayEndInput.value;
+            const isDateRange = showDateRangeCheckbox && showDateRangeCheckbox.checked;
 
             if (startDate && endDate) {
-                // Update constraints for both pickers
-                displayStartPicker.set('minDate', startDate);
-                displayStartPicker.set('maxDate', endDate);
-                displayEndPicker.set('minDate', displayStart || startDate);
-                displayEndPicker.set('maxDate', endDate);
+                // Update constraints for the event day picker
+                eventDayPicker.set('minDate', startDate);
+                eventDayPicker.set('maxDate', endDate);
 
-                // If current display dates are outside the new reservation range, clear them
-                if (displayStart) {
-                    const displayStartDate = new Date(displayStart);
-                    const reservationStartDate = new Date(startDate);
-                    const reservationEndDate = new Date(endDate);
-                    
-                    if (displayStartDate < reservationStartDate || displayStartDate > reservationEndDate) {
-                        displayStartPicker.clear();
+                if (isDateRange) {
+                    // Update constraints for range pickers
+                    displayStartPicker.set('minDate', startDate);
+                    displayStartPicker.set('maxDate', endDate);
+                    displayEndPicker.set('minDate', displayStartInput.value || startDate);
+                    displayEndPicker.set('maxDate', endDate);
+
+                    // Validate and clear range dates if needed
+                    if (displayStartInput.value) {
+                        const displayStartDate = new Date(displayStartInput.value);
+                        const reservationStartDate = new Date(startDate);
+                        const reservationEndDate = new Date(endDate);
+                        
+                        if (displayStartDate < reservationStartDate || displayStartDate > reservationEndDate) {
+                            displayStartPicker.clear();
+                            displayEndPicker.clear();
+                        }
                     }
-                }
-                
-                if (displayEnd) {
-                    const displayEndDate = new Date(displayEnd);
-                    const reservationEndDate = new Date(endDate);
-                    
-                    if (displayEndDate > reservationEndDate) {
-                        displayEndPicker.clear();
+                } else {
+                    // Validate and clear single day if needed
+                    if (eventDayInput.value) {
+                        const eventDay = new Date(eventDayInput.value);
+                        const reservationStartDate = new Date(startDate);
+                        const reservationEndDate = new Date(endDate);
+                        
+                        if (eventDay < reservationStartDate || eventDay > reservationEndDate) {
+                            eventDayPicker.clear();
+                            displayStartInput.value = '';
+                            displayEndInput.value = '';
+                        }
                     }
                 }
             }
@@ -901,8 +965,10 @@ function setupReservationSelection() {
         const startDate = document.getElementById('start_date');
         const endDate = document.getElementById('end_date');
         const isPublicCheckbox = document.getElementById('is_public');
-        const displayStartDate = document.getElementById('display_start_date');
-        const displayEndDate = document.getElementById('display_end_date');
+        const showDateRangeCheckbox = document.getElementById('show_date_range');
+        const publicEventDetails = document.getElementById('public-event-details');
+        const singleDayField = document.getElementById('single-day-field');
+        const dateRangeFields = document.getElementById('date-range-fields');
         const eventName = document.getElementById('event_name');
         
         if (!startDate.value) {
@@ -944,9 +1010,11 @@ function setupReservationSelection() {
                 return false;
             }
 
-            if (!displayStartDate.value || !displayEndDate.value) {
+            const isDateRange = showDateRangeCheckbox && showDateRangeCheckbox.checked;
+            
+            if (!isDateRange && !eventDayInput.value) {
                 event.preventDefault();
-                const message = 'Bitte wählen Sie Start- und Enddatum für die Kalenderanzeige.';
+                const message = 'Bitte wählen Sie den Veranstaltungstag aus.';
                 if (window.matchMedia("(max-width: 768px)").matches) {
                     showMobileAlert(message);
                 } else {
@@ -955,15 +1023,33 @@ function setupReservationSelection() {
                 return false;
             }
 
-            // Validate display dates are within reservation period
+            if (isDateRange && (!displayStartInput.value || !displayEndInput.value)) {
+                event.preventDefault();
+                const message = 'Bitte wählen Sie Start- und Enddatum für den Veranstaltungszeitraum aus.';
+                if (window.matchMedia("(max-width: 768px)").matches) {
+                    showMobileAlert(message);
+                } else {
+                    alert(message);
+                }
+                return false;
+            }
+
+            // Validate dates are within reservation period
             const reservationStart = new Date(startDate.value);
             const reservationEnd = new Date(endDate.value);
-            const displayStart = new Date(displayStartDate.value);
-            const displayEnd = new Date(displayEndDate.value);
+            let displayStart, displayEnd;
+
+            if (isDateRange) {
+                displayStart = new Date(displayStartInput.value);
+                displayEnd = new Date(displayEndInput.value);
+            } else {
+                displayStart = new Date(eventDayInput.value);
+                displayEnd = new Date(eventDayInput.value);
+            }
 
             if (displayStart < reservationStart || displayEnd > reservationEnd) {
                 event.preventDefault();
-                const message = 'Die Anzeigedaten müssen innerhalb des Reservierungszeitraums liegen.';
+                const message = 'Die Veranstaltungstage müssen innerhalb des Reservierungszeitraums liegen.';
                 if (window.matchMedia("(max-width: 768px)").matches) {
                     showMobileAlert(message);
                 } else {
@@ -971,20 +1057,6 @@ function setupReservationSelection() {
                 }
                 return false;
             }
-        }
-
-        // Check if booking is at least 1 day
-        if (!isMinimumBookingDuration(startDate.value, endDate.value)) {
-            event.preventDefault();
-            const message = 'Der Mindestbuchungszeitraum beträgt 1 Tag.';
-            
-            if (window.matchMedia("(max-width: 768px)").matches) {
-                showMobileAlert(message);
-            } else {
-                alert(message);
-            }
-            
-            return false;
         }
         
         // Validate that all days in the range are available
@@ -1221,35 +1293,3 @@ function calculateDefaultCosts(startDateTime, endDateTime, dayCountElement, tota
     baseCostElement.textContent = formattedRate + '€';
     totalCostElement.textContent = formattedTotal + '€';
 }
-
-// Check if booking meets minimum duration requirement (1 day)
-function isMinimumBookingDuration(startDateStr, endDateStr) {
-    if (!startDateStr || !endDateStr) return false;
-    
-    const startTimeInput = document.getElementById('start_time');
-    const endTimeInput = document.getElementById('end_time');
-    
-    // Erstelle vollständige Datums-Zeit-Objekte
-    let startDateTime = new Date(startDateStr);
-    let endDateTime = new Date(endDateStr);
-    
-    // Füge die Uhrzeiten hinzu, falls verfügbar
-    if (startTimeInput && startTimeInput.value) {
-        const [startHours, startMinutes] = startTimeInput.value.split(':').map(Number);
-        startDateTime.setHours(startHours, startMinutes, 0);
-    }
-    
-    if (endTimeInput && endTimeInput.value) {
-        const [endHours, endMinutes] = endTimeInput.value.split(':').map(Number);
-        endDateTime.setHours(endHours, endMinutes, 0);
-    }
-    
-    // Berechne die Differenz in Millisekunden
-    const diffTime = Math.abs(endDateTime - startDateTime);
-    
-    // Berechne die Anzahl der Tage als Dezimalzahl
-    const diffDays = diffTime / (24 * 60 * 60 * 1000);
-    
-    // Prüfe, ob mindestens 1 Tag gebucht wird
-    return diffDays >= 1;
-} 

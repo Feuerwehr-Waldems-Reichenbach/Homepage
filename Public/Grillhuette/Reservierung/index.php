@@ -385,18 +385,32 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
                                 
                                 <div id="public-event-details" style="display: none;">
                                     <div class="mb-3">
-                                        <label for="event_name" class="form-label">Veranstaltungsname</label>
-                                        <input type="text" class="form-control" id="event_name" name="event_name" maxlength="255">
+                                        <label for="event_name" class="form-label">Name der Veranstaltung</label>
+                                        <input type="text" class="form-control" id="event_name" name="event_name" maxlength="255" placeholder="z.B. Grillfest">
+                                    </div>
+
+                                    <div class="mb-3 form-check">
+                                        <input type="checkbox" class="form-check-input" id="show_date_range" name="show_date_range">
+                                        <label class="form-check-label" for="show_date_range">Veranstaltung geht über mehrere Tage</label>
                                     </div>
                                     
-                                    <div class="mb-3">
-                                        <label for="display_start_date" class="form-label">Anzeige im Kalender von</label>
-                                        <input type="text" class="form-control date-picker" id="display_start_date" name="display_start_date">
+                                    <div id="single-day-field" class="mb-3">
+                                        <label for="event_day" class="form-label">Veranstaltungstag</label>
+                                        <input type="text" class="form-control date-picker" id="event_day" name="event_day">
+                                        <div class="form-text">An diesem Tag wird die Veranstaltung im Kalender angezeigt.</div>
                                     </div>
                                     
-                                    <div class="mb-3">
-                                        <label for="display_end_date" class="form-label">Anzeige im Kalender bis</label>
-                                        <input type="text" class="form-control date-picker" id="display_end_date" name="display_end_date">
+                                    <div id="date-range-fields" style="display: none;">
+                                        <div class="mb-3">
+                                            <label for="display_start_date" class="form-label">Veranstaltung anzeigen von</label>
+                                            <input type="text" class="form-control date-picker" id="display_start_date" name="display_start_date">
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label for="display_end_date" class="form-label">Veranstaltung anzeigen bis</label>
+                                            <input type="text" class="form-control date-picker" id="display_end_date" name="display_end_date">
+                                            <div class="form-text">In diesem Zeitraum wird die Veranstaltung im Kalender angezeigt.</div>
+                                        </div>
                                     </div>
                                 </div>
                                 
