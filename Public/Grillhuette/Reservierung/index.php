@@ -299,6 +299,11 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
                                     <input type="time" class="form-control" id="end_time" name="end_time" value="12:00" step="1800" required>
                                 </div>
                                 
+                                <div class="mb-3 form-check">
+                                    <input type="checkbox" class="form-check-input" id="receipt_requested" name="receipt_requested" value="1">
+                                    <label class="form-check-label" for="receipt_requested">Quittung für die Reservierung gewünscht</label>
+                                </div>
+                                
                                 <div class="mb-3">
                                     <label for="message" class="form-label">Nachricht / Anmerkungen (optional)</label>
                                     <textarea class="form-control" id="message" name="message" rows="3"></textarea>

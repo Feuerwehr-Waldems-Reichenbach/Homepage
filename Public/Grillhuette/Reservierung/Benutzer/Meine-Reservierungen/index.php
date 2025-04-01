@@ -157,6 +157,14 @@ require_once '../../includes/header.php';
                                                     <li class="border-top mt-2 pt-2"><strong>Gesamtpreis: <?php echo $formattedTotalPrice; ?>€</strong></li>
                                                 </ul>
                                                 <div class="form-text mt-2">Kaution (<?php echo $formattedDepositAmount; ?>€) nicht im Gesamtpreis enthalten.</div>
+                                                
+                                                <?php if (isset($res['receipt_requested']) && $res['receipt_requested']): ?>
+                                                <div class="mt-2 pt-2 border-top">
+                                                    <small class="text-primary">
+                                                        <i class="bi bi-receipt"></i> Sie haben eine Quittung für diese Reservierung angefordert.
+                                                    </small>
+                                                </div>
+                                                <?php endif; ?>
                                             </div>
                                         </div>
                                         
@@ -274,6 +282,14 @@ require_once '../../includes/header.php';
                                                     <li class="border-top mt-2 pt-2"><strong>Gesamtpreis: <?php echo $formattedTotalPrice; ?>€</strong></li>
                                                 </ul>
                                                 <div class="form-text mt-2">Kaution (<?php echo $formattedDepositAmount; ?>€) nicht im Gesamtpreis enthalten.</div>
+                                                
+                                                <?php if (isset($res['receipt_requested']) && $res['receipt_requested']): ?>
+                                                <div class="mt-2 pt-2 border-top">
+                                                    <small class="text-primary">
+                                                        <i class="bi bi-receipt"></i> Sie haben eine Quittung für diese Reservierung angefordert.
+                                                    </small>
+                                                </div>
+                                                <?php endif; ?>
                                             </div>
                                         </div>
                                         

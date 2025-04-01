@@ -53,6 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $startTime = isset($_POST['start_time']) ? trim($_POST['start_time']) : '12:00';
             $endTime = isset($_POST['end_time']) ? trim($_POST['end_time']) : '12:00';
             $adminMessage = isset($_POST['admin_message']) ? trim($_POST['admin_message']) : '';
+            $receiptRequested = isset($_POST['receipt_requested']) ? 1 : 0;
             
             // Validierung
             $errors = [];
@@ -80,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $_SESSION['flash_message'] = 'Das Enddatum muss nach dem Startdatum liegen.';
                     $_SESSION['flash_type'] = 'danger';
                 } else {
-                    $result = $reservation->createByAdmin($userId, $startDatetime, $endDatetime, $adminMessage);
+                    $result = $reservation->createByAdmin($userId, $startDatetime, $endDatetime, $adminMessage, $receiptRequested);
                     
                     $_SESSION['flash_message'] = $result['message'];
                     $_SESSION['flash_type'] = $result['success'] ? 'success' : 'danger';
@@ -117,6 +118,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $endTime = isset($_POST['end_time']) ? trim($_POST['end_time']) : '12:00';
             $adminMessage = isset($_POST['admin_message']) ? trim($_POST['admin_message']) : '';
             $status = isset($_POST['status']) ? trim($_POST['status']) : 'pending';
+            $receiptRequested = isset($_POST['receipt_requested']) ? 1 : 0;
             
             // Validierung
             $errors = [];
@@ -148,7 +150,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $_SESSION['flash_message'] = 'Das Enddatum muss nach dem Startdatum liegen.';
                     $_SESSION['flash_type'] = 'danger';
                 } else {
-                    $result = $reservation->updateReservation($reservationId, $userId, $startDatetime, $endDatetime, $adminMessage, $status);
+                    $result = $reservation->updateReservation($reservationId, $userId, $startDatetime, $endDatetime, $adminMessage, $status, $receiptRequested);
                     
                     $_SESSION['flash_message'] = $result['message'];
                     $_SESSION['flash_type'] = $result['success'] ? 'success' : 'danger';
@@ -274,6 +276,14 @@ require_once '../../includes/header.php';
                                                 </small>
                                             </div>
                                             <?php endif; ?>
+                                            
+                                            <?php if (isset($res['receipt_requested']) && $res['receipt_requested']): ?>
+                                            <div class="mt-1">
+                                                <small class="text-primary">
+                                                    <i class="bi bi-receipt"></i> Quittung gewünscht
+                                                </small>
+                                            </div>
+                                            <?php endif; ?>
                                         </td>
                                         <td>
                                             <span class="badge status-badge status-<?php echo $res['status']; ?>">
@@ -327,6 +337,7 @@ require_once '../../includes/header.php';
                                                     data-message="<?php echo escape($res['admin_message'] ?? ''); ?>"
                                                     data-user-message="<?php echo escape($res['user_message'] ?? ''); ?>"
                                                     data-status="<?php echo $res['status']; ?>"
+                                                    data-receipt-requested="<?php echo isset($res['receipt_requested']) && $res['receipt_requested'] ? '1' : '0'; ?>"
                                                     onclick="prepareEditModal(this)">
                                                 <i class="bi bi-pencil"></i> Bearbeiten
                                             </button>
@@ -396,6 +407,11 @@ require_once '../../includes/header.php';
                             <label for="admin_message" class="form-label">Nachricht an den Benutzer (optional)</label>
                             <textarea class="form-control" id="admin_message" name="admin_message" rows="1"></textarea>
                         </div>
+                    </div>
+                    
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="receipt_requested" name="receipt_requested" value="1">
+                        <label class="form-check-label" for="receipt_requested">Quittung für die Reservierung gewünscht</label>
                     </div>
                     
                     <!-- Kostenübersicht -->
@@ -515,6 +531,11 @@ require_once '../../includes/header.php';
                         </div>
                     </div>
                     
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="edit_receipt_requested" name="receipt_requested" value="1">
+                        <label class="form-check-label" for="edit_receipt_requested">Quittung für die Reservierung gewünscht</label>
+                    </div>
+                    
                     <div class="row">
                         <div class="col-md-8 mb-3">
                             <!-- Kostenübersicht -->
@@ -579,43 +600,50 @@ require_once '../../includes/header.php';
 <script>
 // Diese Funktion wird aufgerufen, wenn der "Bearbeiten"-Button geklickt wird
 function prepareEditModal(button) {
-    // Daten aus den Button-Attributen auslesen
+    // Reservation ID abrufen
     const reservationId = button.getAttribute('data-id');
-    const userId = button.getAttribute('data-user-id');
-    const startDate = button.getAttribute('data-start');
-    const startTime = button.getAttribute('data-start-time');
-    const endDate = button.getAttribute('data-end');
-    const endTime = button.getAttribute('data-end-time');
-    const adminMessage = button.getAttribute('data-message');
-    const userMessage = button.getAttribute('data-user-message');
-    const status = button.getAttribute('data-status');
-    
-    // Formularfelder ausfüllen
     document.getElementById('edit_reservation_id').value = reservationId;
-    document.getElementById('delete_reservation_id').value = reservationId;
+    
+    // Benutzer ID 
+    const userId = button.getAttribute('data-user-id');
     document.getElementById('edit_user_id').value = userId;
+    
+    // Startdatum 
+    const startDate = button.getAttribute('data-start');
     document.getElementById('edit_start_date').value = startDate;
-    document.getElementById('edit_start_time').value = startTime;
+    
+    // Enddatum 
+    const endDate = button.getAttribute('data-end');
     document.getElementById('edit_end_date').value = endDate;
+    
+    // Startzeit 
+    const startTime = button.getAttribute('data-start-time');
+    document.getElementById('edit_start_time').value = startTime;
+    
+    // Endzeit 
+    const endTime = button.getAttribute('data-end-time');
     document.getElementById('edit_end_time').value = endTime;
-    document.getElementById('edit_admin_message').value = adminMessage;
-    document.getElementById('edit_user_message_display').value = userMessage;
+    
+    // Admin-Nachricht 
+    const message = button.getAttribute('data-message');
+    document.getElementById('edit_admin_message').value = message || '';
+    
+    // Benutzer-Nachricht
+    const userMessage = button.getAttribute('data-user-message');
+    document.getElementById('edit_user_message_display').value = userMessage || '';
+    
+    // Status (Dropdown)
+    const status = button.getAttribute('data-status');
     document.getElementById('edit_status').value = status;
     
-    // Time values direkt im nativen HTML5-Format setzen
-    const startTimeField = document.getElementById('edit_start_time');
-    const endTimeField = document.getElementById('edit_end_time');
+    // Receipt requested
+    const receiptRequested = button.getAttribute('data-receipt-requested');
+    document.getElementById('edit_receipt_requested').checked = (receiptRequested === '1');
     
-    // Ensure the time values are properly formatted as HH:MM
-    if (startTime && startTimeField) {
-        startTimeField.value = startTime;
-    }
+    // Löschformular vorbereiten
+    document.getElementById('delete_reservation_id').value = reservationId;
     
-    if (endTime && endTimeField) {
-        endTimeField.value = endTime;
-    }
-    
-    // Update cost calculation
+    // Kostenberechnung aktualisieren
     updateEditCosts();
 }
 

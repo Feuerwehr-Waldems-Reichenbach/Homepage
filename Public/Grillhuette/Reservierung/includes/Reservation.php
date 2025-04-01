@@ -93,7 +93,17 @@ class Reservation {
         }
     }
     
-    public function create($userId, $startDatetime, $endDatetime, $userMessage = null) {
+    /**
+     * Creates a new reservation
+     * 
+     * @param int $userId User ID
+     * @param string $startDatetime Start date and time
+     * @param string $endDatetime End date and time
+     * @param string|null $userMessage Optional user message
+     * @param int $receiptRequested Whether a receipt is requested (1) or not (0)
+     * @return array Result with success flag and message
+     */
+    public function create($userId, $startDatetime, $endDatetime, $userMessage = null, $receiptRequested = 0) {
         // Zuweisung der URL-Variablen
         $myReservationsUrl = 'https://' . $_SERVER['HTTP_HOST'] . getRelativePath('Benutzer/Meine-Reservierungen');
         $adminReservationsUrl = 'https://' . $_SERVER['HTTP_HOST'] . getRelativePath('Admin/Reservierungsverwaltung');
@@ -125,13 +135,13 @@ class Reservation {
             $stmt = $this->db->prepare("
                 INSERT INTO gh_reservations (
                     user_id, start_datetime, end_datetime, user_message, 
-                    days_count, base_price, total_price, deposit_amount
+                    days_count, base_price, total_price, deposit_amount, receipt_requested
                 ) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             ");
             $stmt->execute([
                 $userId, $startDatetime, $endDatetime, $userMessage, 
-                $days, $userRate, $totalCost, $depositAmount
+                $days, $userRate, $totalCost, $depositAmount, $receiptRequested
             ]);
             
             // Formatierte Werte für E-Mail
@@ -235,7 +245,8 @@ class Reservation {
                                     Benutzer: ' . $user['first_name'] . ' ' . $user['last_name'] . '<br>
                                     E-Mail: ' . $user['email'] . '<br>
                                     Von: ' . date('d.m.Y H:i', strtotime($startDatetime)) . '<br>
-                                    Bis: ' . date('d.m.Y H:i', strtotime($endDatetime)) . '
+                                    Bis: ' . date('d.m.Y H:i', strtotime($endDatetime)) . '<br>
+                                    Quittung gewünscht: <strong>' . ($receiptRequested ? 'Ja' : 'Nein') . '</strong><br>
                                 </div>
                                 
                                 <div class="cost-box">
@@ -621,7 +632,17 @@ class Reservation {
         }
     }
     
-    public function createByAdmin($userId, $startDatetime, $endDatetime, $adminMessage = null) {
+    /**
+     * Creates a reservation directly by an admin (already confirmed)
+     * 
+     * @param int $userId User ID
+     * @param string $startDatetime Start date and time
+     * @param string $endDatetime End date and time
+     * @param string|null $adminMessage Optional admin message
+     * @param int $receiptRequested Whether a receipt is requested (1) or not (0)
+     * @return array Result with success flag and message
+     */
+    public function createByAdmin($userId, $startDatetime, $endDatetime, $adminMessage = null, $receiptRequested = 0) {
         // Zuweisung der URL-Variablen
         $myReservationsUrl = 'https://' . $_SERVER['HTTP_HOST'] . getRelativePath('Benutzer/Meine-Reservierungen');
         $adminReservationsUrl = 'https://' . $_SERVER['HTTP_HOST'] . getRelativePath('Admin/Reservierungsverwaltung');
@@ -653,13 +674,13 @@ class Reservation {
             $stmt = $this->db->prepare("
                 INSERT INTO gh_reservations (
                     user_id, start_datetime, end_datetime, admin_message, status,
-                    days_count, base_price, total_price, deposit_amount
+                    days_count, base_price, total_price, deposit_amount, receipt_requested
                 ) 
-                VALUES (?, ?, ?, ?, 'confirmed', ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, 'confirmed', ?, ?, ?, ?, ?)
             ");
             $stmt->execute([
                 $userId, $startDatetime, $endDatetime, $adminMessage,
-                $days, $userRate, $totalCost, $depositAmount
+                $days, $userRate, $totalCost, $depositAmount, $receiptRequested
             ]);
             
             // Benutzer per E-Mail benachrichtigen
@@ -1034,17 +1055,35 @@ class Reservation {
         }
     }
 
-    public function updateReservation($id, $userId, $startDatetime, $endDatetime, $adminMessage = null, $status = 'pending') {
+    /**
+     * Updates an existing reservation
+     * 
+     * @param int $id Reservation ID
+     * @param int $userId User ID
+     * @param string $startDatetime Start date and time
+     * @param string $endDatetime End date and time
+     * @param string|null $adminMessage Optional admin message
+     * @param string $status Status of the reservation
+     * @param int $receiptRequested Whether a receipt is requested (1) or not (0)
+     * @return array Result with success flag and message
+     */
+    public function updateReservation($id, $userId, $startDatetime, $endDatetime, $adminMessage = null, $status = 'pending', $receiptRequested = null) {
         try {
             // Überprüfen, ob die Reservierung existiert
-            $stmt = $this->db->prepare("SELECT id, status FROM gh_reservations WHERE id = ?");
+            $stmt = $this->db->prepare("SELECT id, status, receipt_requested FROM gh_reservations WHERE id = ?");
             $stmt->execute([$id]);
+            $currentReservation = $stmt->fetch(PDO::FETCH_ASSOC);
             
-            if ($stmt->rowCount() == 0) {
+            if (!$currentReservation) {
                 return [
                     'success' => false,
                     'message' => 'Reservierung nicht gefunden.'
                 ];
+            }
+
+            // Wenn receipt_requested nicht explizit angegeben wurde, verwenden wir den aktuellen Wert
+            if ($receiptRequested === null) {
+                $receiptRequested = $currentReservation['receipt_requested'] ?? 0;
             }
 
             // Wenn der Status auf "confirmed" gesetzt werden soll, prüfen ob der Zeitraum verfügbar ist
@@ -1091,12 +1130,12 @@ class Reservation {
             $stmt = $this->db->prepare("
                 UPDATE gh_reservations 
                 SET user_id = ?, start_datetime = ?, end_datetime = ?, admin_message = ?, status = ?,
-                    days_count = ?, base_price = ?, total_price = ?, deposit_amount = ?
+                    days_count = ?, base_price = ?, total_price = ?, deposit_amount = ?, receipt_requested = ?
                 WHERE id = ?
             ");
             $stmt->execute([
                 $userId, $startDatetime, $endDatetime, $adminMessage, $status,
-                $days, $userRate, $totalCost, $depositAmount, $id
+                $days, $userRate, $totalCost, $depositAmount, $receiptRequested, $id
             ]);
             
             // Benutzer-Informationen abrufen

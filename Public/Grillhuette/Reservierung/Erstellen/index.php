@@ -26,6 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $startTime = isset($_POST['start_time']) ? trim($_POST['start_time']) : '12:00';
     $endTime = isset($_POST['end_time']) ? trim($_POST['end_time']) : '12:00';
     $message = isset($_POST['message']) ? trim($_POST['message']) : null;
+    $receiptRequested = isset($_POST['receipt_requested']) ? 1 : 0;
     
     // Datumsvalidierung
     if (empty($startDate) || empty($endDate)) {
@@ -78,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     // Reservierung erstellen
     $reservation = new Reservation();
-    $result = $reservation->create($_SESSION['user_id'], $startDatetime, $endDatetime, $message);
+    $result = $reservation->create($_SESSION['user_id'], $startDatetime, $endDatetime, $message, $receiptRequested);
     
     if ($result['success']) {
         $_SESSION['flash_message'] = $result['message'];
