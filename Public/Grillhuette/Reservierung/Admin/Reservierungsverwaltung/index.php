@@ -54,6 +54,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $endTime = isset($_POST['end_time']) ? trim($_POST['end_time']) : '12:00';
             $adminMessage = isset($_POST['admin_message']) ? trim($_POST['admin_message']) : '';
             $receiptRequested = isset($_POST['receipt_requested']) ? 1 : 0;
+            $isPublic = isset($_POST['is_public']) ? 1 : 0;
+            $eventName = null;
+            $displayStartDate = null;
+            $displayEndDate = null;
+            
+            // Wenn öffentliche Veranstaltung
+            if ($isPublic) {
+                $eventName = isset($_POST['event_name']) ? trim($_POST['event_name']) : null;
+                $isDateRange = isset($_POST['show_date_range']) && $_POST['show_date_range'] === 'on';
+                
+                if ($isDateRange) {
+                    $displayStartDate = isset($_POST['display_start_date']) ? trim($_POST['display_start_date']) : null;
+                    $displayEndDate = isset($_POST['display_end_date']) ? trim($_POST['display_end_date']) : null;
+                } else {
+                    // Wenn kein Datumsbereich, verwende den einzelnen Tag für beide Daten
+                    $eventDay = isset($_POST['event_day']) ? trim($_POST['event_day']) : null;
+                    $displayStartDate = $eventDay;
+                    $displayEndDate = $eventDay;
+                }
+            }
             
             // Validierung
             $errors = [];
@@ -71,6 +91,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $errors[] = 'Bitte geben Sie gültige Uhrzeiten ein (Format: HH:MM).';
             }
             
+            if ($isPublic) {
+                if (empty($eventName)) {
+                    $errors[] = 'Bitte geben Sie einen Namen für die öffentliche Veranstaltung an.';
+                }
+                
+                if (empty($displayStartDate) || empty($displayEndDate)) {
+                    $errors[] = 'Bitte wählen Sie ein Anzeige-Start und -Enddatum für öffentliche Reservierungen.';
+                }
+            }
+            
             if (empty($errors)) {
                 // Start- und Enddatum mit Uhrzeit kombinieren
                 $startDatetime = $startDate . ' ' . $startTime . ':00';
@@ -80,7 +110,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if (strtotime($endDatetime) <= strtotime($startDatetime)) {
                     $_SESSION['flash_message'] = 'Das Enddatum muss nach dem Startdatum liegen.';
                     $_SESSION['flash_type'] = 'danger';
-                } else {
+                } 
+                // Validieren der öffentlichen Veranstaltungsdaten
+                else if ($isPublic) {
+                    if (empty($eventName)) {
+                        $_SESSION['flash_message'] = 'Bitte geben Sie einen Namen für die Veranstaltung ein.';
+                        $_SESSION['flash_type'] = 'danger';
+                    }
+                    else if (empty($displayStartDate) || empty($displayEndDate)) {
+                        $_SESSION['flash_message'] = 'Bitte wählen Sie die Anzeigezeiträume für die Veranstaltung.';
+                        $_SESSION['flash_type'] = 'danger';
+                    }
+                    else if (strtotime($displayStartDate) < strtotime($startDate) || 
+                            strtotime($displayEndDate) > strtotime($endDate)) {
+                        $_SESSION['flash_message'] = 'Die Anzeigedaten müssen innerhalb des Reservierungszeitraums liegen.';
+                        $_SESSION['flash_type'] = 'danger';
+                    }
+                    else {
+                        // Alle Validierungen bestanden - Reservierung erstellen
+                        $result = $reservation->createByAdmin(
+                            $userId, 
+                            $startDatetime, 
+                            $endDatetime, 
+                            $adminMessage, 
+                            $receiptRequested,
+                            $isPublic,
+                            $eventName,
+                            $displayStartDate,
+                            $displayEndDate
+                        );
+                        
+                        $_SESSION['flash_message'] = $result['message'];
+                        $_SESSION['flash_type'] = $result['success'] ? 'success' : 'danger';
+                    }
+                }
+                else {
+                    // Keine öffentliche Veranstaltung - normale Reservierung erstellen
                     $result = $reservation->createByAdmin($userId, $startDatetime, $endDatetime, $adminMessage, $receiptRequested);
                     
                     $_SESSION['flash_message'] = $result['message'];
@@ -119,6 +184,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $adminMessage = isset($_POST['admin_message']) ? trim($_POST['admin_message']) : '';
             $status = isset($_POST['status']) ? trim($_POST['status']) : 'pending';
             $receiptRequested = isset($_POST['receipt_requested']) ? 1 : 0;
+            $isPublic = isset($_POST['is_public']) ? 1 : 0;
+            $eventName = null;
+            $displayStartDate = null;
+            $displayEndDate = null;
+            
+            // Wenn öffentliche Veranstaltung
+            if ($isPublic) {
+                $eventName = isset($_POST['event_name']) ? trim($_POST['event_name']) : null;
+                $isDateRange = isset($_POST['show_date_range']) && $_POST['show_date_range'] === 'on';
+                
+                if ($isDateRange) {
+                    $displayStartDate = isset($_POST['display_start_date']) ? trim($_POST['display_start_date']) : null;
+                    $displayEndDate = isset($_POST['display_end_date']) ? trim($_POST['display_end_date']) : null;
+                } else {
+                    // Wenn kein Datumsbereich, verwende den einzelnen Tag für beide Daten
+                    $eventDay = isset($_POST['event_day']) ? trim($_POST['event_day']) : null;
+                    $displayStartDate = $eventDay;
+                    $displayEndDate = $eventDay;
+                }
+            }
             
             // Validierung
             $errors = [];
@@ -140,6 +225,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $errors[] = 'Ungültiger Status.';
             }
             
+            if ($isPublic) {
+                if (empty($eventName)) {
+                    $errors[] = 'Bitte geben Sie einen Namen für die öffentliche Veranstaltung an.';
+                }
+                
+                if (empty($displayStartDate) || empty($displayEndDate)) {
+                    $errors[] = 'Bitte wählen Sie ein Anzeige-Start und -Enddatum für öffentliche Reservierungen.';
+                }
+            }
+            
             if (empty($errors)) {
                 // Start- und Enddatum mit Uhrzeit kombinieren
                 $startDatetime = $startDate . ' ' . $startTime . ':00';
@@ -150,7 +245,63 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $_SESSION['flash_message'] = 'Das Enddatum muss nach dem Startdatum liegen.';
                     $_SESSION['flash_type'] = 'danger';
                 } else {
-                    $result = $reservation->updateReservation($reservationId, $userId, $startDatetime, $endDatetime, $adminMessage, $status, $receiptRequested);
+                    // Validieren der öffentlichen Veranstaltungsdaten
+                    if ($isPublic) {
+                        if (empty($eventName)) {
+                            $_SESSION['flash_message'] = 'Bitte geben Sie einen Namen für die Veranstaltung ein.';
+                            $_SESSION['flash_type'] = 'danger';
+                            // Abbrechen und zur Übersicht zurückkehren
+                            $redirectUrl = getRelativePath('Admin/Reservierungsverwaltung');
+                            if ($statusFilter !== 'all') {
+                                $redirectUrl .= '?status=' . $statusFilter;
+                            }
+                            header('Location: ' . $redirectUrl);
+                            exit;
+                        }
+                        if (empty($displayStartDate) || empty($displayEndDate)) {
+                            $_SESSION['flash_message'] = 'Bitte wählen Sie die Anzeigezeiträume für die Veranstaltung.';
+                            $_SESSION['flash_type'] = 'danger';
+                            // Abbrechen und zur Übersicht zurückkehren
+                            $redirectUrl = getRelativePath('Admin/Reservierungsverwaltung');
+                            if ($statusFilter !== 'all') {
+                                $redirectUrl .= '?status=' . $statusFilter;
+                            }
+                            header('Location: ' . $redirectUrl);
+                            exit;
+                        }
+                        if (strtotime($displayStartDate) < strtotime($startDate) || 
+                                strtotime($displayEndDate) > strtotime($endDate)) {
+                            $_SESSION['flash_message'] = 'Die Anzeigedaten müssen innerhalb des Reservierungszeitraums liegen.';
+                            $_SESSION['flash_type'] = 'danger';
+                            // Abbrechen und zur Übersicht zurückkehren
+                            $redirectUrl = getRelativePath('Admin/Reservierungsverwaltung');
+                            if ($statusFilter !== 'all') {
+                                $redirectUrl .= '?status=' . $statusFilter;
+                            }
+                            header('Location: ' . $redirectUrl);
+                            exit;
+                        }
+                    } else {
+                        // Wenn nicht öffentlich, setze die Veranstaltungsdaten auf null
+                        $eventName = null;
+                        $displayStartDate = null;
+                        $displayEndDate = null;
+                    }
+                    
+                    // Alle Validierungen bestanden - Reservierung aktualisieren
+                    $result = $reservation->updateReservation(
+                        $reservationId, 
+                        $userId, 
+                        $startDatetime, 
+                        $endDatetime, 
+                        $adminMessage, 
+                        $status, 
+                        $receiptRequested,
+                        $isPublic,
+                        $eventName,
+                        $displayStartDate,
+                        $displayEndDate
+                    );
                     
                     $_SESSION['flash_message'] = $result['message'];
                     $_SESSION['flash_type'] = $result['success'] ? 'success' : 'danger';
@@ -284,6 +435,14 @@ require_once '../../includes/header.php';
                                                 </small>
                                             </div>
                                             <?php endif; ?>
+                                            
+                                            <?php if (isset($res['is_public']) && $res['is_public']): ?>
+                                            <div class="mt-1">
+                                                <small class="text-success">
+                                                    <i class="bi bi-calendar-event"></i> Öffentliche Veranstaltung
+                                                </small>
+                                            </div>
+                                            <?php endif; ?>
                                         </td>
                                         <td>
                                             <span class="badge status-badge status-<?php echo $res['status']; ?>">
@@ -338,6 +497,10 @@ require_once '../../includes/header.php';
                                                     data-user-message="<?php echo escape($res['user_message'] ?? ''); ?>"
                                                     data-status="<?php echo $res['status']; ?>"
                                                     data-receipt-requested="<?php echo isset($res['receipt_requested']) && $res['receipt_requested'] ? '1' : '0'; ?>"
+                                                    data-is-public="<?php echo isset($res['is_public']) && $res['is_public'] ? '1' : '0'; ?>"
+                                                    data-event-name="<?php echo escape($res['event_name'] ?? ''); ?>"
+                                                    data-display-start-date="<?php echo isset($res['display_event_name_on_calendar_start_date']) ? date('Y-m-d', strtotime($res['display_event_name_on_calendar_start_date'])) : ''; ?>"
+                                                    data-display-end-date="<?php echo isset($res['display_event_name_on_calendar_end_date']) ? date('Y-m-d', strtotime($res['display_event_name_on_calendar_end_date'])) : ''; ?>"
                                                     onclick="prepareEditModal(this)">
                                                 <i class="bi bi-pencil"></i> Bearbeiten
                                             </button>
@@ -412,6 +575,42 @@ require_once '../../includes/header.php';
                     <div class="mb-3 form-check">
                         <input type="checkbox" class="form-check-input" id="receipt_requested" name="receipt_requested" value="1">
                         <label class="form-check-label" for="receipt_requested">Quittung für die Reservierung gewünscht</label>
+                    </div>
+                    
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="is_public" name="is_public" value="1">
+                        <label class="form-check-label" for="is_public">Öffentliche Reservierung (im Kalender sichtbar)</label>
+                    </div>
+                    
+                    <div id="public-event-details" style="display: none;">
+                        <div class="mb-3">
+                            <label for="event_name" class="form-label">Name der Veranstaltung</label>
+                            <input type="text" class="form-control" id="event_name" name="event_name" maxlength="255" placeholder="z.B. Grillfest">
+                        </div>
+                        
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="show_date_range" name="show_date_range">
+                            <label class="form-check-label" for="show_date_range">Veranstaltung geht über mehrere Tage</label>
+                        </div>
+                        
+                        <div id="single-day-field" class="mb-3">
+                            <label for="event_day" class="form-label">Veranstaltungstag</label>
+                            <input type="text" class="form-control date-picker" id="event_day" name="event_day">
+                            <div class="form-text">An diesem Tag wird die Veranstaltung im Kalender angezeigt.</div>
+                        </div>
+                        
+                        <div id="date-range-fields" style="display: none;">
+                            <div class="mb-3">
+                                <label for="display_start_date" class="form-label">Anzeige im Kalender von</label>
+                                <input type="text" class="form-control date-picker" id="display_start_date" name="display_start_date">
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="display_end_date" class="form-label">Anzeige im Kalender bis</label>
+                                <input type="text" class="form-control date-picker" id="display_end_date" name="display_end_date">
+                                <div class="form-text">In diesem Zeitraum wird die Veranstaltung im Kalender angezeigt.</div>
+                            </div>
+                        </div>
                     </div>
                     
                     <!-- Kostenübersicht -->
@@ -536,6 +735,42 @@ require_once '../../includes/header.php';
                         <label class="form-check-label" for="edit_receipt_requested">Quittung für die Reservierung gewünscht</label>
                     </div>
                     
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="edit_is_public" name="is_public" value="1">
+                        <label class="form-label" for="edit_is_public">Öffentliche Reservierung (im Kalender sichtbar)</label>
+                    </div>
+                    
+                    <div id="edit_public-event-details" style="display: none;">
+                        <div class="mb-3">
+                            <label for="edit_event_name" class="form-label">Name der Veranstaltung</label>
+                            <input type="text" class="form-control" id="edit_event_name" name="event_name" maxlength="255" placeholder="z.B. Grillfest">
+                        </div>
+                        
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="edit_show_date_range" name="show_date_range">
+                            <label class="form-check-label" for="edit_show_date_range">Veranstaltung geht über mehrere Tage</label>
+                        </div>
+                        
+                        <div id="edit_single-day-field" class="mb-3">
+                            <label for="edit_event_day" class="form-label">Veranstaltungstag</label>
+                            <input type="text" class="form-control date-picker" id="edit_event_day" name="event_day">
+                            <div class="form-text">An diesem Tag wird die Veranstaltung im Kalender angezeigt.</div>
+                        </div>
+                        
+                        <div id="edit_date-range-fields" style="display: none;">
+                            <div class="mb-3">
+                                <label for="edit_display_start_date" class="form-label">Anzeige im Kalender von</label>
+                                <input type="text" class="form-control date-picker" id="edit_display_start_date" name="display_start_date">
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="edit_display_end_date" class="form-label">Anzeige im Kalender bis</label>
+                                <input type="text" class="form-control date-picker" id="edit_display_end_date" name="display_end_date">
+                                <div class="form-text">In diesem Zeitraum wird die Veranstaltung im Kalender angezeigt.</div>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <div class="row">
                         <div class="col-md-8 mb-3">
                             <!-- Kostenübersicht -->
@@ -640,11 +875,45 @@ function prepareEditModal(button) {
     const receiptRequested = button.getAttribute('data-receipt-requested');
     document.getElementById('edit_receipt_requested').checked = (receiptRequested === '1');
     
+    // Öffentliche Veranstaltung
+    const isPublic = button.getAttribute('data-is-public');
+    document.getElementById('edit_is_public').checked = (isPublic === '1');
+    
+    // Veranstaltungsname
+    const eventName = button.getAttribute('data-event-name');
+    document.getElementById('edit_event_name').value = eventName || '';
+    
+    // Anzeigebereich
+    const displayStartDate = button.getAttribute('data-display-start-date');
+    const displayEndDate = button.getAttribute('data-display-end-date');
+    
+    // Überprüfen, ob es ein Datumsbereich ist
+    const isDateRange = displayStartDate && displayEndDate && displayStartDate !== displayEndDate;
+    document.getElementById('edit_show_date_range').checked = isDateRange;
+    
+    // Sichtbarkeit der Bereiche aktualisieren
+    document.getElementById('edit_public-event-details').style.display = isPublic === '1' ? 'block' : 'none';
+    document.getElementById('edit_single-day-field').style.display = isDateRange ? 'none' : 'block';
+    document.getElementById('edit_date-range-fields').style.display = isDateRange ? 'block' : 'none';
+    
+    // Daten für entweder den einzelnen Tag oder den Bereich setzen
+    if (displayStartDate) {
+        if (isDateRange) {
+            document.getElementById('edit_display_start_date').value = displayStartDate;
+            document.getElementById('edit_display_end_date').value = displayEndDate;
+        } else {
+            document.getElementById('edit_event_day').value = displayStartDate;
+        }
+    }
+    
     // Löschformular vorbereiten
     document.getElementById('delete_reservation_id').value = reservationId;
     
     // Kostenberechnung aktualisieren
     updateEditCosts();
+    
+    // Öffentliche Veranstaltungsdetails anzeigen/ausblenden
+    togglePublicEventDetails('edit');
 }
 
 function confirmDeleteReservation() {
@@ -848,6 +1117,74 @@ document.addEventListener('DOMContentLoaded', function() {
         newEndTimeField.addEventListener('change', updateNewCosts);
     }
     
+    // Handle public event checkbox for new form
+    const isPublicCheckbox = document.getElementById('is_public');
+    const showDateRangeCheckbox = document.getElementById('show_date_range');
+    const publicEventDetails = document.getElementById('public-event-details');
+    const singleDayField = document.getElementById('single-day-field');
+    const dateRangeFields = document.getElementById('date-range-fields');
+    
+    if (isPublicCheckbox && publicEventDetails) {
+        isPublicCheckbox.addEventListener('change', function() {
+            publicEventDetails.style.display = this.checked ? 'block' : 'none';
+        });
+    }
+    
+    if (showDateRangeCheckbox && dateRangeFields && singleDayField) {
+        showDateRangeCheckbox.addEventListener('change', function() {
+            dateRangeFields.style.display = this.checked ? 'block' : 'none';
+            singleDayField.style.display = this.checked ? 'none' : 'block';
+            
+            // Synchronize the dates if needed
+            const eventDayField = document.getElementById('event_day');
+            const displayStartField = document.getElementById('display_start_date');
+            const displayEndField = document.getElementById('display_end_date');
+            
+            if (this.checked && eventDayField && eventDayField.value) {
+                // If switching to range mode and we have an event day, use it for both start and end
+                displayStartField.value = eventDayField.value;
+                displayEndField.value = eventDayField.value;
+            } else if (!this.checked && displayStartField && displayStartField.value) {
+                // If switching to single day mode, use the start date
+                eventDayField.value = displayStartField.value;
+            }
+        });
+    }
+    
+    // Handle public event checkbox for edit form
+    const editIsPublicCheckbox = document.getElementById('edit_is_public');
+    const editShowDateRangeCheckbox = document.getElementById('edit_show_date_range');
+    const editPublicEventDetails = document.getElementById('edit-public-event-details');
+    const editSingleDayField = document.getElementById('edit-single-day-field');
+    const editDateRangeFields = document.getElementById('edit-date-range-fields');
+    
+    if (editIsPublicCheckbox && editPublicEventDetails) {
+        editIsPublicCheckbox.addEventListener('change', function() {
+            editPublicEventDetails.style.display = this.checked ? 'block' : 'none';
+        });
+    }
+    
+    if (editShowDateRangeCheckbox && editDateRangeFields && editSingleDayField) {
+        editShowDateRangeCheckbox.addEventListener('change', function() {
+            editDateRangeFields.style.display = this.checked ? 'block' : 'none';
+            editSingleDayField.style.display = this.checked ? 'none' : 'block';
+            
+            // Synchronize the dates if needed
+            const eventDayField = document.getElementById('edit_event_day');
+            const displayStartField = document.getElementById('edit_display_start_date');
+            const displayEndField = document.getElementById('edit_display_end_date');
+            
+            if (this.checked && eventDayField && eventDayField.value) {
+                // If switching to range mode and we have an event day, use it for both start and end
+                displayStartField.value = eventDayField.value;
+                displayEndField.value = eventDayField.value;
+            } else if (!this.checked && displayStartField && displayStartField.value) {
+                // If switching to single day mode, use the start date
+                eventDayField.value = displayStartField.value;
+            }
+        });
+    }
+    
     // Initialize flatpickr for the new reservation form date fields
     flatpickr('#start_date', {
         locale: "de",
@@ -858,6 +1195,8 @@ document.addEventListener('DOMContentLoaded', function() {
         disableMobile: "true",
         onChange: function() {
             updateNewCosts();
+            // Update constraints for event dates
+            updateNewEventDateConstraints();
         }
     });
     
@@ -870,8 +1209,67 @@ document.addEventListener('DOMContentLoaded', function() {
         disableMobile: "true",
         onChange: function() {
             updateNewCosts();
+            // Update constraints for event dates
+            updateNewEventDateConstraints();
         }
     });
+    
+    // Initialize flatpickr for the event day fields
+    const eventDayPicker = flatpickr('#event_day', {
+        locale: "de",
+        dateFormat: "Y-m-d",
+        altInput: true,
+        altFormat: "j. F Y",
+        minDate: "today",
+        disableMobile: "true",
+        onChange: function(selectedDates, dateStr) {
+            // When single day is selected, update both display date fields
+            if (selectedDates[0]) {
+                document.getElementById('display_start_date').value = dateStr;
+                document.getElementById('display_end_date').value = dateStr;
+            }
+        }
+    });
+    
+    const displayStartPicker = flatpickr('#display_start_date', {
+        locale: "de",
+        dateFormat: "Y-m-d",
+        altInput: true,
+        altFormat: "j. F Y",
+        minDate: "today",
+        disableMobile: "true",
+        onChange: function(selectedDates, dateStr) {
+            // Update min date of display end picker
+            if (selectedDates[0]) {
+                displayEndPicker.set('minDate', selectedDates[0]);
+            }
+        }
+    });
+    
+    const displayEndPicker = flatpickr('#display_end_date', {
+        locale: "de",
+        dateFormat: "Y-m-d",
+        altInput: true,
+        altFormat: "j. F Y",
+        minDate: "today",
+        disableMobile: "true"
+    });
+    
+    // Function to update event date constraints
+    function updateNewEventDateConstraints() {
+        const startDate = document.getElementById('start_date').value;
+        const endDate = document.getElementById('end_date').value;
+        
+        if (startDate && endDate) {
+            // Update constraints for event dates
+            eventDayPicker.set('minDate', startDate);
+            eventDayPicker.set('maxDate', endDate);
+            displayStartPicker.set('minDate', startDate);
+            displayStartPicker.set('maxDate', endDate);
+            displayEndPicker.set('minDate', startDate);
+            displayEndPicker.set('maxDate', endDate);
+        }
+    }
     
     // Run the initial cost calculation for the new reservation form
     updateNewCosts();
@@ -885,12 +1283,16 @@ document.addEventListener('DOMContentLoaded', function() {
             const startTimeField = document.getElementById('edit_start_time');
             const endDateField = document.getElementById('edit_end_date');
             const endTimeField = document.getElementById('edit_end_time');
+            const eventDayField = document.getElementById('edit_event_day');
+            const displayStartDateField = document.getElementById('edit_display_start_date');
+            const displayEndDateField = document.getElementById('edit_display_end_date');
             
             // Flatpickr-Instanzen zerstören, falls sie bereits existieren
             if (startDateField._flatpickr) startDateField._flatpickr.destroy();
-            if (startTimeField._flatpickr) startTimeField._flatpickr.destroy();
             if (endDateField._flatpickr) endDateField._flatpickr.destroy();
-            if (endTimeField._flatpickr) endTimeField._flatpickr.destroy();
+            if (eventDayField._flatpickr) eventDayField._flatpickr.destroy();
+            if (displayStartDateField._flatpickr) displayStartDateField._flatpickr.destroy();
+            if (displayEndDateField._flatpickr) displayEndDateField._flatpickr.destroy();
             
             // Date picker für Startdatum und Enddatum
             flatpickr('#edit_start_date', {
@@ -903,6 +1305,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 defaultDate: startDateField.value,
                 onChange: function() {
                     updateEditCosts();
+                    updateEditEventDateConstraints();
                 }
             });
             
@@ -916,11 +1319,72 @@ document.addEventListener('DOMContentLoaded', function() {
                 defaultDate: endDateField.value,
                 onChange: function() {
                     updateEditCosts();
+                    updateEditEventDateConstraints();
                 }
             });
             
-            // Time picker für Startzeit und Endzeit - stattdessen einfache HTML Zeit-Eingabefelder verwenden
-            // Keine flatpickr-Instanzen für die Zeitfelder erstellen
+            // Datepicker für Veranstaltungsdaten
+            const editEventDayPicker = flatpickr('#edit_event_day', {
+                locale: "de",
+                dateFormat: "Y-m-d",
+                altInput: true,
+                altFormat: "j. F Y",
+                minDate: "today",
+                disableMobile: "true",
+                defaultDate: eventDayField.value,
+                onChange: function(selectedDates, dateStr) {
+                    // When single day is selected, update both display date fields
+                    if (selectedDates[0]) {
+                        document.getElementById('edit_display_start_date').value = dateStr;
+                        document.getElementById('edit_display_end_date').value = dateStr;
+                    }
+                }
+            });
+            
+            const editDisplayStartPicker = flatpickr('#edit_display_start_date', {
+                locale: "de",
+                dateFormat: "Y-m-d",
+                altInput: true,
+                altFormat: "j. F Y",
+                minDate: "today",
+                disableMobile: "true",
+                defaultDate: displayStartDateField.value,
+                onChange: function(selectedDates, dateStr) {
+                    // Update min date of display end picker
+                    if (selectedDates[0]) {
+                        editDisplayEndPicker.set('minDate', selectedDates[0]);
+                    }
+                }
+            });
+            
+            const editDisplayEndPicker = flatpickr('#edit_display_end_date', {
+                locale: "de",
+                dateFormat: "Y-m-d",
+                altInput: true,
+                altFormat: "j. F Y",
+                minDate: "today",
+                disableMobile: "true",
+                defaultDate: displayEndDateField.value
+            });
+            
+            // Function to update event date constraints
+            function updateEditEventDateConstraints() {
+                const startDate = document.getElementById('edit_start_date').value;
+                const endDate = document.getElementById('edit_end_date').value;
+                
+                if (startDate && endDate) {
+                    // Update constraints for event dates
+                    editEventDayPicker.set('minDate', startDate);
+                    editEventDayPicker.set('maxDate', endDate);
+                    editDisplayStartPicker.set('minDate', startDate);
+                    editDisplayStartPicker.set('maxDate', endDate);
+                    editDisplayEndPicker.set('minDate', startDate);
+                    editDisplayEndPicker.set('maxDate', endDate);
+                }
+            }
+            
+            // Update event date constraints initially
+            updateEditEventDateConstraints();
             
             // Event-Listener hinzufügen, um die Kostenberechnung zu aktualisieren, wenn sich die Zeit ändert
             startTimeField.addEventListener('change', updateEditCosts);
@@ -937,6 +1401,8 @@ document.addEventListener('DOMContentLoaded', function() {
         newModal.addEventListener('shown.bs.modal', function () {
             // Just run the cost calculation again when the modal is shown
             updateNewCosts();
+            // And update event date constraints
+            updateNewEventDateConstraints();
         });
     }
 });
