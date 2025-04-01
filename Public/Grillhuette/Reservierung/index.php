@@ -391,12 +391,12 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
                                     
                                     <div class="mb-3">
                                         <label for="display_start_date" class="form-label">Anzeige im Kalender von</label>
-                                        <input type="text" class="form-control" id="display_start_date" name="display_start_date" readonly>
+                                        <input type="text" class="form-control date-picker" id="display_start_date" name="display_start_date">
                                     </div>
                                     
                                     <div class="mb-3">
                                         <label for="display_end_date" class="form-label">Anzeige im Kalender bis</label>
-                                        <input type="text" class="form-control" id="display_end_date" name="display_end_date" readonly>
+                                        <input type="text" class="form-control date-picker" id="display_end_date" name="display_end_date">
                                     </div>
                                 </div>
                                 

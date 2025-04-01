@@ -221,6 +221,71 @@ function initializeDatePickers() {
             });
         });
     }
+
+    // Initialize flatpickr for display date fields
+    const displayStartPicker = flatpickr('#display_start_date', {
+        locale: "de",
+        dateFormat: "Y-m-d",
+        altInput: true,
+        altFormat: "j. F Y",
+        minDate: "today",
+        disableMobile: "true",
+        onChange: function(selectedDates, dateStr) {
+            // Update min date of display end picker
+            if (selectedDates[0]) {
+                displayEndPicker.set('minDate', selectedDates[0]);
+            }
+        }
+    });
+
+    const displayEndPicker = flatpickr('#display_end_date', {
+        locale: "de",
+        dateFormat: "Y-m-d",
+        altInput: true,
+        altFormat: "j. F Y",
+        minDate: "today",
+        disableMobile: "true"
+    });
+
+    // Handle public event checkbox
+    const isPublicCheckbox = document.getElementById('is_public');
+    const publicEventDetails = document.getElementById('public-event-details');
+    const startDateInput = document.getElementById('start_date');
+    const endDateInput = document.getElementById('end_date');
+    const displayStartInput = document.getElementById('display_start_date');
+    const displayEndInput = document.getElementById('display_end_date');
+
+    if (isPublicCheckbox && publicEventDetails) {
+        isPublicCheckbox.addEventListener('change', function() {
+            publicEventDetails.style.display = this.checked ? 'block' : 'none';
+            if (this.checked && startDateInput.value && endDateInput.value) {
+                // Only set display dates if they haven't been manually changed
+                if (!displayStartInput.value) {
+                    displayStartPicker.setDate(startDateInput.value);
+                }
+                if (!displayEndInput.value) {
+                    displayEndPicker.setDate(endDateInput.value);
+                }
+            }
+        });
+    }
+
+    // Update display date constraints when reservation dates change
+    if (startDateInput && endDateInput) {
+        const updateDisplayDateConstraints = function() {
+            if (startDateInput.value) {
+                displayStartPicker.set('minDate', startDateInput.value);
+                displayStartPicker.set('maxDate', endDateInput.value);
+            }
+            if (endDateInput.value) {
+                displayEndPicker.set('minDate', startDateInput.value);
+                displayEndPicker.set('maxDate', endDateInput.value);
+            }
+        };
+
+        startDateInput.addEventListener('change', updateDisplayDateConstraints);
+        endDateInput.addEventListener('change', updateDisplayDateConstraints);
+    }
 }
 
 // Initialize and render the calendar
@@ -788,6 +853,10 @@ function setupReservationSelection() {
     reservationForm.addEventListener('submit', function(event) {
         const startDate = document.getElementById('start_date');
         const endDate = document.getElementById('end_date');
+        const isPublicCheckbox = document.getElementById('is_public');
+        const displayStartDate = document.getElementById('display_start_date');
+        const displayEndDate = document.getElementById('display_end_date');
+        const eventName = document.getElementById('event_name');
         
         if (!startDate.value) {
             event.preventDefault();
@@ -814,7 +883,49 @@ function setupReservationSelection() {
             
             return false;
         }
-        
+
+        // Validate public event fields if public checkbox is checked
+        if (isPublicCheckbox && isPublicCheckbox.checked) {
+            if (!eventName || !eventName.value.trim()) {
+                event.preventDefault();
+                const message = 'Bitte geben Sie einen Veranstaltungsnamen ein.';
+                if (window.matchMedia("(max-width: 768px)").matches) {
+                    showMobileAlert(message);
+                } else {
+                    alert(message);
+                }
+                return false;
+            }
+
+            if (!displayStartDate.value || !displayEndDate.value) {
+                event.preventDefault();
+                const message = 'Bitte wählen Sie Start- und Enddatum für die Kalenderanzeige.';
+                if (window.matchMedia("(max-width: 768px)").matches) {
+                    showMobileAlert(message);
+                } else {
+                    alert(message);
+                }
+                return false;
+            }
+
+            // Validate display dates are within reservation period
+            const reservationStart = new Date(startDate.value);
+            const reservationEnd = new Date(endDate.value);
+            const displayStart = new Date(displayStartDate.value);
+            const displayEnd = new Date(displayEndDate.value);
+
+            if (displayStart < reservationStart || displayEnd > reservationEnd) {
+                event.preventDefault();
+                const message = 'Die Anzeigedaten müssen innerhalb des Reservierungszeitraums liegen.';
+                if (window.matchMedia("(max-width: 768px)").matches) {
+                    showMobileAlert(message);
+                } else {
+                    alert(message);
+                }
+                return false;
+            }
+        }
+
         // Check if booking is at least 1 day
         if (!isMinimumBookingDuration(startDate.value, endDate.value)) {
             event.preventDefault();
