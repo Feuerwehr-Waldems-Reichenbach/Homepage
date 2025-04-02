@@ -233,6 +233,24 @@ require_once '../../includes/header.php';
                                                 </div>
                                                 <?php endif; ?>
                                                 
+                                                <?php if (!empty($res['key_handover_datetime']) || !empty($res['key_return_datetime'])): ?>
+                                                <div class="mt-2 pt-2 border-top">
+                                                    <h6 class="text-primary mb-2">
+                                                        <i class="bi bi-key"></i> Schlüsselübergabe
+                                                    </h6>
+                                                    <?php if (!empty($res['key_handover_datetime'])): ?>
+                                                    <div>
+                                                        <strong>Übergabe:</strong> <?php echo date('d.m.Y H:i', strtotime($res['key_handover_datetime'])); ?> Uhr
+                                                    </div>
+                                                    <?php endif; ?>
+                                                    <?php if (!empty($res['key_return_datetime'])): ?>
+                                                    <div>
+                                                        <strong>Rückgabe:</strong> <?php echo date('d.m.Y H:i', strtotime($res['key_return_datetime'])); ?> Uhr
+                                                    </div>
+                                                    <?php endif; ?>
+                                                </div>
+                                                <?php endif; ?>
+                                                
                                                 <?php if (isset($res['is_public']) && $res['is_public']): ?>
                                                 <div class="mt-2 pt-2 border-top">
                                                     <h6 class="text-success mb-2">
@@ -399,6 +417,24 @@ require_once '../../includes/header.php';
                                                     <small class="text-primary">
                                                         <i class="bi bi-receipt"></i> Sie haben eine Quittung für diese Reservierung angefordert.
                                                     </small>
+                                                </div>
+                                                <?php endif; ?>
+                                                
+                                                <?php if (!empty($res['key_handover_datetime']) || !empty($res['key_return_datetime'])): ?>
+                                                <div class="mt-2 pt-2 border-top">
+                                                    <h6 class="text-primary mb-2">
+                                                        <i class="bi bi-key"></i> Schlüsselübergabe
+                                                    </h6>
+                                                    <?php if (!empty($res['key_handover_datetime'])): ?>
+                                                    <div>
+                                                        <strong>Übergabe:</strong> <?php echo date('d.m.Y H:i', strtotime($res['key_handover_datetime'])); ?> Uhr
+                                                    </div>
+                                                    <?php endif; ?>
+                                                    <?php if (!empty($res['key_return_datetime'])): ?>
+                                                    <div>
+                                                        <strong>Rückgabe:</strong> <?php echo date('d.m.Y H:i', strtotime($res['key_return_datetime'])); ?> Uhr
+                                                    </div>
+                                                    <?php endif; ?>
                                                 </div>
                                                 <?php endif; ?>
                                                 

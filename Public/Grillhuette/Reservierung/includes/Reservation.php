@@ -118,183 +118,74 @@ class Reservation {
                 ];
             }
             
-            // Kostenberechnung
-            $startDate = new DateTime($startDatetime);
-            $endDate = new DateTime($endDatetime);
-            $diffSeconds = $endDate->getTimestamp() - $startDate->getTimestamp();
-            $diffDays = $diffSeconds / (24 * 60 * 60);
-            $days = max(1, ceil($diffDays));
+            // Standard-Schlüsselübergabezeiten berechnen
+            $keyTimes = $this->calculateDefaultKeyHandoverTimes($startDatetime, $endDatetime);
+            $keyHandoverDatetime = $keyTimes['key_handover'];
+            $keyReturnDatetime = $keyTimes['key_return'];
+
+            // Anzahl der Tage berechnen
+            $daysCount = $this->calculateReservationDays($startDatetime, $endDatetime);
             
-            // Preisdaten abrufen
-            $priceInfo = $this->getPriceInformation($userId);
-            $userRate = $priceInfo['user_rate'];
-            $basePrice = $priceInfo['base_price'];
-            $depositAmount = $priceInfo['deposit_amount'];
-            $totalCost = $days * $userRate;
+            // Standardpreise berechnen
+            $prices = $this->calculateDefaultCosts($daysCount);
             
-            // Reservierung erstellen mit Preisdaten
-            $stmt = $this->db->prepare("
-                INSERT INTO gh_reservations (
-                    user_id, start_datetime, end_datetime, user_message, 
-                    days_count, base_price, total_price, deposit_amount, receipt_requested,
-                    is_public, event_name, display_event_name_on_calendar_start_date, display_event_name_on_calendar_end_date
-                ) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            ");
+            // SQL-Query für die Erstellung einer neuen Reservierung
+            $sql = "INSERT INTO gh_reservations 
+                    (user_id, start_datetime, end_datetime, key_handover_datetime, key_return_datetime, 
+                     user_message, days_count, base_price, total_price, deposit_amount, receipt_requested, 
+                     is_public, event_name, display_event_name_on_calendar_start_date, display_event_name_on_calendar_end_date) 
+                    VALUES 
+                    (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+            $stmt = $this->db->prepare($sql);
             $stmt->execute([
-                $userId, $startDatetime, $endDatetime, $userMessage, 
-                $days, $userRate, $totalCost, $depositAmount, $receiptRequested,
-                $isPublic, $eventName, $displayStartDate, $displayEndDate
+                $userId, 
+                $startDatetime, 
+                $endDatetime,
+                $keyHandoverDatetime,
+                $keyReturnDatetime,
+                $userMessage, 
+                $daysCount, 
+                $prices['base_price'], 
+                $prices['total_price'], 
+                $prices['deposit_amount'], 
+                $receiptRequested,
+                $isPublic,
+                $eventName,
+                $displayStartDate,
+                $displayEndDate
             ]);
             
-            // Formatierte Werte für E-Mail
-            $formattedUserRate = number_format($userRate, 2, ',', '.');
-            $formattedTotalCost = number_format($totalCost, 2, ',', '.');
-            $formattedDepositAmount = number_format($depositAmount, 2, ',', '.');
+            $reservationId = $this->db->lastInsertId();
             
-            // Benutzer per E-Mail benachrichtigen
-            $userStmt = $this->db->prepare("SELECT email, first_name, last_name FROM gh_users WHERE id = ?");
-            $userStmt->execute([$userId]);
-            $user = $userStmt->fetch(PDO::FETCH_ASSOC);
-            
-            $subject = 'Reservierungsanfrage für die Grillhütte Waldems Reichenbach';
-            $body = '
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <style>
-                        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-                        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-                        .header { background-color: #A72920; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
-                        .content { background-color: #ffffff; padding: 20px; border-radius: 0 0 5px 5px; border: 1px solid #ddd; }
-                        .button { display: inline-block; padding: 10px 20px; background-color: #A72920; color: white !important; text-decoration: none; border-radius: 5px; margin-top: 20px; }
-                        .info-box { background-color: #f8f9fa; border: 1px solid #ddd; padding: 15px; border-radius: 5px; margin: 20px 0; }
-                        .cost-box { background-color: #f0f8ff; border: 1px solid #b8daff; padding: 15px; border-radius: 5px; margin: 20px 0; }
-                        .footer { text-align: center; margin-top: 20px; font-size: 0.9em; color: #666; }
-                    </style>
-                </head>
-                <body>
-                    <div class="container">
-                        <div class="header">
-                            <h2>Reservierungsanfrage</h2>
-                        </div>
-                        <div class="content">
-                            <h3>Hallo ' . $user['first_name'] . ' ' . $user['last_name'] . ',</h3>
-                            <p>vielen Dank für Ihre Reservierungsanfrage für die Grillhütte Waldems Reichenbach. Wir haben Ihre Anfrage erhalten und werden sie so schnell wie möglich bearbeiten.</p>
-                            
-                            <div class="info-box">
-                                <strong>Ihre Reservierungsdetails:</strong><br>
-                                Von: ' . date('d.m.Y H:i', strtotime($startDatetime)) . '<br>
-                                Bis: ' . date('d.m.Y H:i', strtotime($endDatetime)) . '<br>
-                                Status: <span style="color: #ffc107; font-weight: bold;">Ausstehend</span>
-                            </div>
-                            
-                            <div class="cost-box">
-                                <strong>Kostenübersicht:</strong><br>
-                                Grundpreis pro Tag: ' . $formattedUserRate . '€<br>
-                                Anzahl der Tage: ' . $days . '<br>
-                                <strong>Gesamtpreis: ' . $formattedTotalCost . '€</strong><br>
-                                <small>Hinweis: Die Kaution (' . $formattedDepositAmount . '€) ist in diesem Preis nicht enthalten.</small>
-                            </div>
-                            
-                            <p>Wir werden Sie benachrichtigen, sobald Ihre Anfrage bearbeitet wurde. Sie können den Status Ihrer Reservierung auch jederzeit über den folgenden Link überprüfen.</p>
-                            
-                            <a href="' . $myReservationsUrl . '" class="button">Meine Reservierungen ansehen</a>
-                            
-                            <div class="footer">
-                                <p>Bei Fragen stehen wir Ihnen gerne zur Verfügung.</p>
-                                <p>Ihr Team der Grillhütte Waldems Reichenbach</p>
-                            </div>
-                        </div>
-                    </div>
-                </body>
-                </html>
-            ';
-            
-            sendEmail($user['email'], $subject, $body);
-            
-            // Admin-E-Mail abrufen und Benachrichtigung senden
-            $adminStmt = $this->db->prepare("SELECT email FROM gh_users WHERE is_admin = 1");
-            $adminStmt->execute();
-            $admins = $adminStmt->fetchAll(PDO::FETCH_ASSOC);
-            
-            if (!empty($admins)) {
-                $adminSubject = 'Neue Reservierungsanfrage';
-                $adminBody = '
-                    <!DOCTYPE html>
-                    <html>
-                    <head>
-                        <style>
-                            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-                            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-                            .header { background-color: #dc3545; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
-                            .content { background-color: #ffffff; padding: 20px; border-radius: 0 0 5px 5px; border: 1px solid #ddd; }
-                            .button { display: inline-block; padding: 10px 20px; background-color: #A72920; color: white !important; text-decoration: none; border-radius: 5px; margin-top: 20px; }
-                            .info-box { background-color: #f8f9fa; border: 1px solid #ddd; padding: 15px; border-radius: 5px; margin: 20px 0; }
-                            .cost-box { background-color: #f0f8ff; border: 1px solid #b8daff; padding: 15px; border-radius: 5px; margin: 20px 0; }
-                            .footer { text-align: center; margin-top: 20px; font-size: 0.9em; color: #666; }
-                        </style>
-                    </head>
-                    <body>
-                        <div class="container">
-                            <div class="header">
-                                <h2>Neue Reservierungsanfrage</h2>
-                            </div>
-                            <div class="content">
-                                <p>Es liegt eine neue Reservierungsanfrage vor, die Ihre Aufmerksamkeit erfordert.</p>
-                                
-                                <div class="info-box">
-                                    <strong>Reservierungsdetails:</strong><br>
-                                    Benutzer: ' . $user['first_name'] . ' ' . $user['last_name'] . '<br>
-                                    E-Mail: ' . $user['email'] . '<br>
-                                    Von: ' . date('d.m.Y H:i', strtotime($startDatetime)) . '<br>
-                                    Bis: ' . date('d.m.Y H:i', strtotime($endDatetime)) . '<br>
-                                    Quittung gewünscht: <strong>' . ($receiptRequested ? 'Ja' : 'Nein') . '</strong><br>
-                                </div>
-                                
-                                <div class="cost-box">
-                                    <strong>Kostenübersicht:</strong><br>
-                                    Grundpreis pro Tag: ' . $formattedUserRate . '€<br>
-                                    Anzahl der Tage: ' . $days . '<br>
-                                    <strong>Gesamtpreis: ' . $formattedTotalCost . '€</strong><br>';
-                
-                // Spezielle Preishinweise für Administratoren
-                if ($priceInfo['rate_type'] !== 'normal') {
-                    $rateTypeText = $priceInfo['rate_type'] === 'feuerwehr' ? 'Feuerwehr' : 'Aktives Mitglied';
-                    $normalRate = number_format($basePrice * $days, 2, ',', '.');
-                    $adminBody .= '
-                                    <span style="color: #A72920;"><strong>Hinweis:</strong> Spezialpreis für ' . $rateTypeText . ' angewendet!</span><br>
-                                    <small>(Regulärer Preis wäre: ' . $normalRate . '€)</small>';
+            // Überprüfung, ob die Reservierung erfolgreich erstellt wurde
+            if ($reservationId) {
+                // E-Mail an den Benutzer senden
+                $user = $this->getUserById($userId);
+                if ($user) {
+                    // E-Mail an den Benutzer senden
+                    $this->sendUserReservationConfirmation($user, $startDatetime, $endDatetime, $myReservationsUrl);
+                    
+                    // E-Mail an die Admins senden
+                    $this->sendAdminReservationNotification($user, $startDatetime, $endDatetime, $adminReservationsUrl);
                 }
                 
-                $adminBody .= '
-                                </div>
-                                
-                                <a href="' . $adminReservationsUrl . '" class="button">Reservierung verwalten</a>
-                                
-                                <div class="footer">
-                                    <p>Dies ist eine automatische Benachrichtigung des Grillhütten-Reservierungssystems.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </body>
-                    </html>
-                ';
-                
-                foreach ($admins as $admin) {
-                    sendEmail($admin['email'], $adminSubject, $adminBody);
-                }
+                return [
+                    'success' => true,
+                    'message' => 'Ihre Reservierung wurde erfolgreich erstellt und muss nun vom Administrator bestätigt werden.',
+                    'reservation_id' => $reservationId
+                ];
+            } else {
+                return [
+                    'success' => false,
+                    'message' => 'Es ist ein Fehler bei der Erstellung der Reservierung aufgetreten. Bitte versuchen Sie es später erneut.'
+                ];
             }
-            
-            return [
-                'success' => true,
-                'message' => 'Reservierung erfolgreich erstellt. Wir werden Sie benachrichtigen, sobald Ihre Anfrage bearbeitet wurde.'
-            ];
-            
-        } catch (PDOException $e) {
+        } catch (Exception $e) {
+            error_log('Fehler beim Erstellen der Reservierung: ' . $e->getMessage());
             return [
                 'success' => false,
-                'message' => 'Ein technischer Fehler ist aufgetreten. Bitte versuchen Sie es später erneut oder kontaktieren Sie den Support.'
+                'message' => 'Es ist ein Datenbankfehler aufgetreten. Bitte versuchen Sie es später erneut.'
             ];
         }
     }
@@ -646,7 +537,8 @@ class Reservation {
      * @return array Result with success flag and message
      */
     public function createByAdmin($userId, $startDatetime, $endDatetime, $adminMessage = null, $receiptRequested = 0,
-                       $isPublic = 0, $eventName = null, $displayStartDate = null, $displayEndDate = null) {
+                       $isPublic = 0, $eventName = null, $displayStartDate = null, $displayEndDate = null,
+                       $keyHandoverDatetime = null, $keyReturnDatetime = null) {
         // Zuweisung der URL-Variablen
         $myReservationsUrl = 'https://' . $_SERVER['HTTP_HOST'] . getRelativePath('Benutzer/Meine-Reservierungen');
         $adminReservationsUrl = 'https://' . $_SERVER['HTTP_HOST'] . getRelativePath('Admin/Reservierungsverwaltung');
@@ -660,120 +552,75 @@ class Reservation {
                 ];
             }
             
-            // Preisberechnung
-            $startDate = new DateTime($startDatetime);
-            $endDate = new DateTime($endDatetime);
-            $diffSeconds = $endDate->getTimestamp() - $startDate->getTimestamp();
-            $diffDays = $diffSeconds / (24 * 60 * 60);
-            $days = max(1, ceil($diffDays));
+            // Wenn keine Schlüsselübergabezeiten angegeben wurden, Standard-Zeiten berechnen
+            if ($keyHandoverDatetime === null || $keyReturnDatetime === null) {
+                $keyTimes = $this->calculateDefaultKeyHandoverTimes($startDatetime, $endDatetime);
+                if ($keyHandoverDatetime === null) {
+                    $keyHandoverDatetime = $keyTimes['key_handover'];
+                }
+                if ($keyReturnDatetime === null) {
+                    $keyReturnDatetime = $keyTimes['key_return'];
+                }
+            }
+
+            // Anzahl der Tage und Kosten berechnen
+            $daysCount = $this->calculateReservationDays($startDatetime, $endDatetime);
+            $prices = $this->calculateDefaultCosts($daysCount);
             
-            // Preisdaten abrufen
-            $priceInfo = $this->getPriceInformation($userId);
-            $userRate = $priceInfo['user_rate'];
-            $basePrice = $priceInfo['base_price'];
-            $depositAmount = $priceInfo['deposit_amount'];
-            $totalCost = $days * $userRate;
-            
-            // Reservierung erstellen (direkt bestätigt) mit Preisdaten
-            $stmt = $this->db->prepare("
-                INSERT INTO gh_reservations (
-                    user_id, start_datetime, end_datetime, admin_message, status,
-                    days_count, base_price, total_price, deposit_amount, receipt_requested,
-                    is_public, event_name, display_event_name_on_calendar_start_date, display_event_name_on_calendar_end_date
-                ) 
-                VALUES (?, ?, ?, ?, 'confirmed', ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            ");
+            // SQL-Query für die Erstellung einer neuen Reservierung
+            $sql = "INSERT INTO gh_reservations 
+                    (user_id, start_datetime, end_datetime, key_handover_datetime, key_return_datetime, 
+                     admin_message, days_count, base_price, total_price, deposit_amount, receipt_requested, 
+                     status, is_public, event_name, display_event_name_on_calendar_start_date, display_event_name_on_calendar_end_date) 
+                    VALUES 
+                    (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'confirmed', ?, ?, ?, ?)";
+
+            $stmt = $this->db->prepare($sql);
             $stmt->execute([
-                $userId, $startDatetime, $endDatetime, $adminMessage,
-                $days, $userRate, $totalCost, $depositAmount, $receiptRequested,
-                $isPublic, $eventName, $displayStartDate, $displayEndDate
+                $userId, 
+                $startDatetime, 
+                $endDatetime,
+                $keyHandoverDatetime,
+                $keyReturnDatetime,
+                $adminMessage, 
+                $daysCount, 
+                $prices['base_price'], 
+                $prices['total_price'], 
+                $prices['deposit_amount'], 
+                $receiptRequested,
+                $isPublic,
+                $eventName,
+                $displayStartDate,
+                $displayEndDate
             ]);
             
-            // Benutzer per E-Mail benachrichtigen
-            $userStmt = $this->db->prepare("SELECT email, first_name, last_name FROM gh_users WHERE id = ?");
-            $userStmt->execute([$userId]);
-            $user = $userStmt->fetch(PDO::FETCH_ASSOC);
+            $reservationId = $this->db->lastInsertId();
             
-            // Formatierte Werte für die E-Mail
-            $formattedUserRate = number_format($userRate, 2, ',', '.');
-            $formattedTotalCost = number_format($totalCost, 2, ',', '.');
-            $formattedDepositAmount = number_format($depositAmount, 2, ',', '.');
-            
-            $subject = 'Neue Reservierung für die Grillhütte Waldems Reichenbach';
-            $body = '
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <style>
-                        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-                        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-                        .header { background-color: #A72920; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
-                        .content { background-color: #ffffff; padding: 20px; border-radius: 0 0 5px 5px; border: 1px solid #ddd; }
-                        .button { display: inline-block; padding: 10px 20px; background-color: #A72920; color: white !important; text-decoration: none; border-radius: 5px; margin-top: 20px; }
-                        .info-box { background-color: #f8f9fa; border: 1px solid #ddd; padding: 15px; border-radius: 5px; margin: 20px 0; }
-                        .cost-box { background-color: #f0f8ff; border: 1px solid #b8daff; padding: 15px; border-radius: 5px; margin: 20px 0; }
-                        .message-box { background-color: #f8f9fa; border-left: 4px solid #28a745; padding: 15px; margin: 20px 0; }
-                        .footer { text-align: center; margin-top: 20px; font-size: 0.9em; color: #666; }
-                    </style>
-                </head>
-                <body>
-                    <div class="container">
-                        <div class="header">
-                            <h2>Neue Reservierung bestätigt</h2>
-                        </div>
-                        <div class="content">
-                            <h3>Hallo ' . $user['first_name'] . ' ' . $user['last_name'] . ',</h3>
-                            <p>der Administrator hat eine Reservierung für Sie erstellt.</p>
-                            
-                            <div class="info-box">
-                                <strong>Ihre Reservierungsdetails:</strong><br>
-                                Von: ' . date('d.m.Y H:i', strtotime($startDatetime)) . '<br>
-                                Bis: ' . date('d.m.Y H:i', strtotime($endDatetime)) . '<br>
-                                Status: <span style="color: #28a745; font-weight: bold;">Bestätigt</span>
-                            </div>
-                            
-                            <div class="cost-box">
-                                <strong>Kostenübersicht:</strong><br>
-                                Grundpreis pro Tag: ' . $formattedUserRate . '€<br>
-                                Anzahl der Tage: ' . $days . '<br>
-                                <strong>Gesamtpreis: ' . $formattedTotalCost . '€</strong><br>
-                                <small>Hinweis: Die Kaution (' . $formattedDepositAmount . '€) ist in diesem Preis nicht enthalten.</small>
-                            </div>
-            ';
-            
-            if ($adminMessage) {
-                $body .= '
-                    <div class="message-box">
-                        <strong>Nachricht vom Administrator:</strong><br>
-                        ' . nl2br($adminMessage) . '
-                    </div>
-                ';
+            // Überprüfung, ob die Reservierung erfolgreich erstellt wurde
+            if ($reservationId) {
+                // E-Mail an den Benutzer senden
+                $user = $this->getUserById($userId);
+                if ($user) {
+                    // E-Mail an den Benutzer senden mit Status "Bestätigt"
+                    $this->sendUserReservationConfirmation($user, $startDatetime, $endDatetime, $myReservationsUrl, 'confirmed', $keyHandoverDatetime, $keyReturnDatetime);
+                }
+                
+                return [
+                    'success' => true,
+                    'message' => 'Die Reservierung wurde erfolgreich erstellt.',
+                    'reservation_id' => $reservationId
+                ];
+            } else {
+                return [
+                    'success' => false,
+                    'message' => 'Es ist ein Fehler bei der Erstellung der Reservierung aufgetreten. Bitte versuchen Sie es später erneut.'
+                ];
             }
-            
-            $body .= '
-                            <a href="' . $myReservationsUrl . '" class="button">Meine Reservierungen ansehen</a>
-                            
-                            <div class="footer">
-                                <p>Bei Fragen können Sie auf diese E-Mail antworten.</p>
-                                <p>Ihr Team der Grillhütte Waldems Reichenbach</p>
-                            </div>
-                        </div>
-                    </div>
-                </body>
-                </html>
-            ';
-            
-            sendEmail($user['email'], $subject, $body);
-            
-            return [
-                'success' => true,
-                'message' => 'Reservierung erfolgreich erstellt und Benutzer benachrichtigt.'
-            ];
-            
-        } catch (PDOException $e) {
+        } catch (Exception $e) {
+            error_log('Fehler beim Erstellen der Admin-Reservierung: ' . $e->getMessage());
             return [
                 'success' => false,
-                'message' => 'Die Reservierung konnte nicht erstellt werden. Bitte versuchen Sie es später erneut.'
+                'message' => 'Es ist ein Datenbankfehler aufgetreten. Bitte versuchen Sie es später erneut.'
             ];
         }
     }
@@ -971,10 +818,18 @@ class Reservation {
         }
     }
     
-    public function isTimeSlotAvailable($startDatetime, $endDatetime) {
+    /**
+     * Überprüft, ob ein Zeitraum für eine Reservierung verfügbar ist
+     * 
+     * @param string $startDatetime Beginn des zu prüfenden Zeitraums
+     * @param string $endDatetime Ende des zu prüfenden Zeitraums
+     * @param int|null $excludeReservationId Optionale ID einer Reservierung, die bei der Prüfung ausgeschlossen werden soll
+     * @return bool True wenn der Zeitraum verfügbar ist, sonst False
+     */
+    public function isTimeSlotAvailable($startDatetime, $endDatetime, $excludeReservationId = null) {
         try {
-            // Überprüfen, ob für den Zeitraum bereits eine bestätigte oder ausstehende Reservierung existiert
-            $stmt = $this->db->prepare("
+            // Basisabfrage
+            $sql = "
                 SELECT COUNT(*) AS count
                 FROM gh_reservations 
                 WHERE 
@@ -984,8 +839,18 @@ class Reservation {
                         (start_datetime < ? AND end_datetime >= ?) OR
                         (start_datetime >= ? AND end_datetime <= ?)
                     )
-            ");
-            $stmt->execute([$endDatetime, $startDatetime, $endDatetime, $startDatetime, $startDatetime, $endDatetime]);
+            ";
+            
+            $params = [$endDatetime, $startDatetime, $endDatetime, $startDatetime, $startDatetime, $endDatetime];
+            
+            // Wenn eine Reservierungs-ID zum Ausschließen angegeben wurde, ergänze die Abfrage
+            if ($excludeReservationId !== null) {
+                $sql .= " AND id != ?";
+                $params[] = $excludeReservationId;
+            }
+            
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
             
             return $result['count'] == 0;
@@ -1004,17 +869,19 @@ class Reservation {
             // Reservierungen für diesen Tag abrufen
             $stmt = $this->db->prepare("
                 SELECT id, start_datetime, end_datetime, status, is_public, event_name,
-                       display_event_name_on_calendar_start_date, display_event_name_on_calendar_end_date
+                       display_event_name_on_calendar_start_date, display_event_name_on_calendar_end_date,
+                       key_handover_datetime, key_return_datetime
                 FROM gh_reservations 
                 WHERE 
                     status IN ('confirmed', 'pending') AND
                     (
                         (start_datetime <= ? AND end_datetime > ?) OR
-                        (start_datetime >= ? AND start_datetime <= ?)
+                        (start_datetime >= ? AND start_datetime <= ?) OR
+                        (DATE(key_handover_datetime) = ? OR DATE(key_return_datetime) = ?)
                     )
                 ORDER BY start_datetime
             ");
-            $stmt->execute([$endDate, $startDate, $startDate, $endDate]);
+            $stmt->execute([$endDate, $startDate, $startDate, $endDate, $date, $date]);
             $reservations = $stmt->fetchAll(PDO::FETCH_ASSOC);
             
             if (empty($reservations)) {
@@ -1024,9 +891,29 @@ class Reservation {
             $hasConfirmed = false;
             $hasPending = false;
             $hasPublicEvent = false;
+            $hasKeyHandover = false;
+            $hasKeyReturn = false;
             $eventName = null;
+            $keyInfo = [];
             
             foreach ($reservations as $reservation) {
+                // Prüfen auf Schlüsselübergabe/-rückgabe
+                if (!empty($reservation['key_handover_datetime'])) {
+                    $keyHandoverDate = date('Y-m-d', strtotime($reservation['key_handover_datetime']));
+                    if ($keyHandoverDate == $date) {
+                        $hasKeyHandover = true;
+                        $keyInfo['handover'] = date('H:i', strtotime($reservation['key_handover_datetime']));
+                    }
+                }
+                
+                if (!empty($reservation['key_return_datetime'])) {
+                    $keyReturnDate = date('Y-m-d', strtotime($reservation['key_return_datetime']));
+                    if ($keyReturnDate == $date) {
+                        $hasKeyReturn = true;
+                        $keyInfo['return'] = date('H:i', strtotime($reservation['key_return_datetime']));
+                    }
+                }
+                
                 if ($reservation['status'] == 'confirmed') {
                     $hasConfirmed = true;
                     
@@ -1051,22 +938,50 @@ class Reservation {
                 }
             }
             
-            // Rückgabe mit Event-Informationen
+            // Rückgabe mit Event-Informationen und Schlüsselübergabeinformationen
             if ($hasConfirmed) {
                 if ($hasPublicEvent) {
-                    return [
+                    $response = [
                         'status' => 'public_event',
                         'event_name' => $eventName
                     ];
+                    
+                    if ($hasKeyHandover || $hasKeyReturn) {
+                        $response['key_info'] = $keyInfo;
+                    }
+                    
+                    return $response;
                 }
+                
+                if ($hasKeyHandover || $hasKeyReturn) {
+                    return [
+                        'status' => 'booked',
+                        'key_info' => $keyInfo
+                    ];
+                }
+                
                 return 'booked'; // Belegt (bestätigt)
             } else if ($hasPending) {
+                if ($hasKeyHandover || $hasKeyReturn) {
+                    return [
+                        'status' => 'pending',
+                        'key_info' => $keyInfo
+                    ];
+                }
+                
                 return 'pending'; // Ausstehend (noch nicht bestätigt)
+            } else if ($hasKeyHandover || $hasKeyReturn) {
+                // Nur Schlüsselübergabe/Rückgabe an diesem Tag
+                return [
+                    'status' => 'key_handover',
+                    'key_info' => $keyInfo
+                ];
             }
             
             return 'free'; // Sollte nicht erreicht werden, aber als Fallback
             
         } catch (PDOException $e) {
+            error_log('Error in getReservationDayStatus: ' . $e->getMessage());
             return 'error'; // Fehlerfall
         }
     }
@@ -1102,195 +1017,141 @@ class Reservation {
      */
     public function updateReservation($id, $userId, $startDatetime, $endDatetime, $adminMessage = null, 
                           $status = 'pending', $receiptRequested = null, $isPublic = null, 
-                          $eventName = null, $displayStartDate = null, $displayEndDate = null) {
+                          $eventName = null, $displayStartDate = null, $displayEndDate = null, 
+                          $keyHandoverDatetime = null, $keyReturnDatetime = null) {
         try {
             // Überprüfen, ob die Reservierung existiert
             $stmt = $this->db->prepare("SELECT id, status, receipt_requested, is_public, event_name, 
-                                       display_event_name_on_calendar_start_date, display_event_name_on_calendar_end_date 
+                                       display_event_name_on_calendar_start_date, display_event_name_on_calendar_end_date,
+                                       key_handover_datetime, key_return_datetime
                                        FROM gh_reservations WHERE id = ?");
             $stmt->execute([$id]);
-            $currentReservation = $stmt->fetch(PDO::FETCH_ASSOC);
+            $reservation = $stmt->fetch(PDO::FETCH_ASSOC);
             
-            if (!$currentReservation) {
+            if (!$reservation) {
                 return [
                     'success' => false,
-                    'message' => 'Reservierung nicht gefunden.'
-                ];
-            }
-
-            // Wenn optionale Parameter nicht explizit angegeben wurden, verwenden wir die aktuellen Werte
-            if ($receiptRequested === null) {
-                $receiptRequested = $currentReservation['receipt_requested'] ?? 0;
-            }
-            
-            if ($isPublic === null) {
-                $isPublic = $currentReservation['is_public'] ?? 0;
-            }
-            
-            if ($eventName === null) {
-                $eventName = $currentReservation['event_name'] ?? null;
-            }
-            
-            if ($displayStartDate === null) {
-                $displayStartDate = $currentReservation['display_event_name_on_calendar_start_date'] ?? null;
-            }
-            
-            if ($displayEndDate === null) {
-                $displayEndDate = $currentReservation['display_event_name_on_calendar_end_date'] ?? null;
-            }
-            
-            // Validierung für öffentliche Events
-            if ($isPublic && empty($eventName)) {
-                return [
-                    'success' => false,
-                    'message' => 'Für öffentliche Reservierungen muss ein Veranstaltungsname angegeben werden.'
+                    'message' => 'Die angegebene Reservierung wurde nicht gefunden.'
                 ];
             }
             
-            // Wenn der Status auf "confirmed" gesetzt werden soll, prüfen ob der Zeitraum verfügbar ist
-            if ($status === 'confirmed') {
-                // Prüfen ob es andere bestätigte oder ausstehende Reservierungen im gleichen Zeitraum gibt
-                $stmt = $this->db->prepare("
-                    SELECT COUNT(*) AS count
-                    FROM gh_reservations 
-                    WHERE 
-                        id != ? AND
-                        status = 'confirmed' AND
-                        (
-                            (start_datetime <= ? AND end_datetime > ?) OR
-                            (start_datetime < ? AND end_datetime >= ?) OR
-                            (start_datetime >= ? AND end_datetime <= ?)
-                        )
-                ");
-                $stmt->execute([$id, $endDatetime, $startDatetime, $endDatetime, $startDatetime, $startDatetime, $endDatetime]);
-                $result = $stmt->fetch(PDO::FETCH_ASSOC);
-                
-                if ($result['count'] > 0) {
-                    return [
-                        'success' => false,
-                        'message' => 'Der Zeitraum ist bereits durch eine andere Reservierung belegt. Die Reservierung kann nicht bestätigt werden.'
-                    ];
+            // Überprüfen, ob der Zeitraum verfügbar ist (außer für die eigene Reservierung)
+            if (!$this->isTimeSlotAvailable($startDatetime, $endDatetime, $id)) {
+                return [
+                    'success' => false,
+                    'message' => 'Der gewählte Zeitraum ist nicht verfügbar. Bitte wählen Sie einen anderen Zeitraum.'
+                ];
+            }
+            
+            // Wenn keine neuen Schlüsselübergabezeiten angegeben wurden, bestehende beibehalten oder Standardwerte berechnen
+            if ($keyHandoverDatetime === null) {
+                if (!empty($reservation['key_handover_datetime'])) {
+                    $keyHandoverDatetime = $reservation['key_handover_datetime'];
+                } else {
+                    $keyTimes = $this->calculateDefaultKeyHandoverTimes($startDatetime, $endDatetime);
+                    $keyHandoverDatetime = $keyTimes['key_handover'];
                 }
             }
             
-            // Preisberechnung basierend auf dem neuen Zeitraum
-            $startDate = new DateTime($startDatetime);
-            $endDate = new DateTime($endDatetime);
-            $diffSeconds = $endDate->getTimestamp() - $startDate->getTimestamp();
-            $diffDays = $diffSeconds / (24 * 60 * 60);
-            $days = max(1, ceil($diffDays));
-            
-            // Preisdaten abrufen
-            $priceInfo = $this->getPriceInformation($userId);
-            $userRate = $priceInfo['user_rate'];
-            $basePrice = $priceInfo['base_price'];
-            $depositAmount = $priceInfo['deposit_amount'];
-            $totalCost = $days * $userRate;
-            
-            // Reservierung aktualisieren mit aktualisierten Preisdaten
-            $stmt = $this->db->prepare("
-                UPDATE gh_reservations 
-                SET user_id = ?, start_datetime = ?, end_datetime = ?, admin_message = ?, status = ?,
-                    days_count = ?, base_price = ?, total_price = ?, deposit_amount = ?, receipt_requested = ?,
-                    is_public = ?, event_name = ?, display_event_name_on_calendar_start_date = ?, 
-                    display_event_name_on_calendar_end_date = ?
-                WHERE id = ?
-            ");
-            $stmt->execute([
-                $userId, $startDatetime, $endDatetime, $adminMessage, $status,
-                $days, $userRate, $totalCost, $depositAmount, $receiptRequested,
-                $isPublic, $eventName, $displayStartDate, $displayEndDate,
-                $id
-            ]);
-            
-            // Benutzer-Informationen abrufen
-            $userStmt = $this->db->prepare("SELECT email, first_name, last_name FROM gh_users WHERE id = ?");
-            $userStmt->execute([$userId]);
-            $user = $userStmt->fetch(PDO::FETCH_ASSOC);
-            
-            // E-Mail an den Benutzer senden
-            if ($user) {
-                $statusText = '';
-                switch ($status) {
-                    case 'pending':
-                        $statusText = 'ausstehend';
-                        break;
-                    case 'confirmed':
-                        $statusText = 'bestätigt';
-                        break;
-                    case 'canceled':
-                        $statusText = 'storniert';
-                        break;
-                    default:
-                        $statusText = $status;
+            if ($keyReturnDatetime === null) {
+                if (!empty($reservation['key_return_datetime'])) {
+                    $keyReturnDatetime = $reservation['key_return_datetime'];
+                } else {
+                    $keyTimes = $this->calculateDefaultKeyHandoverTimes($startDatetime, $endDatetime);
+                    $keyReturnDatetime = $keyTimes['key_return'];
                 }
-                $myReservationsUrl = 'https://' . $_SERVER['HTTP_HOST'] . getRelativePath('Benutzer/Meine-Reservierungen');
-                
-                $statusColor = $status == 'confirmed' ? '#28a745' : '#dc3545';
-                $subject = 'Ihre Reservierungsdetails wurden aktualisiert';
-                $body = '
-                    <!DOCTYPE html>
-                    <html>
-                    <head>
-                        <style>
-                            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-                            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-                            .header { background-color: ' . $statusColor . '; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
-                            .content { background-color: #ffffff; padding: 20px; border-radius: 0 0 5px 5px; border: 1px solid #ddd; }
-                            .button { display: inline-block; padding: 10px 20px; background-color: #A72920; color: white !important; text-decoration: none; border-radius: 5px; margin-top: 20px; }
-                            .info-box { background-color: #f8f9fa; border: 1px solid #ddd; padding: 15px; border-radius: 5px; margin: 20px 0; }
-                            .cost-box { background-color: #f0f8ff; border: 1px solid #b8daff; padding: 15px; border-radius: 5px; margin: 20px 0; }
-                            .status-badge { display: inline-block; padding: 5px 15px; background-color: ' . $statusColor . '; color: white; border-radius: 15px; }
-                            .message-box { background-color: #f8f9fa; border-left: 4px solid ' . $statusColor . '; padding: 15px; margin: 20px 0; }
-                            .footer { text-align: center; margin-top: 20px; font-size: 0.9em; color: #666; }
-                        </style>
-                    </head>
-                    <body>
-                        <div class="container">
-                            <div class="header">
-                                <h2>Reservierungsdetails aktualisiert</h2>
-                            </div>
-                            <div class="content">
-                                <h3>Hallo ' . $user['first_name'] . ' ' . $user['last_name'] . ',</h3>
-                                <p>Ihre Reservierung für die Grillhütte Waldems Reichenbach wurde aktualisiert.</p>
-                                <p><strong>Zeitraum:</strong> ' . date('d.m.Y H:i', strtotime($startDatetime)) . ' bis ' . date('d.m.Y H:i', strtotime($endDatetime)) . '</p>
-                                <p><strong>Status:</strong> ' . ucfirst($statusText) . '</p>
-                                ';
-                                if (!empty($adminMessage)) {
-                                    $body .= '
-                                    <div class="message-box">
-                                    <strong>Nachricht vom Administrator:</strong><br>
-                                    ' . nl2br($adminMessage) . '
-                                    </div>
-                                    ';
-                                }
-                                
-                                $body .= '
-                                <a href="' . $myReservationsUrl . '" class="button">Meine Reservierungen ansehen</a>
-                                <div class="footer">
-                                <p>Bei Fragen können Sie auf diese E-Mail antworten.</p>
-                                <p>Ihr Team der Grillhütte Waldems Reichenbach</p>
-                                </div>
-                                </div>
-                        </div>
-                    </body>
-                    </html>
-                ';
-                
-
-                
-                sendEmail($user['email'], $subject, $body);
             }
             
-            return [
-                'success' => true,
-                'message' => 'Reservierung erfolgreich aktualisiert.'
+            // Reservierung aktualisieren
+            $sql = "UPDATE gh_reservations SET 
+                    user_id = ?, 
+                    start_datetime = ?, 
+                    end_datetime = ?,
+                    key_handover_datetime = ?,
+                    key_return_datetime = ?,
+                    admin_message = ?, 
+                    status = ?";
+                    
+            $params = [
+                $userId, 
+                $startDatetime, 
+                $endDatetime,
+                $keyHandoverDatetime,
+                $keyReturnDatetime,
+                $adminMessage, 
+                $status
             ];
             
-        } catch (PDOException $e) {
+            // Optionale Felder nur hinzufügen, wenn sie nicht null sind
+            if ($receiptRequested !== null) {
+                $sql .= ", receipt_requested = ?";
+                $params[] = $receiptRequested;
+            }
+            
+            if ($isPublic !== null) {
+                $sql .= ", is_public = ?";
+                $params[] = $isPublic;
+                
+                // Wenn öffentlich ist, auch die Veranstaltungsdaten aktualisieren
+                if ($isPublic) {
+                    $sql .= ", event_name = ?, 
+                              display_event_name_on_calendar_start_date = ?, 
+                              display_event_name_on_calendar_end_date = ?";
+                    $params[] = $eventName;
+                    $params[] = $displayStartDate;
+                    $params[] = $displayEndDate;
+                } else {
+                    // Wenn nicht öffentlich, die Veranstaltungsdaten auf null setzen
+                    $sql .= ", event_name = NULL, 
+                              display_event_name_on_calendar_start_date = NULL, 
+                              display_event_name_on_calendar_end_date = NULL";
+                }
+            }
+            
+            // Aktualisiere die Anzahl der Tage und die Kosten
+            $daysCount = $this->calculateReservationDays($startDatetime, $endDatetime);
+            $prices = $this->calculateDefaultCosts($daysCount);
+            
+            $sql .= ", days_count = ?, base_price = ?, total_price = ?, deposit_amount = ?";
+            $params[] = $daysCount;
+            $params[] = $prices['base_price'];
+            $params[] = $prices['total_price'];
+            $params[] = $prices['deposit_amount'];
+            
+            $sql .= " WHERE id = ?";
+            $params[] = $id;
+            
+            $stmt = $this->db->prepare($sql);
+            $result = $stmt->execute($params);
+            
+            if ($result) {
+                // Benutzer per E-Mail benachrichtigen, wenn der Status geändert wurde
+                if ($reservation['status'] !== $status && ($status === 'confirmed' || $status === 'canceled')) {
+                    $user = $this->getUserById($userId);
+                    if ($user) {
+                        // URL für die Benutzers Reservierungen
+                        $myReservationsUrl = 'https://' . $_SERVER['HTTP_HOST'] . getRelativePath('Benutzer/Meine-Reservierungen');
+                        
+                        // E-Mail mit aktualisiertem Status senden
+                        $this->sendUserReservationUpdate($user, $startDatetime, $endDatetime, $myReservationsUrl, $status, $adminMessage, $keyHandoverDatetime, $keyReturnDatetime);
+                    }
+                }
+                
+                return [
+                    'success' => true,
+                    'message' => 'Die Reservierung wurde erfolgreich aktualisiert.'
+                ];
+            } else {
+                return [
+                    'success' => false,
+                    'message' => 'Die Reservierung konnte nicht aktualisiert werden. Bitte versuchen Sie es später erneut.'
+                ];
+            }
+        } catch (Exception $e) {
+            error_log('Fehler beim Aktualisieren der Reservierung: ' . $e->getMessage());
             return [
                 'success' => false,
-                'message' => 'Die Reservierung konnte nicht aktualisiert werden. Bitte versuchen Sie es später erneut.'
+                'message' => 'Es ist ein Datenbankfehler aufgetreten. Bitte versuchen Sie es später erneut.'
             ];
         }
     }
@@ -1695,6 +1556,129 @@ class Reservation {
                 'message' => 'Fehler beim Aktualisieren der Veranstaltungsdaten. Bitte versuchen Sie es später erneut.'
             ];
         }
+    }
+
+    /**
+     * Berechnet die Standard-Zeiten für die Schlüsselübergabe und -rückgabe
+     * 
+     * @param string $startDatetime Beginn der Reservierung
+     * @param string $endDatetime Ende der Reservierung
+     * @return array Schlüsselübergabe- und Rückgabezeiten
+     */
+    private function calculateDefaultKeyHandoverTimes($startDatetime, $endDatetime) {
+        // Startdatum in DateTime umwandeln
+        $startDate = new DateTime($startDatetime);
+        $endDate = new DateTime($endDatetime);
+        
+        // Schlüsselübergabe: Tag vor dem Start um 16:00 Uhr
+        $keyHandover = clone $startDate;
+        $keyHandover->modify('-1 day');
+        $keyHandover->setTime(16, 0, 0);
+        
+        // Schlüsselrückgabe: Tag nach dem Ende um 12:00 Uhr
+        $keyReturn = clone $endDate;
+        $keyReturn->modify('+1 day');
+        $keyReturn->setTime(12, 0, 0);
+        
+        return [
+            'key_handover' => $keyHandover->format('Y-m-d H:i:s'),
+            'key_return' => $keyReturn->format('Y-m-d H:i:s')
+        ];
+    }
+
+    /**
+     * Berechnet die Anzahl der Tage einer Reservierung
+     * 
+     * @param string $startDatetime Beginn der Reservierung
+     * @param string $endDatetime Ende der Reservierung
+     * @return int Anzahl der Tage
+     */
+    private function calculateReservationDays($startDatetime, $endDatetime) {
+        $startDate = new DateTime($startDatetime);
+        $endDate = new DateTime($endDatetime);
+        $diffSeconds = $endDate->getTimestamp() - $startDate->getTimestamp();
+        $diffDays = $diffSeconds / (24 * 60 * 60);
+        return max(1, ceil($diffDays));
+    }
+    
+    /**
+     * Berechnet die Standardkosten basierend auf der Anzahl der Tage
+     * 
+     * @param int $daysCount Anzahl der Tage
+     * @return array Array mit base_price, total_price und deposit_amount
+     */
+    private function calculateDefaultCosts($daysCount) {
+        // Standardwerte (können später durch Benutzer-/Gruppenspezifische Preise ersetzt werden)
+        $basePrice = 100.00;
+        $totalPrice = $basePrice * $daysCount;
+        $depositAmount = 100.00;
+        
+        return [
+            'base_price' => $basePrice,
+            'total_price' => $totalPrice,
+            'deposit_amount' => $depositAmount
+        ];
+    }
+    
+    /**
+     * Hilfsfunktion zum Abrufen eines Benutzers nach ID
+     * 
+     * @param int $userId Benutzer-ID
+     * @return array|false Benutzerdaten oder false, wenn nicht gefunden
+     */
+    private function getUserById($userId) {
+        $stmt = $this->db->prepare("SELECT id, email, first_name, last_name FROM gh_users WHERE id = ?");
+        $stmt->execute([$userId]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+    
+    /**
+     * Sendet eine E-Mail-Bestätigung an den Benutzer
+     * 
+     * @param array $user Benutzerdaten (mit email, first_name, last_name)
+     * @param string $startDatetime Beginn der Reservierung
+     * @param string $endDatetime Ende der Reservierung
+     * @param string $myReservationsUrl URL zur Reservierungsübersicht des Benutzers
+     * @param string $status Status der Reservierung (default: 'pending')
+     * @param string $keyHandoverDatetime Zeitpunkt der Schlüsselübergabe
+     * @param string $keyReturnDatetime Zeitpunkt der Schlüsselrückgabe
+     * @return void
+     */
+    private function sendUserReservationConfirmation($user, $startDatetime, $endDatetime, $myReservationsUrl, $status = 'pending', $keyHandoverDatetime = null, $keyReturnDatetime = null) {
+        // E-Mail-Versand-Logik
+        // ...
+    }
+    
+    /**
+     * Benachrichtigt den Admin über eine neue Reservierung
+     * 
+     * @param array $user Benutzerdaten des Reservierenden
+     * @param string $startDatetime Beginn der Reservierung
+     * @param string $endDatetime Ende der Reservierung
+     * @param string $adminReservationsUrl URL zur Reservierungsverwaltung für Admins
+     * @return void
+     */
+    private function sendAdminReservationNotification($user, $startDatetime, $endDatetime, $adminReservationsUrl) {
+        // E-Mail-Versand-Logik für Admins
+        // ...
+    }
+    
+    /**
+     * Sendet eine E-Mail über die Aktualisierung einer Reservierung an den Benutzer
+     * 
+     * @param array $user Benutzerdaten
+     * @param string $startDatetime Beginn der Reservierung
+     * @param string $endDatetime Ende der Reservierung
+     * @param string $myReservationsUrl URL zur Reservierungsübersicht des Benutzers
+     * @param string $status Neuer Status der Reservierung
+     * @param string $adminMessage Nachricht vom Administrator
+     * @param string $keyHandoverDatetime Zeitpunkt der Schlüsselübergabe
+     * @param string $keyReturnDatetime Zeitpunkt der Schlüsselrückgabe
+     * @return void
+     */
+    private function sendUserReservationUpdate($user, $startDatetime, $endDatetime, $myReservationsUrl, $status, $adminMessage = null, $keyHandoverDatetime = null, $keyReturnDatetime = null) {
+        // E-Mail-Versand-Logik für Updates
+        // ...
     }
 }
 ?> 

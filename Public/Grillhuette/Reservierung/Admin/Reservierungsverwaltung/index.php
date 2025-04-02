@@ -50,14 +50,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $userId = isset($_POST['user_id']) ? intval($_POST['user_id']) : 0;
             $startDate = isset($_POST['start_date']) ? trim($_POST['start_date']) : '';
             $endDate = isset($_POST['end_date']) ? trim($_POST['end_date']) : '';
-            $startTime = isset($_POST['start_time']) ? trim($_POST['start_time']) : '12:00';
-            $endTime = isset($_POST['end_time']) ? trim($_POST['end_time']) : '12:00';
             $adminMessage = isset($_POST['admin_message']) ? trim($_POST['admin_message']) : '';
             $receiptRequested = isset($_POST['receipt_requested']) ? 1 : 0;
             $isPublic = isset($_POST['is_public']) ? 1 : 0;
             $eventName = null;
             $displayStartDate = null;
             $displayEndDate = null;
+            
+            // Schlüsselübergabe Daten
+            $keyHandoverDate = isset($_POST['key_handover_date']) ? trim($_POST['key_handover_date']) : '';
+            $keyHandoverTime = isset($_POST['key_handover_time']) ? trim($_POST['key_handover_time']) : '16:00';
+            $keyReturnDate = isset($_POST['key_return_date']) ? trim($_POST['key_return_date']) : '';
+            $keyReturnTime = isset($_POST['key_return_time']) ? trim($_POST['key_return_time']) : '12:00';
             
             // Wenn öffentliche Veranstaltung
             if ($isPublic) {
@@ -86,11 +90,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $errors[] = 'Bitte wählen Sie ein Start- und Enddatum aus.';
             }
             
-            if (!preg_match('/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/', $startTime) || 
-                !preg_match('/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/', $endTime)) {
-                $errors[] = 'Bitte geben Sie gültige Uhrzeiten ein (Format: HH:MM).';
-            }
-            
             if ($isPublic) {
                 if (empty($eventName)) {
                     $errors[] = 'Bitte geben Sie einen Namen für die öffentliche Veranstaltung an.';
@@ -103,8 +102,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             if (empty($errors)) {
                 // Start- und Enddatum mit Uhrzeit kombinieren
-                $startDatetime = $startDate . ' ' . $startTime . ':00';
-                $endDatetime = $endDate . ' ' . $endTime . ':00';
+                $startDatetime = $startDate . ' 00:00:00';
+                $endDatetime = $endDate . ' 23:59:59';
+                
+                // Schlüsselübergabe-Datumszeiten kombinieren
+                $keyHandoverDatetime = null;
+                $keyReturnDatetime = null;
+                
+                if (!empty($keyHandoverDate) && !empty($keyHandoverTime)) {
+                    $keyHandoverDatetime = $keyHandoverDate . ' ' . $keyHandoverTime . ':00';
+                }
+                
+                if (!empty($keyReturnDate) && !empty($keyReturnTime)) {
+                    $keyReturnDatetime = $keyReturnDate . ' ' . $keyReturnTime . ':00';
+                }
                 
                 // Überprüfen, ob das Enddatum nach dem Startdatum liegt
                 if (strtotime($endDatetime) <= strtotime($startDatetime)) {
@@ -137,7 +148,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             $isPublic,
                             $eventName,
                             $displayStartDate,
-                            $displayEndDate
+                            $displayEndDate,
+                            $keyHandoverDatetime,
+                            $keyReturnDatetime
                         );
                         
                         $_SESSION['flash_message'] = $result['message'];
@@ -146,7 +159,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
                 else {
                     // Keine öffentliche Veranstaltung - normale Reservierung erstellen
-                    $result = $reservation->createByAdmin($userId, $startDatetime, $endDatetime, $adminMessage, $receiptRequested);
+                    $result = $reservation->createByAdmin(
+                        $userId, 
+                        $startDatetime, 
+                        $endDatetime, 
+                        $adminMessage, 
+                        $receiptRequested,
+                        0, // is_public
+                        null, // event_name
+                        null, // display_start_date
+                        null, // display_end_date
+                        $keyHandoverDatetime, 
+                        $keyReturnDatetime
+                    );
                     
                     $_SESSION['flash_message'] = $result['message'];
                     $_SESSION['flash_type'] = $result['success'] ? 'success' : 'danger';
@@ -179,8 +204,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $userId = isset($_POST['user_id']) ? intval($_POST['user_id']) : 0;
             $startDate = isset($_POST['start_date']) ? trim($_POST['start_date']) : '';
             $endDate = isset($_POST['end_date']) ? trim($_POST['end_date']) : '';
-            $startTime = isset($_POST['start_time']) ? trim($_POST['start_time']) : '12:00';
-            $endTime = isset($_POST['end_time']) ? trim($_POST['end_time']) : '12:00';
             $adminMessage = isset($_POST['admin_message']) ? trim($_POST['admin_message']) : '';
             $status = isset($_POST['status']) ? trim($_POST['status']) : 'pending';
             $receiptRequested = isset($_POST['receipt_requested']) ? 1 : 0;
@@ -188,6 +211,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $eventName = null;
             $displayStartDate = null;
             $displayEndDate = null;
+            
+            // Schlüsselübergabe Daten
+            $keyHandoverDate = isset($_POST['key_handover_date']) ? trim($_POST['key_handover_date']) : '';
+            $keyHandoverTime = isset($_POST['key_handover_time']) ? trim($_POST['key_handover_time']) : '16:00';
+            $keyReturnDate = isset($_POST['key_return_date']) ? trim($_POST['key_return_date']) : '';
+            $keyReturnTime = isset($_POST['key_return_time']) ? trim($_POST['key_return_time']) : '12:00';
             
             // Wenn öffentliche Veranstaltung
             if ($isPublic) {
@@ -216,11 +245,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $errors[] = 'Bitte wählen Sie ein Start- und Enddatum aus.';
             }
             
-            if (!preg_match('/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/', $startTime) || 
-                !preg_match('/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/', $endTime)) {
-                $errors[] = 'Bitte geben Sie gültige Uhrzeiten ein (Format: HH:MM).';
-            }
-            
             if (!in_array($status, ['pending', 'confirmed', 'canceled'])) {
                 $errors[] = 'Ungültiger Status.';
             }
@@ -237,8 +261,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             if (empty($errors)) {
                 // Start- und Enddatum mit Uhrzeit kombinieren
-                $startDatetime = $startDate . ' ' . $startTime . ':00';
-                $endDatetime = $endDate . ' ' . $endTime . ':00';
+                $startDatetime = $startDate . ' 00:00:00';
+                $endDatetime = $endDate . ' 23:59:59';
+                
+                // Schlüsselübergabe-Datumszeiten kombinieren
+                $keyHandoverDatetime = null;
+                $keyReturnDatetime = null;
+                
+                if (!empty($keyHandoverDate) && !empty($keyHandoverTime)) {
+                    $keyHandoverDatetime = $keyHandoverDate . ' ' . $keyHandoverTime . ':00';
+                }
+                
+                if (!empty($keyReturnDate) && !empty($keyReturnTime)) {
+                    $keyReturnDatetime = $keyReturnDate . ' ' . $keyReturnTime . ':00';
+                }
                 
                 // Überprüfen, ob das Enddatum nach dem Startdatum liegt
                 if (strtotime($endDatetime) <= strtotime($startDatetime)) {
@@ -300,7 +336,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         $isPublic,
                         $eventName,
                         $displayStartDate,
-                        $displayEndDate
+                        $displayEndDate,
+                        $keyHandoverDatetime,
+                        $keyReturnDatetime
                     );
                     
                     $_SESSION['flash_message'] = $result['message'];
@@ -397,8 +435,29 @@ require_once '../../includes/header.php';
                                             <small><?php echo escape($res['email']); ?></small>
                                         </td>
                                         <td>
-                                            Von: <?php echo date('d.m.Y H:i', strtotime($res['start_datetime'])); ?><br>
-                                            Bis: <?php echo date('d.m.Y H:i', strtotime($res['end_datetime'])); ?>
+                                            <?php echo date('d.m.Y', strtotime($res['start_datetime'])); ?> - 
+                                            <?php echo date('d.m.Y', strtotime($res['end_datetime'])); ?>
+                                            
+                                            <?php if (!empty($res['key_handover_datetime']) || !empty($res['key_return_datetime'])): ?>
+                                            <div class="mt-2 small">
+                                                <span class="d-block text-primary">
+                                                    <i class="bi bi-key"></i> 
+                                                    <?php if (!empty($res['key_handover_datetime'])): ?>
+                                                    <span class="me-2">Übergabe: <?php echo date('d.m.Y H:i', strtotime($res['key_handover_datetime'])); ?></span>
+                                                    <?php endif; ?>
+                                                    <?php if (!empty($res['key_return_datetime'])): ?>
+                                                    <span>Rückgabe: <?php echo date('d.m.Y H:i', strtotime($res['key_return_datetime'])); ?></span>
+                                                    <?php endif; ?>
+                                                </span>
+                                            </div>
+                                            <?php endif; ?>
+                                            
+                                            <?php if (isset($res['is_public']) && $res['is_public']): ?>
+                                            <div class="mt-1 badge bg-success">
+                                                <i class="bi bi-calendar-event"></i> 
+                                                <?php echo escape($res['event_name'] ?? 'Öffentliche Veranstaltung'); ?>
+                                            </div>
+                                            <?php endif; ?>
                                         </td>
                                         <td>
                                             <?php
@@ -490,9 +549,7 @@ require_once '../../includes/header.php';
                                                     data-id="<?php echo $res['id']; ?>"
                                                     data-user-id="<?php echo $res['user_id']; ?>"
                                                     data-start="<?php echo date('Y-m-d', strtotime($res['start_datetime'])); ?>"
-                                                    data-start-time="<?php echo date('H:i', strtotime($res['start_datetime'])); ?>"
                                                     data-end="<?php echo date('Y-m-d', strtotime($res['end_datetime'])); ?>"
-                                                    data-end-time="<?php echo date('H:i', strtotime($res['end_datetime'])); ?>"
                                                     data-message="<?php echo escape($res['admin_message'] ?? ''); ?>"
                                                     data-user-message="<?php echo escape($res['user_message'] ?? ''); ?>"
                                                     data-status="<?php echo $res['status']; ?>"
@@ -501,6 +558,10 @@ require_once '../../includes/header.php';
                                                     data-event-name="<?php echo escape($res['event_name'] ?? ''); ?>"
                                                     data-display-start-date="<?php echo isset($res['display_event_name_on_calendar_start_date']) ? date('Y-m-d', strtotime($res['display_event_name_on_calendar_start_date'])) : ''; ?>"
                                                     data-display-end-date="<?php echo isset($res['display_event_name_on_calendar_end_date']) ? date('Y-m-d', strtotime($res['display_event_name_on_calendar_end_date'])) : ''; ?>"
+                                                    data-key-handover-date="<?php echo !empty($res['key_handover_datetime']) ? date('Y-m-d', strtotime($res['key_handover_datetime'])) : ''; ?>"
+                                                    data-key-handover-time="<?php echo !empty($res['key_handover_datetime']) ? date('H:i', strtotime($res['key_handover_datetime'])) : ''; ?>"
+                                                    data-key-return-date="<?php echo !empty($res['key_return_datetime']) ? date('Y-m-d', strtotime($res['key_return_datetime'])) : ''; ?>"
+                                                    data-key-return-time="<?php echo !empty($res['key_return_datetime']) ? date('H:i', strtotime($res['key_return_datetime'])) : ''; ?>"
                                                     onclick="prepareEditModal(this)">
                                                 <i class="bi bi-pencil"></i> Bearbeiten
                                             </button>
@@ -557,16 +618,6 @@ require_once '../../includes/header.php';
                     
                     <div class="row">
                         <div class="col-md-4 mb-3">
-                            <label for="start_time" class="form-label">Startzeit</label>
-                            <input type="time" class="form-control" id="start_time" name="start_time" value="12:00" step="1800" required>
-                        </div>
-                        
-                        <div class="col-md-4 mb-3">
-                            <label for="end_time" class="form-label">Endzeit</label>
-                            <input type="time" class="form-control" id="end_time" name="end_time" value="12:00" step="1800" required>
-                        </div>
-                        
-                        <div class="col-md-4 mb-3">
                             <label for="admin_message" class="form-label">Nachricht an den Benutzer (optional)</label>
                             <textarea class="form-control" id="admin_message" name="admin_message" rows="1"></textarea>
                         </div>
@@ -610,6 +661,31 @@ require_once '../../includes/header.php';
                                 <input type="text" class="form-control date-picker" id="display_end_date" name="display_end_date">
                                 <div class="form-text">In diesem Zeitraum wird die Veranstaltung im Kalender angezeigt.</div>
                             </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Neue Felder für Schlüsselübergabe -->
+                    <div class="row">
+                        <div class="col-12 mb-3">
+                            <hr>
+                            <h5>Schlüsselübergabe</h5>
+                            <div class="form-text mb-3">Der Schlüssel wird standardmäßig am Tag vor dem Aufenthalt um 16:00 Uhr übergeben und am Tag nach dem Aufenthalt um 12:00 Uhr zurückgenommen.</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="key_handover_date" class="form-label">Datum Schlüsselübergabe</label>
+                            <input type="text" class="form-control date-picker" id="key_handover_date" name="key_handover_date">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="key_handover_time" class="form-label">Uhrzeit Schlüsselübergabe</label>
+                            <input type="time" class="form-control" id="key_handover_time" name="key_handover_time" value="16:00">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="key_return_date" class="form-label">Datum Schlüsselrückgabe</label>
+                            <input type="text" class="form-control date-picker" id="key_return_date" name="key_return_date">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="key_return_time" class="form-label">Uhrzeit Schlüsselrückgabe</label>
+                            <input type="time" class="form-control" id="key_return_time" name="key_return_time" value="12:00">
                         </div>
                     </div>
                     
@@ -699,16 +775,6 @@ require_once '../../includes/header.php';
                     
                     <div class="row">
                         <div class="col-md-4 mb-3">
-                            <label for="edit_start_time" class="form-label">Startzeit</label>
-                            <input type="time" class="form-control" id="edit_start_time" name="start_time" step="1800" required>
-                        </div>
-                        
-                        <div class="col-md-4 mb-3">
-                            <label for="edit_end_time" class="form-label">Endzeit</label>
-                            <input type="time" class="form-control" id="edit_end_time" name="end_time" step="1800" required>
-                        </div>
-                        
-                        <div class="col-md-4 mb-3">
                             <label for="edit_status" class="form-label">Status</label>
                             <select class="form-select" id="edit_status" name="status" required>
                                 <option value="pending">Ausstehend</option>
@@ -716,9 +782,7 @@ require_once '../../includes/header.php';
                                 <option value="canceled">Storniert</option>
                             </select>
                         </div>
-                    </div>
-                    
-                    <div class="row">
+                        
                         <div class="col-md-6 mb-3">
                             <label for="edit_user_message_display" class="form-label">Nachricht vom Benutzer</label>
                             <textarea class="form-control" id="edit_user_message_display" rows="3" readonly></textarea>
@@ -771,9 +835,34 @@ require_once '../../includes/header.php';
                         </div>
                     </div>
                     
+                    <!-- Neue Felder für Schlüsselübergabe -->
+                    <div class="row">
+                        <div class="col-12 mb-3">
+                            <hr>
+                            <h5>Schlüsselübergabe</h5>
+                            <div class="form-text mb-3">Der Schlüssel wird standardmäßig am Tag vor dem Aufenthalt um 16:00 Uhr übergeben und am Tag nach dem Aufenthalt um 12:00 Uhr zurückgenommen.</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="edit_key_handover_date" class="form-label">Datum Schlüsselübergabe</label>
+                            <input type="text" class="form-control date-picker" id="edit_key_handover_date" name="key_handover_date">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="edit_key_handover_time" class="form-label">Uhrzeit Schlüsselübergabe</label>
+                            <input type="time" class="form-control" id="edit_key_handover_time" name="key_handover_time">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="edit_key_return_date" class="form-label">Datum Schlüsselrückgabe</label>
+                            <input type="text" class="form-control date-picker" id="edit_key_return_date" name="key_return_date">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="edit_key_return_time" class="form-label">Uhrzeit Schlüsselrückgabe</label>
+                            <input type="time" class="form-control" id="edit_key_return_time" name="key_return_time">
+                        </div>
+                    </div>
+                    
+                    <!-- Kostenübersicht -->
                     <div class="row">
                         <div class="col-md-8 mb-3">
-                            <!-- Kostenübersicht -->
                             <label class="form-label">Kostenübersicht</label>
                             <div class="card">
                                 <div class="card-body p-3">
@@ -834,59 +923,57 @@ require_once '../../includes/header.php';
 <!-- JavaScript für die Formularvorausfüllung -->
 <script>
 // Diese Funktion wird aufgerufen, wenn der "Bearbeiten"-Button geklickt wird
-function prepareEditModal(button) {
-    // Reservation ID abrufen
-    const reservationId = button.getAttribute('data-id');
+function prepareEditModal(element) {
+    const reservationId = element.getAttribute('data-id');
+    const userId = element.getAttribute('data-user-id');
+    const startDate = element.getAttribute('data-start');
+    const endDate = element.getAttribute('data-end');
+    const adminMessage = element.getAttribute('data-message');
+    const userMessage = element.getAttribute('data-user-message');
+    const status = element.getAttribute('data-status');
+    const receiptRequested = element.getAttribute('data-receipt-requested');
+    const isPublic = element.getAttribute('data-is-public');
+    const eventName = element.getAttribute('data-event-name');
+    const displayStartDate = element.getAttribute('data-display-start-date');
+    const displayEndDate = element.getAttribute('data-display-end-date');
+    const keyHandoverDate = element.getAttribute('data-key-handover-date');
+    const keyHandoverTime = element.getAttribute('data-key-handover-time');
+    const keyReturnDate = element.getAttribute('data-key-return-date');
+    const keyReturnTime = element.getAttribute('data-key-return-time');
+    
+    // Felder ausfüllen
     document.getElementById('edit_reservation_id').value = reservationId;
-    
-    // Benutzer ID 
-    const userId = button.getAttribute('data-user-id');
     document.getElementById('edit_user_id').value = userId;
-    
-    // Startdatum 
-    const startDate = button.getAttribute('data-start');
     document.getElementById('edit_start_date').value = startDate;
-    
-    // Enddatum 
-    const endDate = button.getAttribute('data-end');
     document.getElementById('edit_end_date').value = endDate;
-    
-    // Startzeit 
-    const startTime = button.getAttribute('data-start-time');
-    document.getElementById('edit_start_time').value = startTime;
-    
-    // Endzeit 
-    const endTime = button.getAttribute('data-end-time');
-    document.getElementById('edit_end_time').value = endTime;
-    
-    // Admin-Nachricht 
-    const message = button.getAttribute('data-message');
-    document.getElementById('edit_admin_message').value = message || '';
-    
-    // Benutzer-Nachricht
-    const userMessage = button.getAttribute('data-user-message');
+    document.getElementById('edit_admin_message').value = adminMessage || '';
     document.getElementById('edit_user_message_display').value = userMessage || '';
-    
-    // Status (Dropdown)
-    const status = button.getAttribute('data-status');
     document.getElementById('edit_status').value = status;
     
+    // Schlüsselübergabe-Felder
+    if (keyHandoverDate) {
+        document.getElementById('edit_key_handover_date').value = keyHandoverDate;
+    }
+    if (keyHandoverTime) {
+        document.getElementById('edit_key_handover_time').value = keyHandoverTime;
+    }
+    if (keyReturnDate) {
+        document.getElementById('edit_key_return_date').value = keyReturnDate;
+    }
+    if (keyReturnTime) {
+        document.getElementById('edit_key_return_time').value = keyReturnTime;
+    }
+    
     // Receipt requested
-    const receiptRequested = button.getAttribute('data-receipt-requested');
-    document.getElementById('edit_receipt_requested').checked = (receiptRequested === '1');
+    document.getElementById('edit_receipt_requested').checked = receiptRequested === '1';
     
     // Öffentliche Veranstaltung
-    const isPublic = button.getAttribute('data-is-public');
-    document.getElementById('edit_is_public').checked = (isPublic === '1');
+    document.getElementById('edit_is_public').checked = isPublic === '1';
     
     // Veranstaltungsname
-    const eventName = button.getAttribute('data-event-name');
     document.getElementById('edit_event_name').value = eventName || '';
     
     // Anzeigebereich
-    const displayStartDate = button.getAttribute('data-display-start-date');
-    const displayEndDate = button.getAttribute('data-display-end-date');
-    
     // Überprüfen, ob es ein Datumsbereich ist
     const isDateRange = displayStartDate && displayEndDate && displayStartDate !== displayEndDate;
     document.getElementById('edit_show_date_range').checked = isDateRange;
@@ -1148,40 +1235,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Handle public event checkbox for edit form
-    const editIsPublicCheckbox = document.getElementById('edit_is_public');
-    const editShowDateRangeCheckbox = document.getElementById('edit_show_date_range');
-    const editPublicEventDetails = document.getElementById('edit_public-event-details');
-    const editSingleDayField = document.getElementById('edit_single-day-field');
-    const editDateRangeFields = document.getElementById('edit_date-range-fields');
-    
-    if (editIsPublicCheckbox && editPublicEventDetails) {
-        editIsPublicCheckbox.addEventListener('change', function() {
-            editPublicEventDetails.style.display = this.checked ? 'block' : 'none';
-        });
-    }
-    
-    if (editShowDateRangeCheckbox && editDateRangeFields && editSingleDayField) {
-        editShowDateRangeCheckbox.addEventListener('change', function() {
-            editDateRangeFields.style.display = this.checked ? 'block' : 'none';
-            editSingleDayField.style.display = this.checked ? 'none' : 'block';
-            
-            // Synchronize the dates if needed
-            const eventDayField = document.getElementById('edit_event_day');
-            const displayStartField = document.getElementById('edit_display_start_date');
-            const displayEndField = document.getElementById('edit_display_end_date');
-            
-            if (this.checked && eventDayField && eventDayField.value) {
-                // If switching to range mode and we have an event day, use it for both start and end
-                displayStartField.value = eventDayField.value;
-                displayEndField.value = eventDayField.value;
-            } else if (!this.checked && displayStartField && displayStartField.value) {
-                // If switching to single day mode, use the start date
-                eventDayField.value = displayStartField.value;
-            }
-        });
-    }
-    
     // Initialize flatpickr for the new reservation form date fields
     flatpickr('#start_date', {
         locale: "de",
@@ -1271,18 +1324,37 @@ document.addEventListener('DOMContentLoaded', function() {
     // Run the initial cost calculation for the new reservation form
     updateNewCosts();
     
+    // Flatpickr für Schlüsselübergabe-Felder im neuen Reservierungsformular
+    flatpickr('#key_handover_date', {
+        locale: "de",
+        dateFormat: "Y-m-d",
+        altInput: true,
+        altFormat: "j. F Y",
+        minDate: "today",
+        disableMobile: "true"
+    });
+    
+    flatpickr('#key_return_date', {
+        locale: "de",
+        dateFormat: "Y-m-d",
+        altInput: true,
+        altFormat: "j. F Y",
+        minDate: "today",
+        disableMobile: "true"
+    });
+    
     // Event-Listener für das Öffnen des Edit-Modals
     const editModal = document.getElementById('editReservationModal');
     if (editModal) {
         editModal.addEventListener('shown.bs.modal', function () {
             // Felder abrufen
             const startDateField = document.getElementById('edit_start_date');
-            const startTimeField = document.getElementById('edit_start_time');
             const endDateField = document.getElementById('edit_end_date');
-            const endTimeField = document.getElementById('edit_end_time');
             const eventDayField = document.getElementById('edit_event_day');
             const displayStartDateField = document.getElementById('edit_display_start_date');
             const displayEndDateField = document.getElementById('edit_display_end_date');
+            const keyHandoverDateField = document.getElementById('edit_key_handover_date');
+            const keyReturnDateField = document.getElementById('edit_key_return_date');
             
             // Flatpickr-Instanzen zerstören, falls sie bereits existieren
             if (startDateField._flatpickr) startDateField._flatpickr.destroy();
@@ -1290,6 +1362,8 @@ document.addEventListener('DOMContentLoaded', function() {
             if (eventDayField._flatpickr) eventDayField._flatpickr.destroy();
             if (displayStartDateField._flatpickr) displayStartDateField._flatpickr.destroy();
             if (displayEndDateField._flatpickr) displayEndDateField._flatpickr.destroy();
+            if (keyHandoverDateField._flatpickr) keyHandoverDateField._flatpickr.destroy();
+            if (keyReturnDateField._flatpickr) keyReturnDateField._flatpickr.destroy();
             
             // Event-Handler für die Checkbox einrichten
             const editIsPublicCheckbox = document.getElementById('edit_is_public');
@@ -1403,6 +1477,27 @@ document.addEventListener('DOMContentLoaded', function() {
                 defaultDate: displayEndDateField.value
             });
             
+            // Flatpickr für Schlüsselübergabe-Felder im Bearbeitungsmodal
+            flatpickr('#edit_key_handover_date', {
+                locale: "de",
+                dateFormat: "Y-m-d",
+                altInput: true,
+                altFormat: "j. F Y",
+                minDate: "today",
+                disableMobile: "true",
+                defaultDate: keyHandoverDateField.value
+            });
+            
+            flatpickr('#edit_key_return_date', {
+                locale: "de",
+                dateFormat: "Y-m-d",
+                altInput: true,
+                altFormat: "j. F Y",
+                minDate: "today",
+                disableMobile: "true",
+                defaultDate: keyReturnDateField.value
+            });
+            
             // Function to update event date constraints
             function updateEditEventDateConstraints() {
                 const startDate = document.getElementById('edit_start_date').value;
@@ -1422,12 +1517,12 @@ document.addEventListener('DOMContentLoaded', function() {
             // Update event date constraints initially
             updateEditEventDateConstraints();
             
-            // Event-Listener hinzufügen, um die Kostenberechnung zu aktualisieren, wenn sich die Zeit ändert
-            startTimeField.addEventListener('change', updateEditCosts);
-            endTimeField.addEventListener('change', updateEditCosts);
-            
             // Initial cost calculation
             updateEditCosts();
+            
+            // Änderungen an Start-/Enddatum oder -zeit sollten die Kosten aktualisieren
+            startDateField.addEventListener('change', updateEditCosts);
+            endDateField.addEventListener('change', updateEditCosts);
         });
     }
     

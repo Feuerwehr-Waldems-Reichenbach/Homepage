@@ -35,17 +35,27 @@ try {
         // Format: YYYY-MM-DD
         $date = sprintf('%04d-%02d-%02d', $year, $month, $day);
         
-        // Status des Tages abrufen (free, pending, booked oder array mit ['status' => 'public_event', 'event_name' => 'Name'])
+        // Status des Tages abrufen (free, pending, booked oder array mit Detailinformationen)
         $dayStatus = $reservation->getReservationDayStatus($date);
         
         if (is_array($dayStatus)) {
-            // Wenn es ein öffentliches Event ist, speichere Status und Event-Namen
-            $calendarData[$date] = [
-                'status' => $dayStatus['status'],
-                'event_name' => $dayStatus['event_name']
-            ];
+            // Wenn das Ergebnis ein Array ist, füge alle Informationen hinzu
+            $calendarData[$date] = $dayStatus;
+            
+            // Wenn es ein Event oder Schlüsselübergabe gibt, stelle sicher, dass die vollständigen Infos zurückgegeben werden
+            if (isset($dayStatus['status'])) {
+                if ($dayStatus['status'] === 'public_event' && !isset($dayStatus['event_name'])) {
+                    $calendarData[$date]['event_name'] = '';
+                }
+                
+                // Schlüsselübergabe-Informationen
+                if (isset($dayStatus['key_info'])) {
+                    // Stellen sicher, dass key_info erhalten bleibt
+                    $calendarData[$date]['key_info'] = $dayStatus['key_info'];
+                }
+            }
         } else {
-            // Ansonsten nur den Status
+            // Ansonsten nur den Status-String
             $calendarData[$date] = $dayStatus;
         }
     }

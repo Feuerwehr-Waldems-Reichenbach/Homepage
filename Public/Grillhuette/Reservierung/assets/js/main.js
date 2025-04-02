@@ -675,7 +675,6 @@ function showMobileAlert(message) {
 function updateDayStatuses(statusData) {
     if (!statusData) return;
     
-    
     // Verifiziere, dass die zurückgegebenen Daten zum aktuellen Monat/Jahr passen
     const dates = Object.keys(statusData);
     if (dates.length > 0) {
@@ -687,6 +686,8 @@ function updateDayStatuses(statusData) {
         const expectedMonth = document.getElementById('month').value.toString().padStart(2, '0');
         
         if (receivedMonth !== expectedMonth) {
+            // Hier könnte ein Log erfolgen, aber keine Aktion notwendig
+            console.log("Month mismatch in received calendar data");
         }
     }
     
@@ -700,11 +701,15 @@ function updateDayStatuses(statusData) {
         const date = new Date(dateStr);
         
         // Remove all status classes except other-month
-        dayElement.classList.remove('free', 'pending', 'booked', 'past', 'public-event');
+        dayElement.classList.remove('free', 'pending', 'booked', 'past', 'public-event', 'key-handover');
         
         // Remove event name tooltip and data
         dayElement.dataset.eventName = '';
         dayElement.title = '';
+        
+        // Remove any key handover indicators
+        const existingIndicators = dayElement.querySelectorAll('.event-indicator, .key-indicator');
+        existingIndicators.forEach(indicator => indicator.remove());
         
         // Add free by default
         dayElement.classList.add('free');
@@ -723,35 +728,91 @@ function updateDayStatuses(statusData) {
         
         if (dayElement) {
             // Remove status classes but keep past if it's set
-            dayElement.classList.remove('free', 'pending', 'booked', 'public-event');
+            dayElement.classList.remove('free', 'pending', 'booked', 'public-event', 'key-handover');
             
             // For non-past days, update status
             if (!dayElement.classList.contains('past')) {
-                // Check if we have an object with a status and event_name
-                if (typeof statusInfo === 'object' && statusInfo.status === 'public_event') {
-                    // For public event, use a special class
-                    dayElement.classList.add('public-event');
-                    
-                    // Add event name as tooltip and data attribute
-                    if (statusInfo.event_name) {
-                        dayElement.dataset.eventName = statusInfo.event_name;
-                        dayElement.title = statusInfo.event_name;
+                // Check if we have an object with a status or just a string status
+                if (typeof statusInfo === 'object') {
+                    if (statusInfo.status === 'public_event') {
+                        // For public event, use a special class
+                        dayElement.classList.add('public-event');
                         
-                        // Add a small indicator for the event name
-                        if (!dayElement.querySelector('.event-indicator')) {
+                        // Add event name as tooltip and data attribute
+                        if (statusInfo.event_name) {
+                            dayElement.dataset.eventName = statusInfo.event_name;
+                            dayElement.title = statusInfo.event_name;
+                            
+                            // Add a small indicator for the event name
                             const indicator = document.createElement('span');
                             indicator.className = 'event-indicator';
-                            indicator.textContent = statusInfo.event_name; // Vollständiger Veranstaltungsname
+                            indicator.textContent = statusInfo.event_name.substring(0, 15); // Gekürzt auf 15 Zeichen
+                            if (statusInfo.event_name.length > 15) {
+                                indicator.textContent += '...';
+                            }
                             dayElement.appendChild(indicator);
+                        }
+                        
+                        // Add key handover info if available for public events
+                        if (statusInfo.key_info) {
+                            addKeyHandoverInfo(dayElement, statusInfo.key_info);
+                        }
+                    } else if (statusInfo.status === 'key_handover') {
+                        // For key handover only days
+                        dayElement.classList.add('key-handover');
+                        
+                        if (statusInfo.key_info) {
+                            addKeyHandoverInfo(dayElement, statusInfo.key_info);
+                        }
+                    } else {
+                        // For booked or pending with key info
+                        dayElement.classList.add(statusInfo.status);
+                        
+                        // Add key handover info if available
+                        if (statusInfo.key_info) {
+                            addKeyHandoverInfo(dayElement, statusInfo.key_info);
                         }
                     }
                 } else {
-                    // Add the normal status class
+                    // Add the normal status class if it's just a string
                     dayElement.classList.add(statusInfo);
                 }
             }
         }
     });
+    
+    // Helper function to add key handover info
+    function addKeyHandoverInfo(dayElement, keyInfo) {
+        let tooltipText = '';
+        
+        if (keyInfo.handover) {
+            tooltipText += `Schlüsselübergabe: ${keyInfo.handover} Uhr`;
+        }
+        if (keyInfo.return) {
+            if (tooltipText) tooltipText += '\n';
+            tooltipText += `Schlüsselrückgabe: ${keyInfo.return} Uhr`;
+        }
+        
+        // Set tooltip or append to existing tooltip
+        if (dayElement.title) {
+            dayElement.title += '\n\n' + tooltipText;
+        } else {
+            dayElement.title = tooltipText;
+        }
+        
+        // Add key indicator
+        const keyIndicator = document.createElement('span');
+        keyIndicator.className = 'key-indicator';
+        
+        if (keyInfo.handover && keyInfo.return) {
+            // Two keys if both handover and return on same day
+            keyIndicator.innerHTML = '<i class="bi bi-key"></i><i class="bi bi-key"></i>';
+        } else {
+            keyIndicator.innerHTML = '<i class="bi bi-key"></i>';
+        }
+        
+        dayElement.appendChild(keyIndicator);
+    }
 }
 
 // Check if a day is selectable (must be free or today or future)

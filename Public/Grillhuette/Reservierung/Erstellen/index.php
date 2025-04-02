@@ -23,8 +23,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Formularfelder validieren
     $startDate = isset($_POST['start_date']) ? trim($_POST['start_date']) : '';
     $endDate = isset($_POST['end_date']) ? trim($_POST['end_date']) : '';
-    $startTime = isset($_POST['start_time']) ? trim($_POST['start_time']) : '12:00';
-    $endTime = isset($_POST['end_time']) ? trim($_POST['end_time']) : '12:00';
     $message = isset($_POST['message']) ? trim($_POST['message']) : null;
     $receiptRequested = isset($_POST['receipt_requested']) ? 1 : 0;
     
@@ -74,18 +72,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
     
-    // Zeitvalidierung
-    if (!preg_match('/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/', $startTime) || 
-        !preg_match('/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/', $endTime)) {
-        $_SESSION['flash_message'] = 'Bitte geben Sie gültige Uhrzeiten ein (Format: HH:MM).';
-        $_SESSION['flash_type'] = 'danger';
-        header('Location: ' . getRelativePath('home'));
-        exit;
-    }
-    
-    // Start- und Enddatum mit Uhrzeit kombinieren
-    $startDatetime = $startDate . ' ' . $startTime . ':00';
-    $endDatetime = $endDate . ' ' . $endTime . ':00';
+    // Standardzeiten setzen (00:00 für Startdatum, 23:59 für Enddatum)
+    // um ganze Tage zu buchen
+    $startDatetime = $startDate . ' 00:00:00';
+    $endDatetime = $endDate . ' 23:59:59';
     
     // Überprüfen, ob das Enddatum nach dem Startdatum liegt
     if (strtotime($endDatetime) <= strtotime($startDatetime)) {
@@ -96,17 +86,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     
     // Überprüfen, ob der Mindestbuchungszeitraum von 1 Tag eingehalten wird
-    $startDate = new DateTime($startDatetime);
-    $endDate = new DateTime($endDatetime);
+    $startDt = new DateTime($startDatetime);
+    $endDt = new DateTime($endDatetime);
     
-    // Berechne die Differenz in Sekunden
-    $diffSeconds = $endDate->getTimestamp() - $startDate->getTimestamp();
-    
-    // Berechne die Anzahl der Tage als Dezimalzahl
-    $diffDays = $diffSeconds / (24 * 60 * 60);
-    
-    // Runde auf ganze Tage auf
-    $days = ceil($diffDays);
+    // Berechne die Differenz in Tagen
+    $diff = $startDt->diff($endDt);
+    $days = $diff->days + 1; // +1 weil wir inklusive Start- und Enddatum rechnen
     
     if ($days < 1) {
         $_SESSION['flash_message'] = 'Der Mindestbuchungszeitraum beträgt 1 Tag.';
