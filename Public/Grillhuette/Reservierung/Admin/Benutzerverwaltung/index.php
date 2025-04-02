@@ -356,8 +356,8 @@ if (isset($_SESSION['cleanup_message'])) {
                         </div>
                         
                         <div class="col-md-6 mb-3">
-                            <label for="phone" class="form-label">Telefonnummer (optional)</label>
-                            <input type="tel" class="form-control" id="phone" name="phone">
+                            <label for="phone" class="form-label">Telefonnummer</label>
+                            <input type="tel" class="form-control" id="phone" name="phone" required>
                         </div>
                     </div>
                     
@@ -442,8 +442,8 @@ if (isset($_SESSION['cleanup_message'])) {
                         </div>
                         
                         <div class="col-md-6 mb-3">
-                            <label for="edit_phone" class="form-label">Telefonnummer (optional)</label>
-                            <input type="tel" class="form-control" id="edit_phone" name="phone">
+                            <label for="edit_phone" class="form-label">Telefonnummer</label>
+                            <input type="tel" class="form-control" id="edit_phone" name="phone" required>
                         </div>
                     </div>
                     

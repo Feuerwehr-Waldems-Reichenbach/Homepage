@@ -7,7 +7,7 @@
                     <div class="map-wrapper">
                         <div class="map-header d-flex justify-content-between align-items-center mb-2">
                             <h5 class="m-0"><i class="bi bi-geo-alt-fill me-2"></i>Standort Grillhütte Reichenbach</h5>
-                            <a href="https://goo.gl/maps/xDVCv6XdRXdKwKsG7" target="_blank" class="btn btn-sm btn-outline-light">
+                            <a href="https://maps.app.goo.gl/B33Pk2xZeHWrdPQL9" target="_blank" class="btn btn-sm btn-outline-light">
                                 <i class="bi bi-box-arrow-up-right me-1"></i>Google Maps öffnen
                             </a>
                         </div>
