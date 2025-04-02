@@ -609,40 +609,68 @@ function loadDayStatuses(month, year) {
     // Verwende fetch statt XMLHttpRequest für bessere Fehlerbehandlung
     fetch(ajaxUrl)
         .then(response => {
+            console.log("Response status:", response.status, response.statusText);
+            // Add content type checking
+            const contentType = response.headers.get('content-type');
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            if (!contentType || !contentType.includes('application/json')) {
+                console.warn(`Expected JSON response but got ${contentType}`);
             }
             return response.text();
         })
         .then(text => {
             try {
+                // Check if the response starts with HTML (error output)
+                if (text.trim().startsWith('<')) {
+                    console.error("Received HTML instead of JSON:", text.substring(0, 200) + "...");
+                    throw new Error('Server returned HTML instead of JSON');
+                }
+                
                 console.log("Raw response:", text);
-                return JSON.parse(text); // Dann als JSON parsen
+                const data = JSON.parse(text); // Dann als JSON parsen
+                if (!data.success) {
+                    console.error("Server reported error:", data.message || "Unknown error");
+                    throw new Error(data.message || "Server reported error");
+                }
+                console.log("Debug data:", data.debug);
+                return data;
             } catch (e) {
                 console.error("JSON parsing error:", e);
-                throw new Error('Invalid JSON response');
+                if (text) {
+                    console.error("Response text (first 200 chars):", text.substring(0, 200));
+                }
+                throw new Error('Invalid JSON response: ' + e.message);
             }
         })
-        .then(response => {
-            console.log("Parsed response:", response);
-            if (response.success) {
-                // Log debug information if available
-                if (response.debug) {
-                    console.log("Debug info:", response.debug);
-                }
-                updateDayStatuses(response.data);
-            } else {
-                console.error("API error:", response.message);
-                if (window.matchMedia("(max-width: 768px)").matches) {
-                    // Use generic error message instead of showing server message
-                    showMobileAlert('Fehler beim Laden der Kalenderdaten. Bitte versuchen Sie es später erneut.');
-                }
-            }
+        .then(data => {
+            // Update the calendar with the retrieved data
+            updateDayStatuses(data);
         })
         .catch(error => {
             console.error("Fetch error:", error);
-            if (window.matchMedia("(max-width: 768px)").matches) {
-                showMobileAlert('Fehler beim Laden der Kalenderdaten. Bitte versuchen Sie es später erneut.');
+            // Fallback: Set all days to 'unknown' status
+            const dayElements = document.querySelectorAll('.day[data-date]');
+            dayElements.forEach(day => {
+                day.classList.remove('free', 'pending', 'booked', 'public-event', 'key-handover');
+                day.classList.add('free'); // Default to showing as free on error
+            });
+            
+            // Optional: Show a non-intrusive error message
+            const calendarContainer = document.getElementById('calendar');
+            if (calendarContainer) {
+                const errorElement = document.createElement('div');
+                errorElement.className = 'alert alert-warning mt-3';
+                errorElement.textContent = 'Kalenderdaten konnten nicht geladen werden. Bitte versuchen Sie es später erneut.';
+                calendarContainer.appendChild(errorElement);
+                
+                // Remove after 5 seconds
+                setTimeout(() => {
+                    if (errorElement.parentNode) {
+                        errorElement.parentNode.removeChild(errorElement);
+                    }
+                }, 5000);
             }
         });
 }
@@ -695,8 +723,21 @@ function updateDayStatuses(statusData) {
     // Log the data for debugging
     console.log("Calendar data received:", statusData);
     
+    // Accessing the actual data object inside the response
+    const dayStatuses = statusData.data || statusData;
+    
+    // More detailed logging
+    console.log("Day statuses object keys:", Object.keys(dayStatuses));
+    if (Object.keys(dayStatuses).length > 0) {
+        console.log("First few day statuses:", 
+            Object.entries(dayStatuses).slice(0, 3).map(([date, status]) => 
+                `${date}: ${typeof status === 'object' ? JSON.stringify(status) : status}`
+            )
+        );
+    }
+    
     // Verifiziere, dass die zurückgegebenen Daten zum aktuellen Monat/Jahr passen
-    const dates = Object.keys(statusData);
+    const dates = Object.keys(dayStatuses);
     if (dates.length > 0) {
         // Prüfe das erste Datum, um den zurückgegebenen Monat zu erkennen
         const firstDate = dates[0];
@@ -707,15 +748,16 @@ function updateDayStatuses(statusData) {
         
         if (receivedMonth !== expectedMonth) {
             // Hier könnte ein Log erfolgen, aber keine Aktion notwendig
-            console.log("Month mismatch in received calendar data");
+            console.log("Month mismatch in received calendar data. Expected:", expectedMonth, "Received:", receivedMonth);
         }
     } else {
         console.log("No dates found in status data");
+        return; // Exit early if there are no dates
     }
     
     // Get today's date for comparison
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // Reset time part for comparison
+    today.setHours(0, 0, 0, 0);
     
     // First set all days to 'free' by default and mark past days
     document.querySelectorAll('.day[data-date]').forEach(dayElement => {
@@ -744,11 +786,14 @@ function updateDayStatuses(statusData) {
     });
     
     // Then update with statuses from the server
-    Object.keys(statusData).forEach(date => {
-        const statusInfo = statusData[date];
+    Object.keys(dayStatuses).forEach(date => {
+        const statusInfo = dayStatuses[date];
         const dayElement = document.querySelector(`.day[data-date="${date}"]`);
         
         if (dayElement) {
+            // Log for debugging
+            console.log(`Updating day ${date} with status:`, statusInfo);
+            
             // Remove status classes but keep past if it's set
             dayElement.classList.remove('free', 'pending', 'booked', 'public-event', 'key-handover');
             
@@ -756,6 +801,8 @@ function updateDayStatuses(statusData) {
             if (!dayElement.classList.contains('past')) {
                 // Check if we have an object with a status or just a string status
                 if (typeof statusInfo === 'object') {
+                    console.log(`Day ${date} has object status:`, statusInfo.status);
+                    
                     if (statusInfo.status === 'public_event') {
                         // For public event, use a special class
                         dayElement.classList.add('public-event');
@@ -779,7 +826,7 @@ function updateDayStatuses(statusData) {
                         if (statusInfo.key_info) {
                             addKeyHandoverInfo(dayElement, statusInfo.key_info);
                         }
-                    } else if (statusInfo.status === 'key_handover') {
+                    } else if (statusInfo.status === 'key_handover_only') {
                         // For key handover only days
                         dayElement.classList.add('key-handover');
                         
@@ -802,39 +849,6 @@ function updateDayStatuses(statusData) {
             }
         }
     });
-    
-    // Helper function to add key handover info
-    function addKeyHandoverInfo(dayElement, keyInfo) {
-        let tooltipText = '';
-        
-        if (keyInfo.handover) {
-            tooltipText += `Schlüsselübergabe: ${keyInfo.handover} Uhr`;
-        }
-        if (keyInfo.return) {
-            if (tooltipText) tooltipText += '\n';
-            tooltipText += `Schlüsselrückgabe: ${keyInfo.return} Uhr`;
-        }
-        
-        // Set tooltip or append to existing tooltip
-        if (dayElement.title) {
-            dayElement.title += '\n\n' + tooltipText;
-        } else {
-            dayElement.title = tooltipText;
-        }
-        
-        // Add key indicator
-        const keyIndicator = document.createElement('span');
-        keyIndicator.className = 'key-indicator';
-        
-        if (keyInfo.handover && keyInfo.return) {
-            // Two keys if both handover and return on same day
-            keyIndicator.innerHTML = '<i class="bi bi-key"></i><i class="bi bi-key"></i>';
-        } else {
-            keyIndicator.innerHTML = '<i class="bi bi-key"></i>';
-        }
-        
-        dayElement.appendChild(keyIndicator);
-    }
 }
 
 // Check if a day is selectable (must be free or today or future)
@@ -1375,4 +1389,37 @@ function calculateDefaultCosts(startDateTime, endDateTime, dayCountElement, tota
     dayCountElement.textContent = days;
     baseCostElement.textContent = formattedRate + '€';
     totalCostElement.textContent = formattedTotal + '€';
+}
+
+// Function to add key handover information to a day element
+function addKeyHandoverInfo(dayElement, keyInfo) {
+    let tooltipText = '';
+    
+    if (keyInfo.handover) {
+        tooltipText += `Schlüsselübergabe: ${keyInfo.handover} Uhr`;
+    }
+    if (keyInfo.return) {
+        if (tooltipText) tooltipText += '\n';
+        tooltipText += `Schlüsselrückgabe: ${keyInfo.return} Uhr`;
+    }
+    
+    // Set tooltip or append to existing tooltip
+    if (dayElement.title) {
+        dayElement.title += '\n\n' + tooltipText;
+    } else {
+        dayElement.title = tooltipText;
+    }
+    
+    // Add key indicator
+    const keyIndicator = document.createElement('span');
+    keyIndicator.className = 'key-indicator';
+    
+    if (keyInfo.handover && keyInfo.return) {
+        // Two keys if both handover and return on same day
+        keyIndicator.innerHTML = '<i class="bi bi-key"></i><i class="bi bi-key"></i>';
+    } else {
+        keyIndicator.innerHTML = '<i class="bi bi-key"></i>';
+    }
+    
+    dayElement.appendChild(keyIndicator);
 }

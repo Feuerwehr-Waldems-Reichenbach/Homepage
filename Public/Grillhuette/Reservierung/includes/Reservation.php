@@ -866,6 +866,9 @@ class Reservation {
         $endDate = $date . ' 23:59:59';
         
         try {
+            // Debug: Log the date being checked
+            error_log("Checking reservation status for date: " . $date);
+            
             // Reservierungen für diesen Tag abrufen
             $stmt = $this->db->prepare("
                 SELECT id, start_datetime, end_datetime, status, is_public, event_name,
@@ -882,8 +885,17 @@ class Reservation {
                     )
                 ORDER BY start_datetime
             ");
+            
+            // Debug: Output the SQL with values
+            error_log("SQL Query: " . str_replace(['?', '?', '?', '?', '?', '?'], 
+                                                [$endDate, $startDate, $startDate, $endDate, $date, $date], 
+                                                $stmt->queryString));
+            
             $stmt->execute([$endDate, $startDate, $startDate, $endDate, $date, $date]);
             $reservations = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            // Debug: Log the number of reservations found
+            error_log("Found " . count($reservations) . " reservations for date: " . $date);
             
             if (empty($reservations)) {
                 return 'free'; // Frei
