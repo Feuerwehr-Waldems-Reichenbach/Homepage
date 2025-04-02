@@ -917,8 +917,8 @@ class Reservation {
                     if ($keyHandoverDate == $date) {
                         $hasKeyHandover = true;
                         $keyInfo['handover'] = date('H:i', strtotime($reservation['key_handover_datetime']));
-                        // Wenn es eine Schlüsselübergabe gibt, ist der Tag erst nach der Übergabe verfügbar
-                        $timeRestrictions['available_from'] = $keyInfo['handover'];
+                        // Wenn es eine Schlüsselübergabe gibt, ist der Tag nur bis zur Übergabe verfügbar
+                        $timeRestrictions['available_until'] = $keyInfo['handover'];
                     }
                 }
                 
@@ -927,8 +927,8 @@ class Reservation {
                     if ($keyReturnDate == $date) {
                         $hasKeyReturn = true;
                         $keyInfo['return'] = date('H:i', strtotime($reservation['key_return_datetime']));
-                        // Wenn es eine Schlüsselrückgabe gibt, ist der Tag nur bis zur Rückgabe verfügbar
-                        $timeRestrictions['available_until'] = $keyInfo['return'];
+                        // Wenn es eine Schlüsselrückgabe gibt, ist der Tag ab der Rückgabe verfügbar
+                        $timeRestrictions['available_from'] = $keyInfo['return'];
                     }
                 }
                 
@@ -1587,30 +1587,97 @@ class Reservation {
 
     /**
      * Berechnet die Standard-Zeiten für die Schlüsselübergabe und -rückgabe
+     * Berücksichtigt dabei bestehende Reservierungen
      * 
      * @param string $startDatetime Beginn der Reservierung
      * @param string $endDatetime Ende der Reservierung
      * @return array Schlüsselübergabe- und Rückgabezeiten
      */
     private function calculateDefaultKeyHandoverTimes($startDatetime, $endDatetime) {
-        // Startdatum in DateTime umwandeln
-        $startDate = new DateTime($startDatetime);
-        $endDate = new DateTime($endDatetime);
-        
-        // Schlüsselübergabe: Tag vor dem Start um 16:00 Uhr
-        $keyHandover = clone $startDate;
-        $keyHandover->modify('-1 day');
-        $keyHandover->setTime(16, 0, 0);
-        
-        // Schlüsselrückgabe: Tag nach dem Ende um 12:00 Uhr
-        $keyReturn = clone $endDate;
-        $keyReturn->modify('+1 day');
-        $keyReturn->setTime(12, 0, 0);
-        
-        return [
-            'key_handover' => $keyHandover->format('Y-m-d H:i:s'),
-            'key_return' => $keyReturn->format('Y-m-d H:i:s')
-        ];
+        try {
+            // Startdatum in DateTime umwandeln
+            $startDate = new DateTime($startDatetime);
+            $endDate = new DateTime($endDatetime);
+            
+            // Standard-Zeiten setzen
+            $keyHandover = clone $startDate;
+            $keyHandover->modify('-1 day');
+            $keyHandover->setTime(16, 0, 0);
+            
+            $keyReturn = clone $endDate;
+            $keyReturn->modify('+1 day');
+            $keyReturn->setTime(12, 0, 0);
+            
+            // Prüfe auf nachfolgende Reservierungen
+            $stmt = $this->db->prepare("
+                SELECT start_datetime, key_handover_datetime
+                FROM gh_reservations 
+                WHERE status IN ('confirmed', 'pending')
+                AND start_datetime > ?
+                ORDER BY start_datetime ASC
+                LIMIT 1
+            ");
+            $stmt->execute([$endDatetime]);
+            $nextReservation = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            // Prüfe auf vorherige Reservierungen
+            $stmt = $this->db->prepare("
+                SELECT end_datetime, key_return_datetime
+                FROM gh_reservations 
+                WHERE status IN ('confirmed', 'pending')
+                AND end_datetime < ?
+                ORDER BY end_datetime DESC
+                LIMIT 1
+            ");
+            $stmt->execute([$startDatetime]);
+            $prevReservation = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            // Wenn es eine nachfolgende Reservierung gibt
+            if ($nextReservation) {
+                $nextKeyHandover = new DateTime($nextReservation['key_handover_datetime']);
+                
+                // Wenn die Standard-Rückgabezeit nach der Schlüsselübergabe der nächsten Reservierung liegt
+                if ($keyReturn > $nextKeyHandover) {
+                    // Setze die Rückgabezeit auf 2 Stunden vor der nächsten Schlüsselübergabe
+                    $keyReturn = clone $nextKeyHandover;
+                    $keyReturn->modify('-2 hours');
+                }
+            }
+            
+            // Wenn es eine vorherige Reservierung gibt
+            if ($prevReservation) {
+                $prevKeyReturn = new DateTime($prevReservation['key_return_datetime']);
+                
+                // Wenn die Standard-Übergabezeit vor der Schlüsselrückgabe der vorherigen Reservierung liegt
+                if ($keyHandover < $prevKeyReturn) {
+                    // Setze die Übergabezeit auf 2 Stunden nach der vorherigen Schlüsselrückgabe
+                    $keyHandover = clone $prevKeyReturn;
+                    $keyHandover->modify('+2 hours');
+                }
+            }
+            
+            return [
+                'key_handover' => $keyHandover->format('Y-m-d H:i:s'),
+                'key_return' => $keyReturn->format('Y-m-d H:i:s')
+            ];
+            
+        } catch (Exception $e) {
+            error_log('Fehler bei der Berechnung der Schlüsselübergabezeiten: ' . $e->getMessage());
+            
+            // Fallback zu Standard-Zeiten im Fehlerfall
+            $keyHandover = clone $startDate;
+            $keyHandover->modify('-1 day');
+            $keyHandover->setTime(16, 0, 0);
+            
+            $keyReturn = clone $endDate;
+            $keyReturn->modify('+1 day');
+            $keyReturn->setTime(12, 0, 0);
+            
+            return [
+                'key_handover' => $keyHandover->format('Y-m-d H:i:s'),
+                'key_return' => $keyReturn->format('Y-m-d H:i:s')
+            ];
+        }
     }
 
     /**

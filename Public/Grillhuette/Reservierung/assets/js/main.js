@@ -915,11 +915,11 @@ function isSelectable(dayElement) {
         let message = '';
         
         if (restrictions.available_from) {
-            message += `Dieser Tag ist erst ab ${restrictions.available_from} Uhr verfügbar`;
+            message += `Dieser Tag ist ab ${restrictions.available_from} Uhr verfügbar (nach Schlüsselrückgabe)`;
         }
         if (restrictions.available_until) {
             message += message ? ' und ' : 'Dieser Tag ist ';
-            message += `nur bis ${restrictions.available_until} Uhr verfügbar`;
+            message += `nur bis ${restrictions.available_until} Uhr verfügbar (vor Schlüsselübergabe)`;
         }
         message += '.';
         
