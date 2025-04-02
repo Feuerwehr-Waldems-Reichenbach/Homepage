@@ -877,7 +877,8 @@ class Reservation {
                     (
                         (start_datetime <= ? AND end_datetime > ?) OR
                         (start_datetime >= ? AND start_datetime <= ?) OR
-                        (DATE(key_handover_datetime) = ? OR DATE(key_return_datetime) = ?)
+                        (key_handover_datetime IS NOT NULL AND DATE(key_handover_datetime) = ?) OR
+                        (key_return_datetime IS NOT NULL AND DATE(key_return_datetime) = ?)
                     )
                 ORDER BY start_datetime
             ");
@@ -898,7 +899,7 @@ class Reservation {
             
             foreach ($reservations as $reservation) {
                 // Prüfen auf Schlüsselübergabe/-rückgabe
-                if (!empty($reservation['key_handover_datetime'])) {
+                if (!empty($reservation['key_handover_datetime']) && $reservation['key_handover_datetime'] !== null) {
                     $keyHandoverDate = date('Y-m-d', strtotime($reservation['key_handover_datetime']));
                     if ($keyHandoverDate == $date) {
                         $hasKeyHandover = true;
@@ -906,7 +907,7 @@ class Reservation {
                     }
                 }
                 
-                if (!empty($reservation['key_return_datetime'])) {
+                if (!empty($reservation['key_return_datetime']) && $reservation['key_return_datetime'] !== null) {
                     $keyReturnDate = date('Y-m-d', strtotime($reservation['key_return_datetime']));
                     if ($keyReturnDate == $date) {
                         $hasKeyReturn = true;

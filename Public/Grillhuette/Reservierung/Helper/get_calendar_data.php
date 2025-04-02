@@ -28,6 +28,25 @@ try {
     // Reservierungsobjekt erstellen
     $reservation = new Reservation();
     
+    // DEBUG: Direkt alle Reservierungen abrufen
+    $db = Database::getInstance()->getConnection();
+    $debugStmt = $db->prepare("
+        SELECT id, start_datetime, end_datetime, status, is_public, event_name,
+               key_handover_datetime, key_return_datetime
+        FROM gh_reservations 
+        WHERE 
+            status IN ('confirmed', 'pending') AND
+            (
+                (YEAR(start_datetime) = ? AND MONTH(start_datetime) = ?) OR
+                (YEAR(end_datetime) = ? AND MONTH(end_datetime) = ?) OR
+                (YEAR(key_handover_datetime) = ? AND MONTH(key_handover_datetime) = ?) OR
+                (YEAR(key_return_datetime) = ? AND MONTH(key_return_datetime) = ?)
+            )
+        ORDER BY start_datetime
+    ");
+    $debugStmt->execute([$year, $month, $year, $month, $year, $month, $year, $month]);
+    $reservationsDebug = $debugStmt->fetchAll(PDO::FETCH_ASSOC);
+    
     // Daten für alle Tage im Monat sammeln
     $calendarData = [];
     
@@ -60,10 +79,15 @@ try {
         }
     }
     
-    // JSON-Antwort senden
+    // JSON-Antwort senden mit Debug-Informationen
     echo json_encode([
         'success' => true,
-        'data' => $calendarData
+        'data' => $calendarData,
+        'debug' => [
+            'reservations' => $reservationsDebug,
+            'month' => $month,
+            'year' => $year
+        ]
     ]);
 } catch (Exception $e) {
     
@@ -71,7 +95,8 @@ try {
     http_response_code(500);
     echo json_encode([
         'success' => false,
-        'message' => 'Ein Fehler ist bei der Verarbeitung aufgetreten. Bitte versuchen Sie es später erneut.'
+        'message' => 'Ein Fehler ist bei der Verarbeitung aufgetreten. Bitte versuchen Sie es später erneut.',
+        'error' => $e->getMessage()
     ]);
 }
 ?> 

@@ -596,10 +596,15 @@ function loadDayStatuses(month, year) {
     // Format month with leading zero if needed
     const formattedMonth = month.toString().padStart(2, '0');
     
+    // Get the root path from global config if available, otherwise use the default path
+    const rootPath = (typeof APP_CONFIG !== 'undefined' && APP_CONFIG.ROOT_PATH) 
+                    ? APP_CONFIG.ROOT_PATH 
+                    : '/Grillhuette/Reservierung';
     
     // Klare URL mit vollständigem Pfad erstellen, um Pfadprobleme zu vermeiden
-    const ajaxUrl = `Helper/get_calendar_data.php?month=${formattedMonth}&year=${year}`;
+    const ajaxUrl = `${rootPath}/Helper/get_calendar_data.php?month=${formattedMonth}&year=${year}`;
     
+    console.log("Fetching calendar data from:", ajaxUrl);
     
     // Verwende fetch statt XMLHttpRequest für bessere Fehlerbehandlung
     fetch(ajaxUrl)
@@ -611,15 +616,23 @@ function loadDayStatuses(month, year) {
         })
         .then(text => {
             try {
+                console.log("Raw response:", text);
                 return JSON.parse(text); // Dann als JSON parsen
             } catch (e) {
+                console.error("JSON parsing error:", e);
                 throw new Error('Invalid JSON response');
             }
         })
         .then(response => {
+            console.log("Parsed response:", response);
             if (response.success) {
+                // Log debug information if available
+                if (response.debug) {
+                    console.log("Debug info:", response.debug);
+                }
                 updateDayStatuses(response.data);
             } else {
+                console.error("API error:", response.message);
                 if (window.matchMedia("(max-width: 768px)").matches) {
                     // Use generic error message instead of showing server message
                     showMobileAlert('Fehler beim Laden der Kalenderdaten. Bitte versuchen Sie es später erneut.');
@@ -627,6 +640,7 @@ function loadDayStatuses(month, year) {
             }
         })
         .catch(error => {
+            console.error("Fetch error:", error);
             if (window.matchMedia("(max-width: 768px)").matches) {
                 showMobileAlert('Fehler beim Laden der Kalenderdaten. Bitte versuchen Sie es später erneut.');
             }
@@ -673,7 +687,13 @@ function showMobileAlert(message) {
 
 // Update day status classes in the calendar
 function updateDayStatuses(statusData) {
-    if (!statusData) return;
+    if (!statusData) {
+        console.error("No status data received");
+        return;
+    }
+    
+    // Log the data for debugging
+    console.log("Calendar data received:", statusData);
     
     // Verifiziere, dass die zurückgegebenen Daten zum aktuellen Monat/Jahr passen
     const dates = Object.keys(statusData);
@@ -689,6 +709,8 @@ function updateDayStatuses(statusData) {
             // Hier könnte ein Log erfolgen, aber keine Aktion notwendig
             console.log("Month mismatch in received calendar data");
         }
+    } else {
+        console.log("No dates found in status data");
     }
     
     // Get today's date for comparison

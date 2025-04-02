@@ -95,6 +95,14 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
                             }
                         }
                     </style>
+                    
+                    <script>
+                        // Global configuration for JavaScript
+                        const APP_CONFIG = {
+                            ROOT_PATH: '<?php echo APP_ROOT; ?>'
+                        };
+                    </script>
+                    
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <button id="prevMonth" class="btn btn-outline-secondary">
                             <i class="bi bi-chevron-left"></i> <span class="d-none d-md-inline">Vorheriger Monat</span>
