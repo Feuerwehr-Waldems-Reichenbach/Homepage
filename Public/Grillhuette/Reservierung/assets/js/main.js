@@ -797,6 +797,9 @@ function updateDayStatuses(statusData) {
             // Remove status classes but keep past if it's set
             dayElement.classList.remove('free', 'pending', 'booked', 'public-event', 'key-handover');
             
+            // Remove any previous time restrictions
+            delete dayElement.dataset.timeRestrictions;
+            
             // For non-past days, update status
             if (!dayElement.classList.contains('past')) {
                 // Check if we have an object with a status or just a string status
@@ -815,7 +818,7 @@ function updateDayStatuses(statusData) {
                             // Add a small indicator for the event name
                             const indicator = document.createElement('span');
                             indicator.className = 'event-indicator';
-                            indicator.textContent = statusInfo.event_name.substring(0, 15); // Gekürzt auf 15 Zeichen
+                            indicator.textContent = statusInfo.event_name.substring(0, 15);
                             if (statusInfo.event_name.length > 15) {
                                 indicator.textContent += '...';
                             }
@@ -826,12 +829,31 @@ function updateDayStatuses(statusData) {
                         if (statusInfo.key_info) {
                             addKeyHandoverInfo(dayElement, statusInfo.key_info);
                         }
-                    } else if (statusInfo.status === 'key_handover_only') {
-                        // For key handover only days
+                    } else if (statusInfo.status === 'key_handover') {
+                        // For key handover days - now reservable with restrictions
                         dayElement.classList.add('key-handover');
                         
                         if (statusInfo.key_info) {
                             addKeyHandoverInfo(dayElement, statusInfo.key_info);
+                        }
+                        
+                        // Add time restrictions if available
+                        if (statusInfo.time_restrictions) {
+                            dayElement.dataset.timeRestrictions = JSON.stringify(statusInfo.time_restrictions);
+                            
+                            // Create tooltip message
+                            let message = '';
+                            if (statusInfo.time_restrictions.available_from) {
+                                message += `Verfügbar ab ${statusInfo.time_restrictions.available_from} Uhr`;
+                            }
+                            if (statusInfo.time_restrictions.available_until) {
+                                message += message ? ' bis ' : 'Verfügbar bis ';
+                                message += `${statusInfo.time_restrictions.available_until} Uhr`;
+                            }
+                            
+                            if (message) {
+                                dayElement.title = message;
+                            }
                         }
                     } else {
                         // For booked or pending with key info
@@ -861,12 +883,10 @@ function isSelectable(dayElement) {
     
     // Check if it's a past date (before today)
     if (date < today) {
-        
         // Show feedback on mobile
         if (window.matchMedia("(max-width: 768px)").matches) {
             showMobileAlert('Vergangene Daten sind nicht auswählbar.');
         }
-        
         return false;
     }
     
@@ -886,11 +906,32 @@ function isSelectable(dayElement) {
             
             showMobileAlert(message);
         }
-        
         return false;
     }
     
-    // The day is in the future or today and is free
+    // Check for time restrictions on key handover days
+    if (dayElement.dataset.timeRestrictions) {
+        const restrictions = JSON.parse(dayElement.dataset.timeRestrictions);
+        let message = '';
+        
+        if (restrictions.available_from) {
+            message += `Dieser Tag ist erst ab ${restrictions.available_from} Uhr verfügbar`;
+        }
+        if (restrictions.available_until) {
+            message += message ? ' und ' : 'Dieser Tag ist ';
+            message += `nur bis ${restrictions.available_until} Uhr verfügbar`;
+        }
+        message += '.';
+        
+        // Show the time restriction message
+        if (window.matchMedia("(max-width: 768px)").matches) {
+            showMobileAlert(message);
+        } else {
+            dayElement.title = message;
+        }
+    }
+    
+    // The day is in the future or today and is free or has key handover
     return true;
 }
 

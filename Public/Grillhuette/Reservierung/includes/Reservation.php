@@ -908,6 +908,7 @@ class Reservation {
             $hasKeyReturn = false;
             $eventName = null;
             $keyInfo = [];
+            $timeRestrictions = [];
             
             foreach ($reservations as $reservation) {
                 // Prüfen auf Schlüsselübergabe/-rückgabe
@@ -916,6 +917,8 @@ class Reservation {
                     if ($keyHandoverDate == $date) {
                         $hasKeyHandover = true;
                         $keyInfo['handover'] = date('H:i', strtotime($reservation['key_handover_datetime']));
+                        // Wenn es eine Schlüsselübergabe gibt, ist der Tag erst nach der Übergabe verfügbar
+                        $timeRestrictions['available_from'] = $keyInfo['handover'];
                     }
                 }
                 
@@ -924,34 +927,44 @@ class Reservation {
                     if ($keyReturnDate == $date) {
                         $hasKeyReturn = true;
                         $keyInfo['return'] = date('H:i', strtotime($reservation['key_return_datetime']));
+                        // Wenn es eine Schlüsselrückgabe gibt, ist der Tag nur bis zur Rückgabe verfügbar
+                        $timeRestrictions['available_until'] = $keyInfo['return'];
                     }
                 }
                 
-                if ($reservation['status'] == 'confirmed') {
-                    $hasConfirmed = true;
-                    
-                    // Prüfen, ob es eine öffentliche Reservierung mit Eventanzeige für diesen Tag ist
-                    if ($reservation['is_public'] == 1 && !empty($reservation['event_name'])) {
-                        $displayStartDate = !empty($reservation['display_event_name_on_calendar_start_date']) 
-                            ? date('Y-m-d', strtotime($reservation['display_event_name_on_calendar_start_date'])) 
-                            : date('Y-m-d', strtotime($reservation['start_datetime']));
-                            
-                        $displayEndDate = !empty($reservation['display_event_name_on_calendar_end_date']) 
-                            ? date('Y-m-d', strtotime($reservation['display_event_name_on_calendar_end_date'])) 
-                            : date('Y-m-d', strtotime($reservation['end_datetime']));
+                // Prüfen ob der Tag tatsächlich belegt ist
+                $reservationStart = strtotime($reservation['start_datetime']);
+                $reservationEnd = strtotime($reservation['end_datetime']);
+                $dayStart = strtotime($date . ' 00:00:00');
+                $dayEnd = strtotime($date . ' 23:59:59');
+                
+                if ($reservationStart <= $dayEnd && $reservationEnd > $dayStart) {
+                    if ($reservation['status'] == 'confirmed') {
+                        $hasConfirmed = true;
                         
-                        // Prüfen, ob das aktuelle Datum im Anzeigebereich liegt
-                        if ($date >= $displayStartDate && $date <= $displayEndDate) {
-                            $hasPublicEvent = true;
-                            $eventName = $reservation['event_name'];
+                        // Prüfen, ob es eine öffentliche Reservierung mit Eventanzeige für diesen Tag ist
+                        if ($reservation['is_public'] == 1 && !empty($reservation['event_name'])) {
+                            $displayStartDate = !empty($reservation['display_event_name_on_calendar_start_date']) 
+                                ? date('Y-m-d', strtotime($reservation['display_event_name_on_calendar_start_date'])) 
+                                : date('Y-m-d', strtotime($reservation['start_datetime']));
+                            
+                            $displayEndDate = !empty($reservation['display_event_name_on_calendar_end_date']) 
+                                ? date('Y-m-d', strtotime($reservation['display_event_name_on_calendar_end_date'])) 
+                                : date('Y-m-d', strtotime($reservation['end_datetime']));
+                            
+                            // Prüfen, ob das aktuelle Datum im Anzeigebereich liegt
+                            if ($date >= $displayStartDate && $date <= $displayEndDate) {
+                                $hasPublicEvent = true;
+                                $eventName = $reservation['event_name'];
+                            }
                         }
+                    } else if ($reservation['status'] == 'pending') {
+                        $hasPending = true;
                     }
-                } else if ($reservation['status'] == 'pending') {
-                    $hasPending = true;
                 }
             }
             
-            // Rückgabe mit Event-Informationen und Schlüsselübergabeinformationen
+            // Rückgabe mit Event-Informationen, Schlüsselübergabeinformationen und Zeitbeschränkungen
             if ($hasConfirmed) {
                 if ($hasPublicEvent) {
                     $response = [
@@ -984,10 +997,11 @@ class Reservation {
                 
                 return 'pending'; // Ausstehend (noch nicht bestätigt)
             } else if ($hasKeyHandover || $hasKeyReturn) {
-                // Nur Schlüsselübergabe/Rückgabe an diesem Tag
+                // Nur Schlüsselübergabe/Rückgabe an diesem Tag - Tag ist reservierbar mit Zeitbeschränkungen
                 return [
                     'status' => 'key_handover',
-                    'key_info' => $keyInfo
+                    'key_info' => $keyInfo,
+                    'time_restrictions' => $timeRestrictions
                 ];
             }
             

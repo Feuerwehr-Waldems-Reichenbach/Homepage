@@ -411,9 +411,21 @@ body {
 }
 
 /* Schlüsselübergabe-Anzeige */
-.day.key-handover {
+.calendar .day.key-handover {
     background-color: #cce5ff; /* Hellblau für Schlüsselübergabetage */
     position: relative;
+    cursor: pointer; /* Zeigt an, dass der Tag auswählbar ist */
+    border: 1px dashed #0d6efd; /* Gestrichelte Umrandung für visuelle Unterscheidung */
+}
+
+.calendar .day.key-handover:hover {
+    background-color: #e6f2ff;
+    border-style: solid;
+}
+
+.calendar .day.key-handover.selected {
+    background-color: #b8daff;
+    border: 2px solid #0d6efd;
 }
 
 .day .key-indicator {
@@ -422,16 +434,54 @@ body {
     top: 3px;
     font-size: 10px;
     color: #0d6efd;
-    background: #e6f2ff;
+    background: rgba(230, 242, 255, 0.9);
     border-radius: 3px;
     padding: 1px 3px;
     display: flex;
     align-items: center;
     justify-content: center;
+    z-index: 1;
 }
 
 .day .key-indicator i {
     margin-right: 1px;
+}
+
+/* Tooltip-Styling für Zeitbeschränkungen */
+.calendar .day[data-time-restrictions] {
+    position: relative;
+}
+
+.calendar .day[data-time-restrictions]:hover::after {
+    content: attr(title);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 1000;
+}
+
+/* Mobile-Optimierungen für Schlüsselübergabe-Tage */
+@media (max-width: 768px) {
+    .calendar .day.key-handover {
+        border-width: 2px;
+    }
+    
+    .day .key-indicator {
+        font-size: 8px;
+        padding: 1px 2px;
+    }
+    
+    /* Verstecke komplexe Hover-Effekte auf Mobilgeräten */
+    .calendar .day[data-time-restrictions]:hover::after {
+        display: none;
+    }
 }
 
 /* Card styles */
