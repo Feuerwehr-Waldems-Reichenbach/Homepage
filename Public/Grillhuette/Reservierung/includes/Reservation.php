@@ -341,7 +341,6 @@ class Reservation {
                             <a href="' . $myReservationsUrl . '" class="button">Meine Reservierungen ansehen</a>
                             
                             <div class="footer">
-                                <p>Bei Fragen können Sie auf diese E-Mail antworten.</p>
                                 <p>Ihr Team der Grillhütte Waldems Reichenbach</p>
                             </div>
                         </div>
@@ -502,7 +501,6 @@ class Reservation {
                             <a href="' . $myReservationsUrl . '" class="button">Meine Reservierungen ansehen</a>
                             
                             <div class="footer">
-                                <p>Bei Fragen können Sie auf diese E-Mail antworten.</p>
                                 <p>Ihr Team der Grillhütte Waldems Reichenbach</p>
                             </div>
                         </div>
@@ -1737,40 +1735,253 @@ class Reservation {
      * @return void
      */
     private function sendUserReservationConfirmation($user, $startDatetime, $endDatetime, $myReservationsUrl, $status = 'pending', $keyHandoverDatetime = null, $keyReturnDatetime = null) {
-        // E-Mail-Versand-Logik
-        // ...
+        // Formatierte Werte für die E-Mail
+        $formattedStartDate = date('d.m.Y H:i', strtotime($startDatetime));
+        $formattedEndDate = date('d.m.Y H:i', strtotime($endDatetime));
+        
+        // Formatierung der Schlüsselübergabezeiten, falls vorhanden
+        $keyHandoverText = '';
+        $keyReturnText = '';
+        
+        if ($keyHandoverDatetime) {
+            $keyHandoverText = date('d.m.Y H:i', strtotime($keyHandoverDatetime));
+        }
+        
+        if ($keyReturnDatetime) {
+            $keyReturnText = date('d.m.Y H:i', strtotime($keyReturnDatetime));
+        }
+        
+        // Status-abhängige Werte
+        $statusText = $status == 'confirmed' ? 'bestätigt' : ($status == 'pending' ? 'ausstehend' : 'abgelehnt');
+        $statusColor = $status == 'confirmed' ? '#28a745' : ($status == 'pending' ? '#ffc107' : '#dc3545');
+        $headerText = $status == 'confirmed' ? 'Reservierung bestätigt' : 'Neue Reservierung';
+        
+        $subject = 'Ihre Reservierung für die Grillhütte Waldems Reichenbach';
+        
+        $body = '
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <style>
+                    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                    .header { background-color: ' . $statusColor . '; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
+                    .content { background-color: #ffffff; padding: 20px; border-radius: 0 0 5px 5px; border: 1px solid #ddd; }
+                    .button { display: inline-block; padding: 10px 20px; background-color: #A72920; color: white !important; text-decoration: none; border-radius: 5px; margin-top: 20px; }
+                    .info-box { background-color: #f8f9fa; border: 1px solid #ddd; padding: 15px; border-radius: 5px; margin: 20px 0; }
+                    .status-badge { display: inline-block; padding: 5px 15px; background-color: ' . $statusColor . '; color: white; border-radius: 15px; }
+                    .footer { text-align: center; margin-top: 20px; font-size: 0.9em; color: #666; }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="header">
+                        <h2>' . $headerText . '</h2>
+                    </div>
+                    <div class="content">
+                        <h3>Hallo ' . $user['first_name'] . ' ' . $user['last_name'] . ',</h3>
+                        
+                        <p>vielen Dank für Ihre Reservierung der Grillhütte Waldems Reichenbach.</p>
+                        
+                        <div class="info-box">
+                            <strong>Ihre Reservierungsdetails:</strong><br>
+                            Status: <span class="status-badge">' . $statusText . '</span><br>
+                            Von: ' . $formattedStartDate . '<br>
+                            Bis: ' . $formattedEndDate . '<br>';
+        
+        if ($keyHandoverText && $keyReturnText) {
+            $body .= '
+                            <br><strong>Schlüsselübergabe:</strong><br>
+                            Abholung: ' . $keyHandoverText . '<br>
+                            Rückgabe: ' . $keyReturnText . '<br>';
+        }
+        
+        $body .= '
+                        </div>';
+        
+        if ($status == 'pending') {
+            $body .= '
+                        <p>Ihre Reservierung wurde erfolgreich erstellt und wird nun vom Administrator geprüft. 
+                        Sie erhalten eine Benachrichtigung, sobald Ihre Reservierung bestätigt wurde.</p>';
+        } else if ($status == 'confirmed') {
+            $body .= '
+                        <p>Ihre Reservierung wurde bestätigt. Wir freuen uns auf Ihren Besuch!</p>';
+        }
+        
+        $body .= '
+                        <p>Sie können den Status Ihrer Reservierung jederzeit in Ihrem Konto einsehen:</p>
+                        <a href="' . $myReservationsUrl . '" class="button">Meine Reservierungen ansehen</a>
+                        
+                        <div class="footer">
+                            <p>Ihr Team der Grillhütte Waldems Reichenbach</p>
+                        </div>
+                    </div>
+                </div>
+            </body>
+            </html>
+        ';
+        
+        sendEmail($user['email'], $subject, $body);
     }
     
-    /**
-     * Benachrichtigt den Admin über eine neue Reservierung
-     * 
-     * @param array $user Benutzerdaten des Reservierenden
-     * @param string $startDatetime Beginn der Reservierung
-     * @param string $endDatetime Ende der Reservierung
-     * @param string $adminReservationsUrl URL zur Reservierungsverwaltung für Admins
-     * @return void
-     */
     private function sendAdminReservationNotification($user, $startDatetime, $endDatetime, $adminReservationsUrl) {
-        // E-Mail-Versand-Logik für Admins
-        // ...
+        // Admin-E-Mails abrufen
+        $stmt = $this->db->prepare("SELECT email FROM gh_users WHERE is_admin = 1");
+        $stmt->execute();
+        $admins = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        if (empty($admins)) {
+            return; // Keine Admins gefunden
+        }
+        
+        // Formatierte Werte für die E-Mail
+        $formattedStartDate = date('d.m.Y H:i', strtotime($startDatetime));
+        $formattedEndDate = date('d.m.Y H:i', strtotime($endDatetime));
+        
+        $subject = 'Neue Reservierungsanfrage für die Grillhütte';
+        
+        $body = '
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <style>
+                    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                    .header { background-color: #A72920; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
+                    .content { background-color: #ffffff; padding: 20px; border-radius: 0 0 5px 5px; border: 1px solid #ddd; }
+                    .button { display: inline-block; padding: 10px 20px; background-color: #A72920; color: white !important; text-decoration: none; border-radius: 5px; margin-top: 20px; }
+                    .info-box { background-color: #f8f9fa; border: 1px solid #ddd; padding: 15px; border-radius: 5px; margin: 20px 0; }
+                    .footer { text-align: center; margin-top: 20px; font-size: 0.9em; color: #666; }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="header">
+                        <h2>Neue Reservierungsanfrage</h2>
+                    </div>
+                    <div class="content">
+                        <p>Es liegt eine neue Reservierungsanfrage für die Grillhütte vor.</p>
+                        
+                        <div class="info-box">
+                            <strong>Reservierungsdetails:</strong><br>
+                            Benutzer: ' . $user['first_name'] . ' ' . $user['last_name'] . ' (' . $user['email'] . ') | Telefon: ' . $user['phone'] . '<br>
+                            Von: ' . $formattedStartDate . '<br>
+                            Bis: ' . $formattedEndDate . '
+                        </div>
+                        
+                        <p>Bitte bestätigen oder lehnen Sie diese Anfrage ab:</p>
+                        <a href="' . $adminReservationsUrl . '" class="button">Reservierung verwalten</a>
+                        
+                        <div class="footer">
+                            <p>Dies ist eine automatische Benachrichtigung des Grillhütten-Reservierungssystems.</p>
+                        </div>
+                    </div>
+                </div>
+            </body>
+            </html>
+        ';
+        
+        foreach ($admins as $admin) {
+            sendEmail($admin['email'], $subject, $body);
+        }
     }
     
-    /**
-     * Sendet eine E-Mail über die Aktualisierung einer Reservierung an den Benutzer
-     * 
-     * @param array $user Benutzerdaten
-     * @param string $startDatetime Beginn der Reservierung
-     * @param string $endDatetime Ende der Reservierung
-     * @param string $myReservationsUrl URL zur Reservierungsübersicht des Benutzers
-     * @param string $status Neuer Status der Reservierung
-     * @param string $adminMessage Nachricht vom Administrator
-     * @param string $keyHandoverDatetime Zeitpunkt der Schlüsselübergabe
-     * @param string $keyReturnDatetime Zeitpunkt der Schlüsselrückgabe
-     * @return void
-     */
     private function sendUserReservationUpdate($user, $startDatetime, $endDatetime, $myReservationsUrl, $status, $adminMessage = null, $keyHandoverDatetime = null, $keyReturnDatetime = null) {
-        // E-Mail-Versand-Logik für Updates
-        // ...
+        // Formatierte Werte für die E-Mail
+        $formattedStartDate = date('d.m.Y H:i', strtotime($startDatetime));
+        $formattedEndDate = date('d.m.Y H:i', strtotime($endDatetime));
+        
+        // Formatierung der Schlüsselübergabezeiten, falls vorhanden
+        $keyHandoverText = '';
+        $keyReturnText = '';
+        
+        if ($keyHandoverDatetime) {
+            $keyHandoverText = date('d.m.Y H:i', strtotime($keyHandoverDatetime));
+        }
+        
+        if ($keyReturnDatetime) {
+            $keyReturnText = date('d.m.Y H:i', strtotime($keyReturnDatetime));
+        }
+        
+        // Status-abhängige Werte
+        $statusText = $status == 'confirmed' ? 'bestätigt' : ($status == 'pending' ? 'ausstehend' : 'abgelehnt');
+        $statusColor = $status == 'confirmed' ? '#28a745' : ($status == 'pending' ? '#ffc107' : '#dc3545');
+        $headerText = 'Status Ihrer Reservierung - ' . $statusText;
+        
+        $subject = 'Status Ihrer Reservierung für die Grillhütte Waldems Reichenbach';
+        
+        $body = '
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <style>
+                    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                    .header { background-color: ' . $statusColor . '; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
+                    .content { background-color: #ffffff; padding: 20px; border-radius: 0 0 5px 5px; border: 1px solid #ddd; }
+                    .button { display: inline-block; padding: 10px 20px; background-color: #A72920; color: white !important; text-decoration: none; border-radius: 5px; margin-top: 20px; }
+                    .info-box { background-color: #f8f9fa; border: 1px solid #ddd; padding: 15px; border-radius: 5px; margin: 20px 0; }
+                    .status-badge { display: inline-block; padding: 5px 15px; background-color: ' . $statusColor . '; color: white; border-radius: 15px; }
+                    .message-box { background-color: #f8f9fa; border-left: 4px solid ' . $statusColor . '; padding: 15px; margin: 20px 0; }
+                    .footer { text-align: center; margin-top: 20px; font-size: 0.9em; color: #666; }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="header">
+                        <h2>' . $headerText . '</h2>
+                    </div>
+                    <div class="content">
+                        <h3>Hallo ' . $user['first_name'] . ' ' . $user['last_name'] . ',</h3>
+                        
+                        <p>der Status Ihrer Reservierung wurde aktualisiert.</p>
+                        
+                        <div class="info-box">
+                            <strong>Ihre Reservierungsdetails:</strong><br>
+                            Status: <span class="status-badge">' . $statusText . '</span><br>
+                            Von: ' . $formattedStartDate . '<br>
+                            Bis: ' . $formattedEndDate . '<br>';
+        
+        if ($keyHandoverText && $keyReturnText) {
+            $body .= '
+                            <br><strong>Schlüsselübergabe:</strong><br>
+                            Abholung: ' . $keyHandoverText . '<br>
+                            Rückgabe: ' . $keyReturnText . '<br>';
+        }
+        
+        $body .= '
+                        </div>';
+                        
+        if ($adminMessage) {
+            $body .= '
+                        <div class="message-box">
+                            <strong>Nachricht vom Administrator:</strong><br>
+                            ' . nl2br(htmlspecialchars($adminMessage)) . '
+                        </div>';
+        }
+        
+        if ($status == 'confirmed') {
+            $body .= '
+                        <p>Ihre Reservierung wurde bestätigt. Wir freuen uns auf Ihren Besuch!</p>';
+        } else if ($status == 'rejected') {
+            $body .= '
+                        <p>Ihre Reservierung wurde abgelehnt. Bitte beachten Sie die Nachricht des Administrators für weitere Informationen.</p>';
+        }
+        
+        $body .= '
+                        <p>Sie können den Status Ihrer Reservierung jederzeit in Ihrem Konto einsehen:</p>
+                        <a href="' . $myReservationsUrl . '" class="button">Meine Reservierungen ansehen</a>
+                        
+                        <div class="footer">
+                            <p>Ihr Team der Grillhütte Waldems Reichenbach</p>
+                        </div>
+                    </div>
+                </div>
+            </body>
+            </html>
+        ';
+        
+        sendEmail($user['email'], $subject, $body);
     }
 }
 ?> 
