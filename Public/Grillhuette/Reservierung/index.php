@@ -629,7 +629,7 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
         <button id="closeGuideTip" class="close-btn">&times;</button>
     </div>
     <div id="guideStepContent" class="guide-tip-content">
-        Schauen Sie sich den Kalender an, um verfügbare Tage zu sehen. Grün markierte Tage sind verfügbar.
+        Schauen Sie sich den Kalender an, um verfügbare Tage zu sehen. Grün markierte Tage sind verfügbar. Sie können mit den Pfeilen zwischen den Monaten wechseln.
     </div>
     <div class="guide-tip-footer">
         <span id="stepCounter">Schritt 1 von 6</span>
@@ -751,14 +751,14 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
         const guideSteps = [
             {
                 title: "Schritt 1: Kalender ansehen",
-                content: "Schauen Sie sich den Kalender an, um verfügbare Tage zu sehen. Grün markierte Tage sind verfügbar.",
+                content: "Schauen Sie sich den Kalender an, um verfügbare Tage zu sehen. Grün markierte Tage sind verfügbar. Sie können mit den Pfeilen zwischen den Monaten wechseln.",
                 targetSelector: "#calendar",
                 position: "right",
                 waitForAction: false
             },
             {
                 title: "Schritt 2: Startdatum auswählen",
-                content: "Klicken Sie auf einen verfügbaren (grünen) Tag im Kalender, um Ihr Startdatum auszuwählen.",
+                content: "Klicken Sie auf einen der grün markierten (verfügbaren) Tage im Kalender, um Ihr Startdatum auszuwählen. Alle verfügbaren Tage sind hervorgehoben. Sie können auch den Monat wechseln, um andere Termine zu sehen.",
                 targetSelector: ".day:not(.other-month):not(.booked):not(.past)",
                 position: "right",
                 waitForAction: true,
@@ -768,7 +768,7 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
             },
             {
                 title: "Schritt 3: Enddatum auswählen",
-                content: "Wählen Sie nun das Enddatum Ihrer Reservierung aus. Sie können den gleichen Tag oder ein späteres Datum wählen.",
+                content: "Wählen Sie nun einen Tag als Enddatum Ihrer Reservierung aus. Sie können den gleichen Tag oder ein späteres Datum wählen. Alle verfügbaren Tage sind hervorgehoben.",
                 targetSelector: ".day:not(.other-month):not(.booked):not(.past)",
                 position: "right",
                 waitForAction: true,
@@ -778,14 +778,14 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
             },
             {
                 title: "Schritt 4: Optionen auswählen",
-                content: "Hier können Sie zusätzliche Optionen auswählen, wie eine Quittung anzufordern oder es als öffentliche Reservierung zu markieren.",
+                content: "Hier können Sie zusätzliche Optionen auswählen, wie eine Quittung anzufordern oder es als öffentliche Reservierung zu markieren. Klicken Sie auf 'Weiter', wenn Sie bereit sind.",
                 targetSelector: "#receipt_requested",
                 position: "right",
                 waitForAction: false
             },
             {
                 title: "Schritt 5: Nachricht eingeben (optional)",
-                content: "Sie können eine optionale Nachricht für den Verwalter hinterlassen, z.B. für spezielle Anfragen.",
+                content: "Sie können eine optionale Nachricht für den Verwalter hinterlassen, z.B. für spezielle Anfragen. Klicken Sie auf 'Weiter', wenn Sie bereit sind.",
                 targetSelector: "#message",
                 position: "top",
                 waitForAction: false
@@ -857,10 +857,21 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
             
             // Warten auf Aktion oder nicht
             if (step.waitForAction) {
-                nextGuideStepBtn.style.display = 'none';
-                setupActionCheck(step);
+                // Bei der Auswahl des Enddatums prüfen, ob es bereits gewählt wurde
+                if (currentStep === 2 && document.getElementById('end_date') && document.getElementById('end_date').value !== '') {
+                    // Wenn bereits ein Enddatum gewählt wurde, "Weiter"-Button anzeigen und Text anpassen
+                    nextGuideStepBtn.style.display = 'block';
+                    nextGuideStepBtn.textContent = 'Dieses Datum beibehalten';
+                    guideStepContent.textContent = "Sie haben bereits ein Enddatum gewählt. Klicken Sie auf einen anderen Tag, um die Auswahl zu ändern, oder klicken Sie auf 'Weiter', um fortzufahren.";
+                } else {
+                    // Ansonsten den "Weiter"-Button ausblenden
+                    nextGuideStepBtn.style.display = 'none';
+                    setupActionCheck(step);
+                }
             } else {
+                // Bei Schritten ohne Wartepflicht den "Weiter"-Button anzeigen
                 nextGuideStepBtn.style.display = 'block';
+                nextGuideStepBtn.textContent = 'Weiter';
             }
         }
         
@@ -870,42 +881,78 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
             
             const elements = document.querySelectorAll(selector);
             if (elements.length > 0) {
-                // Bei mehreren Elementen nur das erste hervorheben
-                currentHighlightedElement = elements[0];
-                currentHighlightedElement.classList.add('highlight-element');
-                
-                // Stelle sicher, dass das Element sichtbar ist
-                currentHighlightedElement.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'center'
-                });
+                // Bei den Schritten zur Datumsauswahl alle verfügbaren Tage hervorheben
+                if (currentStep === 1 || currentStep === 2) {
+                    elements.forEach(element => {
+                        element.classList.add('highlight-element');
+                    });
+                    
+                    // Auch die Monatsnavigation hervorheben
+                    const prevMonthBtn = document.getElementById('prevMonth');
+                    const nextMonthBtn = document.getElementById('nextMonth');
+                    if (prevMonthBtn) prevMonthBtn.classList.add('highlight-element');
+                    if (nextMonthBtn) nextMonthBtn.classList.add('highlight-element');
+                    
+                    // Scrolle zum ersten Element, damit der Benutzer weiß, wo er anfangen kann
+                    elements[0].scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center'
+                    });
+                } else {
+                    // Bei anderen Schritten nur das erste Element hervorheben
+                    currentHighlightedElement = elements[0];
+                    currentHighlightedElement.classList.add('highlight-element');
+                    
+                    // Stelle sicher, dass das Element sichtbar ist
+                    currentHighlightedElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center'
+                    });
+                }
             }
         }
         
         // Highlight entfernen
         function removeHighlight() {
-            if (currentHighlightedElement) {
-                currentHighlightedElement.classList.remove('highlight-element');
-                currentHighlightedElement = null;
-            }
-            
-            // Falls es mehrere Elemente gibt, die hervorgehoben wurden
+            // Alle hervorgehobenen Elemente zurücksetzen
             document.querySelectorAll('.highlight-element').forEach(el => {
                 el.classList.remove('highlight-element');
             });
+            
+            // Auch den Referenzwert zurücksetzen
+            currentHighlightedElement = null;
         }
         
         // Tooltip positionieren
         function positionGuideTip(selector, position) {
-            const element = document.querySelector(selector);
+            const elements = document.querySelectorAll(selector);
             
-            if (!element) {
+            if (elements.length === 0) {
                 guideTip.style.display = 'none';
                 return;
             }
             
-            const rect = element.getBoundingClientRect();
             const isMobile = window.innerWidth <= 768;
+            
+            // Element für die Positionierung auswählen
+            let element;
+            
+            if (currentStep === 1 || currentStep === 2) {
+                // Bei der Datumsauswahl den Tooltip in der Nähe des Kalenders platzieren
+                const calendarContainer = document.querySelector('.calendar-container');
+                if (calendarContainer) {
+                    element = calendarContainer;
+                    position = 'bottom'; // Position unterhalb des Kalenders
+                } else {
+                    // Fallback auf das erste Element
+                    element = elements[0];
+                }
+            } else {
+                // Bei anderen Schritten das erste Element verwenden
+                element = elements[0];
+            }
+            
+            const rect = element.getBoundingClientRect();
             
             if (isMobile) {
                 // Auf mobilen Geräten immer am unteren Bildschirmrand
@@ -945,12 +992,56 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
         // Nächster Schritt
         function goToNextStep() {
             currentStep++;
+            
+            // Button-Text zurücksetzen
+            nextGuideStepBtn.textContent = 'Weiter';
+            
             showCurrentStep();
         }
         
         // Überwachung der Aktion einrichten
         function setupActionCheck(step) {
             if (!step.actionCheck) return;
+            
+            // Sonderbehandlung für das Zurücksetzen der Datumsauswahl
+            if (currentStep === 1 || currentStep === 2) {
+                const startDateInput = document.getElementById('start_date');
+                const endDateInput = document.getElementById('end_date');
+                
+                // Bei Schritt 2 (Startdatum) nur zurücksetzen, wenn explizit gewünscht
+                if (currentStep === 1 && startDateInput && startDateInput.value !== '') {
+                    // Hinweistext aktualisieren, dass man ein anderes Datum wählen kann
+                    guideStepContent.textContent = "Sie haben bereits ein Startdatum gewählt. Klicken Sie auf einen anderen Tag, um die Auswahl zu ändern, oder klicken Sie auf 'Weiter', um fortzufahren.";
+                    
+                    // Weiter-Button anzeigen, um die bestehende Auswahl zu behalten
+                    nextGuideStepBtn.style.display = 'block';
+                    nextGuideStepBtn.textContent = 'Dieses Datum beibehalten';
+                    
+                    // Event-Listener für Kalender-Klicks hinzufügen, um die Auswahl zurückzusetzen
+                    document.querySelectorAll('.day').forEach(day => {
+                        day.addEventListener('click', function(e) {
+                            if (!day.classList.contains('other-month') && !day.classList.contains('booked') && !day.classList.contains('past')) {
+                                // Nichts tun, die bestehende Kalenderlogik wird die Auswahl ändern
+                                // Die actionCheck-Funktion wird erkennen, wenn sich der Wert ändert
+                            }
+                        });
+                    });
+                }
+                
+                // Bei Schritt 3 (Enddatum) ähnlich verfahren
+                if (currentStep === 2 && endDateInput && endDateInput.value !== '') {
+                    guideStepContent.textContent = "Sie haben bereits ein Enddatum gewählt. Klicken Sie auf einen anderen Tag, um die Auswahl zu ändern, oder klicken Sie auf 'Weiter', um fortzufahren.";
+                    nextGuideStepBtn.style.display = 'block';
+                    nextGuideStepBtn.textContent = 'Dieses Datum beibehalten';
+                }
+            }
+            
+            // Wir speichern die aktuelle Eingabe, um zu erkennen, wenn sie sich ändert
+            let initialInputValue = '';
+            const relevantInput = getRelevantInputForStep(currentStep);
+            if (relevantInput) {
+                initialInputValue = relevantInput.value;
+            }
             
             // Prüfen wir alle 500ms, ob die Aktion ausgeführt wurde
             const checkInterval = setInterval(function() {
@@ -959,7 +1050,19 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
                     return;
                 }
                 
-                if (step.actionCheck()) {
+                // Bei der Datumseingabe prüfen, ob sich die Eingabe geändert hat
+                const currentInput = getRelevantInputForStep(currentStep);
+                if (currentInput && currentInput.value !== initialInputValue && currentInput.value !== '') {
+                    // Eingabe wurde geändert, warten wir kurz und gehen dann weiter
+                    clearInterval(checkInterval);
+                    
+                    // Kurz warten, bevor wir zum nächsten Schritt gehen
+                    setTimeout(function() {
+                        if (isGuideActive) goToNextStep();
+                    }, 1000);
+                }
+                // Bei Aktionsschritten prüfen wir die spezifische Aktionsbedingung
+                else if (step.actionCheck()) {
                     clearInterval(checkInterval);
                     
                     // Kurz warten, bevor wir zum nächsten Schritt gehen
@@ -968,6 +1071,15 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
                     }, 1000);
                 }
             }, 500);
+        }
+        
+        // Hilfsfunktion, um das relevante Eingabefeld für den aktuellen Schritt zu finden
+        function getRelevantInputForStep(step) {
+            switch (step) {
+                case 1: return document.getElementById('start_date');
+                case 2: return document.getElementById('end_date');
+                default: return null;
+            }
         }
         
         // Guide-Tooltip ausblenden
@@ -985,16 +1097,27 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
             overlayBackdrop.style.display = 'none';
         }
         
-        // Event-Listener für Kalender-Klicks (für die automatische Erkennung)
-        // Wird nur aktiviert, wenn der Guide aktiv ist
+        // Event-Listener für Kalender-Klicks und Monatswechsel
         document.addEventListener('click', function(e) {
             if (!isGuideActive) return;
             
             const dayElement = e.target.closest('.day');
+            const isPrevMonthBtn = e.target.closest('#prevMonth');
+            const isNextMonthBtn = e.target.closest('#nextMonth');
+            
+            // Behandle Monatsumschaltung
+            if (isPrevMonthBtn || isNextMonthBtn) {
+                // Wir müssen warten, bis der Kalender neu gerendert wurde
+                setTimeout(function() {
+                    // Hervorheben der Elemente aktualisieren
+                    const step = guideSteps[currentStep];
+                    highlightElement(step.targetSelector);
+                    positionGuideTip(step.targetSelector, step.position);
+                }, 300);
+            }
+            
             if (dayElement && (currentStep === 1 || currentStep === 2)) {
-                // Wir können hier keine direkte Aktion ausführen, da die Auswahl
-                // von der vorhandenen Kalenderlogik verwaltet wird.
-                // Die setupActionCheck Funktion wird dies überwachen.
+                // Die setupActionCheck Funktion überwacht dies
             }
         });
         
