@@ -14,7 +14,7 @@ $cspHeader = "Content-Security-Policy: ".
     "base-uri 'self'; ".
     "form-action 'self'; ".
     "frame-ancestors 'none'; ".
-    "upgrade-insecure-requests;";
+    (isSecureConnection() ? "upgrade-insecure-requests;" : "");
 
 // Content Security Policy für den Meta-Tag (ohne frame-ancestors)
 $cspMeta = "default-src 'self'; ".
@@ -27,7 +27,7 @@ $cspMeta = "default-src 'self'; ".
     "object-src 'none'; ".
     "base-uri 'self'; ".
     "form-action 'self'; ".
-    "upgrade-insecure-requests;";
+    (isSecureConnection() ? "upgrade-insecure-requests;" : "");
 
 // Weitere Sicherheits-Header
 header($cspHeader);

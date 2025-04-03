@@ -95,6 +95,14 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
                             }
                         }
                     </style>
+                    
+                    <script>
+                        // Global configuration for JavaScript
+                        const APP_CONFIG = {
+                            ROOT_PATH: '<?php echo APP_ROOT; ?>'
+                        };
+                    </script>
+                    
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <button id="prevMonth" class="btn btn-outline-secondary">
                             <i class="bi bi-chevron-left"></i> <span class="d-none d-md-inline">Vorheriger Monat</span>
@@ -144,10 +152,16 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
                                         <small>Belegt</small>
                                     </div>
                                 </div>
-                                <div class="mb-2">
+                                <div class="me-3 mb-2">
                                     <div class="d-flex align-items-center">
                                         <div class="me-1 public-event-indicator" style="width: 15px; height: 15px; background-color: #b8e0d2; border-radius: 3px;"></div>
                                         <small>Veranstaltung</small>
+                                    </div>
+                                </div>
+                                <div class="mb-2">
+                                    <div class="d-flex align-items-center">
+                                        <div class="me-1" style="width: 15px; height: 15px; background-color: #cce5ff; border-radius: 3px; display: flex; align-items: center; justify-content: center;"><i class="bi bi-key" style="font-size: 8px;"></i></div>
+                                        <small>Schlüsselübergabe</small>
                                     </div>
                                 </div>
                             </div>
@@ -186,6 +200,12 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
                                 <div class="d-flex align-items-center">
                                     <div class="me-2" style="width: 20px; height: 20px; background-color: #b8e0d2; border-radius: 3px;"></div>
                                     <span>Veranstaltung</span>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <div class="d-flex align-items-center">
+                                    <div class="me-2" style="width: 20px; height: 20px; background-color: #cce5ff; border-radius: 3px; display: flex; align-items: center; justify-content: center;"><i class="bi bi-key"></i></div>
+                                    <span>Schlüsselübergabe</span>
                                 </div>
                             </div>
                         </div>
@@ -362,15 +382,6 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
                                 <div class="mb-3">
                                     <label for="end_date" class="form-label">Enddatum</label>
                                     <input type="text" class="form-control" id="end_date" name="end_date" readonly required>
-                                </div>
-                                
-                                <div class="mb-3">
-                                    <label for="start_time" class="form-label">Startzeit</label>
-                                    <input type="time" class="form-control" id="start_time" name="start_time" value="12:00" step="1800" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="end_time" class="form-label">Endzeit</label>
-                                    <input type="time" class="form-control" id="end_time" name="end_time" value="12:00" step="1800" required>
                                 </div>
                                 
                                 <div class="mb-3 form-check">

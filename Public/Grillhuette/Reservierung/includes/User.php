@@ -33,7 +33,7 @@ class User {
             
             // E-Mail zur Verifikation senden
             $subject = 'Bestätigen Sie Ihre E-Mail-Adresse';
-            $verifyUrl = 'https://' . $_SERVER['HTTP_HOST'] . getRelativePath('Benutzer/Verifizieren') . '?token=' . $verificationToken;
+            $verifyUrl = buildUrl(getRelativePath('Benutzer/Verifizieren') . '?token=' . $verificationToken);
             
             $body = '
                 <!DOCTYPE html>
@@ -295,7 +295,7 @@ class User {
             
             // E-Mail senden
             $subject = 'Zurücksetzen Ihres Passworts';
-            $resetUrl = 'https://' . $_SERVER['HTTP_HOST'] . getRelativePath('Benutzer/Passwort-zuruecksetzen') . '?token=' . $token;
+            $resetUrl = buildUrl(getRelativePath('Benutzer/Passwort-zuruecksetzen') . '?token=' . $token);
             
             $body = '
                 <!DOCTYPE html>
@@ -526,7 +526,7 @@ class User {
             
             // E-Mail zur Verifikation senden
             $subject = 'Bestätigen Sie Ihre neue E-Mail-Adresse';
-            $verifyUrl = 'https://' . $_SERVER['HTTP_HOST'] . getRelativePath('Benutzer/Verifizieren') . '?token=' . $verificationToken;
+            $verifyUrl = buildUrl(getRelativePath('Benutzer/Verifizieren') . '?token=' . $verificationToken);
             
             $body = '
                 <!DOCTYPE html>
@@ -1208,7 +1208,7 @@ class User {
             
             // E-Mail zur Verifikation senden
             $subject = 'Bestätigen Sie Ihre E-Mail-Adresse';
-            $verifyUrl = 'https://' . $_SERVER['HTTP_HOST'] . getRelativePath('Benutzer/Verifizieren') . '?token=' . $verificationToken;
+            $verifyUrl = buildUrl(getRelativePath('Benutzer/Verifizieren') . '?token=' . $verificationToken);
             
             $body = '
                 <!DOCTYPE html>

@@ -596,39 +596,81 @@ function loadDayStatuses(month, year) {
     // Format month with leading zero if needed
     const formattedMonth = month.toString().padStart(2, '0');
     
+    // Get the root path from global config if available, otherwise use the default path
+    const rootPath = (typeof APP_CONFIG !== 'undefined' && APP_CONFIG.ROOT_PATH) 
+                    ? APP_CONFIG.ROOT_PATH 
+                    : '/Grillhuette/Reservierung';
     
     // Klare URL mit vollständigem Pfad erstellen, um Pfadprobleme zu vermeiden
-    const ajaxUrl = `Helper/get_calendar_data.php?month=${formattedMonth}&year=${year}`;
+    const ajaxUrl = `${rootPath}/Helper/get_calendar_data.php?month=${formattedMonth}&year=${year}`;
     
+    console.log("Fetching calendar data from:", ajaxUrl);
     
     // Verwende fetch statt XMLHttpRequest für bessere Fehlerbehandlung
     fetch(ajaxUrl)
         .then(response => {
+            console.log("Response status:", response.status, response.statusText);
+            // Add content type checking
+            const contentType = response.headers.get('content-type');
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            if (!contentType || !contentType.includes('application/json')) {
+                console.warn(`Expected JSON response but got ${contentType}`);
             }
             return response.text();
         })
         .then(text => {
             try {
-                return JSON.parse(text); // Dann als JSON parsen
+                // Check if the response starts with HTML (error output)
+                if (text.trim().startsWith('<')) {
+                    console.error("Received HTML instead of JSON:", text.substring(0, 200) + "...");
+                    throw new Error('Server returned HTML instead of JSON');
+                }
+                
+                console.log("Raw response:", text);
+                const data = JSON.parse(text); // Dann als JSON parsen
+                if (!data.success) {
+                    console.error("Server reported error:", data.message || "Unknown error");
+                    throw new Error(data.message || "Server reported error");
+                }
+                console.log("Debug data:", data.debug);
+                return data;
             } catch (e) {
-                throw new Error('Invalid JSON response');
+                console.error("JSON parsing error:", e);
+                if (text) {
+                    console.error("Response text (first 200 chars):", text.substring(0, 200));
+                }
+                throw new Error('Invalid JSON response: ' + e.message);
             }
         })
-        .then(response => {
-            if (response.success) {
-                updateDayStatuses(response.data);
-            } else {
-                if (window.matchMedia("(max-width: 768px)").matches) {
-                    // Use generic error message instead of showing server message
-                    showMobileAlert('Fehler beim Laden der Kalenderdaten. Bitte versuchen Sie es später erneut.');
-                }
-            }
+        .then(data => {
+            // Update the calendar with the retrieved data
+            updateDayStatuses(data);
         })
         .catch(error => {
-            if (window.matchMedia("(max-width: 768px)").matches) {
-                showMobileAlert('Fehler beim Laden der Kalenderdaten. Bitte versuchen Sie es später erneut.');
+            console.error("Fetch error:", error);
+            // Fallback: Set all days to 'unknown' status
+            const dayElements = document.querySelectorAll('.day[data-date]');
+            dayElements.forEach(day => {
+                day.classList.remove('free', 'pending', 'booked', 'public-event', 'key-handover');
+                day.classList.add('free'); // Default to showing as free on error
+            });
+            
+            // Optional: Show a non-intrusive error message
+            const calendarContainer = document.getElementById('calendar');
+            if (calendarContainer) {
+                const errorElement = document.createElement('div');
+                errorElement.className = 'alert alert-warning mt-3';
+                errorElement.textContent = 'Kalenderdaten konnten nicht geladen werden. Bitte versuchen Sie es später erneut.';
+                calendarContainer.appendChild(errorElement);
+                
+                // Remove after 5 seconds
+                setTimeout(() => {
+                    if (errorElement.parentNode) {
+                        errorElement.parentNode.removeChild(errorElement);
+                    }
+                }, 5000);
             }
         });
 }
@@ -673,11 +715,29 @@ function showMobileAlert(message) {
 
 // Update day status classes in the calendar
 function updateDayStatuses(statusData) {
-    if (!statusData) return;
+    if (!statusData) {
+        console.error("No status data received");
+        return;
+    }
     
+    // Log the data for debugging
+    console.log("Calendar data received:", statusData);
+    
+    // Accessing the actual data object inside the response
+    const dayStatuses = statusData.data || statusData;
+    
+    // More detailed logging
+    console.log("Day statuses object keys:", Object.keys(dayStatuses));
+    if (Object.keys(dayStatuses).length > 0) {
+        console.log("First few day statuses:", 
+            Object.entries(dayStatuses).slice(0, 3).map(([date, status]) => 
+                `${date}: ${typeof status === 'object' ? JSON.stringify(status) : status}`
+            )
+        );
+    }
     
     // Verifiziere, dass die zurückgegebenen Daten zum aktuellen Monat/Jahr passen
-    const dates = Object.keys(statusData);
+    const dates = Object.keys(dayStatuses);
     if (dates.length > 0) {
         // Prüfe das erste Datum, um den zurückgegebenen Monat zu erkennen
         const firstDate = dates[0];
@@ -687,12 +747,17 @@ function updateDayStatuses(statusData) {
         const expectedMonth = document.getElementById('month').value.toString().padStart(2, '0');
         
         if (receivedMonth !== expectedMonth) {
+            // Hier könnte ein Log erfolgen, aber keine Aktion notwendig
+            console.log("Month mismatch in received calendar data. Expected:", expectedMonth, "Received:", receivedMonth);
         }
+    } else {
+        console.log("No dates found in status data");
+        return; // Exit early if there are no dates
     }
     
     // Get today's date for comparison
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // Reset time part for comparison
+    today.setHours(0, 0, 0, 0);
     
     // First set all days to 'free' by default and mark past days
     document.querySelectorAll('.day[data-date]').forEach(dayElement => {
@@ -700,11 +765,15 @@ function updateDayStatuses(statusData) {
         const date = new Date(dateStr);
         
         // Remove all status classes except other-month
-        dayElement.classList.remove('free', 'pending', 'booked', 'past', 'public-event');
+        dayElement.classList.remove('free', 'pending', 'booked', 'past', 'public-event', 'key-handover');
         
         // Remove event name tooltip and data
         dayElement.dataset.eventName = '';
         dayElement.title = '';
+        
+        // Remove any key handover indicators
+        const existingIndicators = dayElement.querySelectorAll('.event-indicator, .key-indicator');
+        existingIndicators.forEach(indicator => indicator.remove());
         
         // Add free by default
         dayElement.classList.add('free');
@@ -717,36 +786,86 @@ function updateDayStatuses(statusData) {
     });
     
     // Then update with statuses from the server
-    Object.keys(statusData).forEach(date => {
-        const statusInfo = statusData[date];
+    Object.keys(dayStatuses).forEach(date => {
+        const statusInfo = dayStatuses[date];
         const dayElement = document.querySelector(`.day[data-date="${date}"]`);
         
         if (dayElement) {
+            // Log for debugging
+            console.log(`Updating day ${date} with status:`, statusInfo);
+            
             // Remove status classes but keep past if it's set
-            dayElement.classList.remove('free', 'pending', 'booked', 'public-event');
+            dayElement.classList.remove('free', 'pending', 'booked', 'public-event', 'key-handover');
+            
+            // Remove any previous time restrictions
+            delete dayElement.dataset.timeRestrictions;
             
             // For non-past days, update status
             if (!dayElement.classList.contains('past')) {
-                // Check if we have an object with a status and event_name
-                if (typeof statusInfo === 'object' && statusInfo.status === 'public_event') {
-                    // For public event, use a special class
-                    dayElement.classList.add('public-event');
+                // Check if we have an object with a status or just a string status
+                if (typeof statusInfo === 'object') {
+                    console.log(`Day ${date} has object status:`, statusInfo.status);
                     
-                    // Add event name as tooltip and data attribute
-                    if (statusInfo.event_name) {
-                        dayElement.dataset.eventName = statusInfo.event_name;
-                        dayElement.title = statusInfo.event_name;
+                    if (statusInfo.status === 'public_event') {
+                        // For public event, use a special class
+                        dayElement.classList.add('public-event');
                         
-                        // Add a small indicator for the event name
-                        if (!dayElement.querySelector('.event-indicator')) {
+                        // Add event name as tooltip and data attribute
+                        if (statusInfo.event_name) {
+                            dayElement.dataset.eventName = statusInfo.event_name;
+                            dayElement.title = statusInfo.event_name;
+                            
+                            // Add a small indicator for the event name
                             const indicator = document.createElement('span');
                             indicator.className = 'event-indicator';
-                            indicator.textContent = statusInfo.event_name; // Vollständiger Veranstaltungsname
+                            indicator.textContent = statusInfo.event_name.substring(0, 15);
+                            if (statusInfo.event_name.length > 15) {
+                                indicator.textContent += '...';
+                            }
                             dayElement.appendChild(indicator);
+                        }
+                        
+                        // Add key handover info if available for public events
+                        if (statusInfo.key_info) {
+                            addKeyHandoverInfo(dayElement, statusInfo.key_info);
+                        }
+                    } else if (statusInfo.status === 'key_handover') {
+                        // For key handover days - now reservable with restrictions
+                        dayElement.classList.add('key-handover');
+                        
+                        if (statusInfo.key_info) {
+                            addKeyHandoverInfo(dayElement, statusInfo.key_info);
+                        }
+                        
+                        // Add time restrictions if available
+                        if (statusInfo.time_restrictions) {
+                            dayElement.dataset.timeRestrictions = JSON.stringify(statusInfo.time_restrictions);
+                            
+                            // Create tooltip message
+                            let message = '';
+                            if (statusInfo.time_restrictions.available_from) {
+                                message += `Verfügbar ab ${statusInfo.time_restrictions.available_from} Uhr`;
+                            }
+                            if (statusInfo.time_restrictions.available_until) {
+                                message += message ? ' bis ' : 'Verfügbar bis ';
+                                message += `${statusInfo.time_restrictions.available_until} Uhr`;
+                            }
+                            
+                            if (message) {
+                                dayElement.title = message;
+                            }
+                        }
+                    } else {
+                        // For booked or pending with key info
+                        dayElement.classList.add(statusInfo.status);
+                        
+                        // Add key handover info if available
+                        if (statusInfo.key_info) {
+                            addKeyHandoverInfo(dayElement, statusInfo.key_info);
                         }
                     }
                 } else {
-                    // Add the normal status class
+                    // Add the normal status class if it's just a string
                     dayElement.classList.add(statusInfo);
                 }
             }
@@ -764,12 +883,10 @@ function isSelectable(dayElement) {
     
     // Check if it's a past date (before today)
     if (date < today) {
-        
         // Show feedback on mobile
         if (window.matchMedia("(max-width: 768px)").matches) {
             showMobileAlert('Vergangene Daten sind nicht auswählbar.');
         }
-        
         return false;
     }
     
@@ -780,7 +897,7 @@ function isSelectable(dayElement) {
         
         // For dates with special status, show appropriate message
         if (window.matchMedia("(max-width: 768px)").matches) {
-            let message = 'Dieses Datum ist bereits reserviert oder angefragt.';
+            let message = 'Dieses Datum ist bereits belegt.';
             
             // If it's a public event, show the event name
             if (dayElement.classList.contains('public-event') && dayElement.dataset.eventName) {
@@ -789,11 +906,31 @@ function isSelectable(dayElement) {
             
             showMobileAlert(message);
         }
-        
         return false;
     }
     
-    // The day is in the future or today and is free
+    // Check for time restrictions on key handover days
+    if (dayElement.dataset.timeRestrictions) {
+        const restrictions = JSON.parse(dayElement.dataset.timeRestrictions);
+        let message = '';
+        
+        if (restrictions.available_from) {
+            message += `Dieser Tag ist ab ${restrictions.available_from} Uhr verfügbar`;
+        }
+        if (restrictions.available_until) {
+            message += message ? ' und ' : 'Dieser Tag ist ';
+            message += `nur bis ${restrictions.available_until} Uhr verfügbar`;
+        }
+        
+        // Show the time restriction message
+        if (window.matchMedia("(max-width: 768px)").matches) {
+            showMobileAlert(message);
+        } else {
+            dayElement.title = message;
+        }
+    }
+    
+    // The day is in the future or today and is free or has key handover
     return true;
 }
 
@@ -1292,4 +1429,37 @@ function calculateDefaultCosts(startDateTime, endDateTime, dayCountElement, tota
     dayCountElement.textContent = days;
     baseCostElement.textContent = formattedRate + '€';
     totalCostElement.textContent = formattedTotal + '€';
+}
+
+// Function to add key handover information to a day element
+function addKeyHandoverInfo(dayElement, keyInfo) {
+    let tooltipText = '';
+    
+    if (keyInfo.handover) {
+        tooltipText += `Schlüsselübergabe: ${keyInfo.handover} Uhr`;
+    }
+    if (keyInfo.return) {
+        if (tooltipText) tooltipText += '\n';
+        tooltipText += `Schlüsselrückgabe: ${keyInfo.return} Uhr`;
+    }
+    
+    // Set tooltip or append to existing tooltip
+    if (dayElement.title) {
+        dayElement.title += '\n\n' + tooltipText;
+    } else {
+        dayElement.title = tooltipText;
+    }
+    
+    // Add key indicator
+    const keyIndicator = document.createElement('span');
+    keyIndicator.className = 'key-indicator';
+    
+    if (keyInfo.handover && keyInfo.return) {
+        // Two keys if both handover and return on same day
+        keyIndicator.innerHTML = '<i class="bi bi-key"></i><i class="bi bi-key"></i>';
+    } else {
+        keyIndicator.innerHTML = '<i class="bi bi-key"></i>';
+    }
+    
+    dayElement.appendChild(keyIndicator);
 }
