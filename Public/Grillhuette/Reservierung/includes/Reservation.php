@@ -1638,9 +1638,8 @@ class Reservation {
                 
                 // Wenn die Standard-Rückgabezeit nach der Schlüsselübergabe der nächsten Reservierung liegt
                 if ($keyReturn > $nextKeyHandover) {
-                    // Setze die Rückgabezeit auf 2 Stunden vor der nächsten Schlüsselübergabe
+                    // Setze die Rückgabezeit auf die exakte Zeit der nächsten Schlüsselübergabe
                     $keyReturn = clone $nextKeyHandover;
-                    $keyReturn->modify('-2 hours');
                 }
             }
             
@@ -1650,9 +1649,8 @@ class Reservation {
                 
                 // Wenn die Standard-Übergabezeit vor der Schlüsselrückgabe der vorherigen Reservierung liegt
                 if ($keyHandover < $prevKeyReturn) {
-                    // Setze die Übergabezeit auf 2 Stunden nach der vorherigen Schlüsselrückgabe
+                    // Setze die Übergabezeit auf die exakte Zeit der vorherigen Schlüsselrückgabe
                     $keyHandover = clone $prevKeyReturn;
-                    $keyHandover->modify('+2 hours');
                 }
             }
             
