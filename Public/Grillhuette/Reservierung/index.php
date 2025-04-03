@@ -55,7 +55,14 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
 ?>
 
 <div class="row mb-4">
-    <div class="col-12">       
+    <div class="col-12">
+        <!-- Reservierungshilfe Button -->
+        <div class="text-center mb-3">
+            <button id="reservierungshilfeBtn" class="btn btn-primary">
+                <i class="bi bi-question-circle"></i> Reservierungshilfe starten
+            </button>
+        </div>
+       
         <!-- Responsives Layout für mobil und desktop -->
         <div class="row">
             <!-- Kalender Container - volle Breite auf mobil, 2/3 auf Desktop -->
@@ -614,5 +621,399 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
     </div>
 </div>
 <?php endif; ?>
+
+<!-- Schwebende Tooltip-Box für die Reservierungshilfe -->
+<div id="guideTip" class="guide-tip">
+    <div class="guide-tip-header">
+        <span id="guideStepTitle">Schritt 1: Kalender ansehen</span>
+        <button id="closeGuideTip" class="close-btn">&times;</button>
+    </div>
+    <div id="guideStepContent" class="guide-tip-content">
+        Schauen Sie sich den Kalender an, um verfügbare Tage zu sehen. Grün markierte Tage sind verfügbar.
+    </div>
+    <div class="guide-tip-footer">
+        <span id="stepCounter">Schritt 1 von 6</span>
+        <button id="nextGuideStep" class="btn btn-sm btn-primary">Weiter</button>
+    </div>
+</div>
+
+<style>
+    /* Stil für die Reservierungshilfe */
+    .guide-tip {
+        position: absolute;
+        display: none;
+        width: 280px;
+        background-color: white;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        z-index: 1000;
+        font-size: 14px;
+        animation: fadeIn 0.3s;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    
+    .guide-tip-header {
+        padding: 8px 12px;
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #ddd;
+        border-radius: 6px 6px 0 0;
+        font-weight: bold;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .guide-tip-content {
+        padding: 12px;
+        line-height: 1.4;
+    }
+    
+    .guide-tip-footer {
+        padding: 8px 12px;
+        border-top: 1px solid #ddd;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .close-btn {
+        background: none;
+        border: none;
+        font-size: 20px;
+        cursor: pointer;
+        padding: 0;
+        line-height: 1;
+    }
+    
+    .highlight-element {
+        position: relative;
+        z-index: 10;
+        animation: pulse 2s infinite;
+        border: 2px solid #007bff !important;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+    }
+    
+    @keyframes pulse {
+        0% { box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.7); }
+        70% { box-shadow: 0 0 0 10px rgba(0, 123, 255, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(0, 123, 255, 0); }
+    }
+    
+    .overlay-backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.3);
+        z-index: 5;
+        display: none;
+    }
+    
+    /* Mobile Anpassungen */
+    @media (max-width: 768px) {
+        .guide-tip {
+            width: 260px;
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+    }
+</style>
+
+<div id="overlayBackdrop" class="overlay-backdrop"></div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Hilfselemente
+        const guideBtn = document.getElementById('reservierungshilfeBtn');
+        const guideTip = document.getElementById('guideTip');
+        const closeGuideTipBtn = document.getElementById('closeGuideTip');
+        const nextGuideStepBtn = document.getElementById('nextGuideStep');
+        const guideStepTitle = document.getElementById('guideStepTitle');
+        const guideStepContent = document.getElementById('guideStepContent');
+        const stepCounter = document.getElementById('stepCounter');
+        const overlayBackdrop = document.getElementById('overlayBackdrop');
+        
+        // Aktueller Schritt
+        let currentStep = 0;
+        let currentHighlightedElement = null;
+        let isGuideActive = false;
+        
+        // Definiere alle Schritte
+        const guideSteps = [
+            {
+                title: "Schritt 1: Kalender ansehen",
+                content: "Schauen Sie sich den Kalender an, um verfügbare Tage zu sehen. Grün markierte Tage sind verfügbar.",
+                targetSelector: "#calendar",
+                position: "right",
+                waitForAction: false
+            },
+            {
+                title: "Schritt 2: Startdatum auswählen",
+                content: "Klicken Sie auf einen verfügbaren (grünen) Tag im Kalender, um Ihr Startdatum auszuwählen.",
+                targetSelector: ".day:not(.other-month):not(.booked):not(.past)",
+                position: "right",
+                waitForAction: true,
+                actionCheck: function() {
+                    return document.getElementById('start_date') && document.getElementById('start_date').value !== '';
+                }
+            },
+            {
+                title: "Schritt 3: Enddatum auswählen",
+                content: "Wählen Sie nun das Enddatum Ihrer Reservierung aus. Sie können den gleichen Tag oder ein späteres Datum wählen.",
+                targetSelector: ".day:not(.other-month):not(.booked):not(.past)",
+                position: "right",
+                waitForAction: true,
+                actionCheck: function() {
+                    return document.getElementById('end_date') && document.getElementById('end_date').value !== '';
+                }
+            },
+            {
+                title: "Schritt 4: Optionen auswählen",
+                content: "Hier können Sie zusätzliche Optionen auswählen, wie eine Quittung anzufordern oder es als öffentliche Reservierung zu markieren.",
+                targetSelector: "#receipt_requested",
+                position: "right",
+                waitForAction: false
+            },
+            {
+                title: "Schritt 5: Nachricht eingeben (optional)",
+                content: "Sie können eine optionale Nachricht für den Verwalter hinterlassen, z.B. für spezielle Anfragen.",
+                targetSelector: "#message",
+                position: "top",
+                waitForAction: false
+            },
+            {
+                title: "Schritt 6: Reservierung anfragen",
+                content: "Überprüfen Sie die Kostenübersicht und klicken Sie auf 'Reservierung anfragen', um Ihre Buchung abzuschließen.",
+                targetSelector: "button[type='submit']",
+                position: "top",
+                waitForAction: true,
+                actionCheck: function() {
+                    // Diese Funktion würde nur durch das Absenden des Formulars ausgelöst werden,
+                    // aber da wir die Seite nicht verlassen wollen, ist dies nur ein Platzhalter
+                    return false;
+                }
+            }
+        ];
+        
+        // Event-Listener für den Guide-Button
+        guideBtn.addEventListener('click', function() {
+            startGuide();
+        });
+        
+        // Event-Listener zum Schließen des Guides
+        closeGuideTipBtn.addEventListener('click', function() {
+            endGuide();
+        });
+        
+        // Event-Listener für "Weiter"-Button
+        nextGuideStepBtn.addEventListener('click', function() {
+            goToNextStep();
+        });
+        
+        // Funktion zum Starten des Guides
+        function startGuide() {
+            isGuideActive = true;
+            currentStep = 0;
+            showOverlay();
+            showCurrentStep();
+        }
+        
+        // Funktion zum Beenden des Guides
+        function endGuide() {
+            isGuideActive = false;
+            hideGuideTip();
+            removeHighlight();
+            hideOverlay();
+        }
+        
+        // Funktion zum Anzeigen des aktuellen Schritts
+        function showCurrentStep() {
+            if (currentStep >= guideSteps.length) {
+                endGuide();
+                return;
+            }
+            
+            const step = guideSteps[currentStep];
+            
+            // Titel und Inhalt aktualisieren
+            guideStepTitle.textContent = step.title;
+            guideStepContent.textContent = step.content;
+            stepCounter.textContent = `Schritt ${currentStep + 1} von ${guideSteps.length}`;
+            
+            // Element hervorheben
+            highlightElement(step.targetSelector);
+            
+            // Tooltip positionieren
+            positionGuideTip(step.targetSelector, step.position);
+            
+            // Warten auf Aktion oder nicht
+            if (step.waitForAction) {
+                nextGuideStepBtn.style.display = 'none';
+                setupActionCheck(step);
+            } else {
+                nextGuideStepBtn.style.display = 'block';
+            }
+        }
+        
+        // Element hervorheben
+        function highlightElement(selector) {
+            removeHighlight();
+            
+            const elements = document.querySelectorAll(selector);
+            if (elements.length > 0) {
+                // Bei mehreren Elementen nur das erste hervorheben
+                currentHighlightedElement = elements[0];
+                currentHighlightedElement.classList.add('highlight-element');
+                
+                // Stelle sicher, dass das Element sichtbar ist
+                currentHighlightedElement.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+            }
+        }
+        
+        // Highlight entfernen
+        function removeHighlight() {
+            if (currentHighlightedElement) {
+                currentHighlightedElement.classList.remove('highlight-element');
+                currentHighlightedElement = null;
+            }
+            
+            // Falls es mehrere Elemente gibt, die hervorgehoben wurden
+            document.querySelectorAll('.highlight-element').forEach(el => {
+                el.classList.remove('highlight-element');
+            });
+        }
+        
+        // Tooltip positionieren
+        function positionGuideTip(selector, position) {
+            const element = document.querySelector(selector);
+            
+            if (!element) {
+                guideTip.style.display = 'none';
+                return;
+            }
+            
+            const rect = element.getBoundingClientRect();
+            const isMobile = window.innerWidth <= 768;
+            
+            if (isMobile) {
+                // Auf mobilen Geräten immer am unteren Bildschirmrand
+                guideTip.style.top = 'auto';
+                guideTip.style.left = '50%';
+                guideTip.style.transform = 'translateX(-50%)';
+                guideTip.style.bottom = '20px';
+            } else {
+                // Auf Desktop je nach Position
+                switch (position) {
+                    case 'right':
+                        guideTip.style.top = (rect.top + window.scrollY) + 'px';
+                        guideTip.style.left = (rect.right + 10 + window.scrollX) + 'px';
+                        guideTip.style.transform = 'none';
+                        break;
+                    case 'left':
+                        guideTip.style.top = (rect.top + window.scrollY) + 'px';
+                        guideTip.style.left = (rect.left - guideTip.offsetWidth - 10 + window.scrollX) + 'px';
+                        guideTip.style.transform = 'none';
+                        break;
+                    case 'top':
+                        guideTip.style.top = (rect.top - guideTip.offsetHeight - 10 + window.scrollY) + 'px';
+                        guideTip.style.left = (rect.left + rect.width/2 + window.scrollX) + 'px';
+                        guideTip.style.transform = 'translateX(-50%)';
+                        break;
+                    case 'bottom':
+                        guideTip.style.top = (rect.bottom + 10 + window.scrollY) + 'px';
+                        guideTip.style.left = (rect.left + rect.width/2 + window.scrollX) + 'px';
+                        guideTip.style.transform = 'translateX(-50%)';
+                        break;
+                }
+            }
+            
+            guideTip.style.display = 'block';
+        }
+        
+        // Nächster Schritt
+        function goToNextStep() {
+            currentStep++;
+            showCurrentStep();
+        }
+        
+        // Überwachung der Aktion einrichten
+        function setupActionCheck(step) {
+            if (!step.actionCheck) return;
+            
+            // Prüfen wir alle 500ms, ob die Aktion ausgeführt wurde
+            const checkInterval = setInterval(function() {
+                if (!isGuideActive) {
+                    clearInterval(checkInterval);
+                    return;
+                }
+                
+                if (step.actionCheck()) {
+                    clearInterval(checkInterval);
+                    
+                    // Kurz warten, bevor wir zum nächsten Schritt gehen
+                    setTimeout(function() {
+                        if (isGuideActive) goToNextStep();
+                    }, 1000);
+                }
+            }, 500);
+        }
+        
+        // Guide-Tooltip ausblenden
+        function hideGuideTip() {
+            guideTip.style.display = 'none';
+        }
+        
+        // Overlay anzeigen
+        function showOverlay() {
+            overlayBackdrop.style.display = 'block';
+        }
+        
+        // Overlay ausblenden
+        function hideOverlay() {
+            overlayBackdrop.style.display = 'none';
+        }
+        
+        // Event-Listener für Kalender-Klicks (für die automatische Erkennung)
+        // Wird nur aktiviert, wenn der Guide aktiv ist
+        document.addEventListener('click', function(e) {
+            if (!isGuideActive) return;
+            
+            const dayElement = e.target.closest('.day');
+            if (dayElement && (currentStep === 1 || currentStep === 2)) {
+                // Wir können hier keine direkte Aktion ausführen, da die Auswahl
+                // von der vorhandenen Kalenderlogik verwaltet wird.
+                // Die setupActionCheck Funktion wird dies überwachen.
+            }
+        });
+        
+        // Anpassung an Fenstergröße
+        window.addEventListener('resize', function() {
+            if (isGuideActive) {
+                const step = guideSteps[currentStep];
+                positionGuideTip(step.targetSelector, step.position);
+            }
+        });
+        
+        // Anpassung an Scrollen
+        window.addEventListener('scroll', function() {
+            if (isGuideActive) {
+                const step = guideSteps[currentStep];
+                positionGuideTip(step.targetSelector, step.position);
+            }
+        });
+    });
+</script>
 
 <?php require_once 'includes/footer.php'; ?> 
