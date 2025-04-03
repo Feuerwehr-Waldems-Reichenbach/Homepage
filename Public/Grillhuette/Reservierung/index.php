@@ -398,7 +398,7 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
                                 
                                 <div class="mb-3 form-check">
                                     <input type="checkbox" class="form-check-input" id="is_public" name="is_public" value="1">
-                                    <label class="form-check-label" for="is_public">Öffentliche Reservierung (im Kalender sichtbar)</label>
+                                    <label class="form-check-label" for="is_public">Öffentliche Veranstaltung (im Kalender sichtbar)</label>
                                 </div>
                                 
                                 <div id="public-event-details" style="display: none;">
@@ -633,7 +633,10 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
     </div>
     <div class="guide-tip-footer">
         <span id="stepCounter">Schritt 1 von 6</span>
-        <button id="nextGuideStep" class="btn btn-sm btn-primary">Weiter</button>
+        <div class="guide-buttons">
+            <button id="prevGuideStep" class="btn btn-sm btn-outline-secondary" style="display: none;">Zurück</button>
+            <button id="nextGuideStep" class="btn btn-sm btn-primary">Weiter</button>
+        </div>
     </div>
 </div>
 
@@ -679,6 +682,11 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
         display: flex;
         justify-content: space-between;
         align-items: center;
+    }
+    
+    .guide-buttons {
+        display: flex;
+        gap: 8px;
     }
     
     .close-btn {
@@ -800,6 +808,7 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
         const guideTip = document.getElementById('guideTip');
         const closeGuideTipBtn = document.getElementById('closeGuideTip');
         const nextGuideStepBtn = document.getElementById('nextGuideStep');
+        const prevGuideStepBtn = document.getElementById('prevGuideStep');
         const guideStepTitle = document.getElementById('guideStepTitle');
         const guideStepContent = document.getElementById('guideStepContent');
         const stepCounter = document.getElementById('stepCounter');
@@ -824,20 +833,14 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
                 content: "Klicken Sie auf einen der grün markierten (verfügbaren) Tage im Kalender, um Ihr Startdatum auszuwählen. Alle verfügbaren Tage sind hervorgehoben. Sie können auch den Monat wechseln, um andere Termine zu sehen.",
                 targetSelector: ".day:not(.other-month):not(.booked):not(.past)",
                 position: "right",
-                waitForAction: true,
-                actionCheck: function() {
-                    return document.getElementById('start_date') && document.getElementById('start_date').value !== '';
-                }
+                waitForAction: false
             },
             {
                 title: "Schritt 3: Enddatum auswählen",
                 content: "Wählen Sie nun einen Tag als Enddatum Ihrer Reservierung aus. Sie können den gleichen Tag oder ein späteres Datum wählen. Alle verfügbaren Tage sind hervorgehoben.",
                 targetSelector: ".day:not(.other-month):not(.booked):not(.past)",
                 position: "right",
-                waitForAction: true,
-                actionCheck: function() {
-                    return document.getElementById('end_date') && document.getElementById('end_date').value !== '';
-                }
+                waitForAction: false
             },
             {
                 title: "Schritt 4: Quittung anfordern",
@@ -847,15 +850,11 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
                 waitForAction: false
             },
             {
-                title: "Schritt 5: Öffentliche Reservierung",
-                content: "Entscheiden Sie, ob Ihre Reservierung öffentlich im Kalender sichtbar sein soll. Aktivieren Sie diese Option für öffentliche Veranstaltungen.",
+                title: "Schritt 5: Öffentliche Veranstaltung",
+                content: "Entscheiden Sie, ob Ihre Reservierung eine öffentliche Veranstaltung sein soll, die im Kalender sichtbar ist.",
                 targetSelector: "label[for='is_public'], #is_public",
                 position: "left",
-                waitForAction: true,
-                actionCheck: function() {
-                    // Wir warten auf das Klicken der Checkbox, egal ob sie aktiviert oder deaktiviert wird
-                    return true; // Immer als erfüllt betrachten, aber wir überwachen unten den Zustand
-                },
+                waitForAction: false,
                 customAction: function() {
                     // Wir fügen einen Event-Listener für die is_public Checkbox hinzu
                     const isPublicCheckbox = document.getElementById('is_public');
@@ -863,21 +862,12 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
                         isPublicCheckbox.addEventListener('change', function() {
                             // Je nach Zustand der Checkbox dynamisch Schritte hinzufügen oder entfernen
                             updateGuideSteps(this.checked);
-                            
-                            // Zum nächsten Schritt gehen
-                            setTimeout(function() {
-                                if (isGuideActive) goToNextStep();
-                            }, 500);
                         });
                         
                         // Wenn die Checkbox bereits aktiviert ist
                         if (isPublicCheckbox.checked) {
                             updateGuideSteps(true);
                         }
-                        
-                        // Weiter-Button zum Überspringen anzeigen
-                        nextGuideStepBtn.style.display = 'block';
-                        nextGuideStepBtn.textContent = 'Überspringen';
                     }
                 }
             },
@@ -886,20 +876,15 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
                 title: "Schritt 6: Nachricht eingeben (optional)",
                 content: "Sie können eine optionale Nachricht für den Verwalter hinterlassen, z.B. für spezielle Anfragen. Klicken Sie auf 'Weiter', wenn Sie bereit sind.",
                 targetSelector: "#message",
-                position: "top",
+                position: "left",
                 waitForAction: false
             },
             {
                 title: "Schritt 7: Reservierung anfragen",
                 content: "Überprüfen Sie die Kostenübersicht und klicken Sie auf 'Reservierung anfragen', um Ihre Buchung abzuschließen.",
                 targetSelector: "button[type='submit']",
-                position: "top",
-                waitForAction: true,
-                actionCheck: function() {
-                    // Diese Funktion würde nur durch das Absenden des Formulars ausgelöst werden,
-                    // aber da wir die Seite nicht verlassen wollen, ist dies nur ein Platzhalter
-                    return false;
-                }
+                position: "left",
+                waitForAction: false
             }
         ];
         
@@ -917,11 +902,7 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
                 content: "Wählen Sie, ob Ihre Veranstaltung an einem bestimmten Tag oder über mehrere Tage stattfindet.",
                 targetSelector: "label[for='show_date_range'], #show_date_range",
                 position: "left",
-                waitForAction: true,
-                actionCheck: function() {
-                    // Wir warten auf das Klicken der Checkbox, egal ob sie aktiviert oder deaktiviert wird
-                    return true;
-                },
+                waitForAction: false,
                 customAction: function() {
                     // Event-Listener für die show_date_range Checkbox
                     const showDateRangeCheckbox = document.getElementById('show_date_range');
@@ -929,19 +910,10 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
                         showDateRangeCheckbox.addEventListener('change', function() {
                             // Aktualisiere die Veranstaltungszeitraum-Selektoren basierend auf der Auswahl
                             updateEventDatesSelector(this.checked);
-                            
-                            // Zum nächsten Schritt gehen
-                            setTimeout(function() {
-                                if (isGuideActive) goToNextStep();
-                            }, 500);
                         });
                         
                         // Initialisieren: Wenn die Checkbox bereits aktiviert ist
                         updateEventDatesSelector(showDateRangeCheckbox.checked);
-                        
-                        // Weiter-Button zum Überspringen anzeigen
-                        nextGuideStepBtn.style.display = 'block';
-                        nextGuideStepBtn.textContent = 'Überspringen';
                     }
                 }
             },
@@ -1016,6 +988,11 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
             goToNextStep();
         });
         
+        // Event-Listener für "Zurück"-Button
+        prevGuideStepBtn.addEventListener('click', function() {
+            goToPrevStep();
+        });
+        
         // Funktion zum Starten des Guides
         function startGuide() {
             isGuideActive = true;
@@ -1058,28 +1035,20 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
             // Tooltip positionieren
             positionGuideTip(step.targetSelector, step.position);
             
-            // Warten auf Aktion oder nicht
-            if (step.waitForAction) {
-                // Prüfen, ob der Schritt eine benutzerdefinierte Aktion hat
-                if (step.customAction) {
-                    step.customAction();
-                } else {
-                    // Bei der Auswahl des Enddatums prüfen, ob es bereits gewählt wurde
-                    if (currentStep === 2 && document.getElementById('end_date') && document.getElementById('end_date').value !== '') {
-                        // Wenn bereits ein Enddatum gewählt wurde, "Weiter"-Button anzeigen und Text anpassen
-                        nextGuideStepBtn.style.display = 'block';
-                        nextGuideStepBtn.textContent = 'Dieses Datum beibehalten';
-                        guideStepContent.textContent = "Sie haben bereits ein Enddatum gewählt. Klicken Sie auf einen anderen Tag, um die Auswahl zu ändern, oder klicken Sie auf 'Weiter', um fortzufahren.";
-                    } else {
-                        // Ansonsten den "Weiter"-Button ausblenden
-                        nextGuideStepBtn.style.display = 'none';
-                        setupActionCheck(step);
-                    }
-                }
+            // Zurück-Button anzeigen/ausblenden
+            if (currentStep > 0) {
+                prevGuideStepBtn.style.display = 'block';
             } else {
-                // Bei Schritten ohne Wartepflicht den "Weiter"-Button anzeigen
-                nextGuideStepBtn.style.display = 'block';
-                nextGuideStepBtn.textContent = 'Weiter';
+                prevGuideStepBtn.style.display = 'none';
+            }
+            
+            // Weiter-Button immer anzeigen
+            nextGuideStepBtn.style.display = 'block';
+            nextGuideStepBtn.textContent = currentStep === guideSteps.length - 1 ? 'Fertig' : 'Weiter';
+            
+            // Prüfen, ob der Schritt eine benutzerdefinierte Aktion hat
+            if (step.customAction) {
+                step.customAction();
             }
         }
         
@@ -1248,96 +1217,27 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
         
         // Nächster Schritt
         function goToNextStep() {
-            currentStep++;
-            
-            // Button-Text zurücksetzen
-            nextGuideStepBtn.textContent = 'Weiter';
-            
-            showCurrentStep();
+            if (currentStep < guideSteps.length - 1) {
+                currentStep++;
+                showCurrentStep();
+            } else {
+                // Beim letzten Schritt den Guide beenden
+                endGuide();
+            }
         }
         
-        // Überwachung der Aktion einrichten
+        // Vorheriger Schritt
+        function goToPrevStep() {
+            if (currentStep > 0) {
+                currentStep--;
+                showCurrentStep();
+            }
+        }
+        
+        // Überwachung der Aktion einrichten - wird jetzt nicht mehr benötigt, da alle Schritte einen Weiter-Button haben
         function setupActionCheck(step) {
-            if (!step.actionCheck) return;
-            
-            // Sonderbehandlung für das Zurücksetzen der Datumsauswahl
-            if (currentStep === 1 || currentStep === 2) {
-                const startDateInput = document.getElementById('start_date');
-                const endDateInput = document.getElementById('end_date');
-                
-                // Bei Schritt 2 (Startdatum) nur zurücksetzen, wenn explizit gewünscht
-                if (currentStep === 1 && startDateInput && startDateInput.value !== '') {
-                    // Hinweistext aktualisieren, dass man ein anderes Datum wählen kann
-                    guideStepContent.textContent = "Sie haben bereits ein Startdatum gewählt. Klicken Sie auf einen anderen Tag, um die Auswahl zu ändern, oder klicken Sie auf 'Weiter', um fortzufahren.";
-                    
-                    // Weiter-Button anzeigen, um die bestehende Auswahl zu behalten
-                    nextGuideStepBtn.style.display = 'block';
-                    nextGuideStepBtn.textContent = 'Dieses Datum beibehalten';
-                    
-                    // Event-Listener für Kalender-Klicks hinzufügen, um die Auswahl zurückzusetzen
-                    document.querySelectorAll('.day').forEach(day => {
-                        day.addEventListener('click', function(e) {
-                            if (!day.classList.contains('other-month') && !day.classList.contains('booked') && !day.classList.contains('past')) {
-                                // Nichts tun, die bestehende Kalenderlogik wird die Auswahl ändern
-                                // Die actionCheck-Funktion wird erkennen, wenn sich der Wert ändert
-                            }
-                        });
-                    });
-                }
-                
-                // Bei Schritt 3 (Enddatum) ähnlich verfahren
-                if (currentStep === 2 && endDateInput && endDateInput.value !== '') {
-                    guideStepContent.textContent = "Sie haben bereits ein Enddatum gewählt. Klicken Sie auf einen anderen Tag, um die Auswahl zu ändern, oder klicken Sie auf 'Weiter', um fortzufahren.";
-                    nextGuideStepBtn.style.display = 'block';
-                    nextGuideStepBtn.textContent = 'Dieses Datum beibehalten';
-                }
-            }
-            
-            // Wir speichern die aktuelle Eingabe, um zu erkennen, wenn sie sich ändert
-            let initialInputValue = '';
-            const relevantInput = getRelevantInputForStep(currentStep);
-            if (relevantInput) {
-                initialInputValue = relevantInput.value;
-            }
-            
-            // Weniger häufige Überprüfung verwenden (nur alle 1,5 Sekunden statt 500ms)
-            // und verhindern, dass während der Benutzereingabe die Hervorhebung neu angewendet wird
-            const checkInterval = setInterval(function() {
-                if (!isGuideActive) {
-                    clearInterval(checkInterval);
-                    return;
-                }
-                
-                // Bei der Datumseingabe prüfen, ob sich die Eingabe geändert hat
-                const currentInput = getRelevantInputForStep(currentStep);
-                if (currentInput && currentInput.value !== initialInputValue && currentInput.value !== '') {
-                    // Eingabe wurde geändert, warten wir kurz und gehen dann weiter
-                    clearInterval(checkInterval);
-                    
-                    // Kurz warten, bevor wir zum nächsten Schritt gehen
-                    setTimeout(function() {
-                        if (isGuideActive) goToNextStep();
-                    }, 1000);
-                }
-                // Bei Aktionsschritten prüfen wir die spezifische Aktionsbedingung
-                else if (step.actionCheck()) {
-                    clearInterval(checkInterval);
-                    
-                    // Kurz warten, bevor wir zum nächsten Schritt gehen
-                    setTimeout(function() {
-                        if (isGuideActive) goToNextStep();
-                    }, 1000);
-                }
-            }, 1500); // Von 500ms auf 1500ms erhöht
-        }
-        
-        // Hilfsfunktion, um das relevante Eingabefeld für den aktuellen Schritt zu finden
-        function getRelevantInputForStep(step) {
-            switch (step) {
-                case 1: return document.getElementById('start_date');
-                case 2: return document.getElementById('end_date');
-                default: return null;
-            }
+            // Diese Funktion wird für die aktualisierte Version nicht mehr benötigt,
+            // bleibt aber als leere Funktion für Kompatibilität bestehen
         }
         
         // Guide-Tooltip ausblenden
@@ -1373,10 +1273,6 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
                     positionGuideTip(step.targetSelector, step.position);
                 }, 300);
             }
-            
-            if (dayElement && (currentStep === 1 || currentStep === 2)) {
-                // Die setupActionCheck Funktion überwacht dies
-            }
         });
         
         // Anpassung an Fenstergröße
@@ -1394,7 +1290,7 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
                 positionGuideTip(step.targetSelector, step.position);
             }
         });
-
+        
         // Funktion zum Aktualisieren des Selektors für Veranstaltungsdaten
         function updateEventDatesSelector(isDateRange) {
             // Finde den Veranstaltungszeitraum-Schritt
