@@ -48,12 +48,38 @@ if (!isset($_SESSION['last_regeneration'])) {
 
 // Funktion zur zuverlässigen Überprüfung einer sicheren Verbindung
 function isSecureConnection() {
-    // Prüfen verschiedener Server-Variablen, die auf HTTPS hinweisen
+    // Für lokale Entwicklung immer HTTP verwenden
+    $localIPs = ['localhost', '127.0.0.1', '::1', '192.168.2.222'];
+    $serverName = $_SERVER['SERVER_NAME'] ?? '';
+    $serverAddr = $_SERVER['SERVER_ADDR'] ?? '';
+    $remoteAddr = $_SERVER['REMOTE_ADDR'] ?? '';
+    
+    // Prüfen, ob wir in einer lokalen Entwicklungsumgebung sind
+    if (in_array($serverName, $localIPs) || 
+        in_array($serverAddr, $localIPs) || 
+        in_array($remoteAddr, $localIPs) ||
+        preg_match('/^192\.168\./', $serverName) ||
+        preg_match('/^192\.168\./', $serverAddr) ||
+        preg_match('/^192\.168\./', $remoteAddr)) {
+        return false;
+    }
+    
+    // Für Produktionsumgebungen die reguläre HTTPS-Erkennung verwenden
     return (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
         || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https')
         || (isset($_SERVER['HTTP_FRONT_END_HTTPS']) && $_SERVER['HTTP_FRONT_END_HTTPS'] === 'on')
         || (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443)
         || (isset($_SERVER['REQUEST_SCHEME']) && $_SERVER['REQUEST_SCHEME'] === 'https');
+}
+
+// Gibt das korrekte Protokoll zurück (http oder https)
+function getProtocol() {
+    return isSecureConnection() ? 'https://' : 'http://';
+}
+
+// Baut eine vollständige URL mit dem korrekten Protokoll
+function buildUrl($path) {
+    return getProtocol() . $_SERVER['HTTP_HOST'] . $path;
 }
 
 // Funktion zur Session-Regeneration nach kritischen Aktionen

@@ -106,8 +106,8 @@ class Reservation {
     public function create($userId, $startDatetime, $endDatetime, $userMessage = null, $receiptRequested = 0, 
                    $isPublic = 0, $eventName = null, $displayStartDate = null, $displayEndDate = null) {
         // Zuweisung der URL-Variablen
-        $myReservationsUrl = 'https://' . $_SERVER['HTTP_HOST'] . getRelativePath('Benutzer/Meine-Reservierungen');
-        $adminReservationsUrl = 'https://' . $_SERVER['HTTP_HOST'] . getRelativePath('Admin/Reservierungsverwaltung');
+        $myReservationsUrl = buildUrl(getRelativePath('Benutzer/Meine-Reservierungen'));
+        $adminReservationsUrl = buildUrl(getRelativePath('Admin/Reservierungsverwaltung'));
 
         try {
             // Überprüfen, ob der Zeitraum verfügbar ist
@@ -252,8 +252,8 @@ class Reservation {
     
     public function updateStatus($id, $status, $adminMessage = null) {
         // Zuweisung der URL-Variablen
-        $myReservationsUrl = 'https://' . $_SERVER['HTTP_HOST'] . getRelativePath('Benutzer/Meine-Reservierungen');
-        $adminReservationsUrl = 'https://' . $_SERVER['HTTP_HOST'] . getRelativePath('Admin/Reservierungsverwaltung');
+        $myReservationsUrl = buildUrl(getRelativePath('Benutzer/Meine-Reservierungen'));
+        $adminReservationsUrl = buildUrl(getRelativePath('Admin/Reservierungsverwaltung'));
 
         try {
             // Reservierungsdaten abrufen
@@ -372,8 +372,8 @@ class Reservation {
     
     public function addUserMessage($id, $message) {
         // Zuweisung der URL-Variablen
-        $myReservationsUrl = 'https://' . $_SERVER['HTTP_HOST'] . getRelativePath('Benutzer/Meine-Reservierungen');
-        $adminReservationsUrl = 'https://' . $_SERVER['HTTP_HOST'] . getRelativePath('Admin/Reservierungsverwaltung');
+        $myReservationsUrl = buildUrl(getRelativePath('Benutzer/Meine-Reservierungen'));
+        $adminReservationsUrl = buildUrl(getRelativePath('Admin/Reservierungsverwaltung'));
 
         try {
             $stmt = $this->db->prepare("UPDATE gh_reservations SET user_message = ? WHERE id = ?");
@@ -454,8 +454,8 @@ class Reservation {
     
     public function addAdminMessage($id, $message) {
         // Zuweisung der URL-Variablen
-        $myReservationsUrl = 'https://' . $_SERVER['HTTP_HOST'] . getRelativePath('Benutzer/Meine-Reservierungen');
-        $adminReservationsUrl = 'https://' . $_SERVER['HTTP_HOST'] . getRelativePath('Admin/Reservierungsverwaltung');
+        $myReservationsUrl = buildUrl(getRelativePath('Benutzer/Meine-Reservierungen'));
+        $adminReservationsUrl = buildUrl(getRelativePath('Admin/Reservierungsverwaltung'));
 
         try {
             $stmt = $this->db->prepare("UPDATE gh_reservations SET admin_message = ? WHERE id = ?");
@@ -540,8 +540,8 @@ class Reservation {
                        $isPublic = 0, $eventName = null, $displayStartDate = null, $displayEndDate = null,
                        $keyHandoverDatetime = null, $keyReturnDatetime = null) {
         // Zuweisung der URL-Variablen
-        $myReservationsUrl = 'https://' . $_SERVER['HTTP_HOST'] . getRelativePath('Benutzer/Meine-Reservierungen');
-        $adminReservationsUrl = 'https://' . $_SERVER['HTTP_HOST'] . getRelativePath('Admin/Reservierungsverwaltung');
+        $myReservationsUrl = buildUrl(getRelativePath('Benutzer/Meine-Reservierungen'));
+        $adminReservationsUrl = buildUrl(getRelativePath('Admin/Reservierungsverwaltung'));
 
         try {
             // Überprüfen, ob der Zeitraum verfügbar ist
@@ -627,8 +627,8 @@ class Reservation {
     
     public function cancel($id) {
         // Zuweisung der URL-Variablen
-        $myReservationsUrl = 'https://' . $_SERVER['HTTP_HOST'] . getRelativePath('Benutzer/Meine-Reservierungen');
-        $adminReservationsUrl = 'https://' . $_SERVER['HTTP_HOST'] . getRelativePath('Admin/Reservierungsverwaltung');
+        $myReservationsUrl = buildUrl(getRelativePath('Benutzer/Meine-Reservierungen'));
+        $adminReservationsUrl = buildUrl(getRelativePath('Admin/Reservierungsverwaltung'));
 
         try {
             // Reservierungsdaten vor der Stornierung abrufen
@@ -1157,7 +1157,7 @@ class Reservation {
                     $user = $this->getUserById($userId);
                     if ($user) {
                         // URL für die Benutzers Reservierungen
-                        $myReservationsUrl = 'https://' . $_SERVER['HTTP_HOST'] . getRelativePath('Benutzer/Meine-Reservierungen');
+                        $myReservationsUrl = buildUrl(getRelativePath('Benutzer/Meine-Reservierungen'));
                         
                         // E-Mail mit aktualisiertem Status senden
                         $this->sendUserReservationUpdate($user, $startDatetime, $endDatetime, $myReservationsUrl, $status, $adminMessage, $keyHandoverDatetime, $keyReturnDatetime);
@@ -1202,7 +1202,7 @@ class Reservation {
             $stmt = $this->db->prepare("DELETE FROM gh_reservations WHERE id = ?");
             $stmt->execute([$id]);
             
-            $myReservationsUrl = 'https://' . $_SERVER['HTTP_HOST'] . getRelativePath('Benutzer/Meine-Reservierungen');
+            $myReservationsUrl = buildUrl(getRelativePath('Benutzer/Meine-Reservierungen'));
             // E-Mail an den Benutzer senden
             if ($reservation['email']) {
                 $subject = 'Ihre Reservierung wurde gelöscht';
