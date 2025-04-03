@@ -700,6 +700,39 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
         pointer-events: auto !important; /* Sicherstellen, dass Mausinteraktionen funktionieren */
     }
     
+    /* Hervorhebung für Formularelemente verbessern */
+    .highlight-label {
+        color: #007bff !important;
+        font-weight: bold !important;
+        pointer-events: auto !important;
+    }
+    
+    .highlight-input {
+        border-color: #007bff !important;
+        pointer-events: auto !important;
+    }
+    
+    /* Wichtig: Hover-Zustand nicht beeinträchtigen */
+    .highlight-element:hover,
+    .highlight-label:hover,
+    .highlight-input:hover,
+    .form-check:hover,
+    .form-check-input:hover,
+    .form-check-label:hover {
+        opacity: 1 !important;
+        color: inherit !important;
+        background-color: transparent !important;
+    }
+    
+    /* Verhindern dass interaktive Elemente deaktiviert erscheinen */
+    .highlight-element input:hover,
+    .highlight-element label:hover,
+    .highlight-element .form-check-input:hover,
+    .highlight-element .form-check-label:hover {
+        opacity: 1 !important;
+        cursor: pointer !important;
+    }
+    
     /* Form-Elemente innerhalb von highlight-element sollten immer anklickbar sein */
     .highlight-element input,
     .highlight-element textarea,
@@ -727,6 +760,23 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
         z-index: 5;
         display: none;
         pointer-events: none; /* Permits clicks through the overlay */
+    }
+    
+    /* Temporär Animation und Hover-Effekt deaktivieren */
+    .guide-active .card,
+    .guide-active .card:hover {
+        transform: none !important;
+        box-shadow: none !important;
+        transition: none !important;
+        animation: none !important;
+    }
+    
+    /* Highlight-Element überschreibt Hover-Effekte */
+    .highlight-element {
+        transition: none !important;
+        transform: none !important;
+        animation: pulse 2s infinite !important;
+        z-index: 100 !important;
     }
     
     /* Mobile Anpassungen */
@@ -800,7 +850,7 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
                 title: "Schritt 5: Öffentliche Reservierung",
                 content: "Entscheiden Sie, ob Ihre Reservierung öffentlich im Kalender sichtbar sein soll. Aktivieren Sie diese Option für öffentliche Veranstaltungen.",
                 targetSelector: "label[for='is_public'], #is_public",
-                position: "right",
+                position: "left",
                 waitForAction: true,
                 actionCheck: function() {
                     // Wir warten auf das Klicken der Checkbox, egal ob sie aktiviert oder deaktiviert wird
@@ -859,14 +909,14 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
                 title: "Zusatz 1: Name der Veranstaltung",
                 content: "Geben Sie einen Namen für Ihre öffentliche Veranstaltung ein, der im Kalender angezeigt wird (z.B. 'Sommerfest').",
                 targetSelector: "#event_name",
-                position: "right",
+                position: "left",
                 waitForAction: false
             },
             {
                 title: "Zusatz 2: Veranstaltungsdauer",
                 content: "Wählen Sie, ob Ihre Veranstaltung an einem bestimmten Tag oder über mehrere Tage stattfindet.",
                 targetSelector: "label[for='show_date_range'], #show_date_range",
-                position: "right",
+                position: "left",
                 waitForAction: true,
                 actionCheck: function() {
                     // Wir warten auf das Klicken der Checkbox, egal ob sie aktiviert oder deaktiviert wird
@@ -900,7 +950,7 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
                 content: "Wählen Sie aus, an welchen Tagen Ihre Veranstaltung im Kalender angezeigt werden soll.",
                 // Der Selektor wird dynamisch aktualisiert basierend auf dem Zustand der Checkbox
                 targetSelector: "#single-day-field",
-                position: "right",
+                position: "left",
                 waitForAction: false
             }
         ];
@@ -972,6 +1022,9 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
             currentStep = 0;
             showOverlay();
             showCurrentStep();
+            
+            // Füge eine Klasse zum body hinzu, um Hover-Effekte zu deaktivieren
+            document.body.classList.add('guide-active');
         }
         
         // Funktion zum Beenden des Guides
@@ -980,6 +1033,9 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
             hideGuideTip();
             removeHighlight();
             hideOverlay();
+            
+            // Entferne die Klasse vom body, um Hover-Effekte wiederherzustellen
+            document.body.classList.remove('guide-active');
         }
         
         // Funktion zum Anzeigen des aktuellen Schritts
@@ -1053,25 +1109,43 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
                 } 
                 // Bei Formularfeldern das gesamte Label mit dem Kästchen hervorheben
                 else if (selector.includes('label[for=') || selector.includes('#receipt_requested') || selector.includes('#is_public') || selector.includes('#show_date_range')) {
-                    // Nur das Label hervorheben, nicht das Eingabefeld selbst, um Interaktion zu ermöglichen
+                    // Verbesserte Hervorhebung für Checkboxen und Labels - den gesamten Form-Check hervorheben
                     elements.forEach(element => {
-                        // Prüfen ob es sich um ein Label handelt
-                        if (element.tagName === 'LABEL') {
-                            element.classList.add('highlight-element');
+                        // Finde die parent form-check für eine konsistente Hervorhebung
+                        const formCheckParent = element.closest('.form-check');
+                        if (formCheckParent) {
+                            formCheckParent.classList.add('highlight-element');
                             
-                            // Find parent form-check if available
-                            const formCheckParent = element.closest('.form-check');
-                            if (formCheckParent) {
-                                formCheckParent.classList.add('highlight-element');
+                            // Auch das Label und die Checkbox innerhalb des form-check hervorheben
+                            const checkboxInput = formCheckParent.querySelector('input[type="checkbox"]');
+                            const label = formCheckParent.querySelector('label');
+                            
+                            if (checkboxInput) {
+                                checkboxInput.classList.add('highlight-input');
+                            }
+                            
+                            if (label) {
+                                label.classList.add('highlight-label');
                             }
                         } else {
-                            // Für Checkboxen und andere Eingabefelder: nicht hervorheben, damit sie bedienbar bleiben
-                            // Nur das übergeordnete Element hervorheben
-                            const parentElement = element.parentElement;
-                            if (parentElement && parentElement.classList.contains('form-check')) {
-                                parentElement.classList.add('highlight-element');
+                            // Fallback, falls kein .form-check gefunden wurde
+                            element.classList.add('highlight-element');
+                            
+                            // Wenn es sich um ein Input-Element handelt, finde das zugehörige Label
+                            if (element.tagName === 'INPUT' && element.id) {
+                                const associatedLabel = document.querySelector(`label[for="${element.id}"]`);
+                                if (associatedLabel) {
+                                    associatedLabel.classList.add('highlight-label');
+                                }
                             }
-                            // Das Element selbst aber NICHT hervorheben um Interaktivität zu erhalten
+                            
+                            // Wenn es sich um ein Label handelt, finde das zugehörige Input
+                            if (element.tagName === 'LABEL' && element.getAttribute('for')) {
+                                const associatedInput = document.getElementById(element.getAttribute('for'));
+                                if (associatedInput) {
+                                    associatedInput.classList.add('highlight-input');
+                                }
+                            }
                         }
                     });
                     
