@@ -631,6 +631,9 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
     <div id="guideStepContent" class="guide-tip-content">
         Schauen Sie sich den Kalender an, um verfügbare Tage zu sehen. Grün markierte Tage sind verfügbar. Sie können mit den Pfeilen zwischen den Monaten wechseln.
     </div>
+    <div id="guideStepHint" class="guide-tip-hint">
+        <i class="bi bi-info-circle"></i> <span id="hintText">Wichtiger Hinweis</span>
+    </div>
     <div class="guide-tip-footer">
         <span id="stepCounter">Schritt 1 von 6</span>
         <div class="guide-buttons">
@@ -674,6 +677,20 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
     .guide-tip-content {
         padding: 12px;
         line-height: 1.4;
+    }
+    
+    .guide-tip-hint {
+        padding: 8px 12px;
+        background-color: #fff8e1;
+        border-top: 1px solid #ffe0b2;
+        border-bottom: 1px solid #ffe0b2;
+        color: #856404;
+        font-size: 13px;
+        line-height: 1.3;
+    }
+    
+    .guide-tip-hint i {
+        margin-right: 5px;
     }
     
     .guide-tip-footer {
@@ -811,6 +828,8 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
         const prevGuideStepBtn = document.getElementById('prevGuideStep');
         const guideStepTitle = document.getElementById('guideStepTitle');
         const guideStepContent = document.getElementById('guideStepContent');
+        const guideStepHint = document.getElementById('guideStepHint');
+        const hintText = document.getElementById('hintText');
         const stepCounter = document.getElementById('stepCounter');
         const overlayBackdrop = document.getElementById('overlayBackdrop');
         
@@ -830,7 +849,8 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
             },
             {
                 title: "Schritt 2: Startdatum auswählen",
-                content: "Klicken Sie auf einen der grün markierten (verfügbaren) Tage im Kalender, um Ihr Startdatum auszuwählen. Alle verfügbaren Tage sind hervorgehoben. Sie können auch den Monat wechseln, um andere Termine zu sehen.",
+                content: "Klicken Sie auf einen der verfügbaren Tage im Kalender, um Ihr Startdatum auszuwählen. Alle verfügbaren Tage sind hervorgehoben. Sie können auch den Monat wechseln, um andere Termine zu sehen.",
+                hint: "Wichtiger Hinweis: Sie können nur freie (grüne) Tage und Schlüsselübergabe-Tage auswählen.)",
                 targetSelector: ".day.free:not(.other-month):not(.past), .day.key-handover:not(.other-month):not(.past)",
                 position: "right",
                 waitForAction: false
@@ -838,6 +858,7 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
             {
                 title: "Schritt 3: Enddatum auswählen",
                 content: "Wählen Sie nun einen Tag als Enddatum Ihrer Reservierung aus. Sie können den gleichen Tag oder ein späteres Datum wählen. Alle verfügbaren Tage sind hervorgehoben.",
+                hint: "Wichtiger Hinweis: Das Enddatum muss gleich oder nach dem Startdatum liegen.",
                 targetSelector: ".day.free:not(.other-month):not(.past), .day.key-handover:not(.other-month):not(.past)",
                 position: "right",
                 waitForAction: false
@@ -845,13 +866,15 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
             {
                 title: "Schritt 4: Quittung anfordern",
                 content: "Aktivieren Sie diese Option, wenn Sie eine Quittung für die Reservierung benötigen. Klicken Sie auf das Kästchen, um die Option zu aktivieren oder deaktivieren.",
+                hint: "Wichtiger Hinweis: Eine Quittung kann später nicht mehr nachträglich angefordert werden.",
                 targetSelector: "label[for='receipt_requested'], #receipt_requested",
                 position: "left",
                 waitForAction: false
             },
             {
-                title: "Schritt 5: Öffentliche Veranstaltung",
-                content: "Entscheiden Sie, ob Ihre Reservierung eine öffentliche Veranstaltung sein soll, die im Kalender sichtbar ist.",
+                title: "Schritt 5: Öffentliche Reservierung",
+                content: "Entscheiden Sie, ob Ihre Reservierung öffentlich im Kalender sichtbar sein soll. Aktivieren Sie diese Option für öffentliche Veranstaltungen.",
+                hint: "Wichtiger Hinweis: Bei öffentlichen Reservierungen wird der Veranstaltungsname im Kalender angezeigt.",
                 targetSelector: "label[for='is_public'], #is_public",
                 position: "left",
                 waitForAction: false,
@@ -875,15 +898,17 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
             {
                 title: "Schritt 6: Nachricht eingeben (optional)",
                 content: "Sie können eine optionale Nachricht für den Verwalter hinterlassen, z.B. für spezielle Anfragen. Klicken Sie auf 'Weiter', wenn Sie bereit sind.",
+                hint: "Wichtiger Hinweis: Hier können Sie besondere Wünsche oder Anmerkungen eintragen.",
                 targetSelector: "#message",
-                position: "left",
+                position: "top",
                 waitForAction: false
             },
             {
                 title: "Schritt 7: Reservierung anfragen",
                 content: "Überprüfen Sie die Kostenübersicht und klicken Sie auf 'Reservierung anfragen', um Ihre Buchung abzuschließen.",
+                hint: "Wichtiger Hinweis: Nach dem Absenden erhalten Sie eine Bestätigungsmail.",
                 targetSelector: "button[type='submit']",
-                position: "left",
+                position: "top",
                 waitForAction: false
             }
         ];
@@ -893,6 +918,7 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
             {
                 title: "Zusatz 1: Name der Veranstaltung",
                 content: "Geben Sie einen Namen für Ihre öffentliche Veranstaltung ein, der im Kalender angezeigt wird (z.B. 'Sommerfest').",
+                hint: "Wichtiger Hinweis: Der Name sollte kurz und aussagekräftig sein.",
                 targetSelector: "#event_name",
                 position: "left",
                 waitForAction: false
@@ -900,6 +926,7 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
             {
                 title: "Zusatz 2: Veranstaltungsdauer",
                 content: "Wählen Sie, ob Ihre Veranstaltung an einem bestimmten Tag oder über mehrere Tage stattfindet.",
+                hint: "Wichtiger Hinweis: Diese Einstellung bestimmt, wie die Veranstaltung im Kalender dargestellt wird.",
                 targetSelector: "label[for='show_date_range'], #show_date_range",
                 position: "left",
                 waitForAction: false,
@@ -920,6 +947,7 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
             {
                 title: "Zusatz 3: Veranstaltungszeitraum",
                 content: "Wählen Sie aus, an welchen Tagen Ihre Veranstaltung im Kalender angezeigt werden soll.",
+                hint: "Wichtiger Hinweis: Der Zeitraum muss innerhalb Ihrer Reservierungszeit liegen.",
                 // Der Selektor wird dynamisch aktualisiert basierend auf dem Zustand der Checkbox
                 targetSelector: "#single-day-field",
                 position: "left",
@@ -1027,6 +1055,15 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
             // Titel und Inhalt aktualisieren
             guideStepTitle.textContent = step.title;
             guideStepContent.textContent = step.content;
+            
+            // Hinweis aktualisieren und anzeigen/ausblenden
+            if (step.hint && step.hint.trim() !== '') {
+                hintText.textContent = step.hint.replace("Wichtiger Hinweis: ", "");
+                guideStepHint.style.display = 'block';
+            } else {
+                guideStepHint.style.display = 'none';
+            }
+            
             stepCounter.textContent = `Schritt ${currentStep + 1} von ${guideSteps.length}`;
             
             // Element hervorheben
