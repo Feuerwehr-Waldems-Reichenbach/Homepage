@@ -697,6 +697,18 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
         border: 2px solid #007bff !important;
         border-radius: 5px;
         box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+        pointer-events: auto !important; /* Sicherstellen, dass Mausinteraktionen funktionieren */
+    }
+    
+    /* Form-Elemente innerhalb von highlight-element sollten immer anklickbar sein */
+    .highlight-element input,
+    .highlight-element textarea,
+    .highlight-element select,
+    .highlight-element label,
+    .highlight-element button {
+        pointer-events: auto !important;
+        position: relative;
+        z-index: 20;
     }
     
     @keyframes pulse {
@@ -714,6 +726,7 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
         background-color: rgba(0, 0, 0, 0.3);
         z-index: 5;
         display: none;
+        pointer-events: none; /* Permits clicks through the overlay */
     }
     
     /* Mobile Anpassungen */
@@ -1040,16 +1053,25 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
                 } 
                 // Bei Formularfeldern das gesamte Label mit dem Kästchen hervorheben
                 else if (selector.includes('label[for=') || selector.includes('#receipt_requested') || selector.includes('#is_public') || selector.includes('#show_date_range')) {
-                    // Find the parent form-check element if possible
-                    let formCheckParents = [];
+                    // Nur das Label hervorheben, nicht das Eingabefeld selbst, um Interaktion zu ermöglichen
                     elements.forEach(element => {
-                        element.classList.add('highlight-element');
-                        
-                        // Find parent form-check if available
-                        const formCheckParent = element.closest('.form-check');
-                        if (formCheckParent && !formCheckParents.includes(formCheckParent)) {
-                            formCheckParents.push(formCheckParent);
-                            formCheckParent.classList.add('highlight-element');
+                        // Prüfen ob es sich um ein Label handelt
+                        if (element.tagName === 'LABEL') {
+                            element.classList.add('highlight-element');
+                            
+                            // Find parent form-check if available
+                            const formCheckParent = element.closest('.form-check');
+                            if (formCheckParent) {
+                                formCheckParent.classList.add('highlight-element');
+                            }
+                        } else {
+                            // Für Checkboxen und andere Eingabefelder: nicht hervorheben, damit sie bedienbar bleiben
+                            // Nur das übergeordnete Element hervorheben
+                            const parentElement = element.parentElement;
+                            if (parentElement && parentElement.classList.contains('form-check')) {
+                                parentElement.classList.add('highlight-element');
+                            }
+                            // Das Element selbst aber NICHT hervorheben um Interaktivität zu erhalten
                         }
                     });
                     
@@ -1204,7 +1226,8 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
                 initialInputValue = relevantInput.value;
             }
             
-            // Prüfen wir alle 500ms, ob die Aktion ausgeführt wurde
+            // Weniger häufige Überprüfung verwenden (nur alle 1,5 Sekunden statt 500ms)
+            // und verhindern, dass während der Benutzereingabe die Hervorhebung neu angewendet wird
             const checkInterval = setInterval(function() {
                 if (!isGuideActive) {
                     clearInterval(checkInterval);
@@ -1231,7 +1254,7 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
                         if (isGuideActive) goToNextStep();
                     }, 1000);
                 }
-            }, 500);
+            }, 1500); // Von 500ms auf 1500ms erhöht
         }
         
         // Hilfsfunktion, um das relevante Eingabefeld für den aktuellen Schritt zu finden
