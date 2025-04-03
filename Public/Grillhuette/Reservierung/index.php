@@ -831,14 +831,14 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
             {
                 title: "Schritt 2: Startdatum auswählen",
                 content: "Klicken Sie auf einen der grün markierten (verfügbaren) Tage im Kalender, um Ihr Startdatum auszuwählen. Alle verfügbaren Tage sind hervorgehoben. Sie können auch den Monat wechseln, um andere Termine zu sehen.",
-                targetSelector: ".day:not(.other-month):not(.booked):not(.past)",
+                targetSelector: ".day.free:not(.other-month):not(.past), .day.key-handover:not(.other-month):not(.past)",
                 position: "right",
                 waitForAction: false
             },
             {
                 title: "Schritt 3: Enddatum auswählen",
                 content: "Wählen Sie nun einen Tag als Enddatum Ihrer Reservierung aus. Sie können den gleichen Tag oder ein späteres Datum wählen. Alle verfügbaren Tage sind hervorgehoben.",
-                targetSelector: ".day:not(.other-month):not(.booked):not(.past)",
+                targetSelector: ".day.free:not(.other-month):not(.past), .day.key-handover:not(.other-month):not(.past)",
                 position: "right",
                 waitForAction: false
             },
