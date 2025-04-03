@@ -897,7 +897,7 @@ function isSelectable(dayElement) {
         
         // For dates with special status, show appropriate message
         if (window.matchMedia("(max-width: 768px)").matches) {
-            let message = 'Dieses Datum ist bereits reserviert oder angefragt.';
+            let message = 'Dieses Datum ist bereits belegt.';
             
             // If it's a public event, show the event name
             if (dayElement.classList.contains('public-event') && dayElement.dataset.eventName) {
@@ -915,13 +915,12 @@ function isSelectable(dayElement) {
         let message = '';
         
         if (restrictions.available_from) {
-            message += `Dieser Tag ist ab ${restrictions.available_from} Uhr verfügbar (nach Schlüsselrückgabe)`;
+            message += `Dieser Tag ist ab ${restrictions.available_from} Uhr verfügbar`;
         }
         if (restrictions.available_until) {
             message += message ? ' und ' : 'Dieser Tag ist ';
-            message += `nur bis ${restrictions.available_until} Uhr verfügbar (vor Schlüsselübergabe)`;
+            message += `nur bis ${restrictions.available_until} Uhr verfügbar`;
         }
-        message += '.';
         
         // Show the time restriction message
         if (window.matchMedia("(max-width: 768px)").matches) {
