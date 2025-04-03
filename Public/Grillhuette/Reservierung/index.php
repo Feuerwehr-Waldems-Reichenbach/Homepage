@@ -777,21 +777,57 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
                 }
             },
             {
-                title: "Schritt 4: Optionen auswählen",
-                content: "Hier können Sie zusätzliche Optionen auswählen, wie eine Quittung anzufordern oder es als öffentliche Reservierung zu markieren. Klicken Sie auf 'Weiter', wenn Sie bereit sind.",
-                targetSelector: "#receipt_requested",
-                position: "right",
+                title: "Schritt 4: Quittung anfordern",
+                content: "Aktivieren Sie diese Option, wenn Sie eine Quittung für die Reservierung benötigen. Klicken Sie auf das Kästchen, um die Option zu aktivieren oder deaktivieren.",
+                targetSelector: "label[for='receipt_requested'], #receipt_requested",
+                position: "left",
                 waitForAction: false
             },
             {
-                title: "Schritt 5: Nachricht eingeben (optional)",
+                title: "Schritt 5: Öffentliche Reservierung",
+                content: "Entscheiden Sie, ob Ihre Reservierung öffentlich im Kalender sichtbar sein soll. Aktivieren Sie diese Option für öffentliche Veranstaltungen.",
+                targetSelector: "label[for='is_public'], #is_public",
+                position: "right",
+                waitForAction: true,
+                actionCheck: function() {
+                    // Wir warten auf das Klicken der Checkbox, egal ob sie aktiviert oder deaktiviert wird
+                    return true; // Immer als erfüllt betrachten, aber wir überwachen unten den Zustand
+                },
+                customAction: function() {
+                    // Wir fügen einen Event-Listener für die is_public Checkbox hinzu
+                    const isPublicCheckbox = document.getElementById('is_public');
+                    if (isPublicCheckbox) {
+                        isPublicCheckbox.addEventListener('change', function() {
+                            // Je nach Zustand der Checkbox dynamisch Schritte hinzufügen oder entfernen
+                            updateGuideSteps(this.checked);
+                            
+                            // Zum nächsten Schritt gehen
+                            setTimeout(function() {
+                                if (isGuideActive) goToNextStep();
+                            }, 500);
+                        });
+                        
+                        // Wenn die Checkbox bereits aktiviert ist
+                        if (isPublicCheckbox.checked) {
+                            updateGuideSteps(true);
+                        }
+                        
+                        // Weiter-Button zum Überspringen anzeigen
+                        nextGuideStepBtn.style.display = 'block';
+                        nextGuideStepBtn.textContent = 'Überspringen';
+                    }
+                }
+            },
+            // Die Public-Event-Schritte werden dynamisch je nach Auswahl eingefügt
+            {
+                title: "Schritt 6: Nachricht eingeben (optional)",
                 content: "Sie können eine optionale Nachricht für den Verwalter hinterlassen, z.B. für spezielle Anfragen. Klicken Sie auf 'Weiter', wenn Sie bereit sind.",
                 targetSelector: "#message",
                 position: "top",
                 waitForAction: false
             },
             {
-                title: "Schritt 6: Reservierung anfragen",
+                title: "Schritt 7: Reservierung anfragen",
                 content: "Überprüfen Sie die Kostenübersicht und klicken Sie auf 'Reservierung anfragen', um Ihre Buchung abzuschließen.",
                 targetSelector: "button[type='submit']",
                 position: "top",
@@ -804,6 +840,104 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
             }
         ];
         
+        // Öffentliche Reservierungsschritte - werden nur angezeigt, wenn die Checkbox aktiviert ist
+        const publicEventSteps = [
+            {
+                title: "Zusatz 1: Name der Veranstaltung",
+                content: "Geben Sie einen Namen für Ihre öffentliche Veranstaltung ein, der im Kalender angezeigt wird (z.B. 'Sommerfest').",
+                targetSelector: "#event_name",
+                position: "right",
+                waitForAction: false
+            },
+            {
+                title: "Zusatz 2: Veranstaltungsdauer",
+                content: "Wählen Sie, ob Ihre Veranstaltung an einem bestimmten Tag oder über mehrere Tage stattfindet.",
+                targetSelector: "label[for='show_date_range'], #show_date_range",
+                position: "right",
+                waitForAction: true,
+                actionCheck: function() {
+                    // Wir warten auf das Klicken der Checkbox, egal ob sie aktiviert oder deaktiviert wird
+                    return true;
+                },
+                customAction: function() {
+                    // Event-Listener für die show_date_range Checkbox
+                    const showDateRangeCheckbox = document.getElementById('show_date_range');
+                    if (showDateRangeCheckbox) {
+                        showDateRangeCheckbox.addEventListener('change', function() {
+                            // Aktualisiere die Veranstaltungszeitraum-Selektoren basierend auf der Auswahl
+                            updateEventDatesSelector(this.checked);
+                            
+                            // Zum nächsten Schritt gehen
+                            setTimeout(function() {
+                                if (isGuideActive) goToNextStep();
+                            }, 500);
+                        });
+                        
+                        // Initialisieren: Wenn die Checkbox bereits aktiviert ist
+                        updateEventDatesSelector(showDateRangeCheckbox.checked);
+                        
+                        // Weiter-Button zum Überspringen anzeigen
+                        nextGuideStepBtn.style.display = 'block';
+                        nextGuideStepBtn.textContent = 'Überspringen';
+                    }
+                }
+            },
+            {
+                title: "Zusatz 3: Veranstaltungszeitraum",
+                content: "Wählen Sie aus, an welchen Tagen Ihre Veranstaltung im Kalender angezeigt werden soll.",
+                // Der Selektor wird dynamisch aktualisiert basierend auf dem Zustand der Checkbox
+                targetSelector: "#single-day-field",
+                position: "right",
+                waitForAction: false
+            }
+        ];
+        
+        // Funktionen und Variablen zur dynamischen Steuerung der Schritte
+        let originalStepsLength = guideSteps.length;
+        let hasPublicEventSteps = false;
+        
+        // Funktion zum Aktualisieren der Schritte je nach Checkbox-Zustand
+        function updateGuideSteps(isPublicChecked) {
+            // Wenn die Checkbox aktiviert ist und wir noch keine Public-Event-Schritte haben
+            if (isPublicChecked && !hasPublicEventSteps) {
+                // Öffentliche Event-Schritte einfügen (vor dem Nachricht-Schritt)
+                const insertPosition = originalStepsLength - 2; // Position vor "Nachricht eingeben"
+                
+                // Schritte einfügen
+                guideSteps.splice(insertPosition, 0, ...publicEventSteps);
+                hasPublicEventSteps = true;
+                
+                // Schrittzähler aktualisieren
+                updateStepNumbers();
+            } 
+            // Wenn die Checkbox deaktiviert ist und wir bereits Public-Event-Schritte haben
+            else if (!isPublicChecked && hasPublicEventSteps) {
+                // Öffentliche Event-Schritte entfernen
+                const startIndex = originalStepsLength - 2; // Position vor "Nachricht eingeben"
+                guideSteps.splice(startIndex, publicEventSteps.length);
+                hasPublicEventSteps = false;
+                
+                // Schrittzähler aktualisieren
+                updateStepNumbers();
+            }
+        }
+        
+        // Schrittnummerierung aktualisieren
+        function updateStepNumbers() {
+            // Titel der Schritte mit aktualisierten Nummern versehen
+            for (let i = 0; i < guideSteps.length; i++) {
+                // Schritt-Titel aktualisieren, aber nur die Nummer
+                if (guideSteps[i].title.includes("Schritt")) {
+                    guideSteps[i].title = guideSteps[i].title.replace(/Schritt \d+:/, `Schritt ${i + 1}:`);
+                }
+            }
+            
+            // Aktualisiere auch die Anzeige, wenn der aktuelle Schritt sichtbar ist
+            if (isGuideActive) {
+                stepCounter.textContent = `Schritt ${currentStep + 1} von ${guideSteps.length}`;
+            }
+        }
+
         // Event-Listener für den Guide-Button
         guideBtn.addEventListener('click', function() {
             startGuide();
@@ -857,16 +991,21 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
             
             // Warten auf Aktion oder nicht
             if (step.waitForAction) {
-                // Bei der Auswahl des Enddatums prüfen, ob es bereits gewählt wurde
-                if (currentStep === 2 && document.getElementById('end_date') && document.getElementById('end_date').value !== '') {
-                    // Wenn bereits ein Enddatum gewählt wurde, "Weiter"-Button anzeigen und Text anpassen
-                    nextGuideStepBtn.style.display = 'block';
-                    nextGuideStepBtn.textContent = 'Dieses Datum beibehalten';
-                    guideStepContent.textContent = "Sie haben bereits ein Enddatum gewählt. Klicken Sie auf einen anderen Tag, um die Auswahl zu ändern, oder klicken Sie auf 'Weiter', um fortzufahren.";
+                // Prüfen, ob der Schritt eine benutzerdefinierte Aktion hat
+                if (step.customAction) {
+                    step.customAction();
                 } else {
-                    // Ansonsten den "Weiter"-Button ausblenden
-                    nextGuideStepBtn.style.display = 'none';
-                    setupActionCheck(step);
+                    // Bei der Auswahl des Enddatums prüfen, ob es bereits gewählt wurde
+                    if (currentStep === 2 && document.getElementById('end_date') && document.getElementById('end_date').value !== '') {
+                        // Wenn bereits ein Enddatum gewählt wurde, "Weiter"-Button anzeigen und Text anpassen
+                        nextGuideStepBtn.style.display = 'block';
+                        nextGuideStepBtn.textContent = 'Dieses Datum beibehalten';
+                        guideStepContent.textContent = "Sie haben bereits ein Enddatum gewählt. Klicken Sie auf einen anderen Tag, um die Auswahl zu ändern, oder klicken Sie auf 'Weiter', um fortzufahren.";
+                    } else {
+                        // Ansonsten den "Weiter"-Button ausblenden
+                        nextGuideStepBtn.style.display = 'none';
+                        setupActionCheck(step);
+                    }
                 }
             } else {
                 // Bei Schritten ohne Wartepflicht den "Weiter"-Button anzeigen
@@ -898,7 +1037,29 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
                         behavior: 'smooth',
                         block: 'center'
                     });
-                } else {
+                } 
+                // Bei Formularfeldern das gesamte Label mit dem Kästchen hervorheben
+                else if (selector.includes('label[for=') || selector.includes('#receipt_requested') || selector.includes('#is_public') || selector.includes('#show_date_range')) {
+                    // Find the parent form-check element if possible
+                    let formCheckParents = [];
+                    elements.forEach(element => {
+                        element.classList.add('highlight-element');
+                        
+                        // Find parent form-check if available
+                        const formCheckParent = element.closest('.form-check');
+                        if (formCheckParent && !formCheckParents.includes(formCheckParent)) {
+                            formCheckParents.push(formCheckParent);
+                            formCheckParent.classList.add('highlight-element');
+                        }
+                    });
+                    
+                    // Stelle sicher, dass das Element sichtbar ist
+                    elements[0].scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center'
+                    });
+                }
+                else {
                     // Bei anderen Schritten nur das erste Element hervorheben
                     currentHighlightedElement = elements[0];
                     currentHighlightedElement.classList.add('highlight-element');
@@ -1136,6 +1297,30 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
                 positionGuideTip(step.targetSelector, step.position);
             }
         });
+
+        // Funktion zum Aktualisieren des Selektors für Veranstaltungsdaten
+        function updateEventDatesSelector(isDateRange) {
+            // Finde den Veranstaltungszeitraum-Schritt
+            const eventDateStep = guideSteps.find(step => step.title.includes("Zusatz 3"));
+            if (!eventDateStep) return;
+            
+            if (isDateRange) {
+                // Wenn es ein Datumsbereich ist, aktualisiere den Selektor und Inhalt
+                eventDateStep.targetSelector = "#date-range-fields";
+                eventDateStep.content = "Wählen Sie den Zeitraum aus, in dem Ihre Veranstaltung im Kalender angezeigt werden soll. Der Zeitraum muss innerhalb Ihrer Reservierung liegen.";
+            } else {
+                // Wenn es ein einzelner Tag ist
+                eventDateStep.targetSelector = "#single-day-field";
+                eventDateStep.content = "Wählen Sie den Tag aus, an dem Ihre Veranstaltung im Kalender angezeigt werden soll. Der Tag muss innerhalb Ihrer Reservierung liegen.";
+            }
+            
+            // Aktualisiere die Anzeige, falls dieser Schritt gerade aktiv ist
+            if (isGuideActive && guideSteps[currentStep] === eventDateStep) {
+                highlightElement(eventDateStep.targetSelector);
+                positionGuideTip(eventDateStep.targetSelector, eventDateStep.position);
+                guideStepContent.textContent = eventDateStep.content;
+            }
+        }
     });
 </script>
 
