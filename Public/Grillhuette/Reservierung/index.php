@@ -656,13 +656,13 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
     .guide-tip {
         position: absolute;
         display: none;
-        width: 280px;
+        width: 350px; /* Erhöhte Breite für bessere Lesbarkeit */
         background-color: white;
-        border: 1px solid #ddd;
-        border-radius: 6px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        border: 2px solid #007bff; /* Dickerer Rahmen mit deutlicherer Farbe */
+        border-radius: 8px;
+        box-shadow: 0 6px 16px rgba(0,0,0,0.2);
         z-index: 1000;
-        font-size: 14px;
+        font-size: 16px; /* Größere Standardschrift */
         animation: fadeIn 0.3s;
     }
     
@@ -672,33 +672,35 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
     }
     
     .guide-tip-header {
-        padding: 8px 12px;
-        background-color: #f8f9fa;
+        padding: 12px 16px; /* Größere Padding */
+        background-color: #007bff; /* Deutlichere Hintergrundfarbe */
         border-bottom: 1px solid #ddd;
         border-radius: 6px 6px 0 0;
         font-weight: bold;
         display: flex;
         justify-content: space-between;
         align-items: center;
+        color: white; /* Weißer Text für besseren Kontrast */
+        font-size: 18px; /* Größerer Titel */
     }
     
     .guide-tip-content {
-        padding: 12px;
-        line-height: 1.4;
+        padding: 16px; /* Größerer Innenabstand */
+        line-height: 1.6; /* Erhöhter Zeilenabstand für bessere Lesbarkeit */
     }
     
     .guide-tip-hint {
-        padding: 8px 12px;
+        padding: 12px 16px; /* Größerer Innenabstand */
         background-color: #fff8e1;
         border-top: 1px solid #ffe0b2;
         border-bottom: 1px solid #ffe0b2;
         color: #856404;
-        font-size: 13px;
-        line-height: 1.3;
+        font-size: 15px; /* Größere Hinweisschrift */
+        line-height: 1.5; /* Erhöhter Zeilenabstand */
     }
     
     .guide-tip-hint i {
-        margin-right: 5px;
+        margin-right: 8px;
     }
     
     /* Styling for multiple hints */
@@ -708,26 +710,26 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
         border-top: 1px solid #ffe0b2;
         border-bottom: 1px solid #ffe0b2;
         color: #856404;
-        font-size: 13px;
-        line-height: 1.3;
+        font-size: 15px; /* Größere Schrift */
+        line-height: 1.5; /* Erhöhter Zeilenabstand */
     }
     
     .guide-hint-header {
-        padding: 8px 12px 4px;
+        padding: 12px 16px 8px;
         font-weight: bold;
     }
     
     .guide-hints-list {
         margin: 0;
-        padding: 0 12px 8px 32px;
+        padding: 0 16px 12px 36px;
     }
     
     .guide-hints-list li {
-        margin-bottom: 4px;
+        margin-bottom: 8px; /* Mehr Abstand zwischen Listenpunkten */
     }
     
     .guide-tip-footer {
-        padding: 8px 12px;
+        padding: 12px 16px; /* Größerer Innenabstand */
         border-top: 1px solid #ddd;
         display: flex;
         justify-content: space-between;
@@ -736,13 +738,21 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
     
     .guide-buttons {
         display: flex;
-        gap: 8px;
+        gap: 12px; /* Mehr Abstand zwischen Buttons */
+    }
+    
+    /* Größere, besser klickbare Buttons */
+    .guide-buttons button {
+        padding: 8px 16px; /* Größerer Button */
+        font-size: 16px; /* Größere Schrift */
+        border-radius: 6px;
     }
     
     .close-btn {
         background: none;
         border: none;
-        font-size: 20px;
+        font-size: 24px; /* Größeres Schließen-Symbol */
+        color: white; /* Weißes Symbol für besseren Kontrast */
         cursor: pointer;
         padding: 0;
         line-height: 1;
@@ -752,9 +762,9 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
         position: relative;
         z-index: 10;
         animation: pulse 2s infinite;
-        border: 2px solid #007bff !important;
+        border: 3px solid #007bff !important; /* Dickerer Rahmen */
         border-radius: 5px;
-        box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+        box-shadow: 0 0 15px rgba(0, 123, 255, 0.6); /* Stärkere Hervorhebung */
         pointer-events: auto !important; /* Sicherstellen, dass Mausinteraktionen funktionieren */
     }
     
@@ -762,11 +772,13 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
     .highlight-label {
         color: #007bff !important;
         font-weight: bold !important;
+        font-size: 1.1em !important; /* Größere Schrift für Labels */
         pointer-events: auto !important;
     }
     
     .highlight-input {
         border-color: #007bff !important;
+        border-width: 2px !important; /* Dickerer Rahmen */
         pointer-events: auto !important;
     }
     
@@ -803,8 +815,8 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
     }
     
     @keyframes pulse {
-        0% { box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.7); }
-        70% { box-shadow: 0 0 0 10px rgba(0, 123, 255, 0); }
+        0% { box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.8); }
+        70% { box-shadow: 0 0 0 15px rgba(0, 123, 255, 0); }
         100% { box-shadow: 0 0 0 0 rgba(0, 123, 255, 0); }
     }
     
@@ -814,7 +826,7 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
         left: 0;
         width: 100%;
         height: 100%;
-        background-color: rgba(0, 0, 0, 0.3);
+        background-color: rgba(0, 0, 0, 0.4); /* Dunkleres Overlay für besseren Kontrast */
         z-index: 5;
         display: none;
         pointer-events: none; /* Permits clicks through the overlay */
@@ -840,11 +852,16 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
     /* Mobile Anpassungen */
     @media (max-width: 768px) {
         .guide-tip {
-            width: 260px;
+            width: 320px; /* Größer aber angepasst für Mobilgeräte */
             position: fixed;
             bottom: 80px;
             left: 50%;
             transform: translateX(-50%);
+            font-size: 16px; /* Größere Schrift auch auf Mobilgeräten */
+        }
+        
+        .guide-buttons button {
+            padding: 10px 16px; /* Noch größere Touch-Targets auf Mobilgeräten */
         }
     }
 </style>
@@ -1282,21 +1299,21 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
                 switch (position) {
                     case 'right':
                         guideTip.style.top = (rect.top + window.scrollY) + 'px';
-                        guideTip.style.left = (rect.right + 10 + window.scrollX) + 'px';
+                        guideTip.style.left = (rect.right + 20 + window.scrollX) + 'px'; // Größerer Abstand (20px statt 10px)
                         guideTip.style.transform = 'none';
                         break;
                     case 'left':
                         guideTip.style.top = (rect.top + window.scrollY) + 'px';
-                        guideTip.style.left = (rect.left - guideTip.offsetWidth - 10 + window.scrollX) + 'px';
+                        guideTip.style.left = (rect.left - guideTip.offsetWidth - 20 + window.scrollX) + 'px'; // Größerer Abstand
                         guideTip.style.transform = 'none';
                         break;
                     case 'top':
-                        guideTip.style.top = (rect.top - guideTip.offsetHeight - 10 + window.scrollY) + 'px';
+                        guideTip.style.top = (rect.top - guideTip.offsetHeight - 20 + window.scrollY) + 'px'; // Größerer Abstand
                         guideTip.style.left = (rect.left + rect.width/2 + window.scrollX) + 'px';
                         guideTip.style.transform = 'translateX(-50%)';
                         break;
                     case 'bottom':
-                        guideTip.style.top = (rect.bottom + 10 + window.scrollY) + 'px';
+                        guideTip.style.top = (rect.bottom + 20 + window.scrollY) + 'px'; // Größerer Abstand
                         guideTip.style.left = (rect.left + rect.width/2 + window.scrollX) + 'px';
                         guideTip.style.transform = 'translateX(-50%)';
                         break;
