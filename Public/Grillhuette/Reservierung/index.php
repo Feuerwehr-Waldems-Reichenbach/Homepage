@@ -1260,7 +1260,6 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
                 const calendarContainer = document.querySelector('.calendar-container');
                 if (calendarContainer) {
                     element = calendarContainer;
-                    position = 'bottom'; // Position unterhalb des Kalenders
                 } else {
                     // Fallback auf das erste Element
                     element = elements[0];
