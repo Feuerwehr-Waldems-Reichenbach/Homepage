@@ -56,13 +56,6 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
 
 <div class="row mb-4">
     <div class="col-12">
-        <!-- Reservierungshilfe Button -->
-        <div class="text-center mb-3">
-            <button id="reservierungshilfeBtn" class="btn btn-primary">
-                <i class="bi bi-question-circle"></i> Reservierungshilfe starten
-            </button>
-        </div>
-       
         <!-- Responsives Layout für mobil und desktop -->
         <div class="row">
             <!-- Kalender Container - volle Breite auf mobil, 2/3 auf Desktop -->
@@ -379,6 +372,13 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
                             <h4 class="mb-0">Neue Reservierung</h4>
                         </div>
                         <div class="card-body">
+                            <!-- Reservierungshilfe Button - nur für angemeldete Benutzer -->
+                            <div class="text-center mb-3">
+                                <button id="reservierungshilfeBtn" class="btn btn-outline-primary btn-sm w-100">
+                                    <i class="bi bi-question-circle"></i> Reservierungshilfe starten
+                                </button>
+                            </div>
+                            
                             <form id="reservationForm" method="post" action="<?php echo getRelativePath('Erstellen'); ?>">
                                 <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
                                 
