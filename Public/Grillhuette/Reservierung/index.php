@@ -898,20 +898,22 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
                 waitForAction: false
             },
             {
-                title: "Schritt 2: Startdatum auswählen",
-                content: "Klicken Sie auf einen der verfügbaren Tage im Kalender, um Ihr Startdatum auszuwählen. Alle verfügbaren Tage sind hervorgehoben. Sie können auch den Monat wechseln, um andere Termine zu sehen.",
-                hints: ["Sie können nur freie (grüne) Tage und Schlüsselübergabe-Tage (blaue) auswählen.", 
-                "Schlüsselübergabe-Tagen sind nur begrenzt nutzbar, positionieren sie ihre Maus über den Tag, die maximale Nutzungszeit sollte nun angezeigt werden."],
+                title: "Schritt 2: Wann möchten Sie die Grillhütte nutzen?",
+                content: "Bitte wählen Sie den ersten Tag Ihrer Reservierung aus. Klicken Sie einfach auf einen grünen (freien) Tag im Kalender. Dies ist der erste Tag an dem sie die Hütte nutzen möchten.",
+                hints: ["Nur grüne Tage (frei) und blaue Tage (Schlüsselübergabe) können ausgewählt werden.", 
+                "Blaue Tage (Schlüsselübergabe) haben eingeschränkte Nutzungszeiten - bewegen Sie Ihre Maus über den Tag, um die verfügbare Zeit zu sehen.",
+                "Sie können mit den Pfeilen über dem Kalender zwischen den Monaten wechseln, um andere Termine zu sehen."],
                 targetSelector: ".day.free:not(.other-month):not(.past), .day.key-handover:not(.other-month):not(.past)",
                 position: "right",
                 waitForAction: false
             },
             {
-                title: "Schritt 3: Enddatum auswählen",
-                content: "Wählen Sie nun einen Tag als Enddatum Ihrer Reservierung aus. Sie können den gleichen Tag oder ein späteres Datum wählen. Alle verfügbaren Tage sind hervorgehoben.",
-                hints: ["Sie können nur freie (grüne) Tage und Schlüsselübergabe-Tage (blaue) auswählen.", 
-                "Schlüsselübergabe-Tagen sind nur begrenzt nutzbar, positionieren sie ihre Maus über den Tag, die maximale Nutzungszeit sollte nun angezeigt werden.",
-                "Das Enddatum kann der selbe Tag wie das Startdatum sein, um nur 1 Tag zu reservieren."],
+                title: "Schritt 3: Wie lange möchten Sie die Grillhütte nutzen?",
+                content: "Bitte wählen Sie den letzten Tag Ihrer Reservierung aus. Möchten Sie die Hütte nur für einen Tag? Dann klicken Sie nochmals auf denselben Tag. Für mehrere Tage wählen Sie einen späteren Tag aus.",
+                hints: ["Nur grüne Tage (frei) und blaue Tage (Schlüsselübergabe) können ausgewählt werden.", 
+                "Blaue Tage (Schlüsselübergabe) haben eingeschränkte Nutzungszeiten - bewegen Sie Ihre Maus über den Tag, um die verfügbare Zeit zu sehen.",
+                "Beispiel: Für ein Wochenende wählen Sie zuerst den Freitag (Schritt 2) und dann den Sonntag (Schritt 3).",
+                "Für nur einen Tag (z.B. Samstag) wählen Sie denselben Tag in Schritt 2 und 3."],
                 targetSelector: ".day.free:not(.other-month):not(.past), .day.key-handover:not(.other-month):not(.past)",
                 position: "right",
                 waitForAction: false
