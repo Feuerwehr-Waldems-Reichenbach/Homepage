@@ -383,58 +383,66 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
                                 <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
                                 
                                 <div class="mb-3">
-                                    <label for="start_date" class="form-label">Startdatum</label>
+                                    <label for="start_date" class="form-label"><strong>Ab wann?</strong> (Erster Tag)</label>
                                     <input type="text" class="form-control" id="start_date" name="start_date" readonly required>
+                                    <div class="form-text">Dies ist der erste Tag Ihrer Nutzung der Grillhütte.</div>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="end_date" class="form-label">Enddatum</label>
+                                    <label for="end_date" class="form-label"><strong>Bis wann?</strong> (Letzter Tag)</label>
                                     <input type="text" class="form-control" id="end_date" name="end_date" readonly required>
+                                    <div class="form-text">Dies ist der letzte Tag Ihrer Nutzung. Für nur einen Tag wählen Sie den gleichen Tag wie oben.</div>
                                 </div>
                                 
                                 <div class="mb-3 form-check">
                                     <input type="checkbox" class="form-check-input" id="receipt_requested" name="receipt_requested" value="1">
-                                    <label class="form-check-label" for="receipt_requested">Quittung für die Reservierung gewünscht</label>
+                                    <label class="form-check-label" for="receipt_requested"><strong>Quittung gewünscht?</strong></label>
+                                    <div class="form-text">Setzen Sie hier einen Haken, wenn Sie eine Quittung für Ihre Zahlung benötigen.</div>
                                 </div>
                                 
                                 <div class="mb-3 form-check">
                                     <input type="checkbox" class="form-check-input" id="is_public" name="is_public" value="1">
-                                    <label class="form-check-label" for="is_public">Öffentliche Veranstaltung (im Kalender sichtbar)</label>
+                                    <label class="form-check-label" for="is_public"><strong>Öffentliche Veranstaltung?</strong></label>
+                                    <div class="form-text">Setzen Sie hier einen Haken, wenn Ihre Veranstaltung öffentlich ist und im Kalender für alle sichtbar sein soll.</div>
                                 </div>
                                 
                                 <div id="public-event-details" style="display: none;">
                                     <div class="mb-3">
-                                        <label for="event_name" class="form-label">Name der Veranstaltung</label>
-                                        <input type="text" class="form-control" id="event_name" name="event_name" maxlength="255" placeholder="z.B. Grillfest">
+                                        <label for="event_name" class="form-label"><strong>Name Ihrer Veranstaltung</strong></label>
+                                        <input type="text" class="form-control" id="event_name" name="event_name" maxlength="255" placeholder="z.B. Familienfest, Vereinsfest">
+                                        <div class="form-text">Dieser Name wird für alle sichtbar im Kalender angezeigt.</div>
                                     </div>
 
                                     <div class="mb-3 form-check">
                                         <input type="checkbox" class="form-check-input" id="show_date_range" name="show_date_range">
-                                        <label class="form-check-label" for="show_date_range">Veranstaltung geht über mehrere Tage</label>
+                                        <label class="form-check-label" for="show_date_range"><strong>Veranstaltung länger als einen Tag?</strong></label>
+                                        <div class="form-text">Setzen Sie hier einen Haken, wenn Ihre Veranstaltung an mehreren Tagen stattfindet.</div>
                                     </div>
                                     
                                     <div id="single-day-field" class="mb-3">
-                                        <label for="event_day" class="form-label">Veranstaltungstag</label>
+                                        <label for="event_day" class="form-label"><strong>An welchem Tag findet die Veranstaltung statt?</strong></label>
                                         <input type="text" class="form-control date-picker" id="event_day" name="event_day">
-                                        <div class="form-text">An diesem Tag wird die Veranstaltung im Kalender angezeigt.</div>
+                                        <div class="form-text">Wählen Sie den Tag, an dem Ihre Veranstaltung im Kalender angezeigt werden soll.</div>
                                     </div>
                                     
                                     <div id="date-range-fields" style="display: none;">
                                         <div class="mb-3">
-                                            <label for="display_start_date" class="form-label">Veranstaltung anzeigen von</label>
+                                            <label for="display_start_date" class="form-label"><strong>Erster Veranstaltungstag</strong></label>
                                             <input type="text" class="form-control date-picker" id="display_start_date" name="display_start_date">
+                                            <div class="form-text">Ab diesem Tag wird Ihre Veranstaltung im Kalender angezeigt.</div>
                                         </div>
                                         
                                         <div class="mb-3">
-                                            <label for="display_end_date" class="form-label">Veranstaltung anzeigen bis</label>
+                                            <label for="display_end_date" class="form-label"><strong>Letzter Veranstaltungstag</strong></label>
                                             <input type="text" class="form-control date-picker" id="display_end_date" name="display_end_date">
-                                            <div class="form-text">In diesem Zeitraum wird die Veranstaltung im Kalender angezeigt.</div>
+                                            <div class="form-text">Bis zu diesem Tag wird Ihre Veranstaltung im Kalender angezeigt.</div>
                                         </div>
                                     </div>
                                 </div>
                                 
                                 <div class="mb-3">
-                                    <label for="message" class="form-label">Nachricht / Anmerkungen (optional)</label>
+                                    <label for="message" class="form-label"><strong>Haben Sie besondere Wünsche oder Anmerkungen?</strong> (freiwillig)</label>
                                     <textarea class="form-control" id="message" name="message" rows="3"></textarea>
+                                    <div class="form-text">Hier können Sie zusätzliche Informationen für die Verwaltung angeben.</div>
                                 </div>
                                 
                                 <!-- Kostenübersicht -->
