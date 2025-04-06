@@ -1704,9 +1704,19 @@ class Reservation {
     private function calculateReservationDays($startDatetime, $endDatetime) {
         $startDate = new DateTime($startDatetime);
         $endDate = new DateTime($endDatetime);
-        $diffSeconds = $endDate->getTimestamp() - $startDate->getTimestamp();
-        $diffDays = $diffSeconds / (24 * 60 * 60);
-        return max(1, ceil($diffDays));
+
+        // Extrahiere nur die Datumsteile, ignoriere die Uhrzeiten
+        $startDate->setTime(0, 0, 0);
+        $endDate->setTime(0, 0, 0);
+        
+        // Berechne die Differenz in Tagen
+        $interval = $startDate->diff($endDate);
+        $diffDays = $interval->days;
+        
+        // Füge einen Tag hinzu, da der Enddatum Teil der Buchung ist
+        $diffDays += 1;
+        
+        return max(1, $diffDays);
     }
     
     /**
@@ -1741,6 +1751,17 @@ class Reservation {
     }
     
     /**
+     * Hilfsfunktion zum Abrufen des spezifischen Tarifs für einen Benutzer
+     * 
+     * @param int $userId Benutzer-ID
+     * @return float Der Tagestarif für den Benutzer
+     */
+    private function getUserRate($userId) {
+        $priceInfo = $this->getPriceInformation($userId);
+        return $priceInfo['user_rate'];
+    }
+    
+    /**
      * Sendet eine E-Mail-Bestätigung an den Benutzer
      * 
      * @param array $user Benutzerdaten (mit email, first_name, last_name)
@@ -1768,6 +1789,20 @@ class Reservation {
         if ($keyReturnDatetime) {
             $keyReturnText = date('d.m.Y H:i', strtotime($keyReturnDatetime));
         }
+
+        // Berechnung der Kosten
+        $startDate = new DateTime($startDatetime);
+        $endDate = new DateTime($endDatetime);
+        $interval = $startDate->diff($endDate);
+        $days = $interval->days + 1; // +1 weil der erste Tag mitgezählt wird
+        
+        // Abrufen des Benutzertarifs
+        $userRatePerDay = $this->getUserRate($user['id']);
+        $totalCost = $days * $userRatePerDay;
+        
+        // Formatierung der Kosten mit deutschem Format
+        $formattedRate = number_format($userRatePerDay, 2, ',', '.');
+        $formattedTotalCost = number_format($totalCost, 2, ',', '.');
         
         // Status-abhängige Werte
         $statusText = $status == 'confirmed' ? 'bestätigt' : ($status == 'pending' ? 'ausstehend' : 'abgelehnt');
@@ -1789,6 +1824,7 @@ class Reservation {
                     .info-box { background-color: #f8f9fa; border: 1px solid #ddd; padding: 15px; border-radius: 5px; margin: 20px 0; }
                     .status-badge { display: inline-block; padding: 5px 15px; background-color: ' . $statusColor . '; color: white; border-radius: 15px; }
                     .footer { text-align: center; margin-top: 20px; font-size: 0.9em; color: #666; }
+                    .cost-info { margin-top: 15px; border-top: 1px solid #ddd; padding-top: 15px; }
                 </style>
             </head>
             <body>
@@ -1820,6 +1856,15 @@ class Reservation {
         } else {
             $body .= 'Quittung: Nein<br>';
         }
+        
+        // Kosteninformationen hinzufügen
+        $body .= '
+                            <div class="cost-info">
+                                <strong>Kosteninformationen:</strong><br>
+                                Anzahl Tage: ' . $days . '<br>
+                                Preis pro Tag: ' . $formattedRate . ' €<br>
+                                <strong>Gesamtkosten: ' . $formattedTotalCost . ' €</strong>
+                            </div>';
         
         $body .= '
                         </div>';
@@ -1944,6 +1989,20 @@ class Reservation {
         if ($keyReturnDatetime) {
             $keyReturnText = date('d.m.Y H:i', strtotime($keyReturnDatetime));
         }
+
+        // Berechnung der Kosten
+        $startDate = new DateTime($startDatetime);
+        $endDate = new DateTime($endDatetime);
+        $interval = $startDate->diff($endDate);
+        $days = $interval->days + 1; // +1 weil der erste Tag mitgezählt wird
+        
+        // Abrufen des Benutzertarifs
+        $userRatePerDay = $this->getUserRate($user['id']);
+        $totalCost = $days * $userRatePerDay;
+        
+        // Formatierung der Kosten mit deutschem Format
+        $formattedRate = number_format($userRatePerDay, 2, ',', '.');
+        $formattedTotalCost = number_format($totalCost, 2, ',', '.');
         
         // Status-abhängige Werte
         $statusText = $status == 'confirmed' ? 'bestätigt' : ($status == 'pending' ? 'ausstehend' : 'abgelehnt');
@@ -1966,6 +2025,7 @@ class Reservation {
                     .status-badge { display: inline-block; padding: 5px 15px; background-color: ' . $statusColor . '; color: white; border-radius: 15px; }
                     .message-box { background-color: #f8f9fa; border-left: 4px solid ' . $statusColor . '; padding: 15px; margin: 20px 0; }
                     .footer { text-align: center; margin-top: 20px; font-size: 0.9em; color: #666; }
+                    .cost-info { margin-top: 15px; border-top: 1px solid #ddd; padding-top: 15px; }
                 </style>
             </head>
             <body>
@@ -1990,6 +2050,15 @@ class Reservation {
                             Abholung: ' . $keyHandoverText . '<br>
                             Rückgabe: ' . $keyReturnText . '<br>';
         }
+
+        // Kosteninformationen hinzufügen
+        $body .= '
+                            <div class="cost-info">
+                                <strong>Kosteninformationen:</strong><br>
+                                Anzahl Tage: ' . $days . '<br>
+                                Preis pro Tag: ' . $formattedRate . ' €<br>
+                                <strong>Gesamtkosten: ' . $formattedTotalCost . ' €</strong>
+                            </div>';
         
         $body .= '
                         </div>';

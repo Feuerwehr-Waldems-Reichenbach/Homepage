@@ -1024,12 +1024,6 @@ function calculateCosts(startDateId, endDateId, dayCountId, totalCostId) {
     const dayCountElement = document.getElementById(dayCountId);
     const totalCostElement = document.getElementById(totalCostId);
     
-    // Finde die passenden Zeitfelder basierend auf den Datums-IDs
-    let startTimeId = startDateId.replace('date', 'time');
-    let endTimeId = endDateId.replace('date', 'time');
-    const startTimeInput = document.getElementById(startTimeId);
-    const endTimeInput = document.getElementById(endTimeId);
-    
     if (!startDateInput || !endDateInput || !dayCountElement || !totalCostElement) {
         return;
     }
@@ -1042,20 +1036,13 @@ function calculateCosts(startDateId, endDateId, dayCountId, totalCostId) {
     // Only calculate if both dates are selected
     if (startDateInput.value && endDateInput.value) {     
         
-        // Erstelle vollständige Datums-Zeit-Objekte
-        let startDateTime = new Date(startDateInput.value);
-        let endDateTime = new Date(endDateInput.value);
+        // Erstelle Datums-Objekte (nur Datum, keine Uhrzeit)
+        let startDate = new Date(startDateInput.value);
+        let endDate = new Date(endDateInput.value);
         
-        // Füge die Uhrzeiten hinzu, falls verfügbar
-        if (startTimeInput && startTimeInput.value) {
-            const [startHours, startMinutes] = startTimeInput.value.split(':').map(Number);
-            startDateTime.setHours(startHours, startMinutes, 0);
-        }
-        
-        if (endTimeInput && endTimeInput.value) {
-            const [endHours, endMinutes] = endTimeInput.value.split(':').map(Number);
-            endDateTime.setHours(endHours, endMinutes, 0);
-        }     
+        // Entferne Uhrzeiteinfluss
+        startDate.setHours(0, 0, 0, 0);
+        endDate.setHours(0, 0, 0, 0);
         
         // Get the user ID if we're on the edit form
         let userId = null;
@@ -1079,14 +1066,15 @@ function calculateCosts(startDateId, endDateId, dayCountId, totalCostId) {
                 })
                 .then(priceInfo => {
                     if (priceInfo.success) {
-                        // Berechne die Differenz in Millisekunden
-                        const diffTime = Math.abs(endDateTime - startDateTime);
+                        // Berechne die Differenz in Tagen
+                        const diffTime = Math.abs(endDate - startDate);
+                        let diffDays = diffTime / (24 * 60 * 60 * 1000);
                         
-                        // Berechne die Anzahl der Tage als Dezimalzahl (z.B. 1,5 Tage)
-                        const diffDays = diffTime / (24 * 60 * 60 * 1000);
+                        // Füge einen Tag hinzu, da Enddatum inklusiv ist
+                        diffDays += 1;
                         
-                        // Runde auf ganze Tage auf (mindestens 1 Tag)
-                        const days = Math.max(1, Math.ceil(diffDays));
+                        // Mindestens 1 Tag
+                        const days = Math.max(1, diffDays);
                         
                         // Calculate total cost based on user rate
                         const dailyRate = priceInfo.user_rate;
@@ -1138,17 +1126,17 @@ function calculateCosts(startDateId, endDateId, dayCountId, totalCostId) {
                     } else {
                         // Fallback to standard calculation with generic error handling
                         console.log('Preisermittlung nicht erfolgreich. Standardberechnung wird verwendet.');
-                        calculateStandardCost(startDateTime, endDateTime, dayCountElement, totalCostElement, defaultBasePrice);
+                        calculateStandardCost(startDate, endDate, dayCountElement, totalCostElement, defaultBasePrice);
                     }
                 })
                 .catch(error => {
                     // Generic error handling without revealing implementation details
                     console.log('Fehler bei der Preisermittlung. Standardberechnung wird verwendet.');
-                    calculateStandardCost(startDateTime, endDateTime, dayCountElement, totalCostElement, defaultBasePrice);
+                    calculateStandardCost(startDate, endDate, dayCountElement, totalCostElement, defaultBasePrice);
                 });
         } else {
             // If no user ID, use standard calculation
-            calculateStandardCost(startDateTime, endDateTime, dayCountElement, totalCostElement, defaultBasePrice);
+            calculateStandardCost(startDate, endDate, dayCountElement, totalCostElement, defaultBasePrice);
         }
     } else {
         // Default values if dates not selected
@@ -1164,15 +1152,16 @@ function calculateCosts(startDateId, endDateId, dayCountId, totalCostId) {
 }
 
 // Fallback to standard pricing calculation
-function calculateStandardCost(startDateTime, endDateTime, dayCountElement, totalCostElement, defaultBasePrice) {
-    // Berechne die Differenz in Millisekunden
-    const diffTime = Math.abs(endDateTime - startDateTime);
+function calculateStandardCost(startDate, endDate, dayCountElement, totalCostElement, defaultBasePrice) {
+    // Berechne die Differenz in Tagen
+    const diffTime = Math.abs(endDate - startDate);
+    let diffDays = diffTime / (24 * 60 * 60 * 1000);
     
-    // Berechne die Anzahl der Tage als Dezimalzahl (z.B. 1,5 Tage)
-    const diffDays = diffTime / (24 * 60 * 60 * 1000);
+    // Füge einen Tag hinzu, da Enddatum inklusiv ist
+    diffDays += 1;
     
-    // Runde auf ganze Tage auf (mindestens 1 Tag)
-    const days = Math.max(1, Math.ceil(diffDays));
+    // Mindestens 1 Tag
+    const days = Math.max(1, diffDays);
     
     // Get the standard rate from the DOM or use provided defaultBasePrice
     const dailyRate = defaultBasePrice || 100;

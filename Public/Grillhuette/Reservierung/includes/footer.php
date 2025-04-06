@@ -52,10 +52,13 @@
                         <a href="<?php echo getRelativePath('Nutzungsbedingungen'); ?>" class="text-white me-3 mb-2">
                             <i class="bi bi-file-text me-1"></i>Nutzungsbedingungen
                         </a>
-                        <a href="/Datenschutz" class="text-white me-3 mb-2">
+                        <a href="<?php echo getRelativePath('Anleitung'); ?>" class="text-white me-3 mb-2">
+                            <i class="bi bi-question-circle me-1"></i>Anleitung
+                        </a>
+                        <a href="<?php echo getRelativePath('Datenschutz'); ?>" class="text-white me-3 mb-2">
                             <i class="bi bi-shield-lock me-1"></i>Datenschutz
                         </a>
-                        <a href="/Impressum" class="text-white mb-2">
+                        <a href="<?php echo getRelativePath('Impressum'); ?>" class="text-white mb-2">
                             <i class="bi bi-info-circle me-1"></i>Impressum
                         </a>
                     </div>
