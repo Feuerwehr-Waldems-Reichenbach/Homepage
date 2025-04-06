@@ -69,10 +69,13 @@ header("Permissions-Policy: geolocation=(), camera=(), microphone=()");
                     <?php endif; ?>
                     <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                            <a class="nav-link" href="/Grillhuette">Informationen</a>
+                            <a class="nav-link" href="<?php echo getRelativePath('Grillhuette'); ?>">Informationen</a>
                     </li>
                     <li class="nav-item">
                             <a class="nav-link" href="<?php echo getRelativePath('home'); ?>">Startseite</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="<?php echo getRelativePath('Anleitung'); ?>">Anleitung</a>
                         </li>
                         <?php if (isset($_SESSION['user_id'])): ?>
                             <li class="nav-item">
