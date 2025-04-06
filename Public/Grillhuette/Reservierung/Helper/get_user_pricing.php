@@ -40,6 +40,18 @@ try {
     // Get pricing information for the specified user
     $priceInfo = $reservation->getPriceInformation($userId);
     
+    // Get user information to check if they're a Feuerwehr member
+    $db = Database::getInstance()->getConnection();
+    $stmt = $db->prepare("SELECT is_Feuerwehr FROM gh_users WHERE id = ?");
+    $stmt->execute([$userId]);
+    $userData = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    // For Feuerwehr users, always ensure rate is 0
+    if ($userData && $userData['is_Feuerwehr']) {
+        $priceInfo['user_rate'] = 0.00;
+        $priceInfo['rate_type'] = 'feuerwehr';
+    }
+    
     // Return the data
     echo json_encode([
         'success' => true,
@@ -49,13 +61,11 @@ try {
         'rate_type' => $priceInfo['rate_type']
     ]);
 } catch (Exception $e) {
-    // Log error but return a generic error message
-    error_log('Error in get_user_pricing.php: ' . $e->getMessage());
     
     // Return error with default values
     echo json_encode([
         'success' => false,
-        'message' => 'Ein Fehler ist aufgetreten. Standard-Preise werden verwendet.',
+        'message' => 'Ein Fehler ist aufgetreten. Standardwerte werden verwendet.',
         'user_rate' => 100.00,
         'base_price' => 100.00,
         'deposit_amount' => 100.00,

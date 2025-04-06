@@ -50,9 +50,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $userId = isset($_POST['user_id']) ? intval($_POST['user_id']) : 0;
             $startDate = isset($_POST['start_date']) ? trim($_POST['start_date']) : '';
             $endDate = isset($_POST['end_date']) ? trim($_POST['end_date']) : '';
-            $startTime = isset($_POST['start_time']) ? trim($_POST['start_time']) : '12:00';
-            $endTime = isset($_POST['end_time']) ? trim($_POST['end_time']) : '12:00';
             $adminMessage = isset($_POST['admin_message']) ? trim($_POST['admin_message']) : '';
+            $receiptRequested = isset($_POST['receipt_requested']) ? 1 : 0;
+            $isPublic = isset($_POST['is_public']) ? 1 : 0;
+            $eventName = null;
+            $displayStartDate = null;
+            $displayEndDate = null;
+            
+            // Schlüsselübergabe Daten
+            $keyHandoverDate = isset($_POST['key_handover_date']) ? trim($_POST['key_handover_date']) : '';
+            $keyHandoverTime = isset($_POST['key_handover_time']) ? trim($_POST['key_handover_time']) : '16:00';
+            $keyReturnDate = isset($_POST['key_return_date']) ? trim($_POST['key_return_date']) : '';
+            $keyReturnTime = isset($_POST['key_return_time']) ? trim($_POST['key_return_time']) : '12:00';
+            
+            // Wenn öffentliche Veranstaltung
+            if ($isPublic) {
+                $eventName = isset($_POST['event_name']) ? trim($_POST['event_name']) : null;
+                $isDateRange = isset($_POST['show_date_range']) && $_POST['show_date_range'] === 'on';
+                
+                if ($isDateRange) {
+                    $displayStartDate = isset($_POST['display_start_date']) ? trim($_POST['display_start_date']) : null;
+                    $displayEndDate = isset($_POST['display_end_date']) ? trim($_POST['display_end_date']) : null;
+                } else {
+                    // Wenn kein Datumsbereich, verwende den einzelnen Tag für beide Daten
+                    $eventDay = isset($_POST['event_day']) ? trim($_POST['event_day']) : null;
+                    $displayStartDate = $eventDay;
+                    $displayEndDate = $eventDay;
+                }
+            }
             
             // Validierung
             $errors = [];
@@ -65,22 +90,88 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $errors[] = 'Bitte wählen Sie ein Start- und Enddatum aus.';
             }
             
-            if (!preg_match('/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/', $startTime) || 
-                !preg_match('/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/', $endTime)) {
-                $errors[] = 'Bitte geben Sie gültige Uhrzeiten ein (Format: HH:MM).';
+            if ($isPublic) {
+                if (empty($eventName)) {
+                    $errors[] = 'Bitte geben Sie einen Namen für die öffentliche Veranstaltung an.';
+                }
+                
+                if (empty($displayStartDate) || empty($displayEndDate)) {
+                    $errors[] = 'Bitte wählen Sie ein Anzeige-Start und -Enddatum für öffentliche Reservierungen.';
+                }
             }
             
             if (empty($errors)) {
                 // Start- und Enddatum mit Uhrzeit kombinieren
-                $startDatetime = $startDate . ' ' . $startTime . ':00';
-                $endDatetime = $endDate . ' ' . $endTime . ':00';
+                $startDatetime = $startDate . ' 00:00:00';
+                $endDatetime = $endDate . ' 23:59:59';
+                
+                // Schlüsselübergabe-Datumszeiten kombinieren
+                $keyHandoverDatetime = null;
+                $keyReturnDatetime = null;
+                
+                if (!empty($keyHandoverDate) && !empty($keyHandoverTime)) {
+                    $keyHandoverDatetime = $keyHandoverDate . ' ' . $keyHandoverTime . ':00';
+                }
+                
+                if (!empty($keyReturnDate) && !empty($keyReturnTime)) {
+                    $keyReturnDatetime = $keyReturnDate . ' ' . $keyReturnTime . ':00';
+                }
                 
                 // Überprüfen, ob das Enddatum nach dem Startdatum liegt
                 if (strtotime($endDatetime) <= strtotime($startDatetime)) {
                     $_SESSION['flash_message'] = 'Das Enddatum muss nach dem Startdatum liegen.';
                     $_SESSION['flash_type'] = 'danger';
-                } else {
-                    $result = $reservation->createByAdmin($userId, $startDatetime, $endDatetime, $adminMessage);
+                } 
+                // Validieren der öffentlichen Veranstaltungsdaten
+                else if ($isPublic) {
+                    if (empty($eventName)) {
+                        $_SESSION['flash_message'] = 'Bitte geben Sie einen Namen für die Veranstaltung ein.';
+                        $_SESSION['flash_type'] = 'danger';
+                    }
+                    else if (empty($displayStartDate) || empty($displayEndDate)) {
+                        $_SESSION['flash_message'] = 'Bitte wählen Sie die Anzeigezeiträume für die Veranstaltung.';
+                        $_SESSION['flash_type'] = 'danger';
+                    }
+                    else if (strtotime($displayStartDate) < strtotime($startDate) || 
+                            strtotime($displayEndDate) > strtotime($endDate)) {
+                        $_SESSION['flash_message'] = 'Die Anzeigedaten müssen innerhalb des Reservierungszeitraums liegen.';
+                        $_SESSION['flash_type'] = 'danger';
+                    }
+                    else {
+                        // Alle Validierungen bestanden - Reservierung erstellen
+                        $result = $reservation->createByAdmin(
+                            $userId, 
+                            $startDatetime, 
+                            $endDatetime, 
+                            $adminMessage, 
+                            $receiptRequested,
+                            $isPublic,
+                            $eventName,
+                            $displayStartDate,
+                            $displayEndDate,
+                            $keyHandoverDatetime,
+                            $keyReturnDatetime
+                        );
+                        
+                        $_SESSION['flash_message'] = $result['message'];
+                        $_SESSION['flash_type'] = $result['success'] ? 'success' : 'danger';
+                    }
+                }
+                else {
+                    // Keine öffentliche Veranstaltung - normale Reservierung erstellen
+                    $result = $reservation->createByAdmin(
+                        $userId, 
+                        $startDatetime, 
+                        $endDatetime, 
+                        $adminMessage, 
+                        $receiptRequested,
+                        0, // is_public
+                        null, // event_name
+                        null, // display_start_date
+                        null, // display_end_date
+                        $keyHandoverDatetime, 
+                        $keyReturnDatetime
+                    );
                     
                     $_SESSION['flash_message'] = $result['message'];
                     $_SESSION['flash_type'] = $result['success'] ? 'success' : 'danger';
@@ -113,10 +204,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $userId = isset($_POST['user_id']) ? intval($_POST['user_id']) : 0;
             $startDate = isset($_POST['start_date']) ? trim($_POST['start_date']) : '';
             $endDate = isset($_POST['end_date']) ? trim($_POST['end_date']) : '';
-            $startTime = isset($_POST['start_time']) ? trim($_POST['start_time']) : '12:00';
-            $endTime = isset($_POST['end_time']) ? trim($_POST['end_time']) : '12:00';
             $adminMessage = isset($_POST['admin_message']) ? trim($_POST['admin_message']) : '';
             $status = isset($_POST['status']) ? trim($_POST['status']) : 'pending';
+            $receiptRequested = isset($_POST['receipt_requested']) ? 1 : 0;
+            $isPublic = isset($_POST['is_public']) ? 1 : 0;
+            $eventName = null;
+            $displayStartDate = null;
+            $displayEndDate = null;
+            
+            // Schlüsselübergabe Daten
+            $keyHandoverDate = isset($_POST['key_handover_date']) ? trim($_POST['key_handover_date']) : '';
+            $keyHandoverTime = isset($_POST['key_handover_time']) ? trim($_POST['key_handover_time']) : '16:00';
+            $keyReturnDate = isset($_POST['key_return_date']) ? trim($_POST['key_return_date']) : '';
+            $keyReturnTime = isset($_POST['key_return_time']) ? trim($_POST['key_return_time']) : '12:00';
+            
+            // Wenn öffentliche Veranstaltung
+            if ($isPublic) {
+                $eventName = isset($_POST['event_name']) ? trim($_POST['event_name']) : null;
+                $isDateRange = isset($_POST['show_date_range']) && $_POST['show_date_range'] === 'on';
+                
+                if ($isDateRange) {
+                    $displayStartDate = isset($_POST['display_start_date']) ? trim($_POST['display_start_date']) : null;
+                    $displayEndDate = isset($_POST['display_end_date']) ? trim($_POST['display_end_date']) : null;
+                } else {
+                    // Wenn kein Datumsbereich, verwende den einzelnen Tag für beide Daten
+                    $eventDay = isset($_POST['event_day']) ? trim($_POST['event_day']) : null;
+                    $displayStartDate = $eventDay;
+                    $displayEndDate = $eventDay;
+                }
+            }
             
             // Validierung
             $errors = [];
@@ -129,26 +245,101 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $errors[] = 'Bitte wählen Sie ein Start- und Enddatum aus.';
             }
             
-            if (!preg_match('/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/', $startTime) || 
-                !preg_match('/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/', $endTime)) {
-                $errors[] = 'Bitte geben Sie gültige Uhrzeiten ein (Format: HH:MM).';
-            }
-            
             if (!in_array($status, ['pending', 'confirmed', 'canceled'])) {
                 $errors[] = 'Ungültiger Status.';
             }
             
+            if ($isPublic) {
+                if (empty($eventName)) {
+                    $errors[] = 'Bitte geben Sie einen Namen für die öffentliche Veranstaltung an.';
+                }
+                
+                if (empty($displayStartDate) || empty($displayEndDate)) {
+                    $errors[] = 'Bitte wählen Sie ein Anzeige-Start und -Enddatum für öffentliche Reservierungen.';
+                }
+            }
+            
             if (empty($errors)) {
                 // Start- und Enddatum mit Uhrzeit kombinieren
-                $startDatetime = $startDate . ' ' . $startTime . ':00';
-                $endDatetime = $endDate . ' ' . $endTime . ':00';
+                $startDatetime = $startDate . ' 00:00:00';
+                $endDatetime = $endDate . ' 23:59:59';
+                
+                // Schlüsselübergabe-Datumszeiten kombinieren
+                $keyHandoverDatetime = null;
+                $keyReturnDatetime = null;
+                
+                if (!empty($keyHandoverDate) && !empty($keyHandoverTime)) {
+                    $keyHandoverDatetime = $keyHandoverDate . ' ' . $keyHandoverTime . ':00';
+                }
+                
+                if (!empty($keyReturnDate) && !empty($keyReturnTime)) {
+                    $keyReturnDatetime = $keyReturnDate . ' ' . $keyReturnTime . ':00';
+                }
                 
                 // Überprüfen, ob das Enddatum nach dem Startdatum liegt
                 if (strtotime($endDatetime) <= strtotime($startDatetime)) {
                     $_SESSION['flash_message'] = 'Das Enddatum muss nach dem Startdatum liegen.';
                     $_SESSION['flash_type'] = 'danger';
                 } else {
-                    $result = $reservation->updateReservation($reservationId, $userId, $startDatetime, $endDatetime, $adminMessage, $status);
+                    // Validieren der öffentlichen Veranstaltungsdaten
+                    if ($isPublic) {
+                        if (empty($eventName)) {
+                            $_SESSION['flash_message'] = 'Bitte geben Sie einen Namen für die Veranstaltung ein.';
+                            $_SESSION['flash_type'] = 'danger';
+                            // Abbrechen und zur Übersicht zurückkehren
+                            $redirectUrl = getRelativePath('Admin/Reservierungsverwaltung');
+                            if ($statusFilter !== 'all') {
+                                $redirectUrl .= '?status=' . $statusFilter;
+                            }
+                            header('Location: ' . $redirectUrl);
+                            exit;
+                        }
+                        if (empty($displayStartDate) || empty($displayEndDate)) {
+                            $_SESSION['flash_message'] = 'Bitte wählen Sie die Anzeigezeiträume für die Veranstaltung.';
+                            $_SESSION['flash_type'] = 'danger';
+                            // Abbrechen und zur Übersicht zurückkehren
+                            $redirectUrl = getRelativePath('Admin/Reservierungsverwaltung');
+                            if ($statusFilter !== 'all') {
+                                $redirectUrl .= '?status=' . $statusFilter;
+                            }
+                            header('Location: ' . $redirectUrl);
+                            exit;
+                        }
+                        if (strtotime($displayStartDate) < strtotime($startDate) || 
+                                strtotime($displayEndDate) > strtotime($endDate)) {
+                            $_SESSION['flash_message'] = 'Die Anzeigedaten müssen innerhalb des Reservierungszeitraums liegen.';
+                            $_SESSION['flash_type'] = 'danger';
+                            // Abbrechen und zur Übersicht zurückkehren
+                            $redirectUrl = getRelativePath('Admin/Reservierungsverwaltung');
+                            if ($statusFilter !== 'all') {
+                                $redirectUrl .= '?status=' . $statusFilter;
+                            }
+                            header('Location: ' . $redirectUrl);
+                            exit;
+                        }
+                    } else {
+                        // Wenn nicht öffentlich, setze die Veranstaltungsdaten auf null
+                        $eventName = null;
+                        $displayStartDate = null;
+                        $displayEndDate = null;
+                    }
+                    
+                    // Alle Validierungen bestanden - Reservierung aktualisieren
+                    $result = $reservation->updateReservation(
+                        $reservationId, 
+                        $userId, 
+                        $startDatetime, 
+                        $endDatetime, 
+                        $adminMessage, 
+                        $status, 
+                        $receiptRequested,
+                        $isPublic,
+                        $eventName,
+                        $displayStartDate,
+                        $displayEndDate,
+                        $keyHandoverDatetime,
+                        $keyReturnDatetime
+                    );
                     
                     $_SESSION['flash_message'] = $result['message'];
                     $_SESSION['flash_type'] = $result['success'] ? 'success' : 'danger';
@@ -205,13 +396,15 @@ require_once '../../includes/header.php';
         </div>
         
         <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h3 class="mb-0">Reservierungen</h3>
-                <div class="btn-group">
-                    <a href="<?php echo getRelativePath('Admin/Reservierungsverwaltung'); ?>" class="btn btn-outline-secondary <?php echo $statusFilter === 'all' ? 'active' : ''; ?>">Alle</a>
-                    <a href="<?php echo getRelativePath('Admin/Reservierungsverwaltung'); ?>?status=pending" class="btn btn-outline-warning <?php echo $statusFilter === 'pending' ? 'active' : ''; ?>">Ausstehend</a>
-                    <a href="<?php echo getRelativePath('Admin/Reservierungsverwaltung'); ?>?status=confirmed" class="btn btn-outline-success <?php echo $statusFilter === 'confirmed' ? 'active' : ''; ?>">Bestätigt</a>
-                    <a href="<?php echo getRelativePath('Admin/Reservierungsverwaltung'); ?>?status=canceled" class="btn btn-outline-danger <?php echo $statusFilter === 'canceled' ? 'active' : ''; ?>">Storniert</a>
+            <div class="card-header">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
+                    <h3 class="mb-3 mb-md-0">Reservierungen</h3>
+                    <div class="btn-group btn-group-sm flex-wrap filter-buttons">
+                        <a href="<?php echo getRelativePath('Admin/Reservierungsverwaltung'); ?>" class="btn btn-outline-secondary <?php echo $statusFilter === 'all' ? 'active' : ''; ?>">Alle</a>
+                        <a href="<?php echo getRelativePath('Admin/Reservierungsverwaltung'); ?>?status=pending" class="btn btn-outline-warning <?php echo $statusFilter === 'pending' ? 'active' : ''; ?>">Ausstehend</a>
+                        <a href="<?php echo getRelativePath('Admin/Reservierungsverwaltung'); ?>?status=confirmed" class="btn btn-outline-success <?php echo $statusFilter === 'confirmed' ? 'active' : ''; ?>">Bestätigt</a>
+                        <a href="<?php echo getRelativePath('Admin/Reservierungsverwaltung'); ?>?status=canceled" class="btn btn-outline-danger <?php echo $statusFilter === 'canceled' ? 'active' : ''; ?>">Storniert</a>
+                    </div>
                 </div>
             </div>
             <div class="card-body">
@@ -242,8 +435,29 @@ require_once '../../includes/header.php';
                                             <small><?php echo escape($res['email']); ?></small>
                                         </td>
                                         <td>
-                                            Von: <?php echo date('d.m.Y H:i', strtotime($res['start_datetime'])); ?><br>
-                                            Bis: <?php echo date('d.m.Y H:i', strtotime($res['end_datetime'])); ?>
+                                            <?php echo date('d.m.Y', strtotime($res['start_datetime'])); ?> - 
+                                            <?php echo date('d.m.Y', strtotime($res['end_datetime'])); ?>
+                                            
+                                            <?php if (!empty($res['key_handover_datetime']) || !empty($res['key_return_datetime'])): ?>
+                                            <div class="mt-2 small">
+                                                <span class="d-block text-primary">
+                                                    <i class="bi bi-key"></i> 
+                                                    <?php if (!empty($res['key_handover_datetime'])): ?>
+                                                    <span class="me-2">Übergabe: <?php echo date('d.m.Y H:i', strtotime($res['key_handover_datetime'])); ?></span>
+                                                    <?php endif; ?>
+                                                    <?php if (!empty($res['key_return_datetime'])): ?>
+                                                    <span>Rückgabe: <?php echo date('d.m.Y H:i', strtotime($res['key_return_datetime'])); ?></span>
+                                                    <?php endif; ?>
+                                                </span>
+                                            </div>
+                                            <?php endif; ?>
+                                            
+                                            <?php if (isset($res['is_public']) && $res['is_public']): ?>
+                                            <div class="mt-1 badge bg-success">
+                                                <i class="bi bi-calendar-event"></i> 
+                                                <?php echo escape($res['event_name'] ?? 'Öffentliche Veranstaltung'); ?>
+                                            </div>
+                                            <?php endif; ?>
                                         </td>
                                         <td>
                                             <?php
@@ -269,6 +483,22 @@ require_once '../../includes/header.php';
                                             <div class="mt-1">
                                                 <small class="text-danger">
                                                     <i class="bi bi-tag-fill"></i> Spezialpreis angewendet
+                                                </small>
+                                            </div>
+                                            <?php endif; ?>
+                                            
+                                            <?php if (isset($res['receipt_requested']) && $res['receipt_requested']): ?>
+                                            <div class="mt-1">
+                                                <small class="text-primary">
+                                                    <i class="bi bi-receipt"></i> Quittung gewünscht
+                                                </small>
+                                            </div>
+                                            <?php endif; ?>
+                                            
+                                            <?php if (isset($res['is_public']) && $res['is_public']): ?>
+                                            <div class="mt-1">
+                                                <small class="text-success">
+                                                    <i class="bi bi-calendar-event"></i> Öffentliche Veranstaltung
                                                 </small>
                                             </div>
                                             <?php endif; ?>
@@ -319,12 +549,19 @@ require_once '../../includes/header.php';
                                                     data-id="<?php echo $res['id']; ?>"
                                                     data-user-id="<?php echo $res['user_id']; ?>"
                                                     data-start="<?php echo date('Y-m-d', strtotime($res['start_datetime'])); ?>"
-                                                    data-start-time="<?php echo date('H:i', strtotime($res['start_datetime'])); ?>"
                                                     data-end="<?php echo date('Y-m-d', strtotime($res['end_datetime'])); ?>"
-                                                    data-end-time="<?php echo date('H:i', strtotime($res['end_datetime'])); ?>"
                                                     data-message="<?php echo escape($res['admin_message'] ?? ''); ?>"
                                                     data-user-message="<?php echo escape($res['user_message'] ?? ''); ?>"
                                                     data-status="<?php echo $res['status']; ?>"
+                                                    data-receipt-requested="<?php echo isset($res['receipt_requested']) && $res['receipt_requested'] ? '1' : '0'; ?>"
+                                                    data-is-public="<?php echo isset($res['is_public']) && $res['is_public'] ? '1' : '0'; ?>"
+                                                    data-event-name="<?php echo escape($res['event_name'] ?? ''); ?>"
+                                                    data-display-start-date="<?php echo isset($res['display_event_name_on_calendar_start_date']) ? date('Y-m-d', strtotime($res['display_event_name_on_calendar_start_date'])) : ''; ?>"
+                                                    data-display-end-date="<?php echo isset($res['display_event_name_on_calendar_end_date']) ? date('Y-m-d', strtotime($res['display_event_name_on_calendar_end_date'])) : ''; ?>"
+                                                    data-key-handover-date="<?php echo !empty($res['key_handover_datetime']) ? date('Y-m-d', strtotime($res['key_handover_datetime'])) : ''; ?>"
+                                                    data-key-handover-time="<?php echo !empty($res['key_handover_datetime']) ? date('H:i', strtotime($res['key_handover_datetime'])) : ''; ?>"
+                                                    data-key-return-date="<?php echo !empty($res['key_return_datetime']) ? date('Y-m-d', strtotime($res['key_return_datetime'])) : ''; ?>"
+                                                    data-key-return-time="<?php echo !empty($res['key_return_datetime']) ? date('H:i', strtotime($res['key_return_datetime'])) : ''; ?>"
                                                     onclick="prepareEditModal(this)">
                                                 <i class="bi bi-pencil"></i> Bearbeiten
                                             </button>
@@ -381,18 +618,74 @@ require_once '../../includes/header.php';
                     
                     <div class="row">
                         <div class="col-md-4 mb-3">
-                            <label for="start_time" class="form-label">Startzeit</label>
-                            <input type="time" class="form-control" id="start_time" name="start_time" value="12:00" step="1800" required>
-                        </div>
-                        
-                        <div class="col-md-4 mb-3">
-                            <label for="end_time" class="form-label">Endzeit</label>
-                            <input type="time" class="form-control" id="end_time" name="end_time" value="12:00" step="1800" required>
-                        </div>
-                        
-                        <div class="col-md-4 mb-3">
                             <label for="admin_message" class="form-label">Nachricht an den Benutzer (optional)</label>
                             <textarea class="form-control" id="admin_message" name="admin_message" rows="1"></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="receipt_requested" name="receipt_requested" value="1">
+                        <label class="form-check-label" for="receipt_requested">Quittung für die Reservierung gewünscht</label>
+                    </div>
+                    
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="is_public" name="is_public" value="1">
+                        <label class="form-check-label" for="is_public">Öffentliche Reservierung (im Kalender sichtbar)</label>
+                    </div>
+                    
+                    <div id="public-event-details" style="display: none;">
+                        <div class="mb-3">
+                            <label for="event_name" class="form-label">Name der Veranstaltung</label>
+                            <input type="text" class="form-control" id="event_name" name="event_name" maxlength="255" placeholder="z.B. Grillfest">
+                        </div>
+                        
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="show_date_range" name="show_date_range">
+                            <label class="form-check-label" for="show_date_range">Veranstaltung geht über mehrere Tage</label>
+                        </div>
+                        
+                        <div id="single-day-field" class="mb-3">
+                            <label for="event_day" class="form-label">Veranstaltungstag</label>
+                            <input type="text" class="form-control date-picker" id="event_day" name="event_day">
+                            <div class="form-text">An diesem Tag wird die Veranstaltung im Kalender angezeigt.</div>
+                        </div>
+                        
+                        <div id="date-range-fields" style="display: none;">
+                            <div class="mb-3">
+                                <label for="display_start_date" class="form-label">Anzeige im Kalender von</label>
+                                <input type="text" class="form-control date-picker" id="display_start_date" name="display_start_date">
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="display_end_date" class="form-label">Anzeige im Kalender bis</label>
+                                <input type="text" class="form-control date-picker" id="display_end_date" name="display_end_date">
+                                <div class="form-text">In diesem Zeitraum wird die Veranstaltung im Kalender angezeigt.</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Neue Felder für Schlüsselübergabe -->
+                    <div class="row">
+                        <div class="col-12 mb-3">
+                            <hr>
+                            <h5>Schlüsselübergabe</h5>
+                            <div class="form-text mb-3">Der Schlüssel wird standardmäßig am Tag vor dem Aufenthalt um 16:00 Uhr übergeben und am Tag nach dem Aufenthalt um 12:00 Uhr zurückgenommen.</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="key_handover_date" class="form-label">Datum Schlüsselübergabe</label>
+                            <input type="text" class="form-control date-picker" id="key_handover_date" name="key_handover_date">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="key_handover_time" class="form-label">Uhrzeit Schlüsselübergabe</label>
+                            <input type="time" class="form-control" id="key_handover_time" name="key_handover_time" value="16:00">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="key_return_date" class="form-label">Datum Schlüsselrückgabe</label>
+                            <input type="text" class="form-control date-picker" id="key_return_date" name="key_return_date">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="key_return_time" class="form-label">Uhrzeit Schlüsselrückgabe</label>
+                            <input type="time" class="form-control" id="key_return_time" name="key_return_time" value="12:00">
                         </div>
                     </div>
                     
@@ -482,16 +775,6 @@ require_once '../../includes/header.php';
                     
                     <div class="row">
                         <div class="col-md-4 mb-3">
-                            <label for="edit_start_time" class="form-label">Startzeit</label>
-                            <input type="time" class="form-control" id="edit_start_time" name="start_time" step="1800" required>
-                        </div>
-                        
-                        <div class="col-md-4 mb-3">
-                            <label for="edit_end_time" class="form-label">Endzeit</label>
-                            <input type="time" class="form-control" id="edit_end_time" name="end_time" step="1800" required>
-                        </div>
-                        
-                        <div class="col-md-4 mb-3">
                             <label for="edit_status" class="form-label">Status</label>
                             <select class="form-select" id="edit_status" name="status" required>
                                 <option value="pending">Ausstehend</option>
@@ -499,9 +782,7 @@ require_once '../../includes/header.php';
                                 <option value="canceled">Storniert</option>
                             </select>
                         </div>
-                    </div>
-                    
-                    <div class="row">
+                        
                         <div class="col-md-6 mb-3">
                             <label for="edit_user_message_display" class="form-label">Nachricht vom Benutzer</label>
                             <textarea class="form-control" id="edit_user_message_display" rows="3" readonly></textarea>
@@ -513,9 +794,75 @@ require_once '../../includes/header.php';
                         </div>
                     </div>
                     
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="edit_receipt_requested" name="receipt_requested" value="1">
+                        <label class="form-check-label" for="edit_receipt_requested">Quittung für die Reservierung gewünscht</label>
+                    </div>
+                    
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="edit_is_public" name="is_public" value="1">
+                        <label class="form-check-label" for="edit_is_public">Öffentliche Reservierung (im Kalender sichtbar)</label>
+                    </div>
+                    
+                    <div id="edit_public-event-details" style="display: none;">
+                        <div class="mb-3">
+                            <label for="edit_event_name" class="form-label">Name der Veranstaltung</label>
+                            <input type="text" class="form-control" id="edit_event_name" name="event_name" maxlength="255" placeholder="z.B. Grillfest">
+                        </div>
+                        
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="edit_show_date_range" name="show_date_range">
+                            <label class="form-check-label" for="edit_show_date_range">Veranstaltung geht über mehrere Tage</label>
+                        </div>
+                        
+                        <div id="edit_single-day-field" class="mb-3">
+                            <label for="edit_event_day" class="form-label">Veranstaltungstag</label>
+                            <input type="text" class="form-control date-picker" id="edit_event_day" name="event_day">
+                            <div class="form-text">An diesem Tag wird die Veranstaltung im Kalender angezeigt.</div>
+                        </div>
+                        
+                        <div id="edit_date-range-fields" style="display: none;">
+                            <div class="mb-3">
+                                <label for="edit_display_start_date" class="form-label">Anzeige im Kalender von</label>
+                                <input type="text" class="form-control date-picker" id="edit_display_start_date" name="display_start_date">
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="edit_display_end_date" class="form-label">Anzeige im Kalender bis</label>
+                                <input type="text" class="form-control date-picker" id="edit_display_end_date" name="display_end_date">
+                                <div class="form-text">In diesem Zeitraum wird die Veranstaltung im Kalender angezeigt.</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Neue Felder für Schlüsselübergabe -->
+                    <div class="row">
+                        <div class="col-12 mb-3">
+                            <hr>
+                            <h5>Schlüsselübergabe</h5>
+                            <div class="form-text mb-3">Der Schlüssel wird standardmäßig am Tag vor dem Aufenthalt um 16:00 Uhr übergeben und am Tag nach dem Aufenthalt um 12:00 Uhr zurückgenommen.</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="edit_key_handover_date" class="form-label">Datum Schlüsselübergabe</label>
+                            <input type="text" class="form-control date-picker" id="edit_key_handover_date" name="key_handover_date">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="edit_key_handover_time" class="form-label">Uhrzeit Schlüsselübergabe</label>
+                            <input type="time" class="form-control" id="edit_key_handover_time" name="key_handover_time">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="edit_key_return_date" class="form-label">Datum Schlüsselrückgabe</label>
+                            <input type="text" class="form-control date-picker" id="edit_key_return_date" name="key_return_date">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="edit_key_return_time" class="form-label">Uhrzeit Schlüsselrückgabe</label>
+                            <input type="time" class="form-control" id="edit_key_return_time" name="key_return_time">
+                        </div>
+                    </div>
+                    
+                    <!-- Kostenübersicht -->
                     <div class="row">
                         <div class="col-md-8 mb-3">
-                            <!-- Kostenübersicht -->
                             <label class="form-label">Kostenübersicht</label>
                             <div class="card">
                                 <div class="card-body p-3">
@@ -576,44 +923,80 @@ require_once '../../includes/header.php';
 <!-- JavaScript für die Formularvorausfüllung -->
 <script>
 // Diese Funktion wird aufgerufen, wenn der "Bearbeiten"-Button geklickt wird
-function prepareEditModal(button) {
-    // Daten aus den Button-Attributen auslesen
-    const reservationId = button.getAttribute('data-id');
-    const userId = button.getAttribute('data-user-id');
-    const startDate = button.getAttribute('data-start');
-    const startTime = button.getAttribute('data-start-time');
-    const endDate = button.getAttribute('data-end');
-    const endTime = button.getAttribute('data-end-time');
-    const adminMessage = button.getAttribute('data-message');
-    const userMessage = button.getAttribute('data-user-message');
-    const status = button.getAttribute('data-status');
+function prepareEditModal(element) {
+    const reservationId = element.getAttribute('data-id');
+    const userId = element.getAttribute('data-user-id');
+    const startDate = element.getAttribute('data-start');
+    const endDate = element.getAttribute('data-end');
+    const adminMessage = element.getAttribute('data-message');
+    const userMessage = element.getAttribute('data-user-message');
+    const status = element.getAttribute('data-status');
+    const receiptRequested = element.getAttribute('data-receipt-requested');
+    const isPublic = element.getAttribute('data-is-public');
+    const eventName = element.getAttribute('data-event-name');
+    const displayStartDate = element.getAttribute('data-display-start-date');
+    const displayEndDate = element.getAttribute('data-display-end-date');
+    const keyHandoverDate = element.getAttribute('data-key-handover-date');
+    const keyHandoverTime = element.getAttribute('data-key-handover-time');
+    const keyReturnDate = element.getAttribute('data-key-return-date');
+    const keyReturnTime = element.getAttribute('data-key-return-time');
     
-    // Formularfelder ausfüllen
+    // Felder ausfüllen
     document.getElementById('edit_reservation_id').value = reservationId;
-    document.getElementById('delete_reservation_id').value = reservationId;
     document.getElementById('edit_user_id').value = userId;
     document.getElementById('edit_start_date').value = startDate;
-    document.getElementById('edit_start_time').value = startTime;
     document.getElementById('edit_end_date').value = endDate;
-    document.getElementById('edit_end_time').value = endTime;
-    document.getElementById('edit_admin_message').value = adminMessage;
-    document.getElementById('edit_user_message_display').value = userMessage;
+    document.getElementById('edit_admin_message').value = adminMessage || '';
+    document.getElementById('edit_user_message_display').value = userMessage || '';
     document.getElementById('edit_status').value = status;
     
-    // Time values direkt im nativen HTML5-Format setzen
-    const startTimeField = document.getElementById('edit_start_time');
-    const endTimeField = document.getElementById('edit_end_time');
-    
-    // Ensure the time values are properly formatted as HH:MM
-    if (startTime && startTimeField) {
-        startTimeField.value = startTime;
+    // Schlüsselübergabe-Felder
+    if (keyHandoverDate) {
+        document.getElementById('edit_key_handover_date').value = keyHandoverDate;
+    }
+    if (keyHandoverTime) {
+        document.getElementById('edit_key_handover_time').value = keyHandoverTime;
+    }
+    if (keyReturnDate) {
+        document.getElementById('edit_key_return_date').value = keyReturnDate;
+    }
+    if (keyReturnTime) {
+        document.getElementById('edit_key_return_time').value = keyReturnTime;
     }
     
-    if (endTime && endTimeField) {
-        endTimeField.value = endTime;
+    // Receipt requested
+    document.getElementById('edit_receipt_requested').checked = receiptRequested === '1';
+    
+    // Öffentliche Veranstaltung
+    document.getElementById('edit_is_public').checked = isPublic === '1';
+    
+    // Veranstaltungsname
+    document.getElementById('edit_event_name').value = eventName || '';
+    
+    // Anzeigebereich
+    // Überprüfen, ob es ein Datumsbereich ist
+    const isDateRange = displayStartDate && displayEndDate && displayStartDate !== displayEndDate;
+    document.getElementById('edit_show_date_range').checked = isDateRange;
+    
+    // Sichtbarkeit der Bereiche aktualisieren
+    document.getElementById('edit_public-event-details').style.display = isPublic === '1' ? 'block' : 'none';
+    document.getElementById('edit_single-day-field').style.display = isDateRange ? 'none' : 'block';
+    document.getElementById('edit_date-range-fields').style.display = isDateRange ? 'block' : 'none';
+    
+    // Daten für entweder den einzelnen Tag oder den Bereich setzen
+    if (displayStartDate) {
+        if (isDateRange) {
+            document.getElementById('edit_display_start_date').value = displayStartDate;
+            document.getElementById('edit_display_end_date').value = displayEndDate;
+        } else {
+            document.getElementById('edit_event_day').value = displayStartDate;
+        }
     }
     
-    // Update cost calculation
+    // Löschformular vorbereiten
+    document.getElementById('delete_reservation_id').value = reservationId;
+    
+    // Kostenberechnung aktualisieren
     updateEditCosts();
 }
 
@@ -630,41 +1013,18 @@ function updateEditCosts() {
 
 // Calculate costs for new reservation
 function updateNewCosts() {
-    console.log('updateNewCosts called');
     calculateCosts('start_date', 'end_date', 'new-day-count', 'new-total-cost');
 }
 
 // Generic cost calculation function
 function calculateCosts(startDateId, endDateId, dayCountId, totalCostId) {
-    console.log('calculateCosts called with:', { startDateId, endDateId, dayCountId, totalCostId });
     
     const startDateInput = document.getElementById(startDateId);
     const endDateInput = document.getElementById(endDateId);
     const dayCountElement = document.getElementById(dayCountId);
     const totalCostElement = document.getElementById(totalCostId);
     
-    console.log('Elements found:', { 
-        startDateInput: !!startDateInput, 
-        endDateInput: !!endDateInput, 
-        dayCountElement: !!dayCountElement, 
-        totalCostElement: !!totalCostElement 
-    });
-    
-    // Finde die passenden Zeitfelder basierend auf den Datums-IDs
-    let startTimeId = startDateId.replace('date', 'time');
-    let endTimeId = endDateId.replace('date', 'time');
-    const startTimeInput = document.getElementById(startTimeId);
-    const endTimeInput = document.getElementById(endTimeId);
-    
-    console.log('Time elements found:', { 
-        startTimeInput: !!startTimeInput, 
-        endTimeInput: !!endTimeInput,
-        startTimeValue: startTimeInput ? startTimeInput.value : null,
-        endTimeValue: endTimeInput ? endTimeInput.value : null
-    });
-    
     if (!startDateInput || !endDateInput || !dayCountElement || !totalCostElement) {
-        console.error('Missing required elements for calculation');
         return;
     }
     
@@ -674,33 +1034,15 @@ function calculateCosts(startDateId, endDateId, dayCountId, totalCostId) {
         parseFloat(costOverview.dataset.basePrice) : 100;
     
     // Only calculate if both dates are selected
-    if (startDateInput.value && endDateInput.value) {
-        console.log('Date values:', { 
-            startDate: startDateInput.value, 
-            endDate: endDateInput.value
-        });
+    if (startDateInput.value && endDateInput.value) {     
         
-        // Erstelle vollständige Datums-Zeit-Objekte
-        let startDateTime = new Date(startDateInput.value);
-        let endDateTime = new Date(endDateInput.value);
+        // Erstelle Datums-Objekte (nur Datum, keine Uhrzeit)
+        let startDate = new Date(startDateInput.value);
+        let endDate = new Date(endDateInput.value);
         
-        // Füge die Uhrzeiten hinzu, falls verfügbar
-        if (startTimeInput && startTimeInput.value) {
-            const [startHours, startMinutes] = startTimeInput.value.split(':').map(Number);
-            startDateTime.setHours(startHours, startMinutes, 0);
-            console.log('Applied start time:', { startHours, startMinutes });
-        }
-        
-        if (endTimeInput && endTimeInput.value) {
-            const [endHours, endMinutes] = endTimeInput.value.split(':').map(Number);
-            endDateTime.setHours(endHours, endMinutes, 0);
-            console.log('Applied end time:', { endHours, endMinutes });
-        }
-        
-        console.log('DateTime objects:', { 
-            startDateTime: startDateTime.toISOString(), 
-            endDateTime: endDateTime.toISOString() 
-        });
+        // Entferne Uhrzeiteinfluss
+        startDate.setHours(0, 0, 0, 0);
+        endDate.setHours(0, 0, 0, 0);
         
         // Get the user ID if we're on the edit form
         let userId = null;
@@ -716,26 +1058,28 @@ function calculateCosts(startDateId, endDateId, dayCountId, totalCostId) {
         if (userId) {
             // Make an AJAX request to get pricing for this specific user
             fetch('../../Helper/get_user_pricing.php?user_id=' + userId)
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Netzwerkfehler beim Abrufen der Preisdaten');
+                    }
+                    return response.json();
+                })
                 .then(priceInfo => {
                     if (priceInfo.success) {
-                        // Berechne die Differenz in Millisekunden
-                        const diffTime = Math.abs(endDateTime - startDateTime);
+                        // Berechne die Differenz in Tagen
+                        const diffTime = Math.abs(endDate - startDate);
+                        let diffDays = diffTime / (24 * 60 * 60 * 1000);
                         
-                        // Berechne die Anzahl der Tage als Dezimalzahl (z.B. 1,5 Tage)
-                        const diffDays = diffTime / (24 * 60 * 60 * 1000);
+                        // Füge einen Tag hinzu, da Enddatum inklusiv ist
+                        diffDays += 1;
                         
-                        // Runde auf ganze Tage auf (mindestens 1 Tag)
-                        const days = Math.max(1, Math.ceil(diffDays));
+                        // Mindestens 1 Tag
+                        const days = Math.max(1, diffDays);
                         
                         // Calculate total cost based on user rate
                         const dailyRate = priceInfo.user_rate;
                         const totalCost = days * dailyRate;
                         
-                        console.log('Calculation results with user pricing:', {
-                            diffDays, days, dailyRate, totalCost,
-                            rateType: priceInfo.rate_type
-                        });
                         
                         // Update the UI
                         dayCountElement.textContent = days;
@@ -779,22 +1123,22 @@ function calculateCosts(startDateId, endDateId, dayCountId, totalCostId) {
                             }
                         }
                         
-                        console.log('UI updated with user pricing');
                     } else {
-                        // Fallback to standard calculation
-                        calculateStandardCost(startDateTime, endDateTime, dayCountElement, totalCostElement, defaultBasePrice);
+                        // Fallback to standard calculation with generic error handling
+                        console.log('Preisermittlung nicht erfolgreich. Standardberechnung wird verwendet.');
+                        calculateStandardCost(startDate, endDate, dayCountElement, totalCostElement, defaultBasePrice);
                     }
                 })
                 .catch(error => {
-                    console.error('Error fetching user pricing:', error);
-                    calculateStandardCost(startDateTime, endDateTime, dayCountElement, totalCostElement, defaultBasePrice);
+                    // Generic error handling without revealing implementation details
+                    console.log('Fehler bei der Preisermittlung. Standardberechnung wird verwendet.');
+                    calculateStandardCost(startDate, endDate, dayCountElement, totalCostElement, defaultBasePrice);
                 });
         } else {
             // If no user ID, use standard calculation
-            calculateStandardCost(startDateTime, endDateTime, dayCountElement, totalCostElement, defaultBasePrice);
+            calculateStandardCost(startDate, endDate, dayCountElement, totalCostElement, defaultBasePrice);
         }
     } else {
-        console.log('One or both dates are missing');
         // Default values if dates not selected
         dayCountElement.textContent = '1';
         
@@ -808,22 +1152,21 @@ function calculateCosts(startDateId, endDateId, dayCountId, totalCostId) {
 }
 
 // Fallback to standard pricing calculation
-function calculateStandardCost(startDateTime, endDateTime, dayCountElement, totalCostElement, defaultBasePrice) {
-    // Berechne die Differenz in Millisekunden
-    const diffTime = Math.abs(endDateTime - startDateTime);
+function calculateStandardCost(startDate, endDate, dayCountElement, totalCostElement, defaultBasePrice) {
+    // Berechne die Differenz in Tagen
+    const diffTime = Math.abs(endDate - startDate);
+    let diffDays = diffTime / (24 * 60 * 60 * 1000);
     
-    // Berechne die Anzahl der Tage als Dezimalzahl (z.B. 1,5 Tage)
-    const diffDays = diffTime / (24 * 60 * 60 * 1000);
+    // Füge einen Tag hinzu, da Enddatum inklusiv ist
+    diffDays += 1;
     
-    // Runde auf ganze Tage auf (mindestens 1 Tag)
-    const days = Math.max(1, Math.ceil(diffDays));
+    // Mindestens 1 Tag
+    const days = Math.max(1, diffDays);
     
     // Get the standard rate from the DOM or use provided defaultBasePrice
     const dailyRate = defaultBasePrice || 100;
     
     const totalCost = days * dailyRate;
-    
-    console.log('Standard calculation results:', { diffDays, days, dailyRate, totalCost });
     
     // Update the UI
     dayCountElement.textContent = days;
@@ -847,6 +1190,40 @@ document.addEventListener('DOMContentLoaded', function() {
         newEndTimeField.addEventListener('change', updateNewCosts);
     }
     
+    // Handle public event checkbox for new form
+    const isPublicCheckbox = document.getElementById('is_public');
+    const showDateRangeCheckbox = document.getElementById('show_date_range');
+    const publicEventDetails = document.getElementById('public-event-details');
+    const singleDayField = document.getElementById('single-day-field');
+    const dateRangeFields = document.getElementById('date-range-fields');
+    
+    if (isPublicCheckbox && publicEventDetails) {
+        isPublicCheckbox.addEventListener('change', function() {
+            publicEventDetails.style.display = this.checked ? 'block' : 'none';
+        });
+    }
+    
+    if (showDateRangeCheckbox && dateRangeFields && singleDayField) {
+        showDateRangeCheckbox.addEventListener('change', function() {
+            dateRangeFields.style.display = this.checked ? 'block' : 'none';
+            singleDayField.style.display = this.checked ? 'none' : 'block';
+            
+            // Synchronize the dates if needed
+            const eventDayField = document.getElementById('event_day');
+            const displayStartField = document.getElementById('display_start_date');
+            const displayEndField = document.getElementById('display_end_date');
+            
+            if (this.checked && eventDayField && eventDayField.value) {
+                // If switching to range mode and we have an event day, use it for both start and end
+                displayStartField.value = eventDayField.value;
+                displayEndField.value = eventDayField.value;
+            } else if (!this.checked && displayStartField && displayStartField.value) {
+                // If switching to single day mode, use the start date
+                eventDayField.value = displayStartField.value;
+            }
+        });
+    }
+    
     // Initialize flatpickr for the new reservation form date fields
     flatpickr('#start_date', {
         locale: "de",
@@ -857,6 +1234,8 @@ document.addEventListener('DOMContentLoaded', function() {
         disableMobile: "true",
         onChange: function() {
             updateNewCosts();
+            // Update constraints for event dates
+            updateNewEventDateConstraints();
         }
     });
     
@@ -869,11 +1248,89 @@ document.addEventListener('DOMContentLoaded', function() {
         disableMobile: "true",
         onChange: function() {
             updateNewCosts();
+            // Update constraints for event dates
+            updateNewEventDateConstraints();
         }
     });
     
+    // Initialize flatpickr for the event day fields
+    const eventDayPicker = flatpickr('#event_day', {
+        locale: "de",
+        dateFormat: "Y-m-d",
+        altInput: true,
+        altFormat: "j. F Y",
+        minDate: "today",
+        disableMobile: "true",
+        onChange: function(selectedDates, dateStr) {
+            // When single day is selected, update both display date fields
+            if (selectedDates[0]) {
+                document.getElementById('display_start_date').value = dateStr;
+                document.getElementById('display_end_date').value = dateStr;
+            }
+        }
+    });
+    
+    const displayStartPicker = flatpickr('#display_start_date', {
+        locale: "de",
+        dateFormat: "Y-m-d",
+        altInput: true,
+        altFormat: "j. F Y",
+        minDate: "today",
+        disableMobile: "true",
+        onChange: function(selectedDates, dateStr) {
+            // Update min date of display end picker
+            if (selectedDates[0]) {
+                displayEndPicker.set('minDate', selectedDates[0]);
+            }
+        }
+    });
+    
+    const displayEndPicker = flatpickr('#display_end_date', {
+        locale: "de",
+        dateFormat: "Y-m-d",
+        altInput: true,
+        altFormat: "j. F Y",
+        minDate: "today",
+        disableMobile: "true"
+    });
+    
+    // Function to update event date constraints
+    function updateNewEventDateConstraints() {
+        const startDate = document.getElementById('start_date').value;
+        const endDate = document.getElementById('end_date').value;
+        
+        if (startDate && endDate) {
+            // Update constraints for event dates
+            eventDayPicker.set('minDate', startDate);
+            eventDayPicker.set('maxDate', endDate);
+            displayStartPicker.set('minDate', startDate);
+            displayStartPicker.set('maxDate', endDate);
+            displayEndPicker.set('minDate', startDate);
+            displayEndPicker.set('maxDate', endDate);
+        }
+    }
+    
     // Run the initial cost calculation for the new reservation form
     updateNewCosts();
+    
+    // Flatpickr für Schlüsselübergabe-Felder im neuen Reservierungsformular
+    flatpickr('#key_handover_date', {
+        locale: "de",
+        dateFormat: "Y-m-d",
+        altInput: true,
+        altFormat: "j. F Y",
+        minDate: "today",
+        disableMobile: "true"
+    });
+    
+    flatpickr('#key_return_date', {
+        locale: "de",
+        dateFormat: "Y-m-d",
+        altInput: true,
+        altFormat: "j. F Y",
+        minDate: "today",
+        disableMobile: "true"
+    });
     
     // Event-Listener für das Öffnen des Edit-Modals
     const editModal = document.getElementById('editReservationModal');
@@ -881,15 +1338,60 @@ document.addEventListener('DOMContentLoaded', function() {
         editModal.addEventListener('shown.bs.modal', function () {
             // Felder abrufen
             const startDateField = document.getElementById('edit_start_date');
-            const startTimeField = document.getElementById('edit_start_time');
             const endDateField = document.getElementById('edit_end_date');
-            const endTimeField = document.getElementById('edit_end_time');
+            const eventDayField = document.getElementById('edit_event_day');
+            const displayStartDateField = document.getElementById('edit_display_start_date');
+            const displayEndDateField = document.getElementById('edit_display_end_date');
+            const keyHandoverDateField = document.getElementById('edit_key_handover_date');
+            const keyReturnDateField = document.getElementById('edit_key_return_date');
             
             // Flatpickr-Instanzen zerstören, falls sie bereits existieren
             if (startDateField._flatpickr) startDateField._flatpickr.destroy();
-            if (startTimeField._flatpickr) startTimeField._flatpickr.destroy();
             if (endDateField._flatpickr) endDateField._flatpickr.destroy();
-            if (endTimeField._flatpickr) endTimeField._flatpickr.destroy();
+            if (eventDayField._flatpickr) eventDayField._flatpickr.destroy();
+            if (displayStartDateField._flatpickr) displayStartDateField._flatpickr.destroy();
+            if (displayEndDateField._flatpickr) displayEndDateField._flatpickr.destroy();
+            if (keyHandoverDateField._flatpickr) keyHandoverDateField._flatpickr.destroy();
+            if (keyReturnDateField._flatpickr) keyReturnDateField._flatpickr.destroy();
+            
+            // Event-Handler für die Checkbox einrichten
+            const editIsPublicCheckbox = document.getElementById('edit_is_public');
+            const editShowDateRangeCheckbox = document.getElementById('edit_show_date_range');
+            const editPublicEventDetails = document.getElementById('edit_public-event-details');
+            const editSingleDayField = document.getElementById('edit_single-day-field');
+            const editDateRangeFields = document.getElementById('edit_date-range-fields');
+            
+            // Handler für die öffentliche Veranstaltungs-Checkbox
+            if (editIsPublicCheckbox) {
+                editIsPublicCheckbox.addEventListener('change', function() {
+                    if (editPublicEventDetails) {
+                        editPublicEventDetails.style.display = this.checked ? 'block' : 'none';
+                    }
+                });
+            }
+            
+            // Handler für die Datumsbereich-Checkbox
+            if (editShowDateRangeCheckbox) {
+                editShowDateRangeCheckbox.addEventListener('change', function() {
+                    if (editSingleDayField) {
+                        editSingleDayField.style.display = this.checked ? 'none' : 'block';
+                    }
+                    if (editDateRangeFields) {
+                        editDateRangeFields.style.display = this.checked ? 'block' : 'none';
+                    }
+                    
+                    // Synchronisiere die Daten, wenn nötig
+                    if (this.checked && eventDayField && eventDayField.value) {
+                        // Wenn wir auf Datumsbereich umschalten und ein Tag ausgewählt ist,
+                        // verwende diesen für Start und Ende
+                        displayStartDateField.value = eventDayField.value;
+                        displayEndDateField.value = eventDayField.value;
+                    } else if (!this.checked && displayStartDateField && displayStartDateField.value) {
+                        // Wenn wir auf Einzeltag umschalten, verwende das Startdatum
+                        eventDayField.value = displayStartDateField.value;
+                    }
+                });
+            }
             
             // Date picker für Startdatum und Enddatum
             flatpickr('#edit_start_date', {
@@ -902,6 +1404,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 defaultDate: startDateField.value,
                 onChange: function() {
                     updateEditCosts();
+                    updateEditEventDateConstraints();
                 }
             });
             
@@ -915,18 +1418,100 @@ document.addEventListener('DOMContentLoaded', function() {
                 defaultDate: endDateField.value,
                 onChange: function() {
                     updateEditCosts();
+                    updateEditEventDateConstraints();
                 }
             });
             
-            // Time picker für Startzeit und Endzeit - stattdessen einfache HTML Zeit-Eingabefelder verwenden
-            // Keine flatpickr-Instanzen für die Zeitfelder erstellen
+            // Datepicker für Veranstaltungsdaten
+            const editEventDayPicker = flatpickr('#edit_event_day', {
+                locale: "de",
+                dateFormat: "Y-m-d",
+                altInput: true,
+                altFormat: "j. F Y",
+                minDate: "today",
+                disableMobile: "true",
+                defaultDate: eventDayField.value,
+                onChange: function(selectedDates, dateStr) {
+                    // When single day is selected, update both display date fields
+                    if (selectedDates[0]) {
+                        document.getElementById('edit_display_start_date').value = dateStr;
+                        document.getElementById('edit_display_end_date').value = dateStr;
+                    }
+                }
+            });
             
-            // Event-Listener hinzufügen, um die Kostenberechnung zu aktualisieren, wenn sich die Zeit ändert
-            startTimeField.addEventListener('change', updateEditCosts);
-            endTimeField.addEventListener('change', updateEditCosts);
+            const editDisplayStartPicker = flatpickr('#edit_display_start_date', {
+                locale: "de",
+                dateFormat: "Y-m-d",
+                altInput: true,
+                altFormat: "j. F Y",
+                minDate: "today",
+                disableMobile: "true",
+                defaultDate: displayStartDateField.value,
+                onChange: function(selectedDates, dateStr) {
+                    // Update min date of display end picker
+                    if (selectedDates[0]) {
+                        editDisplayEndPicker.set('minDate', selectedDates[0]);
+                    }
+                }
+            });
+            
+            const editDisplayEndPicker = flatpickr('#edit_display_end_date', {
+                locale: "de",
+                dateFormat: "Y-m-d",
+                altInput: true,
+                altFormat: "j. F Y",
+                minDate: "today",
+                disableMobile: "true",
+                defaultDate: displayEndDateField.value
+            });
+            
+            // Flatpickr für Schlüsselübergabe-Felder im Bearbeitungsmodal
+            flatpickr('#edit_key_handover_date', {
+                locale: "de",
+                dateFormat: "Y-m-d",
+                altInput: true,
+                altFormat: "j. F Y",
+                minDate: "today",
+                disableMobile: "true",
+                defaultDate: keyHandoverDateField.value
+            });
+            
+            flatpickr('#edit_key_return_date', {
+                locale: "de",
+                dateFormat: "Y-m-d",
+                altInput: true,
+                altFormat: "j. F Y",
+                minDate: "today",
+                disableMobile: "true",
+                defaultDate: keyReturnDateField.value
+            });
+            
+            // Function to update event date constraints
+            function updateEditEventDateConstraints() {
+                const startDate = document.getElementById('edit_start_date').value;
+                const endDate = document.getElementById('edit_end_date').value;
+                
+                if (startDate && endDate) {
+                    // Update constraints for event dates
+                    editEventDayPicker.set('minDate', startDate);
+                    editEventDayPicker.set('maxDate', endDate);
+                    editDisplayStartPicker.set('minDate', startDate);
+                    editDisplayStartPicker.set('maxDate', endDate);
+                    editDisplayEndPicker.set('minDate', startDate);
+                    editDisplayEndPicker.set('maxDate', endDate);
+                }
+            }
+            
+            // Update event date constraints initially
+            updateEditEventDateConstraints();
             
             // Initial cost calculation
             updateEditCosts();
+            
+            // Änderungen an Start-/Enddatum oder -zeit sollten die Kosten aktualisieren
+            startDateField.addEventListener('change', updateEditCosts);
+            endDateField.addEventListener('change', updateEditCosts);
         });
     }
     
@@ -936,6 +1521,8 @@ document.addEventListener('DOMContentLoaded', function() {
         newModal.addEventListener('shown.bs.modal', function () {
             // Just run the cost calculation again when the modal is shown
             updateNewCosts();
+            // And update event date constraints
+            updateNewEventDateConstraints();
         });
     }
 });

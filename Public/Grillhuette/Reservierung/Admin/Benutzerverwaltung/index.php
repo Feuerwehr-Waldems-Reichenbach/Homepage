@@ -13,6 +13,13 @@ if (!isset($_SESSION['user_id']) || !isset($_SESSION['is_admin']) || !$_SESSION[
 // User-Objekt initialisieren
 $user = new User();
 
+// Automatische Wartung der Sicherheitslogs durchführen
+$maintenance_result = $user->performLogMaintenance();
+if ($maintenance_result['success'] && $maintenance_result['cleaned_count'] > 0) {
+    $_SESSION['cleanup_message'] = "Automatische Wartung durchgeführt: {$maintenance_result['cleaned_count']} veraltete Protokolleinträge wurden bereinigt.";
+    $_SESSION['cleanup_count'] = $maintenance_result['cleaned_count'];
+}
+
 // Benutzer abrufen für die Anzeige
 $allUsers = $user->getAllUsers();
 
@@ -168,11 +175,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 
                 // Session aktualisieren, wenn der eigene Benutzer aktualisiert wurde
                 if ($result['success'] && $userId === $_SESSION['user_id']) {
-                    $_SESSION['user_email'] = $email;
-                    $_SESSION['user_name'] = $firstName . ' ' . $lastName;
-                    $_SESSION['is_admin'] = $isAdmin;
-                    $_SESSION['is_AktivesMitglied'] = $isAktivesMitglied;
-                    $_SESSION['is_Feuerwehr'] = $isFeuerwehr;
+                    // Session regenerieren für verbesserte Sicherheit
+                    regenerateSession();
+                    
+                    // Session-Daten aktualisieren
+                    $_SESSION['user_name'] = $firstName;
+                    $_SESSION['is_admin'] = (bool)$isAdmin;
+                    $_SESSION['is_verified'] = (bool)$isVerified;
+                    $_SESSION['is_AktivesMitglied'] = (bool)$isAktivesMitglied; 
+                    $_SESSION['is_Feuerwehr'] = (bool)$isFeuerwehr;
                 }
             } else {
                 $_SESSION['flash_message'] = implode('<br>', $errors);
@@ -207,6 +218,18 @@ $pageTitle = 'Benutzer verwalten';
 
 // Header einbinden
 require_once '../../includes/header.php';
+
+// Anzeigen der Wartungsinformation, falls vorhanden
+if (isset($_SESSION['cleanup_message'])) {
+    $cleanup_count = $_SESSION['cleanup_count'] ?? 0;
+    echo '<div class="alert alert-info alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i>
+        ' . $_SESSION['cleanup_message'] . '
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Schließen"></button>
+    </div>';
+    unset($_SESSION['cleanup_message']);
+    unset($_SESSION['cleanup_count']);
+}
 ?>
 
 <div class="row">
@@ -333,8 +356,8 @@ require_once '../../includes/header.php';
                         </div>
                         
                         <div class="col-md-6 mb-3">
-                            <label for="phone" class="form-label">Telefonnummer (optional)</label>
-                            <input type="tel" class="form-control" id="phone" name="phone">
+                            <label for="phone" class="form-label">Telefonnummer</label>
+                            <input type="tel" class="form-control" id="phone" name="phone" required>
                         </div>
                     </div>
                     
@@ -342,7 +365,7 @@ require_once '../../includes/header.php';
                         <div class="col-md-6 mb-3">
                             <label for="password" class="form-label">Passwort</label>
                             <input type="password" class="form-control" id="password" name="password" required>
-                            <div class="form-text">Mindestens 8 Zeichen.</div>
+                            <div class="form-text">Mindestens 8 Zeichen mit Groß- und Kleinbuchstaben, Zahlen und mindestens einem Sonderzeichen.</div>
                         </div>
                         
                         <div class="col-md-6 mb-3 d-flex align-items-end">
@@ -419,8 +442,8 @@ require_once '../../includes/header.php';
                         </div>
                         
                         <div class="col-md-6 mb-3">
-                            <label for="edit_phone" class="form-label">Telefonnummer (optional)</label>
-                            <input type="tel" class="form-control" id="edit_phone" name="phone">
+                            <label for="edit_phone" class="form-label">Telefonnummer</label>
+                            <input type="tel" class="form-control" id="edit_phone" name="phone" required>
                         </div>
                     </div>
                     
@@ -428,7 +451,7 @@ require_once '../../includes/header.php';
                         <div class="col-md-6 mb-3">
                             <label for="edit_new_password" class="form-label">Neues Passwort (optional)</label>
                             <input type="password" class="form-control" id="edit_new_password" name="new_password">
-                            <div class="form-text">Lassen Sie dieses Feld leer, um das Passwort nicht zu ändern. Andernfalls mindestens 8 Zeichen.</div>
+                            <div class="form-text">Lassen Sie dieses Feld leer, um das Passwort nicht zu ändern. Andernfalls mindestens 8 Zeichen mit Groß- und Kleinbuchstaben, Zahlen und mindestens einem Sonderzeichen.</div>
                         </div>
                         
                         <div class="col-md-6 mb-3 d-flex flex-column justify-content-around">
@@ -493,13 +516,6 @@ function prepareEditUserModal(button) {
     const isAktivesMitglied = button.getAttribute('data-is-aktivesmitglied') === '1';
     const isFeuerwehr = button.getAttribute('data-is-feuerwehr') === '1';
     
-    // Debug-Ausgabe
-    console.log('User ID:', userId);
-    console.log('isAktivesMitglied attribute:', button.getAttribute('data-is-aktivesmitglied'));
-    console.log('isAktivesMitglied parsed:', isAktivesMitglied);
-    console.log('isFeuerwehr attribute:', button.getAttribute('data-is-feuerwehr'));
-    console.log('isFeuerwehr parsed:', isFeuerwehr);
-    
     // Formularfelder ausfüllen
     document.getElementById('edit_user_id').value = userId;
     document.getElementById('edit_email').value = email;
@@ -511,6 +527,8 @@ function prepareEditUserModal(button) {
     document.getElementById('edit_is_aktivesmitglied').checked = isAktivesMitglied;
     document.getElementById('edit_is_feuerwehr').checked = isFeuerwehr;
     document.getElementById('edit_new_password').value = '';
+    
+    // Ensure CSRF token and user ID are correctly set for deletion form
     document.getElementById('delete_user_id').value = userId;
     
     // Eigenes Konto kann nicht gelöscht werden
@@ -526,6 +544,8 @@ function prepareEditUserModal(button) {
 
 function confirmDelete() {
     if (confirm('Sind Sie sicher, dass Sie diesen Benutzer löschen möchten? Alle Daten und Reservierungen dieses Benutzers werden unwiderruflich gelöscht!')) {
+        // Make sure the form has the current CSRF token
+        document.getElementById('deleteUserForm').querySelector('input[name="csrf_token"]').value = "<?php echo generate_csrf_token(); ?>";
         document.getElementById('deleteUserForm').submit();
     }
 }

@@ -32,8 +32,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors = [];
         if (empty($password)) {
             $errors[] = 'Bitte geben Sie ein Passwort ein.';
-        } elseif (strlen($password) < 8) {
-            $errors[] = 'Das Passwort muss mindestens 8 Zeichen lang sein.';
+        } else {
+            // Erweiterte Passwortvalidierung
+            $passwordErrors = validatePassword($password);
+            if (!empty($passwordErrors)) {
+                $errors = array_merge($errors, $passwordErrors);
+            }
         }
         
         if ($password !== $password_confirm) {
@@ -113,7 +117,7 @@ require_once '../../includes/header.php';
                                     <i class="bi bi-eye"></i>
                                 </button>
                             </div>
-                            <div class="form-text">Mindestens 8 Zeichen.</div>
+                            <div class="form-text">Mindestens 8 Zeichen mit Groß- und Kleinbuchstaben, Zahlen und mindestens einem Sonderzeichen.</div>
                         </div>
                         
                         <div class="mb-3">

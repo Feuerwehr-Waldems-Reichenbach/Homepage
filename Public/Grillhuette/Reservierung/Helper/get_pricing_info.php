@@ -10,10 +10,17 @@ try {
     $reservation = new Reservation();
     
     // Get user ID from session if logged in
-    $userId = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
+    $userId = isset($_SESSION['user_id']) ? intval($_SESSION['user_id']) : null;
+    
+    // Sicherheitsprüfung: Nur validierte user_id verwenden, keine Parameter von außen akzeptieren
+    if ($userId !== null && $userId <= 0) {
+        throw new Exception('Ungültige Benutzer-ID.');
+    }
     
     // Get pricing information for the current user
     $priceInfo = $reservation->getPriceInformation($userId);
+    
+    // Preise werden jetzt komplett serverseitig berechnet, keine manuelle Anpassung mehr
     
     // Return the data
     echo json_encode([
@@ -24,17 +31,12 @@ try {
         'rate_type' => $priceInfo['rate_type']
     ]);
 } catch (Exception $e) {
-    // Log error but return a generic error message
-    error_log('Error in get_pricing_info.php: ' . $e->getMessage());
     
     // Return error with default values
+    http_response_code(400); // Bad request
     echo json_encode([
         'success' => false,
-        'user_rate' => 100.00,
-        'base_price' => 100.00,
-        'deposit_amount' => 100.00,
-        'rate_type' => 'normal',
-        'message' => 'Ein Fehler ist aufgetreten. Standard-Preise werden verwendet.'
+        'message' => 'Ein Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.'
     ]);
 }
 ?> 

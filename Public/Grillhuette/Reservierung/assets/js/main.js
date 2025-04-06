@@ -103,13 +103,76 @@ function handleResize() {
 
 // Setup navbar to auto-collapse on mobile after clicking a link
 function setupMobileNavbar() {
-    const navLinks = document.querySelectorAll('.navbar-nav .nav-link');
+    const navLinks = document.querySelectorAll('.navbar-nav .nav-link:not(.dropdown-toggle)');
     const navbarToggler = document.querySelector('.navbar-toggler');
     const navbarCollapse = document.querySelector('.navbar-collapse');
     
     if (navLinks && navbarToggler && navbarCollapse) {
         navLinks.forEach(link => {
             link.addEventListener('click', () => {
+                if (navbarCollapse.classList.contains('show')) {
+                    navbarToggler.click();
+                }
+            });
+        });
+    }
+    
+    // Spezielles Handling für Dropdown-Toggles
+    const dropdownToggles = document.querySelectorAll('.navbar-nav .dropdown-toggle');
+    if (dropdownToggles) {
+        dropdownToggles.forEach(toggle => {
+            toggle.addEventListener('click', (e) => {
+                e.preventDefault(); // Verhindert das Standardverhalten
+                e.stopPropagation(); // Verhindert die Ausbreitung des Events
+                
+                // Finde das entsprechende Dropdown-Menü
+                const dropdownMenu = toggle.nextElementSibling;
+                if (dropdownMenu && dropdownMenu.classList.contains('dropdown-menu')) {
+                    // Toggle das Dropdown-Menü
+                    if (dropdownMenu.style.display === 'block') {
+                        dropdownMenu.style.display = 'none';
+                        toggle.classList.remove('show');
+                    } else {
+                        // Erst alle anderen schließen
+                        document.querySelectorAll('.dropdown-menu').forEach(menu => {
+                            if (menu !== dropdownMenu) {
+                                menu.style.display = 'none';
+                                const parentToggle = menu.previousElementSibling;
+                                if (parentToggle) {
+                                    parentToggle.classList.remove('show');
+                                }
+                            }
+                        });
+                        
+                        dropdownMenu.style.display = 'block';
+                        toggle.classList.add('show');
+                    }
+                }
+            });
+        });
+        
+        // Dropdown-Menü schließen, wenn irgendwo außerhalb geklickt wird
+        document.addEventListener('click', (e) => {
+            const isDropdownToggle = e.target.classList.contains('dropdown-toggle') || 
+                                     e.target.closest('.dropdown-toggle');
+            const isDropdownMenu = e.target.classList.contains('dropdown-menu') || 
+                                  e.target.closest('.dropdown-menu');
+            
+            if (!isDropdownToggle && !isDropdownMenu) {
+                document.querySelectorAll('.dropdown-menu').forEach(menu => {
+                    menu.style.display = 'none';
+                    const parentToggle = menu.previousElementSibling;
+                    if (parentToggle) {
+                        parentToggle.classList.remove('show');
+                    }
+                });
+            }
+        });
+        
+        // Event-Listener für Dropdown-Items
+        const dropdownItems = document.querySelectorAll('.dropdown-menu .dropdown-item');
+        dropdownItems.forEach(item => {
+            item.addEventListener('click', () => {
                 if (navbarCollapse.classList.contains('show')) {
                     navbarToggler.click();
                 }
@@ -157,6 +220,182 @@ function initializeDatePickers() {
                 appendTo: window.matchMedia("(max-width: 768px)").matches ? document.body : undefined
             });
         });
+    }
+
+    // Initialize flatpickr for display date fields
+    const displayStartPicker = flatpickr('#display_start_date', {
+        locale: "de",
+        dateFormat: "Y-m-d",
+        altInput: true,
+        altFormat: "j. F Y",
+        minDate: "today",
+        disableMobile: "true",
+        onChange: function(selectedDates, dateStr) {
+            // Update min date of display end picker
+            if (selectedDates[0]) {
+                displayEndPicker.set('minDate', selectedDates[0]);
+            }
+        },
+        onOpen: function(selectedDates, dateStr, instance) {
+            // Update allowed date range when picker opens
+            const startDate = document.getElementById('start_date').value;
+            const endDate = document.getElementById('end_date').value;
+            
+            if (startDate && endDate) {
+                instance.set('minDate', startDate);
+                instance.set('maxDate', endDate);
+            }
+        }
+    });
+
+    const displayEndPicker = flatpickr('#display_end_date', {
+        locale: "de",
+        dateFormat: "Y-m-d",
+        altInput: true,
+        altFormat: "j. F Y",
+        minDate: "today",
+        disableMobile: "true",
+        onOpen: function(selectedDates, dateStr, instance) {
+            // Update allowed date range when picker opens
+            const startDate = document.getElementById('start_date').value;
+            const endDate = document.getElementById('end_date').value;
+            const displayStart = document.getElementById('display_start_date').value;
+            
+            if (startDate && endDate) {
+                // Minimum date is either the reservation start date or the display start date
+                instance.set('minDate', displayStart || startDate);
+                instance.set('maxDate', endDate);
+            }
+        }
+    });
+
+    // Handle public event checkbox and date range toggle
+    const isPublicCheckbox = document.getElementById('is_public');
+    const showDateRangeCheckbox = document.getElementById('show_date_range');
+    const publicEventDetails = document.getElementById('public-event-details');
+    const singleDayField = document.getElementById('single-day-field');
+    const dateRangeFields = document.getElementById('date-range-fields');
+    const startDateInput = document.getElementById('start_date');
+    const endDateInput = document.getElementById('end_date');
+    const eventDayInput = document.getElementById('event_day');
+    const displayStartInput = document.getElementById('display_start_date');
+    const displayEndInput = document.getElementById('display_end_date');
+
+    // Initialize flatpickr for the event day field
+    const eventDayPicker = flatpickr('#event_day', {
+        locale: "de",
+        dateFormat: "Y-m-d",
+        altInput: true,
+        altFormat: "j. F Y",
+        minDate: "today",
+        disableMobile: "true",
+        onChange: function(selectedDates, dateStr) {
+            // When single day is selected, update both display date fields
+            if (selectedDates[0]) {
+                displayStartInput.value = dateStr;
+                displayEndInput.value = dateStr;
+            }
+        },
+        onOpen: function(selectedDates, dateStr, instance) {
+            // Update allowed date range when picker opens
+            const startDate = startDateInput.value;
+            const endDate = endDateInput.value;
+            
+            if (startDate && endDate) {
+                instance.set('minDate', startDate);
+                instance.set('maxDate', endDate);
+            }
+        }
+    });
+
+    if (isPublicCheckbox && publicEventDetails) {
+        isPublicCheckbox.addEventListener('change', function() {
+            publicEventDetails.style.display = this.checked ? 'block' : 'none';
+            if (this.checked && startDateInput.value) {
+                // Set the single day display date to the reservation start date if not set
+                if (!eventDayInput.value) {
+                    eventDayPicker.setDate(startDateInput.value);
+                }
+            }
+        });
+    }
+
+    if (showDateRangeCheckbox && dateRangeFields) {
+        showDateRangeCheckbox.addEventListener('change', function() {
+            dateRangeFields.style.display = this.checked ? 'block' : 'none';
+            singleDayField.style.display = this.checked ? 'none' : 'block';
+            
+            if (this.checked) {
+                // When switching to date range, if we have a single day selected,
+                // use it as the start and end date
+                if (eventDayInput.value) {
+                    displayStartPicker.setDate(eventDayInput.value);
+                    displayEndPicker.setDate(eventDayInput.value);
+                }
+            } else {
+                // When switching back to single day, use the start date if set
+                if (displayStartInput.value) {
+                    eventDayPicker.setDate(displayStartInput.value);
+                }
+                // Make sure both display dates are set to the single day
+                if (eventDayInput.value) {
+                    displayStartInput.value = eventDayInput.value;
+                    displayEndInput.value = eventDayInput.value;
+                }
+            }
+        });
+    }
+
+    // Update display date constraints when reservation dates change
+    if (startDateInput && endDateInput) {
+        const updateDisplayDateConstraints = function() {
+            const startDate = startDateInput.value;
+            const endDate = endDateInput.value;
+            const isDateRange = showDateRangeCheckbox && showDateRangeCheckbox.checked;
+
+            if (startDate && endDate) {
+                // Update constraints for the event day picker
+                eventDayPicker.set('minDate', startDate);
+                eventDayPicker.set('maxDate', endDate);
+
+                if (isDateRange) {
+                    // Update constraints for range pickers
+                    displayStartPicker.set('minDate', startDate);
+                    displayStartPicker.set('maxDate', endDate);
+                    displayEndPicker.set('minDate', displayStartInput.value || startDate);
+                    displayEndPicker.set('maxDate', endDate);
+
+                    // Validate and clear range dates if needed
+                    if (displayStartInput.value) {
+                        const displayStartDate = new Date(displayStartInput.value);
+                        const reservationStartDate = new Date(startDate);
+                        const reservationEndDate = new Date(endDate);
+                        
+                        if (displayStartDate < reservationStartDate || displayStartDate > reservationEndDate) {
+                            displayStartPicker.clear();
+                            displayEndPicker.clear();
+                        }
+                    }
+                } else {
+                    // Validate and clear single day if needed
+                    if (eventDayInput.value) {
+                        const eventDay = new Date(eventDayInput.value);
+                        const reservationStartDate = new Date(startDate);
+                        const reservationEndDate = new Date(endDate);
+                        
+                        if (eventDay < reservationStartDate || eventDay > reservationEndDate) {
+                            eventDayPicker.clear();
+                            displayStartInput.value = '';
+                            displayEndInput.value = '';
+                        }
+                    }
+                }
+            }
+        };
+
+        // Listen for changes to reservation dates
+        startDateInput.addEventListener('change', updateDisplayDateConstraints);
+        endDateInput.addEventListener('change', updateDisplayDateConstraints);
     }
 }
 
@@ -357,49 +596,86 @@ function loadDayStatuses(month, year) {
     // Format month with leading zero if needed
     const formattedMonth = month.toString().padStart(2, '0');
     
-    console.log(`Loading calendar data for ${year}-${formattedMonth}`);
+    // Get the root path from global config if available, otherwise use the default path
+    const rootPath = (typeof APP_CONFIG !== 'undefined' && APP_CONFIG.ROOT_PATH) 
+                    ? APP_CONFIG.ROOT_PATH 
+                    : '/Grillhuette/Reservierung';
     
-    // Create AJAX request
-    const xhr = new XMLHttpRequest();
-    // Statt die Basis-URL selbst zu berechnen, verwenden wir den Pfad zur Helper-Datei
-    xhr.open('GET', `Helper/get_calendar_data.php?month=${formattedMonth}&year=${year}`, true);
+    // Klare URL mit vollständigem Pfad erstellen, um Pfadprobleme zu vermeiden
+    const ajaxUrl = `${rootPath}/Helper/get_calendar_data.php?month=${formattedMonth}&year=${year}`;
     
-    xhr.onload = function() {
-        if (this.status === 200) {
-            try {
-                const response = JSON.parse(this.responseText);
-                console.log('Calendar data received:', response);
-                if (response.success) {
-                    updateDayStatuses(response.data);
-                } else {
-                    console.error('Error loading calendar data:', response.message);
-                    // Display error for mobile users with toast or alert
-                    if (window.matchMedia("(max-width: 768px)").matches) {
-                        showMobileAlert('Fehler beim Laden der Kalenderdaten. Bitte versuchen Sie es später erneut.');
-                    }
-                }
-            } catch (e) {
-                console.error('Error parsing calendar data:', e, this.responseText);
-                // Display parse error for mobile users
-                if (window.matchMedia("(max-width: 768px)").matches) {
-                    showMobileAlert('Fehler beim Laden der Kalenderdaten. Bitte versuchen Sie es später erneut.');
-                }
+    console.log("Fetching calendar data from:", ajaxUrl);
+    
+    // Verwende fetch statt XMLHttpRequest für bessere Fehlerbehandlung
+    fetch(ajaxUrl)
+        .then(response => {
+            console.log("Response status:", response.status, response.statusText);
+            // Add content type checking
+            const contentType = response.headers.get('content-type');
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
             }
-        }
-    };
-    
-    xhr.onerror = function() {
-        console.error('AJAX request failed');
-        // Show network error to mobile users
-        if (window.matchMedia("(max-width: 768px)").matches) {
-            showMobileAlert('Netzwerkfehler. Bitte überprüfen Sie Ihre Internetverbindung.');
-        }
-    };
-    
-    xhr.send();
+            if (!contentType || !contentType.includes('application/json')) {
+                console.warn(`Expected JSON response but got ${contentType}`);
+            }
+            return response.text();
+        })
+        .then(text => {
+            try {
+                // Check if the response starts with HTML (error output)
+                if (text.trim().startsWith('<')) {
+                    console.error("Received HTML instead of JSON:", text.substring(0, 200) + "...");
+                    throw new Error('Server returned HTML instead of JSON');
+                }
+                
+                console.log("Raw response:", text);
+                const data = JSON.parse(text); // Dann als JSON parsen
+                if (!data.success) {
+                    console.error("Server reported error:", data.message || "Unknown error");
+                    throw new Error(data.message || "Server reported error");
+                }
+                console.log("Debug data:", data.debug);
+                return data;
+            } catch (e) {
+                console.error("JSON parsing error:", e);
+                if (text) {
+                    console.error("Response text (first 200 chars):", text.substring(0, 200));
+                }
+                throw new Error('Invalid JSON response: ' + e.message);
+            }
+        })
+        .then(data => {
+            // Update the calendar with the retrieved data
+            updateDayStatuses(data);
+        })
+        .catch(error => {
+            console.error("Fetch error:", error);
+            // Fallback: Set all days to 'unknown' status
+            const dayElements = document.querySelectorAll('.day[data-date]');
+            dayElements.forEach(day => {
+                day.classList.remove('free', 'pending', 'booked', 'public-event', 'key-handover');
+                day.classList.add('free'); // Default to showing as free on error
+            });
+            
+            // Optional: Show a non-intrusive error message
+            const calendarContainer = document.getElementById('calendar');
+            if (calendarContainer) {
+                const errorElement = document.createElement('div');
+                errorElement.className = 'alert alert-warning mt-3';
+                errorElement.textContent = 'Kalenderdaten konnten nicht geladen werden. Bitte versuchen Sie es später erneut.';
+                calendarContainer.appendChild(errorElement);
+                
+                // Remove after 5 seconds
+                setTimeout(() => {
+                    if (errorElement.parentNode) {
+                        errorElement.parentNode.removeChild(errorElement);
+                    }
+                }, 5000);
+            }
+        });
 }
 
-// Show a mobile-friendly alert/toast message
+// Show a mobile-friendly alert/toast message with sanitized content
 function showMobileAlert(message) {
     // Create a toast element if it doesn't exist
     let toast = document.getElementById('mobileToast');
@@ -425,8 +701,10 @@ function showMobileAlert(message) {
         document.body.appendChild(toast);
     }
     
-    // Set message and show toast
-    toast.textContent = message;
+    // Sanitize message to prevent any HTML/script injection
+    const sanitizedMessage = document.createTextNode(message);
+    toast.textContent = ''; // Clear previous content
+    toast.appendChild(sanitizedMessage);
     toast.style.display = 'block';
     
     // Hide toast after 3 seconds
@@ -437,11 +715,49 @@ function showMobileAlert(message) {
 
 // Update day status classes in the calendar
 function updateDayStatuses(statusData) {
-    if (!statusData) return;
+    if (!statusData) {
+        console.error("No status data received");
+        return;
+    }
+    
+    // Log the data for debugging
+    console.log("Calendar data received:", statusData);
+    
+    // Accessing the actual data object inside the response
+    const dayStatuses = statusData.data || statusData;
+    
+    // More detailed logging
+    console.log("Day statuses object keys:", Object.keys(dayStatuses));
+    if (Object.keys(dayStatuses).length > 0) {
+        console.log("First few day statuses:", 
+            Object.entries(dayStatuses).slice(0, 3).map(([date, status]) => 
+                `${date}: ${typeof status === 'object' ? JSON.stringify(status) : status}`
+            )
+        );
+    }
+    
+    // Verifiziere, dass die zurückgegebenen Daten zum aktuellen Monat/Jahr passen
+    const dates = Object.keys(dayStatuses);
+    if (dates.length > 0) {
+        // Prüfe das erste Datum, um den zurückgegebenen Monat zu erkennen
+        const firstDate = dates[0];
+        const receivedMonth = firstDate.split('-')[1]; // Format ist YYYY-MM-DD
+        
+        // Prüfe, ob der Monat im Datums-Key mit dem erwarteten Monat übereinstimmt
+        const expectedMonth = document.getElementById('month').value.toString().padStart(2, '0');
+        
+        if (receivedMonth !== expectedMonth) {
+            // Hier könnte ein Log erfolgen, aber keine Aktion notwendig
+            console.log("Month mismatch in received calendar data. Expected:", expectedMonth, "Received:", receivedMonth);
+        }
+    } else {
+        console.log("No dates found in status data");
+        return; // Exit early if there are no dates
+    }
     
     // Get today's date for comparison
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // Reset time part for comparison
+    today.setHours(0, 0, 0, 0);
     
     // First set all days to 'free' by default and mark past days
     document.querySelectorAll('.day[data-date]').forEach(dayElement => {
@@ -449,7 +765,15 @@ function updateDayStatuses(statusData) {
         const date = new Date(dateStr);
         
         // Remove all status classes except other-month
-        dayElement.classList.remove('free', 'pending', 'booked', 'past');
+        dayElement.classList.remove('free', 'pending', 'booked', 'past', 'public-event', 'key-handover');
+        
+        // Remove event name tooltip and data
+        dayElement.dataset.eventName = '';
+        dayElement.title = '';
+        
+        // Remove any key handover indicators
+        const existingIndicators = dayElement.querySelectorAll('.event-indicator, .key-indicator');
+        existingIndicators.forEach(indicator => indicator.remove());
         
         // Add free by default
         dayElement.classList.add('free');
@@ -462,17 +786,88 @@ function updateDayStatuses(statusData) {
     });
     
     // Then update with statuses from the server
-    Object.keys(statusData).forEach(date => {
-        const status = statusData[date];
+    Object.keys(dayStatuses).forEach(date => {
+        const statusInfo = dayStatuses[date];
         const dayElement = document.querySelector(`.day[data-date="${date}"]`);
         
         if (dayElement) {
+            // Log for debugging
+            console.log(`Updating day ${date} with status:`, statusInfo);
+            
+            // Remove status classes but keep past if it's set
+            dayElement.classList.remove('free', 'pending', 'booked', 'public-event', 'key-handover');
+            
+            // Remove any previous time restrictions
+            delete dayElement.dataset.timeRestrictions;
+            
             // For non-past days, update status
             if (!dayElement.classList.contains('past')) {
-                // Remove status classes but keep past if it's set
-                dayElement.classList.remove('free', 'pending', 'booked');
-                // Add the new status class
-                dayElement.classList.add(status);
+                // Check if we have an object with a status or just a string status
+                if (typeof statusInfo === 'object') {
+                    console.log(`Day ${date} has object status:`, statusInfo.status);
+                    
+                    if (statusInfo.status === 'public_event') {
+                        // For public event, use a special class
+                        dayElement.classList.add('public-event');
+                        
+                        // Add event name as tooltip and data attribute
+                        if (statusInfo.event_name) {
+                            dayElement.dataset.eventName = statusInfo.event_name;
+                            dayElement.title = statusInfo.event_name;
+                            
+                            // Add a small indicator for the event name
+                            const indicator = document.createElement('span');
+                            indicator.className = 'event-indicator';
+                            indicator.textContent = statusInfo.event_name.substring(0, 15);
+                            if (statusInfo.event_name.length > 15) {
+                                indicator.textContent += '...';
+                            }
+                            dayElement.appendChild(indicator);
+                        }
+                        
+                        // Add key handover info if available for public events
+                        if (statusInfo.key_info) {
+                            addKeyHandoverInfo(dayElement, statusInfo.key_info);
+                        }
+                    } else if (statusInfo.status === 'key_handover') {
+                        // For key handover days - now reservable with restrictions
+                        dayElement.classList.add('key-handover');
+                        
+                        if (statusInfo.key_info) {
+                            addKeyHandoverInfo(dayElement, statusInfo.key_info);
+                        }
+                        
+                        // Add time restrictions if available
+                        if (statusInfo.time_restrictions) {
+                            dayElement.dataset.timeRestrictions = JSON.stringify(statusInfo.time_restrictions);
+                            
+                            // Create tooltip message
+                            let message = '';
+                            if (statusInfo.time_restrictions.available_from) {
+                                message += `Verfügbar ab ${statusInfo.time_restrictions.available_from} Uhr`;
+                            }
+                            if (statusInfo.time_restrictions.available_until) {
+                                message += message ? ' bis ' : 'Verfügbar bis ';
+                                message += `${statusInfo.time_restrictions.available_until} Uhr`;
+                            }
+                            
+                            if (message) {
+                                dayElement.title = message;
+                            }
+                        }
+                    } else {
+                        // For booked or pending with key info
+                        dayElement.classList.add(statusInfo.status);
+                        
+                        // Add key handover info if available
+                        if (statusInfo.key_info) {
+                            addKeyHandoverInfo(dayElement, statusInfo.key_info);
+                        }
+                    }
+                } else {
+                    // Add the normal status class if it's just a string
+                    dayElement.classList.add(statusInfo);
+                }
             }
         }
     });
@@ -488,32 +883,54 @@ function isSelectable(dayElement) {
     
     // Check if it's a past date (before today)
     if (date < today) {
-        console.log('Date is in the past and not selectable:', dateStr);
-        
         // Show feedback on mobile
         if (window.matchMedia("(max-width: 768px)").matches) {
             showMobileAlert('Vergangene Daten sind nicht auswählbar.');
         }
-        
         return false;
     }
     
-    // Check if the day has booked or pending status
-    if (dayElement.classList.contains('booked') || dayElement.classList.contains('pending')) {
-        // For dates with pending or booked status, we might need an extra check
-        // to see if the time slot is partially available
-        // This would require additional logic with backend communication
-        console.log('Date is not free:', dateStr);
+    // Check if the day has booked, pending, or public-event status
+    if (dayElement.classList.contains('booked') || 
+        dayElement.classList.contains('pending') || 
+        dayElement.classList.contains('public-event')) {
         
-        // Show feedback on mobile
+        // For dates with special status, show appropriate message
         if (window.matchMedia("(max-width: 768px)").matches) {
-            showMobileAlert('Dieses Datum ist bereits reserviert oder angefragt.');
+            let message = 'Dieses Datum ist bereits belegt.';
+            
+            // If it's a public event, show the event name
+            if (dayElement.classList.contains('public-event') && dayElement.dataset.eventName) {
+                message = `Dieses Datum ist für "${dayElement.dataset.eventName}" reserviert.`;
+            }
+            
+            showMobileAlert(message);
+        }
+        return false;
+    }
+    
+    // Check for time restrictions on key handover days
+    if (dayElement.dataset.timeRestrictions) {
+        const restrictions = JSON.parse(dayElement.dataset.timeRestrictions);
+        let message = '';
+        
+        if (restrictions.available_from) {
+            message += `Dieser Tag ist ab ${restrictions.available_from} Uhr verfügbar`;
+        }
+        if (restrictions.available_until) {
+            message += message ? ' und ' : 'Dieser Tag ist ';
+            message += `nur bis ${restrictions.available_until} Uhr verfügbar`;
         }
         
-        return false;
+        // Show the time restriction message
+        if (window.matchMedia("(max-width: 768px)").matches) {
+            showMobileAlert(message);
+        } else {
+            dayElement.title = message;
+        }
     }
     
-    // The day is in the future or today and is free
+    // The day is in the future or today and is free or has key handover
     return true;
 }
 
@@ -622,7 +1039,6 @@ function highlightDateRange(startDate, endDate) {
             if (!isSelectable(dayElement) && formattedDate !== startDate && formattedDate !== endDate) {
                 // If we encounter a non-selectable day in the range, we have a problem
                 allDaysInRangeAreSelectable = false;
-                console.warn(`Date range contains unavailable day: ${formattedDate}`);
                 
                 // We'll still highlight what we can up to this point
                 dayElement.classList.add('selected');
@@ -685,6 +1101,12 @@ function setupReservationSelection() {
     reservationForm.addEventListener('submit', function(event) {
         const startDate = document.getElementById('start_date');
         const endDate = document.getElementById('end_date');
+        const isPublicCheckbox = document.getElementById('is_public');
+        const showDateRangeCheckbox = document.getElementById('show_date_range');
+        const publicEventDetails = document.getElementById('public-event-details');
+        const singleDayField = document.getElementById('single-day-field');
+        const dateRangeFields = document.getElementById('date-range-fields');
+        const eventName = document.getElementById('event_name');
         
         if (!startDate.value) {
             event.preventDefault();
@@ -711,19 +1133,67 @@ function setupReservationSelection() {
             
             return false;
         }
-        
-        // Check if booking is at least 1 day
-        if (!isMinimumBookingDuration(startDate.value, endDate.value)) {
-            event.preventDefault();
-            const message = 'Der Mindestbuchungszeitraum beträgt 1 Tag.';
-            
-            if (window.matchMedia("(max-width: 768px)").matches) {
-                showMobileAlert(message);
-            } else {
-                alert(message);
+
+        // Validate public event fields if public checkbox is checked
+        if (isPublicCheckbox && isPublicCheckbox.checked) {
+            if (!eventName || !eventName.value.trim()) {
+                event.preventDefault();
+                const message = 'Bitte geben Sie einen Veranstaltungsnamen ein.';
+                if (window.matchMedia("(max-width: 768px)").matches) {
+                    showMobileAlert(message);
+                } else {
+                    alert(message);
+                }
+                return false;
             }
+
+            const isDateRange = showDateRangeCheckbox && showDateRangeCheckbox.checked;
             
-            return false;
+            if (!isDateRange && !eventDayInput.value) {
+                event.preventDefault();
+                const message = 'Bitte wählen Sie den Veranstaltungstag aus.';
+                if (window.matchMedia("(max-width: 768px)").matches) {
+                    showMobileAlert(message);
+                } else {
+                    alert(message);
+                }
+                return false;
+            }
+
+            if (isDateRange && (!displayStartInput.value || !displayEndInput.value)) {
+                event.preventDefault();
+                const message = 'Bitte wählen Sie Start- und Enddatum für den Veranstaltungszeitraum aus.';
+                if (window.matchMedia("(max-width: 768px)").matches) {
+                    showMobileAlert(message);
+                } else {
+                    alert(message);
+                }
+                return false;
+            }
+
+            // Validate dates are within reservation period
+            const reservationStart = new Date(startDate.value);
+            const reservationEnd = new Date(endDate.value);
+            let displayStart, displayEnd;
+
+            if (isDateRange) {
+                displayStart = new Date(displayStartInput.value);
+                displayEnd = new Date(displayEndInput.value);
+            } else {
+                displayStart = new Date(eventDayInput.value);
+                displayEnd = new Date(eventDayInput.value);
+            }
+
+            if (displayStart < reservationStart || displayEnd > reservationEnd) {
+                event.preventDefault();
+                const message = 'Die Veranstaltungstage müssen innerhalb des Reservierungszeitraums liegen.';
+                if (window.matchMedia("(max-width: 768px)").matches) {
+                    showMobileAlert(message);
+                } else {
+                    alert(message);
+                }
+                return false;
+            }
         }
         
         // Validate that all days in the range are available
@@ -757,42 +1227,49 @@ function setupReservationSelection() {
         return true;
     });
     
-    // Setup cost calculator
+    // Setup cost calculator with improved event handling
     const startDateInput = document.getElementById('start_date');
     const endDateInput = document.getElementById('end_date');
-    const startTimeInput = document.getElementById('start_time');
-    const endTimeInput = document.getElementById('end_time');
     
     if (startDateInput && endDateInput) {
-        // Einfache Event-Listener für Wertänderungen hinzufügen, ohne den Setter zu überschreiben
-        startDateInput.addEventListener('input', updateReservationCosts);
-        endDateInput.addEventListener('input', updateReservationCosts);
+        // Flatpickr-Integration für die Kostenberechnung
+        function setupFlatpickrEvents() {
+            // Versuche, die Flatpickr-Instanzen zu finden
+            if (startDateInput._flatpickr) {
+                startDateInput._flatpickr.config.onChange.push(function(selectedDates, dateStr) {
+                    setTimeout(updateReservationCosts, 50);
+                });
+            }
+            
+            if (endDateInput._flatpickr) {
+                endDateInput._flatpickr.config.onChange.push(function(selectedDates, dateStr) {
+                    setTimeout(updateReservationCosts, 50);
+                });
+            }
+        }
         
-        // Update costs when dates change (durch MutationObserver)
-        const observer = new MutationObserver(function(mutations) {
-            updateReservationCosts();
+        // Versuche sofort und nach einer Verzögerung
+        setupFlatpickrEvents();
+        setTimeout(setupFlatpickrEvents, 500);
+        
+        // Standard-Event-Listener
+        startDateInput.addEventListener('change', function() {
+            setTimeout(updateReservationCosts, 50);
         });
         
-        observer.observe(startDateInput, { attributes: true });
-        observer.observe(endDateInput, { attributes: true });
+        endDateInput.addEventListener('change', function() {
+            setTimeout(updateReservationCosts, 50);
+        });
         
-        // Auch bei direkter Änderung aktualisieren
-        startDateInput.addEventListener('change', updateReservationCosts);
-        endDateInput.addEventListener('change', updateReservationCosts);
-        
-        // Auch bei Uhrzeitänderungen aktualisieren
-        if (startTimeInput) {
-            startTimeInput.addEventListener('change', updateReservationCosts);
-            startTimeInput.addEventListener('input', updateReservationCosts);
-        }
-        
-        if (endTimeInput) {
-            endTimeInput.addEventListener('change', updateReservationCosts);
-            endTimeInput.addEventListener('input', updateReservationCosts);
-        }
-        
-        // Initiale Berechnung
+        // Initiale Berechnung und Aktualisierung
         updateReservationCosts();
+        
+        // Regelmäßige Überprüfung, ob sich die Werte geändert haben
+        setInterval(function() {
+            if (startDateInput.value && endDateInput.value) {
+                updateReservationCosts();
+            }
+        }, 1000);
     }
 }
 
@@ -800,8 +1277,6 @@ function setupReservationSelection() {
 function updateReservationCosts() {
     const startDateInput = document.getElementById('start_date');
     const endDateInput = document.getElementById('end_date');
-    const startTimeInput = document.getElementById('start_time');
-    const endTimeInput = document.getElementById('end_time');
     const dayCountElement = document.getElementById('day-count');
     const totalCostElement = document.getElementById('total-cost');
     const baseCostElement = document.getElementById('base-cost');
@@ -810,40 +1285,251 @@ function updateReservationCosts() {
     
     // Only calculate if both dates are selected
     if (startDateInput.value && endDateInput.value) {
+        // Einfache, zuverlässige Methode zur Berechnung der Tage
+        try {
+            // Datumsobjekte erstellen (nur das Datum ohne Uhrzeit)
+            let startDateParts = startDateInput.value.split('-');
+            let endDateParts = endDateInput.value.split('-');
+            
+            // Stellen Sie sicher, dass wir gültige Werte haben
+            if (startDateParts.length < 3 || endDateParts.length < 3) {
+                throw new Error("Ungültiges Datumsformat");
+            }
+            
+            // Erstelle Datumsobjekte (Monat ist 0-basiert in JavaScript)
+            let startDateObj = new Date(
+                parseInt(startDateParts[0]), 
+                parseInt(startDateParts[1]) - 1, 
+                parseInt(startDateParts[2])
+            );
+            
+            let endDateObj = new Date(
+                parseInt(endDateParts[0]), 
+                parseInt(endDateParts[1]) - 1, 
+                parseInt(endDateParts[2])
+            );
+            
+            // Berechne die Tage manuell mit der einfachsten Methode
+            // Setze auf UTC-Zeit, um Probleme mit Sommerzeit zu vermeiden
+            const startUTC = Date.UTC(startDateObj.getFullYear(), startDateObj.getMonth(), startDateObj.getDate());
+            const endUTC = Date.UTC(endDateObj.getFullYear(), endDateObj.getMonth(), endDateObj.getDate());
+            
+            // Die Differenz in Millisekunden
+            const diffMilliseconds = Math.abs(endUTC - startUTC);
+            
+            // Umrechnung in Tage (1000 * 60 * 60 * 24 = Millisekunden in einem Tag)
+            const diffDays = Math.floor(diffMilliseconds / (1000 * 60 * 60 * 24));
+            
+            // +1 weil wir auch den ersten Tag zählen (inklusiv)
+            const days = diffDays + 1;
+            
+            // DEBUGGING: Füge temporär ein div hinzu, das anzeigt, was berechnet wurde
+            let debugInfo = `Start: ${startDateInput.value}, End: ${endDateInput.value}, Tage: ${days}`;
+            let debugDiv = document.getElementById('price-debug-info');
+            if (!debugDiv) {
+                debugDiv = document.createElement('div');
+                debugDiv.id = 'price-debug-info';
+                debugDiv.style.padding = '8px';
+                debugDiv.style.backgroundColor = '#f8f9fa';
+                debugDiv.style.fontSize = '12px';
+                debugDiv.style.marginTop = '10px';
+                
+                const costOverview = document.getElementById('cost-overview');
+                if (costOverview && costOverview.parentNode) {
+                    costOverview.parentNode.appendChild(debugDiv);
+                }
+            }
+            debugDiv.textContent = debugInfo;
+            
+            // Fetch current pricing information via AJAX
+            fetch('Helper/get_pricing_info.php')
+                .then(response => response.json())
+                .then(priceInfo => {
+                    // Use proper check to preserve 0 values
+                    const rate = (priceInfo.user_rate !== undefined && priceInfo.user_rate !== null) ? priceInfo.user_rate : 100;
+                    const totalCost = days * rate;
+                    
+                    // Format for display with German notation (comma for decimal)
+                    const formattedRate = rate.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    const formattedTotal = totalCost.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    
+                    // Update the UI
+                    dayCountElement.textContent = days;
+                    baseCostElement.textContent = formattedRate + '€';
+                    totalCostElement.textContent = formattedTotal + '€';
+                    
+                    // If we have special pricing, add a note
+                    const costOverview = document.getElementById('cost-overview');
+                    if (costOverview) {
+                        // Remove any existing special pricing notes
+                        const existingNote = document.querySelector('.special-price-note');
+                        if (existingNote) {
+                            existingNote.remove();
+                        }
+                        
+                        // Add a special note if using a special rate
+                        if (priceInfo.rate_type !== 'normal') {
+                            const noteText = priceInfo.rate_type === 'feuerwehr' ? 
+                                'Spezialpreis für Feuerwehr' : 'Spezialpreis für aktives Mitglied';
+                            
+                            const specialNote = document.createElement('li');
+                            specialNote.className = 'special-price-note text-success';
+                            const priceDisplay = priceInfo.rate_type === 'feuerwehr' ? '0,00€' : `${rate.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}€`;
+                            specialNote.innerHTML = `<i class="bi bi-check-circle"></i> ${noteText} (${priceDisplay})`;
+                            costOverview.appendChild(specialNote);
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error("API-Fehler:", error);
+                    // Fallback to local calculation
+                    const costOverview = document.getElementById('cost-overview');
+                    let defaultRate = 100; // Default fallback
+                    
+                    if (costOverview && costOverview.hasAttribute('data-user-rate')) {
+                        const userRateVal = parseFloat(costOverview.getAttribute('data-user-rate'));
+                        defaultRate = (!isNaN(userRateVal) && userRateVal !== null) ? userRateVal : 100;
+                    }
+                    
+                    const totalCost = days * defaultRate;
+                    
+                    // Format for display with German notation
+                    const formattedRate = defaultRate.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    const formattedTotal = totalCost.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    
+                    // Update UI
+                    dayCountElement.textContent = days;
+                    baseCostElement.textContent = formattedRate + '€';
+                    totalCostElement.textContent = formattedTotal + '€';
+                });
+        } catch (e) {
+            console.error("Fehler bei der Tagesberechnung:", e);
+            // Fallback zu einer einfacheren Methode
+            calculateDefaultCosts(startDateInput.value, endDateInput.value, dayCountElement, totalCostElement, baseCostElement);
+        }
+    } else {
+        // Default values if dates not selected
+        dayCountElement.textContent = '1';
+        
+        // Try to get default prices
+        fetch('Helper/get_pricing_info.php')
+            .then(response => response.json())
+            .then(priceInfo => {
+                // Use proper check to preserve 0 values
+                const rate = (priceInfo.user_rate !== undefined && priceInfo.user_rate !== null) ? priceInfo.user_rate : 100;
+                const formattedRate = rate.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                baseCostElement.textContent = formattedRate + '€';
+                totalCostElement.textContent = formattedRate + '€';
+                
+                // If we have special pricing, add a note
+                const costOverview = document.getElementById('cost-overview');
+                if (costOverview) {
+                    // Remove any existing special pricing notes
+                    const existingNote = document.querySelector('.special-price-note');
+                    if (existingNote) {
+                        existingNote.remove();
+                    }
+                    
+                    // Add a special note if using a special rate
+                    if (priceInfo.rate_type !== 'normal') {
+                        const noteText = priceInfo.rate_type === 'feuerwehr' ? 
+                            'Spezialpreis für Feuerwehr' : 'Spezialpreis für aktives Mitglied';
+                        
+                        const specialNote = document.createElement('li');
+                        specialNote.className = 'special-price-note text-success';
+                        const priceDisplay = priceInfo.rate_type === 'feuerwehr' ? '0,00€' : `${rate.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}€`;
+                        specialNote.innerHTML = `<i class="bi bi-check-circle"></i> ${noteText} (${priceDisplay})`;
+                        costOverview.appendChild(specialNote);
+                    }
+                }
+            })
+            .catch(() => {
+                // Try to get the user rate from the data attribute
+                const costOverview = document.getElementById('cost-overview');
+                let defaultRate = 100; // Default fallback
+                
+                if (costOverview && costOverview.hasAttribute('data-user-rate')) {
+                    const userRateVal = parseFloat(costOverview.getAttribute('data-user-rate'));
+                    defaultRate = (!isNaN(userRateVal) && userRateVal !== null) ? userRateVal : 100;
+                }
+                
+                // Format for display with German notation
+                const formattedRate = defaultRate.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                
+                // Hard fallback
+                baseCostElement.textContent = formattedRate + '€';
+                totalCostElement.textContent = formattedRate + '€';
+            });
+    }
+}
+
+// Fallback function for calculating costs with default values
+function calculateDefaultCosts(startDate, endDate, dayCountElement, totalCostElement, baseCostElement) {
+    try {
+        // Datumsobjekte erstellen (nur das Datum ohne Uhrzeit)
+        let startDateParts = startDate.split('-');
+        let endDateParts = endDate.split('-');
+        
+        // Stellen Sie sicher, dass wir gültige Werte haben
+        if (startDateParts.length < 3 || endDateParts.length < 3) {
+            throw new Error("Ungültiges Datumsformat");
+        }
+        
+        // Erstelle Datumsobjekte (Monat ist 0-basiert in JavaScript)
+        let startDateObj = new Date(
+            parseInt(startDateParts[0]), 
+            parseInt(startDateParts[1]) - 1, 
+            parseInt(startDateParts[2])
+        );
+        
+        let endDateObj = new Date(
+            parseInt(endDateParts[0]), 
+            parseInt(endDateParts[1]) - 1, 
+            parseInt(endDateParts[2])
+        );
+        
+        // Berechne die Tage manuell mit der einfachsten Methode
+        // Setze auf UTC-Zeit, um Probleme mit Sommerzeit zu vermeiden
+        const startUTC = Date.UTC(startDateObj.getFullYear(), startDateObj.getMonth(), startDateObj.getDate());
+        const endUTC = Date.UTC(endDateObj.getFullYear(), endDateObj.getMonth(), endDateObj.getDate());
+        
+        // Die Differenz in Millisekunden
+        const diffMilliseconds = Math.abs(endUTC - startUTC);
+        
+        // Umrechnung in Tage (1000 * 60 * 60 * 24 = Millisekunden in einem Tag)
+        const diffDays = Math.floor(diffMilliseconds / (1000 * 60 * 60 * 24));
+        
+        // +1 weil wir auch den ersten Tag zählen (inklusiv)
+        const days = diffDays + 1;
+        
+        // DEBUGGING: Füge temporär ein div hinzu, das anzeigt, was berechnet wurde
+        let debugInfo = `Start: ${startDate}, End: ${endDate}, Tage: ${days}`;
+        let debugDiv = document.getElementById('price-debug-info');
+        if (!debugDiv) {
+            debugDiv = document.createElement('div');
+            debugDiv.id = 'price-debug-info';
+            debugDiv.style.padding = '8px';
+            debugDiv.style.backgroundColor = '#f8f9fa';
+            debugDiv.style.fontSize = '12px';
+            debugDiv.style.marginTop = '10px';
+            
+            const costOverview = document.getElementById('cost-overview');
+            if (costOverview && costOverview.parentNode) {
+                costOverview.parentNode.appendChild(debugDiv);
+            }
+        }
+        debugDiv.textContent = debugInfo;
+        
         // Fetch current pricing information via AJAX
         fetch('Helper/get_pricing_info.php')
             .then(response => response.json())
             .then(priceInfo => {
-                // Erstelle vollständige Datums-Zeit-Objekte
-                let startDateTime = new Date(startDateInput.value);
-                let endDateTime = new Date(endDateInput.value);
-                
-                // Füge die Uhrzeiten hinzu, falls verfügbar
-                if (startTimeInput && startTimeInput.value) {
-                    const [startHours, startMinutes] = startTimeInput.value.split(':').map(Number);
-                    startDateTime.setHours(startHours, startMinutes, 0);
-                }
-                
-                if (endTimeInput && endTimeInput.value) {
-                    const [endHours, endMinutes] = endTimeInput.value.split(':').map(Number);
-                    endDateTime.setHours(endHours, endMinutes, 0);
-                }
-                
-                // Berechne die Differenz in Millisekunden
-                const diffTime = Math.abs(endDateTime - startDateTime);
-                
-                // Berechne die Anzahl der Tage als Dezimalzahl (z.B. 1,5 Tage)
-                const diffDays = diffTime / (24 * 60 * 60 * 1000);
-                
-                // Runde auf ganze Tage auf (mindestens 1 Tag)
-                const days = Math.max(1, Math.ceil(diffDays));
-                
-                // Get the user's rate from the price info
-                const dailyRate = priceInfo.user_rate || 100; // Default to 100€ if not available
-                const totalCost = days * dailyRate;
+                // Use proper check to preserve 0 values
+                const rate = (priceInfo.user_rate !== undefined && priceInfo.user_rate !== null) ? priceInfo.user_rate : 100;
+                const totalCost = days * rate;
                 
                 // Format for display with German notation (comma for decimal)
-                const formattedRate = dailyRate.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                const formattedRate = rate.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                 const formattedTotal = totalCost.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                 
                 // Update the UI
@@ -867,103 +1553,70 @@ function updateReservationCosts() {
                         
                         const specialNote = document.createElement('li');
                         specialNote.className = 'special-price-note text-success';
-                        specialNote.innerHTML = `<i class="bi bi-check-circle"></i> ${noteText}`;
+                        const priceDisplay = priceInfo.rate_type === 'feuerwehr' ? '0,00€' : `${rate.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}€`;
+                        specialNote.innerHTML = `<i class="bi bi-check-circle"></i> ${noteText} (${priceDisplay})`;
                         costOverview.appendChild(specialNote);
                     }
                 }
             })
             .catch(error => {
-                console.error('Error fetching pricing information:', error);
-                // Fallback to default calculation
-                calculateDefaultCosts(startDateTime, endDateTime, dayCountElement, totalCostElement, baseCostElement);
-            });
-    } else {
-        // Default values if dates not selected
-        dayCountElement.textContent = '1';
-        
-        // Try to get default prices
-        fetch('Helper/get_pricing_info.php')
-            .then(response => response.json())
-            .then(priceInfo => {
-                const rate = priceInfo.user_rate || 100;
-                const formattedRate = rate.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-                baseCostElement.textContent = formattedRate + '€';
-                totalCostElement.textContent = formattedRate + '€';
-            })
-            .catch(() => {
-                // Try to get the user rate from the data attribute
+                console.error("API-Fehler:", error);
+                // Fallback to local calculation
                 const costOverview = document.getElementById('cost-overview');
                 let defaultRate = 100; // Default fallback
                 
                 if (costOverview && costOverview.hasAttribute('data-user-rate')) {
-                    defaultRate = parseFloat(costOverview.getAttribute('data-user-rate')) || 100;
+                    const userRateVal = parseFloat(costOverview.getAttribute('data-user-rate'));
+                    defaultRate = (!isNaN(userRateVal) && userRateVal !== null) ? userRateVal : 100;
                 }
+                
+                const totalCost = days * defaultRate;
                 
                 // Format for display with German notation
                 const formattedRate = defaultRate.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                const formattedTotal = totalCost.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                 
-                // Hard fallback
+                // Update UI
+                dayCountElement.textContent = days;
                 baseCostElement.textContent = formattedRate + '€';
-                totalCostElement.textContent = formattedRate + '€';
+                totalCostElement.textContent = formattedTotal + '€';
             });
+    } catch (e) {
+        console.error("Fehler bei der Tagesberechnung:", e);
+        // Fallback zu einer einfacheren Methode
+        calculateDefaultCosts(startDate, endDate, dayCountElement, totalCostElement, baseCostElement);
     }
 }
 
-// Fallback function for calculating costs with default values
-function calculateDefaultCosts(startDateTime, endDateTime, dayCountElement, totalCostElement, baseCostElement) {
-    // Calculate days
-    const diffTime = Math.abs(endDateTime - startDateTime);
-    const diffDays = diffTime / (24 * 60 * 60 * 1000);
-    const days = Math.max(1, Math.ceil(diffDays));
+// Function to add key handover information to a day element
+function addKeyHandoverInfo(dayElement, keyInfo) {
+    let tooltipText = '';
     
-    // Try to get the user rate from the data attribute
-    const costOverview = document.getElementById('cost-overview');
-    let dailyRate = 100; // Default fallback
-    
-    if (costOverview && costOverview.hasAttribute('data-user-rate')) {
-        dailyRate = parseFloat(costOverview.getAttribute('data-user-rate')) || 100;
+    if (keyInfo.handover) {
+        tooltipText += `Schlüsselübergabe: ${keyInfo.handover} Uhr`;
+    }
+    if (keyInfo.return) {
+        if (tooltipText) tooltipText += '\n';
+        tooltipText += `Schlüsselrückgabe: ${keyInfo.return} Uhr`;
     }
     
-    const totalCost = days * dailyRate;
+    // Set tooltip or append to existing tooltip
+    if (dayElement.title) {
+        dayElement.title += '\n\n' + tooltipText;
+    } else {
+        dayElement.title = tooltipText;
+    }
     
-    // Format for display with German notation
-    const formattedRate = dailyRate.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    const formattedTotal = totalCost.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    // Add key indicator
+    const keyIndicator = document.createElement('span');
+    keyIndicator.className = 'key-indicator';
     
-    // Update UI
-    dayCountElement.textContent = days;
-    baseCostElement.textContent = formattedRate + '€';
-    totalCostElement.textContent = formattedTotal + '€';
+    if (keyInfo.handover && keyInfo.return) {
+        // Two keys if both handover and return on same day
+        keyIndicator.innerHTML = '<i class="bi bi-key"></i><i class="bi bi-key"></i>';
+    } else {
+        keyIndicator.innerHTML = '<i class="bi bi-key"></i>';
+    }
+    
+    dayElement.appendChild(keyIndicator);
 }
-
-// Check if booking meets minimum duration requirement (1 day)
-function isMinimumBookingDuration(startDateStr, endDateStr) {
-    if (!startDateStr || !endDateStr) return false;
-    
-    const startTimeInput = document.getElementById('start_time');
-    const endTimeInput = document.getElementById('end_time');
-    
-    // Erstelle vollständige Datums-Zeit-Objekte
-    let startDateTime = new Date(startDateStr);
-    let endDateTime = new Date(endDateStr);
-    
-    // Füge die Uhrzeiten hinzu, falls verfügbar
-    if (startTimeInput && startTimeInput.value) {
-        const [startHours, startMinutes] = startTimeInput.value.split(':').map(Number);
-        startDateTime.setHours(startHours, startMinutes, 0);
-    }
-    
-    if (endTimeInput && endTimeInput.value) {
-        const [endHours, endMinutes] = endTimeInput.value.split(':').map(Number);
-        endDateTime.setHours(endHours, endMinutes, 0);
-    }
-    
-    // Berechne die Differenz in Millisekunden
-    const diffTime = Math.abs(endDateTime - startDateTime);
-    
-    // Berechne die Anzahl der Tage als Dezimalzahl
-    const diffDays = diffTime / (24 * 60 * 60 * 1000);
-    
-    // Prüfe, ob mindestens 1 Tag gebucht wird
-    return diffDays >= 1;
-} 

@@ -25,7 +25,6 @@ class Database
         try {
             $this->conn = new PDO($dsn, $config['user'], $config['pass'], $options);
         } catch (PDOException $e) {
-            error_log("Datenbankverbindung fehlgeschlagen: " . $e->getMessage());
             die("Ein technischer Fehler ist aufgetreten. Bitte versuchen Sie es später erneut oder kontaktieren Sie den Administrator.");
         }
     }
