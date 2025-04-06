@@ -1167,7 +1167,8 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
                 "Sie können mit den Pfeilen über dem Kalender zwischen den Monaten wechseln, um andere Termine zu sehen."],
                 targetSelector: ".day.free:not(.other-month):not(.past), .day.key-handover:not(.other-month):not(.past)",
                 position: "right",
-                waitForAction: false
+                waitForAction: true,
+                validationField: "start_date"
             },
             {
                 title: "Schritt 3: Wie lange möchten Sie die Grillhütte nutzen?",
@@ -1178,7 +1179,8 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
                 "Für nur einen Tag (z.B. Samstag) wählen Sie denselben Tag in Schritt 2 und 3."],
                 targetSelector: ".day.free:not(.other-month):not(.past), .day.key-handover:not(.other-month):not(.past)",
                 position: "right",
-                waitForAction: false
+                waitForAction: true,
+                validationField: "end_date"
             },
             {
                 title: "Schritt 4: Quittung anfordern",
@@ -1702,6 +1704,31 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
         
         // Nächster Schritt
         function goToNextStep() {
+            // Validierung für bestimmte Schritte
+            if (currentStep === 1 || currentStep === 2) { // Schritt 2 oder 3
+                const step = guideSteps[currentStep];
+                
+                // Prüfen, ob das entsprechende Feld ausgefüllt ist
+                if (step.validationField) {
+                    const fieldValue = document.getElementById(step.validationField).value;
+                    
+                    // Wenn das Feld leer ist, Hinweis anzeigen und nicht weitergehen
+                    if (!fieldValue) {
+                        // Temporäre Nachricht einblenden
+                        const originalContent = guideStepContent.textContent;
+                        guideStepContent.innerHTML = `<span class="text-danger"><i class="bi bi-exclamation-triangle"></i> Bitte wählen Sie zuerst ein Datum aus, bevor Sie fortfahren.</span>`;
+                        
+                        // Nach 3 Sekunden zurücksetzen
+                        setTimeout(() => {
+                            guideStepContent.textContent = originalContent;
+                        }, 3000);
+                        
+                        return; // Nicht zum nächsten Schritt gehen
+                    }
+                }
+            }
+            
+            // Zum nächsten Schritt gehen, wenn die Validierung bestanden wurde
             if (currentStep < guideSteps.length - 1) {
                 currentStep++;
                 showCurrentStep();
@@ -1774,6 +1801,24 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
             const dayElement = e.target.closest('.day');
             const isPrevMonthBtn = e.target.closest('#prevMonth');
             const isNextMonthBtn = e.target.closest('#nextMonth');
+            
+            // Behandle Tag-Auswahl
+            if (dayElement && (currentStep === 1 || currentStep === 2)) { // Schritt 2 oder 3 (Datumsauswahl)
+                // Überprüfen, ob der aktuelle Schritt darauf wartet
+                const step = guideSteps[currentStep];
+                
+                if (step.waitForAction && step.validationField) {
+                    // Nach kurzer Verzögerung prüfen, ob das Feld jetzt ausgefüllt ist
+                    setTimeout(function() {
+                        const fieldValue = document.getElementById(step.validationField).value;
+                        
+                        // Wenn das Feld ausgefüllt wurde, automatisch zum nächsten Schritt gehen
+                        if (fieldValue) {
+                            goToNextStep();
+                        }
+                    }, 500); // Kurze Verzögerung, um sicherzustellen, dass das Datum gesetzt wurde
+                }
+            }
             
             // Behandle Monatsumschaltung
             if (isPrevMonthBtn || isNextMonthBtn) {
