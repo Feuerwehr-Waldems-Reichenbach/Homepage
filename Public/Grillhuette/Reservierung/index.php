@@ -634,7 +634,10 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
 <div id="guideTip" class="guide-tip">
     <div class="guide-tip-header">
         <span id="guideStepTitle">Schritt 1: Kalender ansehen</span>
-        <button id="closeGuideTip" class="close-btn">&times;</button>
+        <div class="guide-tip-actions">
+            <button id="minimizeGuideTip" class="minimize-btn" title="Minimieren"><i class="bi bi-dash"></i></button>
+            <button id="closeGuideTip" class="close-btn" title="Schließen">&times;</button>
+        </div>
     </div>
     <div id="guideStepContent" class="guide-tip-content">
         Schauen Sie sich den Kalender an, um verfügbare Tage zu sehen. Grün markierte Tage sind verfügbar. Sie können mit den Pfeilen zwischen den Monaten wechseln.
@@ -657,6 +660,13 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
             <button id="nextGuideStep" class="btn btn-sm btn-primary">Weiter</button>
         </div>
     </div>
+</div>
+
+<!-- Minimierter Guide-Button (wird eingeblendet, wenn Guide minimiert ist) -->
+<div id="minimizedGuide" class="minimized-guide">
+    <button id="expandGuide" class="btn btn-primary rounded-circle">
+        <i class="bi bi-question-lg"></i>
+    </button>
 </div>
 
 <style>
@@ -690,6 +700,41 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
         align-items: center;
         color: white; /* Weißer Text für besseren Kontrast */
         font-size: 18px; /* Größerer Titel */
+    }
+    
+    .guide-tip-actions {
+        display: flex;
+        align-items: center;
+    }
+    
+    .minimize-btn {
+        background: none;
+        border: none;
+        font-size: 24px;
+        color: white;
+        cursor: pointer;
+        padding: 0;
+        margin-right: 10px;
+        line-height: 1;
+    }
+    
+    /* Minimierter Zustand des Guides */
+    .minimized-guide {
+        position: fixed;
+        bottom: 80px;
+        right: 20px;
+        z-index: 1000;
+        display: none; /* Initial ausgeblendet */
+    }
+    
+    .minimized-guide button {
+        width: 50px;
+        height: 50px;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        font-size: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
     
     .guide-tip-content {
@@ -886,6 +931,74 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
             padding: 10px 16px; /* Noch größere Touch-Targets auf Mobilgeräten */
         }
     }
+    
+    /* Extra kleine Geräte wie kleine Smartphones */
+    @media (max-width: 375px) {
+        .guide-tip {
+            width: 90%; /* Relative Breite statt fester Breite */
+            bottom: 60px; /* Höher positionieren, damit mehr Inhalte sichtbar sind */
+            max-height: 60vh; /* Maximal 60% der Bildschirmhöhe */
+            overflow-y: auto; /* Scrollbar, wenn der Inhalt nicht passt */
+            font-size: 14px; /* Etwas kleinere Schrift */
+        }
+        
+        .guide-tip-header {
+            padding: 10px 12px; /* Kleineres Padding für Header */
+            font-size: 16px; /* Kleinerer Titel */
+        }
+        
+        .guide-tip-content,
+        .guide-tip-hint,
+        .guide-tip-multi-hints {
+            padding: 12px; /* Kleineres Padding für Inhalt */
+        }
+        
+        .guide-tip-footer {
+            padding: 10px; /* Kleineres Padding für Footer */
+        }
+        
+        /* Kompaktere Hinweise */
+        .guide-hints-list {
+            padding: 0 12px 10px 30px;
+        }
+        
+        .guide-buttons button {
+            padding: 8px 12px; /* Kompaktere Buttons */
+            font-size: 14px; /* Kleinere Schrift für Buttons */
+        }
+        
+        /* Reduzierte Schrittnummer für mehr Platz */
+        #stepCounter {
+            font-size: 13px;
+        }
+        
+        /* Leichtere Animation für bessere Performance auf mobilen Geräten */
+        .highlight-element {
+            animation: mobile-pulse 2s infinite !important;
+            border-width: 2px !important; /* Etwas dünnerer Rahmen für mobil */
+            box-shadow: 0 0 8px rgba(0, 123, 255, 0.5) !important; /* Weniger intensive Schatten */
+        }
+        
+        @keyframes mobile-pulse {
+            0% { box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.5); }
+            70% { box-shadow: 0 0 0 7px rgba(0, 123, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 123, 255, 0); }
+        }
+    }
+    
+    /* Tablet/mittlere Mobilgeräte */
+    @media (min-width: 376px) and (max-width: 768px) {
+        /* Optimierte Animation für Tablets */
+        .highlight-element {
+            animation: tablet-pulse 2s infinite !important;
+        }
+        
+        @keyframes tablet-pulse {
+            0% { box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.6); }
+            70% { box-shadow: 0 0 0 10px rgba(0, 123, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 123, 255, 0); }
+        }
+    }
 </style>
 
 <div id="overlayBackdrop" class="overlay-backdrop"></div>
@@ -896,6 +1009,9 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
         const guideBtn = document.getElementById('reservierungshilfeBtn');
         const guideTip = document.getElementById('guideTip');
         const closeGuideTipBtn = document.getElementById('closeGuideTip');
+        const minimizeGuideTipBtn = document.getElementById('minimizeGuideTip');
+        const expandGuideBtn = document.getElementById('expandGuide');
+        const minimizedGuide = document.getElementById('minimizedGuide');
         const nextGuideStepBtn = document.getElementById('nextGuideStep');
         const prevGuideStepBtn = document.getElementById('prevGuideStep');
         const guideStepTitle = document.getElementById('guideStepTitle');
@@ -909,6 +1025,7 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
         let currentStep = 0;
         let currentHighlightedElement = null;
         let isGuideActive = false;
+        let isGuideMinimized = false;
         
         // Definiere alle Schritte
         const guideSteps = [
@@ -1089,6 +1206,16 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
             endGuide();
         });
         
+        // Event-Listener zum Minimieren des Guides
+        minimizeGuideTipBtn.addEventListener('click', function() {
+            minimizeGuide();
+        });
+        
+        // Event-Listener zum Wiederherstellen des minimierten Guides
+        expandGuideBtn.addEventListener('click', function() {
+            expandGuide();
+        });
+        
         // Event-Listener für "Weiter"-Button
         nextGuideStepBtn.addEventListener('click', function() {
             goToNextStep();
@@ -1113,7 +1240,9 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
         // Funktion zum Beenden des Guides
         function endGuide() {
             isGuideActive = false;
+            isGuideMinimized = false;
             hideGuideTip();
+            minimizedGuide.style.display = 'none';
             removeHighlight();
             hideOverlay();
             
@@ -1190,6 +1319,9 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
             removeHighlight();
             
             const elements = document.querySelectorAll(selector);
+            const isMobile = window.innerWidth <= 768;
+            const isSmallMobile = window.innerWidth <= 375;
+            
             if (elements.length > 0) {
                 // Bei den Schritten zur Datumsauswahl alle verfügbaren Tage hervorheben
                 if (currentStep === 1 || currentStep === 2) {
@@ -1203,11 +1335,29 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
                     if (prevMonthBtn) prevMonthBtn.classList.add('highlight-element');
                     if (nextMonthBtn) nextMonthBtn.classList.add('highlight-element');
                     
-                    // Scrolle zum ersten Element, damit der Benutzer weiß, wo er anfangen kann
-                    elements[0].scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'center'
-                    });
+                    // Angepasstes Scrollverhalten für mobile Geräte
+                    if (isMobile) {
+                        // Scrolle etwas höher auf mobilen Geräten, um Platz für das Popup zu lassen
+                        const scrollOptions = {
+                            behavior: 'smooth',
+                            block: isSmallMobile ? 'start' : 'center' // Kleiner Bildschirm: mehr nach oben scrollen
+                        };
+                        
+                        // Zum Kalender-Container scrollen statt zum ersten Element
+                        const calendarContainer = document.querySelector('.calendar-container');
+                        if (calendarContainer) {
+                            calendarContainer.scrollIntoView(scrollOptions);
+                        } else {
+                            // Fallback: Zum ersten Element scrollen
+                            elements[0].scrollIntoView(scrollOptions);
+                        }
+                    } else {
+                        // Desktop-Verhalten: Scrollen zum ersten Element
+                        elements[0].scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'center'
+                        });
+                    }
                 } 
                 // Bei Formularfeldern das gesamte Label mit dem Kästchen hervorheben
                 else if (selector.includes('label[for=') || selector.includes('#receipt_requested') || selector.includes('#is_public') || selector.includes('#show_date_range')) {
@@ -1251,22 +1401,67 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
                         }
                     });
                     
-                    // Stelle sicher, dass das Element sichtbar ist
-                    elements[0].scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'center'
-                    });
+                    // Angepasstes Scrollverhalten für mobile Geräte
+                    if (isMobile) {
+                        const scrollTarget = elements[0];
+                        
+                        // Position berechnen, um ausreichend Abstand für das Popup zu lassen
+                        if (isSmallMobile) {
+                            // Auf kleinen Geräten weiter nach oben scrollen
+                            const rect = scrollTarget.getBoundingClientRect();
+                            const targetTop = rect.top + window.scrollY;
+                            
+                            // Sanft zu einer Position scrollen, die Abstand zum Popup lässt
+                            window.scrollTo({
+                                top: targetTop - 120, // Mehr Abstand nach oben
+                                behavior: 'smooth'
+                            });
+                        } else {
+                            // Normales mobiles Scrollverhalten
+                            scrollTarget.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'center'
+                            });
+                        }
+                    } else {
+                        // Desktop-Verhalten
+                        elements[0].scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'center'
+                        });
+                    }
                 }
                 else {
                     // Bei anderen Schritten nur das erste Element hervorheben
                     currentHighlightedElement = elements[0];
                     currentHighlightedElement.classList.add('highlight-element');
                     
-                    // Stelle sicher, dass das Element sichtbar ist
-                    currentHighlightedElement.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'center'
-                    });
+                    // Angepasstes Scrollverhalten für mobile Geräte
+                    if (isMobile) {
+                        // Position berechnen, um ausreichend Abstand für das Popup zu lassen
+                        if (isSmallMobile) {
+                            const rect = currentHighlightedElement.getBoundingClientRect();
+                            const targetTop = rect.top + window.scrollY;
+                            
+                            // Sanft zu einer Position scrollen, die Abstand zum Popup lässt
+                            window.scrollTo({
+                                top: targetTop - 120, // Mehr Abstand nach oben
+                                behavior: 'smooth'
+                            });
+                        } else {
+                            // Normales mobiles Scrollverhalten
+                            currentHighlightedElement.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'center'
+                            });
+                        }
+                    } else {
+                        // Desktop-Verhalten
+                        currentHighlightedElement.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'center'
+                        });
+                    }
                 }
             }
         }
@@ -1292,6 +1487,7 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
             }
             
             const isMobile = window.innerWidth <= 768;
+            const isSmallMobile = window.innerWidth <= 375;
             
             // Element für die Positionierung auswählen
             let element;
@@ -1317,7 +1513,29 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
                 guideTip.style.top = 'auto';
                 guideTip.style.left = '50%';
                 guideTip.style.transform = 'translateX(-50%)';
-                guideTip.style.bottom = '20px';
+                
+                // Anpassung der Position basierend auf Bildschirmgröße
+                if (isSmallMobile) {
+                    // Auf sehr kleinen Bildschirmen höher positionieren, um mehr Platz für Inhalte zu lassen
+                    guideTip.style.bottom = '60px';
+                    
+                    // Stellen wir sicher, dass das hervorgehobene Element sichtbar ist
+                    // und genug Abstand zum Popup-Dialog besteht
+                    const viewportHeight = window.innerHeight;
+                    const elementBottom = rect.bottom;
+                    
+                    // Wenn das Element zu weit unten ist, scrolle es höher in die Mitte
+                    if (elementBottom > viewportHeight - 150) {
+                        const scrollTarget = window.scrollY + (elementBottom - (viewportHeight - 200));
+                        window.scrollTo({
+                            top: scrollTarget,
+                            behavior: 'smooth'
+                        });
+                    }
+                } else {
+                    // Auf normalen Mobilgeräten weiter unten positionieren
+                    guideTip.style.bottom = '20px';
+                }
             } else {
                 // Auf Desktop je nach Position
                 switch (position) {
@@ -1375,6 +1593,33 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
         // Guide-Tooltip ausblenden
         function hideGuideTip() {
             guideTip.style.display = 'none';
+        }
+        
+        // Guide minimieren
+        function minimizeGuide() {
+            isGuideMinimized = true;
+            guideTip.style.display = 'none';
+            minimizedGuide.style.display = 'block';
+            
+            // Wenn auf mobilen Geräten
+            if (window.innerWidth <= 768) {
+                // Overlay leicht transparent machen
+                overlayBackdrop.style.opacity = '0.2';
+            }
+        }
+        
+        // Guide wiederherstellen
+        function expandGuide() {
+            isGuideMinimized = false;
+            guideTip.style.display = 'block';
+            minimizedGuide.style.display = 'none';
+            
+            // Overlay wieder normal
+            overlayBackdrop.style.opacity = '0.4';
+            
+            // Aktuellen Schritt erneut anzeigen (um die Position zu aktualisieren)
+            const step = guideSteps[currentStep];
+            positionGuideTip(step.targetSelector, step.position);
         }
         
         // Overlay anzeigen
