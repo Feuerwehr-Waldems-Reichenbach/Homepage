@@ -7,7 +7,7 @@
                     <div class="map-wrapper">
                         <div class="map-header d-flex justify-content-between align-items-center mb-2">
                             <h5 class="m-0"><i class="bi bi-geo-alt-fill me-2"></i>Standort Grillhütte Reichenbach</h5>
-                            <a href="https://goo.gl/maps/xDVCv6XdRXdKwKsG7" target="_blank" class="btn btn-sm btn-outline-light">
+                            <a href="https://maps.app.goo.gl/B33Pk2xZeHWrdPQL9" target="_blank" class="btn btn-sm btn-outline-light">
                                 <i class="bi bi-box-arrow-up-right me-1"></i>Google Maps öffnen
                             </a>
                         </div>
@@ -52,10 +52,13 @@
                         <a href="<?php echo getRelativePath('Nutzungsbedingungen'); ?>" class="text-white me-3 mb-2">
                             <i class="bi bi-file-text me-1"></i>Nutzungsbedingungen
                         </a>
-                        <a href="/Datenschutz" class="text-white me-3 mb-2">
+                        <a href="<?php echo getRelativePath('Anleitung'); ?>" class="text-white me-3 mb-2">
+                            <i class="bi bi-question-circle me-1"></i>Anleitung
+                        </a>
+                        <a href="<?php echo getRelativePath('Datenschutz'); ?>" class="text-white me-3 mb-2">
                             <i class="bi bi-shield-lock me-1"></i>Datenschutz
                         </a>
-                        <a href="/Impressum" class="text-white mb-2">
+                        <a href="<?php echo getRelativePath('Impressum'); ?>" class="text-white mb-2">
                             <i class="bi bi-info-circle me-1"></i>Impressum
                         </a>
                     </div>

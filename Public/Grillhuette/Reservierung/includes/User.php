@@ -6,7 +6,7 @@ class User {
         $this->db = Database::getInstance()->getConnection();
     }
     
-    public function register($email, $password, $firstName, $lastName, $phone = null) {
+    public function register($email, $password, $firstName, $lastName, $phone) {
         try {
             // Prüfen, ob E-Mail bereits existiert
             $stmt = $this->db->prepare("SELECT id FROM gh_users WHERE email = ?");
@@ -33,7 +33,7 @@ class User {
             
             // E-Mail zur Verifikation senden
             $subject = 'Bestätigen Sie Ihre E-Mail-Adresse';
-            $verifyUrl = 'https://' . $_SERVER['HTTP_HOST'] . getRelativePath('Benutzer/Verifizieren') . '?token=' . $verificationToken;
+            $verifyUrl = buildUrl(getRelativePath('Benutzer/Verifizieren') . '?token=' . $verificationToken);
             
             $body = '
                 <!DOCTYPE html>
@@ -295,7 +295,7 @@ class User {
             
             // E-Mail senden
             $subject = 'Zurücksetzen Ihres Passworts';
-            $resetUrl = 'https://' . $_SERVER['HTTP_HOST'] . getRelativePath('Benutzer/Passwort-zuruecksetzen') . '?token=' . $token;
+            $resetUrl = buildUrl(getRelativePath('Benutzer/Passwort-zuruecksetzen') . '?token=' . $token);
             
             $body = '
                 <!DOCTYPE html>
@@ -526,7 +526,7 @@ class User {
             
             // E-Mail zur Verifikation senden
             $subject = 'Bestätigen Sie Ihre neue E-Mail-Adresse';
-            $verifyUrl = 'https://' . $_SERVER['HTTP_HOST'] . getRelativePath('Benutzer/Verifizieren') . '?token=' . $verificationToken;
+            $verifyUrl = buildUrl(getRelativePath('Benutzer/Verifizieren') . '?token=' . $verificationToken);
             
             $body = '
                 <!DOCTYPE html>
@@ -700,7 +700,7 @@ class User {
         }
     }
 
-    public function createUserByAdmin($email, $password, $firstName, $lastName, $phone = null, $isAdmin = 0, $isVerified = 1, $isAktivesMitglied = 0, $isFeuerwehr = 0) {
+    public function createUserByAdmin($email, $password, $firstName, $lastName, $phone, $isAdmin = 0, $isVerified = 1, $isAktivesMitglied = 0, $isFeuerwehr = 0) {
         try {
             // Get the current admin user who is creating the new user
             $adminId = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
@@ -850,7 +850,7 @@ class User {
         }
     }
     
-    public function updateUser($userId, $email, $firstName, $lastName, $phone = null, $isAdmin = 0, $newPassword = null, $isVerified = 1, $isAktivesMitglied = 0, $isFeuerwehr = 0) {
+    public function updateUser($userId, $email, $firstName, $lastName, $phone, $isAdmin = 0, $newPassword = null, $isVerified = 1, $isAktivesMitglied = 0, $isFeuerwehr = 0) {
         try {
             // Get the current admin user who is updating the user
             $adminId = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
@@ -1208,7 +1208,7 @@ class User {
             
             // E-Mail zur Verifikation senden
             $subject = 'Bestätigen Sie Ihre E-Mail-Adresse';
-            $verifyUrl = 'https://' . $_SERVER['HTTP_HOST'] . getRelativePath('Benutzer/Verifizieren') . '?token=' . $verificationToken;
+            $verifyUrl = buildUrl(getRelativePath('Benutzer/Verifizieren') . '?token=' . $verificationToken);
             
             $body = '
                 <!DOCTYPE html>

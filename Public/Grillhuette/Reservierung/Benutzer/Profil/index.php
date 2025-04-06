@@ -341,8 +341,8 @@ require_once '../../includes/header.php';
                             </div>
                             
                             <div class="mb-3">
-                                <label for="phone" class="form-label">Telefonnummer (optional)</label>
-                                <input type="tel" class="form-control" id="phone" name="phone" value="<?php echo escape($userData['phone']); ?>">
+                                <label for="phone" class="form-label">Telefonnummer</label>
+                                <input type="tel" class="form-control" id="phone" name="phone" value="<?php echo escape($userData['phone']); ?>" required>
                             </div>
                             
                             <button type="submit" class="btn btn-primary">Aktualisieren</button>

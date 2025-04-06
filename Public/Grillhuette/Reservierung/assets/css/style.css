@@ -350,11 +350,15 @@ body {
 }
 
 .calendar .day {
-    height: 60px;
-    width: calc(100% / 7);
-    position: relative;
+    padding: 10px;
+    border: 1px solid #e0e0e0;
+    height: 70px;
     cursor: pointer;
-    transition: background-color 0.2s;
+    position: relative;
+    overflow: hidden;
+    background-color: #d4edda; /* Grün für freie Tage */
+    color: #343a40;
+    transition: all 0.3s ease;
 }
 
 .calendar .day:hover {
@@ -395,8 +399,8 @@ body {
 }
 
 .calendar .day.other-month {
-    color: #adb5bd;
-    background-color: #f8f9fa;
+    opacity: 0.3;
+    cursor: default;
 }
 
 .calendar .date-number {
@@ -404,6 +408,80 @@ body {
     top: 5px;
     left: 5px;
     font-size: 0.8em;
+}
+
+/* Schlüsselübergabe-Anzeige */
+.calendar .day.key-handover {
+    background-color: #cce5ff; /* Hellblau für Schlüsselübergabetage */
+    position: relative;
+    cursor: pointer; /* Zeigt an, dass der Tag auswählbar ist */
+    border: 1px dashed #0d6efd; /* Gestrichelte Umrandung für visuelle Unterscheidung */
+}
+
+.calendar .day.key-handover:hover {
+    background-color: #e6f2ff;
+    border-style: solid;
+}
+
+.calendar .day.key-handover.selected {
+    background-color: #b8daff;
+    border: 2px solid #0d6efd;
+}
+
+.day .key-indicator {
+    position: absolute;
+    right: 3px;
+    top: 3px;
+    font-size: 10px;
+    color: #0d6efd;
+    background: rgba(230, 242, 255, 0.9);
+    border-radius: 3px;
+    padding: 1px 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+}
+
+.day .key-indicator i {
+    margin-right: 1px;
+}
+
+/* Tooltip-Styling für Zeitbeschränkungen */
+.calendar .day[data-time-restrictions] {
+    position: relative;
+}
+
+.calendar .day[data-time-restrictions]:hover::after {
+    content: attr(title);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 1000;
+}
+
+/* Mobile-Optimierungen für Schlüsselübergabe-Tage */
+@media (max-width: 768px) {
+    .calendar .day.key-handover {
+        border-width: 2px;
+    }
+    
+    .day .key-indicator {
+        font-size: 8px;
+        padding: 1px 2px;
+    }
+    
+    /* Verstecke komplexe Hover-Effekte auf Mobilgeräten */
+    .calendar .day[data-time-restrictions]:hover::after {
+        display: none;
+    }
 }
 
 /* Card styles */
@@ -839,4 +917,23 @@ body {
         padding-bottom: max(1.5rem, env(safe-area-inset-bottom)); /* Add padding to footer instead */
         margin-bottom: 0 !important;
     }
+}
+
+/* Legende für Schlüsselübergabe */
+.key-handover-legend {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.key-handover-legend .key-icon {
+    margin-right: 8px;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #cce5ff;
+    border-radius: 3px;
+    color: #0d6efd;
 } 

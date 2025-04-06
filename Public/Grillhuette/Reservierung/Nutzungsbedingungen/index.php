@@ -71,7 +71,7 @@ require_once '../includes/header.php';
                     <ul>
                         <li>Vor- und Nachname</li>
                         <li>E-Mail-Adresse</li>
-                        <li>Telefonnummer (optional)</li>
+                        <li>Telefonnummer</li>
                         <li>Reservierungsdetails (Datum, Uhrzeit, Dauer)</li>
                     </ul>
                     <p>Diese Daten werden ausschließlich zum Zweck der Abwicklung des Vertragsverhältnisses gespeichert und verarbeitet. Eine Weitergabe an Dritte erfolgt nur, soweit dies zur Vertragserfüllung notwendig ist oder gesetzliche Pflichten dies erfordern.</p>

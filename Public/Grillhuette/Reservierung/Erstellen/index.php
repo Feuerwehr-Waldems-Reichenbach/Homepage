@@ -23,9 +23,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Formularfelder validieren
     $startDate = isset($_POST['start_date']) ? trim($_POST['start_date']) : '';
     $endDate = isset($_POST['end_date']) ? trim($_POST['end_date']) : '';
-    $startTime = isset($_POST['start_time']) ? trim($_POST['start_time']) : '12:00';
-    $endTime = isset($_POST['end_time']) ? trim($_POST['end_time']) : '12:00';
     $message = isset($_POST['message']) ? trim($_POST['message']) : null;
+    $receiptRequested = isset($_POST['receipt_requested']) ? 1 : 0;
+    
+    // New fields for public events
+    $isPublic = isset($_POST['is_public']) ? 1 : 0;
+    $eventName = null;
+    $displayStartDate = null;
+    $displayEndDate = null;
+    
+    // Only process these if it's a public event
+    if ($isPublic) {
+        $eventName = isset($_POST['event_name']) ? trim($_POST['event_name']) : null;
+        $displayStartDate = isset($_POST['display_start_date']) ? trim($_POST['display_start_date']) : null;
+        $displayEndDate = isset($_POST['display_end_date']) ? trim($_POST['display_end_date']) : null;
+        
+        // Validate event name for public events
+        if (empty($eventName)) {
+            $_SESSION['flash_message'] = 'Bitte geben Sie einen Veranstaltungsnamen für öffentliche Reservierungen ein.';
+            $_SESSION['flash_type'] = 'danger';
+            header('Location: ' . getRelativePath('home'));
+            exit;
+        }
+        
+        // Validate display dates
+        if (empty($displayStartDate) || empty($displayEndDate)) {
+            $_SESSION['flash_message'] = 'Bitte wählen Sie ein Anzeige-Start und -Enddatum für öffentliche Reservierungen.';
+            $_SESSION['flash_type'] = 'danger';
+            header('Location: ' . getRelativePath('home'));
+            exit;
+        }
+        
+        // Validate that display dates are within reservation period
+        if (strtotime($displayStartDate) < strtotime($startDate) || 
+            strtotime($displayEndDate) > strtotime($endDate)) {
+            $_SESSION['flash_message'] = 'Die Anzeigedaten müssen innerhalb des Reservierungszeitraums liegen.';
+            $_SESSION['flash_type'] = 'danger';
+            header('Location: ' . getRelativePath('home'));
+            exit;
+        }
+    }
     
     // Datumsvalidierung
     if (empty($startDate) || empty($endDate)) {
@@ -35,18 +72,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
     
-    // Zeitvalidierung
-    if (!preg_match('/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/', $startTime) || 
-        !preg_match('/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/', $endTime)) {
-        $_SESSION['flash_message'] = 'Bitte geben Sie gültige Uhrzeiten ein (Format: HH:MM).';
-        $_SESSION['flash_type'] = 'danger';
-        header('Location: ' . getRelativePath('home'));
-        exit;
-    }
-    
-    // Start- und Enddatum mit Uhrzeit kombinieren
-    $startDatetime = $startDate . ' ' . $startTime . ':00';
-    $endDatetime = $endDate . ' ' . $endTime . ':00';
+    // Standardzeiten setzen (00:00 für Startdatum, 23:59 für Enddatum)
+    // um ganze Tage zu buchen
+    $startDatetime = $startDate . ' 00:00:00';
+    $endDatetime = $endDate . ' 23:59:59';
     
     // Überprüfen, ob das Enddatum nach dem Startdatum liegt
     if (strtotime($endDatetime) <= strtotime($startDatetime)) {
@@ -57,17 +86,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     
     // Überprüfen, ob der Mindestbuchungszeitraum von 1 Tag eingehalten wird
-    $startDate = new DateTime($startDatetime);
-    $endDate = new DateTime($endDatetime);
+    $startDt = new DateTime($startDatetime);
+    $endDt = new DateTime($endDatetime);
     
-    // Berechne die Differenz in Sekunden
-    $diffSeconds = $endDate->getTimestamp() - $startDate->getTimestamp();
-    
-    // Berechne die Anzahl der Tage als Dezimalzahl
-    $diffDays = $diffSeconds / (24 * 60 * 60);
-    
-    // Runde auf ganze Tage auf
-    $days = ceil($diffDays);
+    // Berechne die Differenz in Tagen
+    $diff = $startDt->diff($endDt);
+    $days = $diff->days + 1; // +1 weil wir inklusive Start- und Enddatum rechnen
     
     if ($days < 1) {
         $_SESSION['flash_message'] = 'Der Mindestbuchungszeitraum beträgt 1 Tag.';
@@ -78,7 +102,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     // Reservierung erstellen
     $reservation = new Reservation();
-    $result = $reservation->create($_SESSION['user_id'], $startDatetime, $endDatetime, $message);
+    $result = $reservation->create(
+        $_SESSION['user_id'], 
+        $startDatetime, 
+        $endDatetime, 
+        $message, 
+        $receiptRequested,
+        $isPublic,
+        $eventName,
+        $displayStartDate,
+        $displayEndDate
+    );
     
     if ($result['success']) {
         $_SESSION['flash_message'] = $result['message'];
