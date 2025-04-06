@@ -643,11 +643,17 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
         Schauen Sie sich den Kalender an, um verfügbare Tage zu sehen. Grün markierte Tage sind verfügbar. Sie können mit den Pfeilen zwischen den Monaten wechseln.
     </div>
     <div id="guideStepHint" class="guide-tip-hint">
-        <i class="bi bi-info-circle"></i> <span id="hintText">Wichtiger Hinweis</span>
+        <div class="hint-toggle">
+            <i class="bi bi-chevron-down"></i> <span>Wichtiger Hinweis</span>
+        </div>
+        <div class="hint-content">
+            <i class="bi bi-info-circle"></i> <span id="hintText">Wichtiger Hinweis</span>
+        </div>
     </div>
     <div id="guideStepMultiHints" class="guide-tip-multi-hints" style="display: none;">
         <div class="guide-hint-header">
-            <i class="bi bi-info-circle"></i> Wichtige Hinweise:
+            <span><i class="bi bi-info-circle"></i> Wichtige Hinweise:</span>
+            <i class="bi bi-chevron-down toggle-icon"></i>
         </div>
         <ul id="hintsList" class="guide-hints-list">
             <!-- Hints will be inserted here dynamically -->
@@ -756,6 +762,27 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
         margin-right: 8px;
     }
     
+    /* Toggle für Hinweise auf Mobilgeräten */
+    .hint-toggle {
+        display: none; /* Standard: nicht anzeigen */
+        cursor: pointer;
+        font-weight: bold;
+        user-select: none;
+    }
+    
+    .hint-toggle i {
+        transition: transform 0.3s ease;
+    }
+    
+    .hint-toggle.collapsed i {
+        transform: rotate(-90deg);
+    }
+    
+    .hint-content {
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+    }
+    
     /* Styling for multiple hints */
     .guide-tip-multi-hints {
         padding: 0;
@@ -770,11 +797,26 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
     .guide-hint-header {
         padding: 12px 16px 8px;
         font-weight: bold;
+        cursor: pointer;
+        user-select: none;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .guide-hint-header i.toggle-icon {
+        transition: transform 0.3s ease;
+    }
+    
+    .guide-hint-header.collapsed i.toggle-icon {
+        transform: rotate(-90deg);
     }
     
     .guide-hints-list {
         margin: 0;
         padding: 0 16px 12px 36px;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
     }
     
     .guide-hints-list li {
@@ -1020,6 +1062,87 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
         const hintText = document.getElementById('hintText');
         const stepCounter = document.getElementById('stepCounter');
         const overlayBackdrop = document.getElementById('overlayBackdrop');
+        const hintToggle = document.querySelector('.hint-toggle');
+        const hintContent = document.querySelector('.hint-content');
+        const multiHintsHeader = document.querySelector('.guide-hint-header');
+        const multiHintsList = document.querySelector('.guide-hints-list');
+        
+        // Variablen für den Zustand der Hinweise
+        let isHintCollapsed = window.innerWidth <= 768; // Auf Mobilgeräten standardmäßig eingeklappt
+        let isMultiHintsCollapsed = window.innerWidth <= 768; // Auf Mobilgeräten standardmäßig eingeklappt
+        
+        // Event-Listener für Hint-Toggle
+        if (hintToggle) {
+            hintToggle.addEventListener('click', function() {
+                toggleHint();
+            });
+        }
+        
+        // Event-Listener für Multi-Hints-Toggle
+        if (multiHintsHeader) {
+            multiHintsHeader.addEventListener('click', function() {
+                toggleMultiHints();
+            });
+        }
+        
+        // Funktion zum Umschalten des Hinweis-Zustands
+        function toggleHint() {
+            isHintCollapsed = !isHintCollapsed;
+            updateHintVisibility();
+        }
+        
+        // Funktion zum Umschalten der Multi-Hinweise
+        function toggleMultiHints() {
+            isMultiHintsCollapsed = !isMultiHintsCollapsed;
+            updateMultiHintsVisibility();
+        }
+        
+        // Aktualisieren der Sichtbarkeit des Hinweises
+        function updateHintVisibility() {
+            if (isHintCollapsed) {
+                hintContent.style.maxHeight = '0';
+                hintToggle.classList.add('collapsed');
+            } else {
+                hintContent.style.maxHeight = hintContent.scrollHeight + 'px';
+                hintToggle.classList.remove('collapsed');
+            }
+        }
+        
+        // Aktualisieren der Sichtbarkeit der Multi-Hinweise
+        function updateMultiHintsVisibility() {
+            if (isMultiHintsCollapsed) {
+                multiHintsList.style.maxHeight = '0';
+                multiHintsHeader.classList.add('collapsed');
+            } else {
+                multiHintsList.style.maxHeight = multiHintsList.scrollHeight + 'px';
+                multiHintsHeader.classList.remove('collapsed');
+            }
+        }
+        
+        // Funktion zum Initialisieren der Ansicht basierend auf der Gerätebreite
+        function initializeHintsView() {
+            const isMobile = window.innerWidth <= 768;
+            
+            // Anzeigen oder Ausblenden der Toggle-Elemente basierend auf der Bildschirmgröße
+            if (isMobile) {
+                if (hintToggle) hintToggle.style.display = 'block';
+                isHintCollapsed = true;
+                isMultiHintsCollapsed = true;
+            } else {
+                if (hintToggle) hintToggle.style.display = 'none';
+                isHintCollapsed = false;
+                isMultiHintsCollapsed = false;
+            }
+            
+            // Anfangszustand aktualisieren
+            if (hintContent) updateHintVisibility();
+            if (multiHintsList) updateMultiHintsVisibility();
+        }
+        
+        // Beim Fenstergrößenwechsel den Zustand aktualisieren
+        window.addEventListener('resize', function() {
+            initializeHintsView();
+        });
         
         // Aktueller Schritt
         let currentStep = 0;
@@ -1101,7 +1224,7 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
             {
                 title: "Schritt 7: Reservierung anfragen",
                 content: "Überprüfen Sie die Kostenübersicht und klicken Sie auf 'Reservierung anfragen', um Ihre Buchung abzuschließen.",
-                hint: "Wichtiger Hinweis: Nach dem Absenden erhalten Sie eine Eingangsbestätigung per E-Mail.",
+                hints: ["Wichtiger Hinweis: Nach dem Absenden erhalten Sie eine Eingangsbestätigung per E-Mail."],
                 targetSelector: "button[type='submit']",
                 position: "left",
                 waitForAction: false
@@ -1231,6 +1354,7 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
             isGuideActive = true;
             currentStep = 0;
             showOverlay();
+            initializeHintsView(); // Initialisiere den Zustand der Hinweise
             showCurrentStep();
             
             // Füge eine Klasse zum body hinzu, um Hover-Effekte zu deaktivieren
@@ -1268,6 +1392,14 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
                 hintText.textContent = step.hint.replace("Wichtiger Hinweis: ", "");
                 guideStepHint.style.display = 'block';
                 document.getElementById('guideStepMultiHints').style.display = 'none';
+                
+                // Update toggle text for single hint
+                if (hintToggle) {
+                    hintToggle.querySelector('span').textContent = 'Wichtiger Hinweis';
+                }
+                
+                // Ensure hint visibility is correct
+                setTimeout(updateHintVisibility, 0);
             } else if (step.hints && Array.isArray(step.hints) && step.hints.length > 0) {
                 // Multi-hints handling
                 const hintsList = document.getElementById('hintsList');
@@ -1283,6 +1415,9 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
                 // Show multi-hints, hide single hint
                 document.getElementById('guideStepMultiHints').style.display = 'block';
                 guideStepHint.style.display = 'none';
+                
+                // Ensure multi-hints visibility is correct
+                setTimeout(updateMultiHintsVisibility, 0);
             } else {
                 // No hints at all
                 guideStepHint.style.display = 'none';
