@@ -47,7 +47,8 @@ require_once '../includes/header.php';
                         
                         <div class="alert alert-info">
                             <strong>Wichtiger Hinweis:</strong> Um das Reservierungssystem nutzen zu können, müssen Sie 
-                            sich registrieren und Ihre E-Mail-Adresse bestätigen.
+                            sich registrieren und Ihre E-Mail-Adresse bestätigen. Die Anmelde- und Registrierungsschaltflächen 
+                            finden Sie oben rechts in der Navigationsleiste.
                         </div>
                         
                         <h4 class="mt-4">Systemanforderungen</h4>
@@ -69,7 +70,7 @@ require_once '../includes/header.php';
                         <p>Um das Reservierungssystem nutzen zu können, müssen Sie sich zunächst registrieren:</p>
                         
                         <ol class="mb-4">
-                            <li>Klicken Sie auf der Startseite des Reservierungssystems auf den Button <strong>"Registrieren"</strong>.</li>
+                            <li>Klicken Sie auf den Button <strong>"Registrieren"</strong> in der oberen Navigationsleiste.</li>
                             <li>Geben Sie Ihre persönlichen Daten in das Registrierungsformular ein:
                                 <ul>
                                     <li>Vorname und Nachname</li>
@@ -102,7 +103,7 @@ require_once '../includes/header.php';
                         <p>Nach erfolgreicher Registrierung können Sie sich mit Ihrer E-Mail-Adresse und Ihrem Passwort anmelden:</p>
                         
                         <ol>
-                            <li>Klicken Sie auf der Startseite auf den Button <strong>"Anmelden"</strong>.</li>
+                            <li>Klicken Sie in der Navigationsleiste auf den Button <strong>"Anmelden"</strong>.</li>
                             <li>Geben Sie Ihre E-Mail-Adresse und Ihr Passwort ein.</li>
                             <li>Klicken Sie auf <strong>"Anmelden"</strong>.</li>
                         </ol>
@@ -127,7 +128,7 @@ require_once '../includes/header.php';
                         </p>
                         
                         <ol>
-                            <li>Im Menü <strong>"Mein Profil"</strong> auswählen.</li>
+                            <li>Im Dropdown-Menü <strong>"Mein Bereich"</strong> auf <strong>"Mein Profil"</strong> klicken.</li>
                             <li>Auf der Profilseite können Sie:
                                 <ul>
                                     <li>Persönliche Daten (Vorname, Nachname, Telefonnummer) ändern</li>
@@ -190,7 +191,8 @@ require_once '../includes/header.php';
                         <hr>
                         <p>
                             Die Startseite des Reservierungssystems zeigt einen Kalender mit den verfügbaren und bereits 
-                            reservierten Terminen für die Grillhütte. Hier finden Sie wichtige Informationen:
+                            reservierten Terminen für die Grillhütte. Sie erreichen diese Seite über den Menüpunkt <strong>"Startseite"</strong> 
+                            im Dropdown-Menü <strong>"Allgemein"</strong>.
                         </p>
                         
                         <h5 class="mt-4">Kalenderlegende:</h5>
@@ -309,8 +311,7 @@ require_once '../includes/header.php';
                         </p>
                         
                         <ol>
-                            <li>Klicken Sie nach der Anmeldung oben rechts auf Ihren Namen.</li>
-                            <li>Wählen Sie im Dropdown-Menü "Meine Reservierungen" aus.</li>
+                            <li>Klicken Sie nach der Anmeldung im Dropdown-Menü <strong>"Mein Bereich"</strong> auf <strong>"Meine Reservierungen"</strong>.</li>
                             <li>Auf der Seite "Meine Reservierungen" sehen Sie:
                                 <ul>
                                     <li>Ihre aktuellen und zukünftigen Reservierungen im oberen Bereich</li>
@@ -411,10 +412,7 @@ require_once '../includes/header.php';
                             nutzen:
                         </p>
                         
-                        <h5 class="mt-4">Kontakt zur Verwalterin der Grillhütte</h5>
-                        <p>
-                            Für Fragen zur Grillhütte, zur Schlüsselübergabe oder zu Ihrer Reservierung:
-                        </p>
+                        <h5 class="mt-4">Kontaktdaten</h5>
                         <ul>
                             <li>Verwalterin: <?php echo $infoData['VerwaltungspersonVorname'] ?? 'Julia'; ?> <?php echo $infoData['VerwaltungspersonNachname'] ?? 'Kitschmann'; ?></li>
                             <li>E-Mail: <a href="javascript:void(0)" class="email-protect" data-encoded="<?php echo base64_encode($infoData['VerwaltungspersonEmail'] ?? 'julia@kitschmann.de'); ?>">E-Mail anzeigen</a></li>
