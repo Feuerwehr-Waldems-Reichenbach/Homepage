@@ -1227,42 +1227,49 @@ function setupReservationSelection() {
         return true;
     });
     
-    // Setup cost calculator
+    // Setup cost calculator with improved event handling
     const startDateInput = document.getElementById('start_date');
     const endDateInput = document.getElementById('end_date');
-    const startTimeInput = document.getElementById('start_time');
-    const endTimeInput = document.getElementById('end_time');
     
     if (startDateInput && endDateInput) {
-        // Einfache Event-Listener für Wertänderungen hinzufügen, ohne den Setter zu überschreiben
-        startDateInput.addEventListener('input', updateReservationCosts);
-        endDateInput.addEventListener('input', updateReservationCosts);
+        // Flatpickr-Integration für die Kostenberechnung
+        function setupFlatpickrEvents() {
+            // Versuche, die Flatpickr-Instanzen zu finden
+            if (startDateInput._flatpickr) {
+                startDateInput._flatpickr.config.onChange.push(function(selectedDates, dateStr) {
+                    setTimeout(updateReservationCosts, 50);
+                });
+            }
+            
+            if (endDateInput._flatpickr) {
+                endDateInput._flatpickr.config.onChange.push(function(selectedDates, dateStr) {
+                    setTimeout(updateReservationCosts, 50);
+                });
+            }
+        }
         
-        // Update costs when dates change (durch MutationObserver)
-        const observer = new MutationObserver(function(mutations) {
-            updateReservationCosts();
+        // Versuche sofort und nach einer Verzögerung
+        setupFlatpickrEvents();
+        setTimeout(setupFlatpickrEvents, 500);
+        
+        // Standard-Event-Listener
+        startDateInput.addEventListener('change', function() {
+            setTimeout(updateReservationCosts, 50);
         });
         
-        observer.observe(startDateInput, { attributes: true });
-        observer.observe(endDateInput, { attributes: true });
+        endDateInput.addEventListener('change', function() {
+            setTimeout(updateReservationCosts, 50);
+        });
         
-        // Auch bei direkter Änderung aktualisieren
-        startDateInput.addEventListener('change', updateReservationCosts);
-        endDateInput.addEventListener('change', updateReservationCosts);
-        
-        // Auch bei Uhrzeitänderungen aktualisieren
-        if (startTimeInput) {
-            startTimeInput.addEventListener('change', updateReservationCosts);
-            startTimeInput.addEventListener('input', updateReservationCosts);
-        }
-        
-        if (endTimeInput) {
-            endTimeInput.addEventListener('change', updateReservationCosts);
-            endTimeInput.addEventListener('input', updateReservationCosts);
-        }
-        
-        // Initiale Berechnung
+        // Initiale Berechnung und Aktualisierung
         updateReservationCosts();
+        
+        // Regelmäßige Überprüfung, ob sich die Werte geändert haben
+        setInterval(function() {
+            if (startDateInput.value && endDateInput.value) {
+                updateReservationCosts();
+            }
+        }, 1000);
     }
 }
 
@@ -1270,8 +1277,6 @@ function setupReservationSelection() {
 function updateReservationCosts() {
     const startDateInput = document.getElementById('start_date');
     const endDateInput = document.getElementById('end_date');
-    const startTimeInput = document.getElementById('start_time');
-    const endTimeInput = document.getElementById('end_time');
     const dayCountElement = document.getElementById('day-count');
     const totalCostElement = document.getElementById('total-cost');
     const baseCostElement = document.getElementById('base-cost');
@@ -1280,73 +1285,128 @@ function updateReservationCosts() {
     
     // Only calculate if both dates are selected
     if (startDateInput.value && endDateInput.value) {
-        // Fetch current pricing information via AJAX
-        fetch('Helper/get_pricing_info.php')
-            .then(response => response.json())
-            .then(priceInfo => {
-                // Erstelle vollständige Datums-Zeit-Objekte
-                let startDateTime = new Date(startDateInput.value);
-                let endDateTime = new Date(endDateInput.value);
+        // Einfache, zuverlässige Methode zur Berechnung der Tage
+        try {
+            // Datumsobjekte erstellen (nur das Datum ohne Uhrzeit)
+            let startDateParts = startDateInput.value.split('-');
+            let endDateParts = endDateInput.value.split('-');
+            
+            // Stellen Sie sicher, dass wir gültige Werte haben
+            if (startDateParts.length < 3 || endDateParts.length < 3) {
+                throw new Error("Ungültiges Datumsformat");
+            }
+            
+            // Erstelle Datumsobjekte (Monat ist 0-basiert in JavaScript)
+            let startDateObj = new Date(
+                parseInt(startDateParts[0]), 
+                parseInt(startDateParts[1]) - 1, 
+                parseInt(startDateParts[2])
+            );
+            
+            let endDateObj = new Date(
+                parseInt(endDateParts[0]), 
+                parseInt(endDateParts[1]) - 1, 
+                parseInt(endDateParts[2])
+            );
+            
+            // Berechne die Tage manuell mit der einfachsten Methode
+            // Setze auf UTC-Zeit, um Probleme mit Sommerzeit zu vermeiden
+            const startUTC = Date.UTC(startDateObj.getFullYear(), startDateObj.getMonth(), startDateObj.getDate());
+            const endUTC = Date.UTC(endDateObj.getFullYear(), endDateObj.getMonth(), endDateObj.getDate());
+            
+            // Die Differenz in Millisekunden
+            const diffMilliseconds = Math.abs(endUTC - startUTC);
+            
+            // Umrechnung in Tage (1000 * 60 * 60 * 24 = Millisekunden in einem Tag)
+            const diffDays = Math.floor(diffMilliseconds / (1000 * 60 * 60 * 24));
+            
+            // +1 weil wir auch den ersten Tag zählen (inklusiv)
+            const days = diffDays + 1;
+            
+            // DEBUGGING: Füge temporär ein div hinzu, das anzeigt, was berechnet wurde
+            let debugInfo = `Start: ${startDateInput.value}, End: ${endDateInput.value}, Tage: ${days}`;
+            let debugDiv = document.getElementById('price-debug-info');
+            if (!debugDiv) {
+                debugDiv = document.createElement('div');
+                debugDiv.id = 'price-debug-info';
+                debugDiv.style.padding = '8px';
+                debugDiv.style.backgroundColor = '#f8f9fa';
+                debugDiv.style.fontSize = '12px';
+                debugDiv.style.marginTop = '10px';
                 
-                // Füge die Uhrzeiten hinzu, falls verfügbar
-                if (startTimeInput && startTimeInput.value) {
-                    const [startHours, startMinutes] = startTimeInput.value.split(':').map(Number);
-                    startDateTime.setHours(startHours, startMinutes, 0);
-                }
-                
-                if (endTimeInput && endTimeInput.value) {
-                    const [endHours, endMinutes] = endTimeInput.value.split(':').map(Number);
-                    endDateTime.setHours(endHours, endMinutes, 0);
-                }
-                
-                // Berechne die Differenz in Millisekunden
-                const diffTime = Math.abs(endDateTime - startDateTime);
-                
-                // Berechne die Anzahl der Tage als Dezimalzahl (z.B. 1,5 Tage)
-                const diffDays = diffTime / (24 * 60 * 60 * 1000);
-                
-                // Runde auf ganze Tage auf (mindestens 1 Tag)
-                const days = Math.max(1, Math.ceil(diffDays));
-                
-                // Use proper check to preserve 0 values
-                const rate = (priceInfo.user_rate !== undefined && priceInfo.user_rate !== null) ? priceInfo.user_rate : 100;
-                const totalCost = days * rate;
-                
-                // Format for display with German notation (comma for decimal)
-                const formattedRate = rate.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-                const formattedTotal = totalCost.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-                
-                // Update the UI
-                dayCountElement.textContent = days;
-                baseCostElement.textContent = formattedRate + '€';
-                totalCostElement.textContent = formattedTotal + '€';
-                
-                // If we have special pricing, add a note
                 const costOverview = document.getElementById('cost-overview');
-                if (costOverview) {
-                    // Remove any existing special pricing notes
-                    const existingNote = document.querySelector('.special-price-note');
-                    if (existingNote) {
-                        existingNote.remove();
+                if (costOverview && costOverview.parentNode) {
+                    costOverview.parentNode.appendChild(debugDiv);
+                }
+            }
+            debugDiv.textContent = debugInfo;
+            
+            // Fetch current pricing information via AJAX
+            fetch('Helper/get_pricing_info.php')
+                .then(response => response.json())
+                .then(priceInfo => {
+                    // Use proper check to preserve 0 values
+                    const rate = (priceInfo.user_rate !== undefined && priceInfo.user_rate !== null) ? priceInfo.user_rate : 100;
+                    const totalCost = days * rate;
+                    
+                    // Format for display with German notation (comma for decimal)
+                    const formattedRate = rate.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    const formattedTotal = totalCost.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    
+                    // Update the UI
+                    dayCountElement.textContent = days;
+                    baseCostElement.textContent = formattedRate + '€';
+                    totalCostElement.textContent = formattedTotal + '€';
+                    
+                    // If we have special pricing, add a note
+                    const costOverview = document.getElementById('cost-overview');
+                    if (costOverview) {
+                        // Remove any existing special pricing notes
+                        const existingNote = document.querySelector('.special-price-note');
+                        if (existingNote) {
+                            existingNote.remove();
+                        }
+                        
+                        // Add a special note if using a special rate
+                        if (priceInfo.rate_type !== 'normal') {
+                            const noteText = priceInfo.rate_type === 'feuerwehr' ? 
+                                'Spezialpreis für Feuerwehr' : 'Spezialpreis für aktives Mitglied';
+                            
+                            const specialNote = document.createElement('li');
+                            specialNote.className = 'special-price-note text-success';
+                            const priceDisplay = priceInfo.rate_type === 'feuerwehr' ? '0,00€' : `${rate.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}€`;
+                            specialNote.innerHTML = `<i class="bi bi-check-circle"></i> ${noteText} (${priceDisplay})`;
+                            costOverview.appendChild(specialNote);
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error("API-Fehler:", error);
+                    // Fallback to local calculation
+                    const costOverview = document.getElementById('cost-overview');
+                    let defaultRate = 100; // Default fallback
+                    
+                    if (costOverview && costOverview.hasAttribute('data-user-rate')) {
+                        const userRateVal = parseFloat(costOverview.getAttribute('data-user-rate'));
+                        defaultRate = (!isNaN(userRateVal) && userRateVal !== null) ? userRateVal : 100;
                     }
                     
-                    // Add a special note if using a special rate
-                    if (priceInfo.rate_type !== 'normal') {
-                        const noteText = priceInfo.rate_type === 'feuerwehr' ? 
-                            'Spezialpreis für Feuerwehr' : 'Spezialpreis für aktives Mitglied';
-                        
-                        const specialNote = document.createElement('li');
-                        specialNote.className = 'special-price-note text-success';
-                        const priceDisplay = priceInfo.rate_type === 'feuerwehr' ? '0,00€' : `${rate.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}€`;
-                        specialNote.innerHTML = `<i class="bi bi-check-circle"></i> ${noteText} (${priceDisplay})`;
-                        costOverview.appendChild(specialNote);
-                    }
-                }
-            })
-            .catch(error => {
-                // Fallback to default calculation
-                calculateDefaultCosts(startDateTime, endDateTime, dayCountElement, totalCostElement, baseCostElement);
-            });
+                    const totalCost = days * defaultRate;
+                    
+                    // Format for display with German notation
+                    const formattedRate = defaultRate.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    const formattedTotal = totalCost.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    
+                    // Update UI
+                    dayCountElement.textContent = days;
+                    baseCostElement.textContent = formattedRate + '€';
+                    totalCostElement.textContent = formattedTotal + '€';
+                });
+        } catch (e) {
+            console.error("Fehler bei der Tagesberechnung:", e);
+            // Fallback zu einer einfacheren Methode
+            calculateDefaultCosts(startDateInput.value, endDateInput.value, dayCountElement, totalCostElement, baseCostElement);
+        }
     } else {
         // Default values if dates not selected
         dayCountElement.textContent = '1';
@@ -1404,31 +1464,128 @@ function updateReservationCosts() {
 }
 
 // Fallback function for calculating costs with default values
-function calculateDefaultCosts(startDateTime, endDateTime, dayCountElement, totalCostElement, baseCostElement) {
-    // Calculate days
-    const diffTime = Math.abs(endDateTime - startDateTime);
-    const diffDays = diffTime / (24 * 60 * 60 * 1000);
-    const days = Math.max(1, Math.ceil(diffDays));
-    
-    // Try to get the user rate from the data attribute
-    const costOverview = document.getElementById('cost-overview');
-    let dailyRate = 100; // Default fallback
-    
-    if (costOverview && costOverview.hasAttribute('data-user-rate')) {
-        const userRateVal = parseFloat(costOverview.getAttribute('data-user-rate'));
-        dailyRate = (!isNaN(userRateVal) && userRateVal !== null) ? userRateVal : 100;
+function calculateDefaultCosts(startDate, endDate, dayCountElement, totalCostElement, baseCostElement) {
+    try {
+        // Datumsobjekte erstellen (nur das Datum ohne Uhrzeit)
+        let startDateParts = startDate.split('-');
+        let endDateParts = endDate.split('-');
+        
+        // Stellen Sie sicher, dass wir gültige Werte haben
+        if (startDateParts.length < 3 || endDateParts.length < 3) {
+            throw new Error("Ungültiges Datumsformat");
+        }
+        
+        // Erstelle Datumsobjekte (Monat ist 0-basiert in JavaScript)
+        let startDateObj = new Date(
+            parseInt(startDateParts[0]), 
+            parseInt(startDateParts[1]) - 1, 
+            parseInt(startDateParts[2])
+        );
+        
+        let endDateObj = new Date(
+            parseInt(endDateParts[0]), 
+            parseInt(endDateParts[1]) - 1, 
+            parseInt(endDateParts[2])
+        );
+        
+        // Berechne die Tage manuell mit der einfachsten Methode
+        // Setze auf UTC-Zeit, um Probleme mit Sommerzeit zu vermeiden
+        const startUTC = Date.UTC(startDateObj.getFullYear(), startDateObj.getMonth(), startDateObj.getDate());
+        const endUTC = Date.UTC(endDateObj.getFullYear(), endDateObj.getMonth(), endDateObj.getDate());
+        
+        // Die Differenz in Millisekunden
+        const diffMilliseconds = Math.abs(endUTC - startUTC);
+        
+        // Umrechnung in Tage (1000 * 60 * 60 * 24 = Millisekunden in einem Tag)
+        const diffDays = Math.floor(diffMilliseconds / (1000 * 60 * 60 * 24));
+        
+        // +1 weil wir auch den ersten Tag zählen (inklusiv)
+        const days = diffDays + 1;
+        
+        // DEBUGGING: Füge temporär ein div hinzu, das anzeigt, was berechnet wurde
+        let debugInfo = `Start: ${startDate}, End: ${endDate}, Tage: ${days}`;
+        let debugDiv = document.getElementById('price-debug-info');
+        if (!debugDiv) {
+            debugDiv = document.createElement('div');
+            debugDiv.id = 'price-debug-info';
+            debugDiv.style.padding = '8px';
+            debugDiv.style.backgroundColor = '#f8f9fa';
+            debugDiv.style.fontSize = '12px';
+            debugDiv.style.marginTop = '10px';
+            
+            const costOverview = document.getElementById('cost-overview');
+            if (costOverview && costOverview.parentNode) {
+                costOverview.parentNode.appendChild(debugDiv);
+            }
+        }
+        debugDiv.textContent = debugInfo;
+        
+        // Fetch current pricing information via AJAX
+        fetch('Helper/get_pricing_info.php')
+            .then(response => response.json())
+            .then(priceInfo => {
+                // Use proper check to preserve 0 values
+                const rate = (priceInfo.user_rate !== undefined && priceInfo.user_rate !== null) ? priceInfo.user_rate : 100;
+                const totalCost = days * rate;
+                
+                // Format for display with German notation (comma for decimal)
+                const formattedRate = rate.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                const formattedTotal = totalCost.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                
+                // Update the UI
+                dayCountElement.textContent = days;
+                baseCostElement.textContent = formattedRate + '€';
+                totalCostElement.textContent = formattedTotal + '€';
+                
+                // If we have special pricing, add a note
+                const costOverview = document.getElementById('cost-overview');
+                if (costOverview) {
+                    // Remove any existing special pricing notes
+                    const existingNote = document.querySelector('.special-price-note');
+                    if (existingNote) {
+                        existingNote.remove();
+                    }
+                    
+                    // Add a special note if using a special rate
+                    if (priceInfo.rate_type !== 'normal') {
+                        const noteText = priceInfo.rate_type === 'feuerwehr' ? 
+                            'Spezialpreis für Feuerwehr' : 'Spezialpreis für aktives Mitglied';
+                        
+                        const specialNote = document.createElement('li');
+                        specialNote.className = 'special-price-note text-success';
+                        const priceDisplay = priceInfo.rate_type === 'feuerwehr' ? '0,00€' : `${rate.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}€`;
+                        specialNote.innerHTML = `<i class="bi bi-check-circle"></i> ${noteText} (${priceDisplay})`;
+                        costOverview.appendChild(specialNote);
+                    }
+                }
+            })
+            .catch(error => {
+                console.error("API-Fehler:", error);
+                // Fallback to local calculation
+                const costOverview = document.getElementById('cost-overview');
+                let defaultRate = 100; // Default fallback
+                
+                if (costOverview && costOverview.hasAttribute('data-user-rate')) {
+                    const userRateVal = parseFloat(costOverview.getAttribute('data-user-rate'));
+                    defaultRate = (!isNaN(userRateVal) && userRateVal !== null) ? userRateVal : 100;
+                }
+                
+                const totalCost = days * defaultRate;
+                
+                // Format for display with German notation
+                const formattedRate = defaultRate.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                const formattedTotal = totalCost.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                
+                // Update UI
+                dayCountElement.textContent = days;
+                baseCostElement.textContent = formattedRate + '€';
+                totalCostElement.textContent = formattedTotal + '€';
+            });
+    } catch (e) {
+        console.error("Fehler bei der Tagesberechnung:", e);
+        // Fallback zu einer einfacheren Methode
+        calculateDefaultCosts(startDate, endDate, dayCountElement, totalCostElement, baseCostElement);
     }
-    
-    const totalCost = days * dailyRate;
-    
-    // Format for display with German notation
-    const formattedRate = dailyRate.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    const formattedTotal = totalCost.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    
-    // Update UI
-    dayCountElement.textContent = days;
-    baseCostElement.textContent = formattedRate + '€';
-    totalCostElement.textContent = formattedTotal + '€';
 }
 
 // Function to add key handover information to a day element

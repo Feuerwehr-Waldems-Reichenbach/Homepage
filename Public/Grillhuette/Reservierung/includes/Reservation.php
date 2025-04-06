@@ -1704,9 +1704,19 @@ class Reservation {
     private function calculateReservationDays($startDatetime, $endDatetime) {
         $startDate = new DateTime($startDatetime);
         $endDate = new DateTime($endDatetime);
-        $diffSeconds = $endDate->getTimestamp() - $startDate->getTimestamp();
-        $diffDays = $diffSeconds / (24 * 60 * 60);
-        return max(1, ceil($diffDays));
+
+        // Extrahiere nur die Datumsteile, ignoriere die Uhrzeiten
+        $startDate->setTime(0, 0, 0);
+        $endDate->setTime(0, 0, 0);
+        
+        // Berechne die Differenz in Tagen
+        $interval = $startDate->diff($endDate);
+        $diffDays = $interval->days;
+        
+        // Füge einen Tag hinzu, da der Enddatum Teil der Buchung ist
+        $diffDays += 1;
+        
+        return max(1, $diffDays);
     }
     
     /**
