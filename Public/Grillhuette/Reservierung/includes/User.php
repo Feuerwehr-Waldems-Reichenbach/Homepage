@@ -190,8 +190,8 @@ class User {
             $_SESSION['user_name'] = $user['first_name'];
             $_SESSION['is_admin'] = (bool)$user['is_admin'];
             $_SESSION['is_verified'] = (bool)$user['is_verified'];
-            $_SESSION['is_Feuerwehr'] = (bool)$user['is_Feuerwehr'];
-            $_SESSION['is_aktives_Mitglied'] = (bool)$user['is_aktives_Mitglied'];
+            $_SESSION['is_Feuerwehr'] = isset($user['is_Feuerwehr']) ? (bool)$user['is_Feuerwehr'] : false;
+            $_SESSION['is_aktives_Mitglied'] = isset($user['is_AktivesMitglied']) ? (bool)$user['is_AktivesMitglied'] : false;
             
             // Login-Timestamp aktualisieren
             $stmt = $this->db->prepare("UPDATE gh_users SET last_login = NOW() WHERE id = ?");
@@ -1367,4 +1367,4 @@ class User {
         }
     }
 }
-?> 
+// End of User class - PHP closing tag removed intentionally 

@@ -2206,4 +2206,3 @@ class Reservation {
         sendEmail($user['email'], $subject, $body);
     }
 }
-?> 

@@ -921,7 +921,7 @@ require_once '../../includes/header.php';
 </form>
 
 <!-- JavaScript für die Formularvorausfüllung -->
-<script>
+<script nonce="<?php echo $cspNonce; ?>">
 // Diese Funktion wird aufgerufen, wenn der "Bearbeiten"-Button geklickt wird
 function prepareEditModal(element) {
     const reservationId = element.getAttribute('data-id');

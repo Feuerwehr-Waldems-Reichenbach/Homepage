@@ -503,7 +503,7 @@ if (isset($_SESSION['cleanup_message'])) {
 </form>
 
 <!-- JavaScript für die Formularvorausfüllung und das Löschen -->
-<script>
+<script nonce="<?php echo $cspNonce; ?>">
 function prepareEditUserModal(button) {
     // Daten aus dem Button-Attributen auslesen
     const userId = button.getAttribute('data-id');

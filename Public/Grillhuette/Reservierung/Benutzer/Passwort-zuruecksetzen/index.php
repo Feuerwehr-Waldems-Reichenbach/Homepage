@@ -138,7 +138,7 @@ require_once '../../includes/header.php';
     </div>
 </div>
 
-<script>
+<script nonce="<?php echo $cspNonce; ?>">
 document.addEventListener('DOMContentLoaded', function() {
     // Funktion für den Toggle-Button
     function setupPasswordToggle(buttonId, passwordId) {

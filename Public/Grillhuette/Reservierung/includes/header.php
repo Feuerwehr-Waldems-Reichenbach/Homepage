@@ -1,10 +1,16 @@
 <?php
+// Start output buffering to prevent "headers already sent" errors
+ob_start();
+
 require_once __DIR__ . '/config.php';
+
+// Generate a unique nonce for this request
+$cspNonce = base64_encode(random_bytes(16));
 
 // Content Security Policy definieren
 $cspHeader = "Content-Security-Policy: ".
     "default-src 'self'; ".
-    "script-src 'self' https://cdn.jsdelivr.net/npm/ https://cdn.jsdelivr.net/npm/flatpickr/ https://cdn.jsdelivr.net/npm/moment@2.29.4/ 'unsafe-inline' https://www.google.com/maps/ https://maps.googleapis.com; ".
+    "script-src 'self' 'nonce-{$cspNonce}' https://cdn.jsdelivr.net/npm/ https://cdn.jsdelivr.net/npm/flatpickr/ https://cdn.jsdelivr.net/npm/moment@2.29.4/ 'unsafe-inline' https://www.google.com/maps/ https://maps.googleapis.com; ".
     "style-src 'self' https://cdn.jsdelivr.net/npm/ https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/ https://cdn.jsdelivr.net/npm/flatpickr/ 'unsafe-inline'; ".
     "img-src 'self' data: https://www.google.com/maps/ https://*.googleapis.com https://*.gstatic.com; ".
     "font-src 'self' https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/; ".
@@ -18,7 +24,7 @@ $cspHeader = "Content-Security-Policy: ".
 
 // Content Security Policy für den Meta-Tag (ohne frame-ancestors)
 $cspMeta = "default-src 'self'; ".
-    "script-src 'self' https://cdn.jsdelivr.net/npm/ https://cdn.jsdelivr.net/npm/flatpickr/ https://cdn.jsdelivr.net/npm/moment@2.29.4/ 'unsafe-inline' https://www.google.com/maps/ https://maps.googleapis.com; ".
+    "script-src 'self' 'nonce-{$cspNonce}' https://cdn.jsdelivr.net/npm/ https://cdn.jsdelivr.net/npm/flatpickr/ https://cdn.jsdelivr.net/npm/moment@2.29.4/ 'unsafe-inline' https://www.google.com/maps/ https://maps.googleapis.com; ".
     "style-src 'self' https://cdn.jsdelivr.net/npm/ https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/ https://cdn.jsdelivr.net/npm/flatpickr/ 'unsafe-inline'; ".
     "img-src 'self' data: https://www.google.com/maps/ https://*.googleapis.com https://*.gstatic.com; ".
     "font-src 'self' https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/; ".

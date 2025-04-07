@@ -310,7 +310,7 @@ require_once '../../includes/header.php';
             <div class="alert alert-success">
                 Ihre E-Mail-Adresse wurde aktualisiert. Bitte bestätigen Sie Ihre neue E-Mail-Adresse, indem Sie auf den Link klicken, den wir Ihnen gesendet haben.
                 Sie werden nun abgemeldet. Bitte melden Sie sich nach der Bestätigung Ihrer neuen E-Mail-Adresse wieder an.
-                <script>
+                <script nonce="<?php echo $cspNonce; ?>">
                     setTimeout(function() {
                         window.location.href = '<?php echo getRelativePath('Benutzer/Abmelden'); ?>';
                     }, 5000);
@@ -489,7 +489,7 @@ require_once '../../includes/header.php';
     </div>
 </div>
 
-<script>
+<script nonce="<?php echo $cspNonce; ?>">
 document.addEventListener('DOMContentLoaded', function() {
     // Funktion für den Toggle-Button
     function setupPasswordToggle(buttonId, passwordId) {

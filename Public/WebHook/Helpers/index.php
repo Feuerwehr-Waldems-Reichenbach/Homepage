@@ -112,7 +112,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="result" id="result"></div>
     </div>
 
-    <script>
+    <?php
+    // Generate a unique nonce for CSP
+    $webhookNonce = base64_encode(random_bytes(16));
+    ?>
+    <script nonce="<?php echo $webhookNonce; ?>">
         document.getElementById('updateForm').addEventListener('submit', function(e) {
             e.preventDefault();
             

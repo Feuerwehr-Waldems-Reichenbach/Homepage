@@ -96,7 +96,7 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
                         }
                     </style>
                     
-                    <script>
+                    <script nonce="<?php echo $cspNonce; ?>">
                         // Global configuration for JavaScript
                         const APP_CONFIG = {
                             ROOT_PATH: '<?php echo APP_ROOT; ?>'
@@ -284,7 +284,7 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
                     </div>
                 </div>
                 
-                <script>
+                <script nonce="<?php echo $cspNonce; ?>">
                 document.addEventListener('DOMContentLoaded', function() {
                     // Base64 decode function
                     function decodeBase64(str) {
@@ -1045,7 +1045,7 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
 
 <div id="overlayBackdrop" class="overlay-backdrop"></div>
 
-<script>
+<script nonce="<?php echo $cspNonce; ?>">
     document.addEventListener('DOMContentLoaded', function() {
         // Hilfselemente
         const guideBtn = document.getElementById('reservierungshilfeBtn');

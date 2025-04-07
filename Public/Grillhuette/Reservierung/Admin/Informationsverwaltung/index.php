@@ -554,7 +554,7 @@ require_once '../../includes/header.php';
 <?php endforeach; ?>
 
 <!-- JavaScript für Tab-Aktivierung basierend auf URL-Parameter -->
-<script>
+<script nonce="<?php echo $cspNonce; ?>">
 document.addEventListener('DOMContentLoaded', function() {
     // Aktive Tab bei Seitenaufruf auswählen
     const urlParams = new URLSearchParams(window.location.search);

@@ -95,14 +95,14 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/de.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/locale/de.js"></script>
-    <script src="<?php echo str_repeat('../', substr_count($_SERVER['REQUEST_URI'], '/') - 3); ?>assets/js/main.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" nonce="<?php echo $cspNonce; ?>"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr" nonce="<?php echo $cspNonce; ?>"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/de.js" nonce="<?php echo $cspNonce; ?>"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js" nonce="<?php echo $cspNonce; ?>"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/locale/de.js" nonce="<?php echo $cspNonce; ?>"></script>
+    <script src="<?php echo str_repeat('../', substr_count($_SERVER['REQUEST_URI'], '/') - 3); ?>assets/js/main.js" nonce="<?php echo $cspNonce; ?>"></script>
     
-    <script>
+    <script nonce="<?php echo $cspNonce; ?>">
         document.addEventListener('DOMContentLoaded', function() {
             // Check if consent was already given
             if (!localStorage.getItem('cookieConsent')) {
@@ -139,4 +139,8 @@
         });
     </script>
 </body>
-</html> 
+</html>
+<?php
+// Flush the output buffer
+ob_end_flush();
+?> 

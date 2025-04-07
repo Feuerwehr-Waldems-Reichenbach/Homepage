@@ -569,7 +569,7 @@ require_once '../../includes/header.php';
 </div>
 
 <!-- JavaScript für die Bearbeitung öffentlicher Veranstaltungen -->
-<script>
+<script nonce="<?php echo $cspNonce; ?>">
 document.addEventListener('DOMContentLoaded', function() {
     // Show/hide date range fields based on checkbox
     const showDateRangeCheckbox = document.getElementById('show_date_range');
