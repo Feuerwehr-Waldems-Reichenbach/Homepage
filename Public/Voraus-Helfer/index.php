@@ -163,60 +163,7 @@
 	</div>
 </section>
 
-<section data-bs-version="5.1" class="footer6 cid-u8DcwC0mHb" once="footers" id="footer6-27">
-
-    
-
-    
-
-    <div class="container">
-        <div class="row content mbr-white">
-            <div class="col-12 col-md-3 mbr-fonts-style display-7">
-                <h5 class="mbr-section-subtitle mbr-fonts-style mb-2 display-7"><strong>Rechtliches</strong></h5>
-                <p class="mbr-text mbr-fonts-style display-7"><a href="/Impressum" class="text-white">Impressum</a><br><a href="/Datenschutz" class="text-white">Datenschutz</a></p> <br>
-                <h5 class="mbr-section-subtitle mbr-fonts-style mb-2 mt-4 display-7"><a href="Kontakt.html" class="text-white"><strong>Kontakt</strong></a></h5>
-                <p class="mbr-text mbr-fonts-style mb-4 display-7">Fragen? Melde Dich!&nbsp;<br><a href="mailto:info@feuerwehr-waldems-reichenbach.de" class="text-info">info@feuerwehr-waldems-reichenbach.de</a><br></p>
-            </div>
-            <div class="col-12 col-md-3 mbr-fonts-style display-7">
-                <h5 class="mbr-section-subtitle mbr-fonts-style mb-2 display-7"><strong>Adresse</strong></h5>
-                <ul class="list mbr-fonts-style mb-4 display-4">Am Dorfgemeinschaftshaus 1, 65529 Waldems</ul>
-                <h5 class="mbr-section-subtitle mbr-fonts-style mb-2 mt-5 display-7"></h5>
-                <p class="mbr-text mbr-fonts-style mb-4 display-7"></p>
-            </div>
-            <div class="col-12 col-md-6">
-                <div class="google-map"><iframe frameborder="0" style="border:0" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2550.0765696607805!2d8.371063376928547!3d50.27182890020835!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47bdb1c0618ad845%3A0x8cb4e6795a859e93!2sFreiwillige%20Feuerwehr%20Waldems-Reichenbach!5e0!3m2!1sde!2sde!4v1711914944503!5m2!1sde!2sde" allowfullscreen=""></iframe></div>
-            </div>
-            <div class="col-md-6">
-                <div class="social-list align-left">
-                    <div class="soc-item">
-                        <a href="https://www.instagram.com/feuerwehrreichenbach/" target="_blank">
-                            <span class="mbr-iconfont mbr-iconfont-social socicon-instagram socicon" style="color: rgb(255, 255, 255); fill: rgb(255, 255, 255);"></span>
-                        </a>
-                    </div>
-                    <div class="soc-item">
-                        <a href="https://www.facebook.com/groups/163127135137/" target="_blank">
-                            <span class="mbr-iconfont mbr-iconfont-social socicon-facebook socicon"></span>
-                        </a>
-                    </div>
-                    
-                    
-                    
-                    
-                </div>
-            </div>
-        </div>
-        <div class="footer-lower">
-            <div class="media-container-row">
-                <div class="col-sm-12">
-                    <hr>
-                </div>
-            </div>
-            <div class="col-sm-12 copyright pl-0">
-                <p class="mbr-text mbr-fonts-style mbr-white display-7">
-                    © Copyright 2024 Förderverein der Freiwilligen Feuerwehr Waldems-Reichenbach e.V. im Auftrag für die Freiwillige Feuerwehr Waldems Reichenbach - Alle Rechte vorbehalten</p>
-            </div>
-        </div>
-    </div>
+<?php include '../assets/includes/footer.php'; ?>
 
   
 </body>
