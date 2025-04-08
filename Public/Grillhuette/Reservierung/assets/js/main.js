@@ -604,12 +604,10 @@ function loadDayStatuses(month, year) {
     // Klare URL mit vollständigem Pfad erstellen, um Pfadprobleme zu vermeiden
     const ajaxUrl = `${rootPath}/Helper/get_calendar_data.php?month=${formattedMonth}&year=${year}`;
     
-    console.log("Fetching calendar data from:", ajaxUrl);
     
     // Verwende fetch statt XMLHttpRequest für bessere Fehlerbehandlung
     fetch(ajaxUrl)
         .then(response => {
-            console.log("Response status:", response.status, response.statusText);
             // Add content type checking
             const contentType = response.headers.get('content-type');
             if (!response.ok) {
@@ -624,24 +622,22 @@ function loadDayStatuses(month, year) {
             try {
                 // Check if the response starts with HTML (error output)
                 if (text.trim().startsWith('<')) {
-                    console.error("Received HTML instead of JSON:", text.substring(0, 200) + "...");
-                    throw new Error('Server returned HTML instead of JSON');
+                    handleError('Ungültiges Datenformat vom Server');
+                    throw new Error('Invalid server response format');
                 }
                 
-                console.log("Raw response:", text);
-                const data = JSON.parse(text); // Dann als JSON parsen
+                const data = JSON.parse(text);
                 if (!data.success) {
-                    console.error("Server reported error:", data.message || "Unknown error");
-                    throw new Error(data.message || "Server reported error");
+                    handleError(data.message || 'Unbekannter Fehler beim Laden der Daten');
+                    throw new Error('Server reported error');
                 }
-                console.log("Debug data:", data.debug);
                 return data;
             } catch (e) {
-                console.error("JSON parsing error:", e);
+                handleError('Fehler beim Verarbeiten der Kalenderdaten');
                 if (text) {
-                    console.error("Response text (first 200 chars):", text.substring(0, 200));
+                    handleError('Ungültige Serverantwort');
                 }
-                throw new Error('Invalid JSON response: ' + e.message);
+                throw new Error('Invalid server response');
             }
         })
         .then(data => {
@@ -649,7 +645,7 @@ function loadDayStatuses(month, year) {
             updateDayStatuses(data);
         })
         .catch(error => {
-            console.error("Fetch error:", error);
+            handleError('Fehler beim Laden der Kalenderdaten');
             // Fallback: Set all days to 'unknown' status
             const dayElements = document.querySelectorAll('.day[data-date]');
             dayElements.forEach(day => {
@@ -716,25 +712,12 @@ function showMobileAlert(message) {
 // Update day status classes in the calendar
 function updateDayStatuses(statusData) {
     if (!statusData) {
-        console.error("No status data received");
+        handleError('Keine Kalenderdaten verfügbar');
         return;
     }
     
-    // Log the data for debugging
-    console.log("Calendar data received:", statusData);
-    
     // Accessing the actual data object inside the response
     const dayStatuses = statusData.data || statusData;
-    
-    // More detailed logging
-    console.log("Day statuses object keys:", Object.keys(dayStatuses));
-    if (Object.keys(dayStatuses).length > 0) {
-        console.log("First few day statuses:", 
-            Object.entries(dayStatuses).slice(0, 3).map(([date, status]) => 
-                `${date}: ${typeof status === 'object' ? JSON.stringify(status) : status}`
-            )
-        );
-    }
     
     // Verifiziere, dass die zurückgegebenen Daten zum aktuellen Monat/Jahr passen
     const dates = Object.keys(dayStatuses);
@@ -746,12 +729,8 @@ function updateDayStatuses(statusData) {
         // Prüfe, ob der Monat im Datums-Key mit dem erwarteten Monat übereinstimmt
         const expectedMonth = document.getElementById('month').value.toString().padStart(2, '0');
         
-        if (receivedMonth !== expectedMonth) {
-            // Hier könnte ein Log erfolgen, aber keine Aktion notwendig
-            console.log("Month mismatch in received calendar data. Expected:", expectedMonth, "Received:", receivedMonth);
-        }
     } else {
-        console.log("No dates found in status data");
+        handleError('Keine Kalenderdaten für diesen Monat verfügbar');
         return; // Exit early if there are no dates
     }
     
@@ -791,8 +770,6 @@ function updateDayStatuses(statusData) {
         const dayElement = document.querySelector(`.day[data-date="${date}"]`);
         
         if (dayElement) {
-            // Log for debugging
-            console.log(`Updating day ${date} with status:`, statusInfo);
             
             // Remove status classes but keep past if it's set
             dayElement.classList.remove('free', 'pending', 'booked', 'public-event', 'key-handover');
@@ -804,7 +781,6 @@ function updateDayStatuses(statusData) {
             if (!dayElement.classList.contains('past')) {
                 // Check if we have an object with a status or just a string status
                 if (typeof statusInfo === 'object') {
-                    console.log(`Day ${date} has object status:`, statusInfo.status);
                     
                     if (statusInfo.status === 'public_event') {
                         // For public event, use a special class
@@ -1281,11 +1257,13 @@ function updateReservationCosts() {
     const totalCostElement = document.getElementById('total-cost');
     const baseCostElement = document.getElementById('base-cost');
     
-    if (!startDateInput || !endDateInput || !dayCountElement || !totalCostElement) return;
+    if (!startDateInput || !endDateInput || !dayCountElement || !totalCostElement) {
+        handleError('Fehler bei der Preisberechnung: Nicht alle erforderlichen Elemente gefunden');
+        return;
+    }
     
     // Only calculate if both dates are selected
     if (startDateInput.value && endDateInput.value) {
-        // Einfache, zuverlässige Methode zur Berechnung der Tage
         try {
             // Datumsobjekte erstellen (nur das Datum ohne Uhrzeit)
             let startDateParts = startDateInput.value.split('-');
@@ -1403,7 +1381,7 @@ function updateReservationCosts() {
                     totalCostElement.textContent = formattedTotal + '€';
                 });
         } catch (e) {
-            console.error("Fehler bei der Tagesberechnung:", e);
+            handleError('Fehler bei der Tagesberechnung');
             // Fallback zu einer einfacheren Methode
             calculateDefaultCosts(startDateInput.value, endDateInput.value, dayCountElement, totalCostElement, baseCostElement);
         }
@@ -1444,6 +1422,7 @@ function updateReservationCosts() {
                 }
             })
             .catch(() => {
+                handleError('Fehler beim Laden der Preisinformationen');
                 // Try to get the user rate from the data attribute
                 const costOverview = document.getElementById('cost-overview');
                 let defaultRate = 100; // Default fallback
@@ -1582,7 +1561,7 @@ function calculateDefaultCosts(startDate, endDate, dayCountElement, totalCostEle
                 totalCostElement.textContent = formattedTotal + '€';
             });
     } catch (e) {
-        console.error("Fehler bei der Tagesberechnung:", e);
+        handleError('Fehler bei der Standard-Preisberechnung');
         // Fallback zu einer einfacheren Methode
         calculateDefaultCosts(startDate, endDate, dayCountElement, totalCostElement, baseCostElement);
     }
@@ -1619,4 +1598,28 @@ function addKeyHandoverInfo(dayElement, keyInfo) {
     }
     
     dayElement.appendChild(keyIndicator);
+}
+
+// Zentrale Fehlerbehandlungsfunktion
+function handleError(message) {
+    // Nur in Entwicklungsumgebung detaillierte Fehler loggen
+    if (process.env.NODE_ENV === 'development') {
+        console.error(message);
+    }
+    
+    // Benutzerfreundliche Fehlermeldung anzeigen
+    const calendarContainer = document.getElementById('calendar');
+    if (calendarContainer) {
+        const errorElement = document.createElement('div');
+        errorElement.className = 'alert alert-warning mt-3';
+        errorElement.textContent = 'Die Kalenderdaten konnten nicht geladen werden. Bitte versuchen Sie es später erneut.';
+        calendarContainer.appendChild(errorElement);
+        
+        // Nach 5 Sekunden entfernen
+        setTimeout(() => {
+            if (errorElement.parentNode) {
+                errorElement.parentNode.removeChild(errorElement);
+            }
+        }, 5000);
+    }
 }

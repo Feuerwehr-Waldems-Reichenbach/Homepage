@@ -1125,13 +1125,11 @@ function calculateCosts(startDateId, endDateId, dayCountId, totalCostId) {
                         
                     } else {
                         // Fallback to standard calculation with generic error handling
-                        console.log('Preisermittlung nicht erfolgreich. Standardberechnung wird verwendet.');
                         calculateStandardCost(startDate, endDate, dayCountElement, totalCostElement, defaultBasePrice);
                     }
                 })
                 .catch(error => {
                     // Generic error handling without revealing implementation details
-                    console.log('Fehler bei der Preisermittlung. Standardberechnung wird verwendet.');
                     calculateStandardCost(startDate, endDate, dayCountElement, totalCostElement, defaultBasePrice);
                 });
         } else {
