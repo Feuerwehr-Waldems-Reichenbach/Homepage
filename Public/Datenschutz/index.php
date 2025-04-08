@@ -40,9 +40,6 @@
 
   <section data-bs-version="5.1" class="article07 cid-u8NeWgWdln" id="article07-1y">
 
-
-
-
     <div class="container">
       <div class="row justify-content-center">
         <div class="card col-md-12 col-lg-10">

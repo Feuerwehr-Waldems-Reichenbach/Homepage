@@ -5,22 +5,23 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
-  <link rel="shortcut icon" href="../assets/images/gravatar-logo-dunkel-1.jpg" type="image/x-icon">
+  <link rel="shortcut icon" href="assets/images/gravatar-logo-dunkel-1.jpg" type="image/x-icon">
   <meta name="description" content="Willkommen bei der Freiwilligen Feuerwehr Reichenbach! Erfahre mehr über unsere Einsätze, unser Engagement und wie du uns unterstützen kannst.">
   
   
   <title>Startseite</title>
-  <link rel="stylesheet" href="../assets/web/assets/mobirise-icons2/mobirise2.css">
-  <link rel="stylesheet" href="../assets/bootstrap/css/bootstrap.min.css">
-  <link rel="stylesheet" href="../assets/bootstrap/css/bootstrap-grid.min.css">
-  <link rel="stylesheet" href="../assets/bootstrap/css/bootstrap-reboot.min.css">
-  <link rel="stylesheet" href="../assets/parallax/jarallax.css">
-  <link rel="stylesheet" href="../assets/dropdown/css/style.css">
-  <link rel="stylesheet" href="../assets/socicon/css/styles.css">
-  <link rel="stylesheet" href="../assets/theme/css/style.css">
+  <link rel="stylesheet" href="assets/web/assets/mobirise-icons2/mobirise2.css">
+  <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="assets/bootstrap/css/bootstrap-grid.min.css">
+  <link rel="stylesheet" href="assets/bootstrap/css/bootstrap-reboot.min.css">
+  <link rel="stylesheet" href="assets/parallax/jarallax.css">
+  <link rel="stylesheet" href="assets/dropdown/css/style.css">
+  <link rel="stylesheet" href="assets/socicon/css/styles.css">
+  <link rel="stylesheet" href="assets/theme/css/style.css">
+  <link rel="stylesheet" href="assets/css/custom-parallax.css">
   <link rel="preload" href="https://fonts.googleapis.com/css?family=Inter+Tight:100,200,300,400,500,600,700,800,900,100i,200i,300i,400i,500i,600i,700i,800i,900i&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter+Tight:100,200,300,400,500,600,700,800,900,100i,200i,300i,400i,500i,600i,700i,800i,900i&display=swap"></noscript>
-  <link rel="preload" as="style" href="../assets/mobirise/css/mbr-additional.css?v=M1cYSM"><link rel="stylesheet" href="../assets/mobirise/css/mbr-additional.css?v=M1cYSM" type="text/css">
+  <link rel="preload" as="style" href="assets/mobirise/css/mbr-additional.css?v=M1cYSM"><link rel="stylesheet" href="assets/mobirise/css/mbr-additional.css?v=M1cYSM" type="text/css">
 
   
   
@@ -30,7 +31,7 @@
   
   <?php include 'assets/includes/navbar.php'; ?>
 
-  <section data-bs-version="5.1" class="header16 cid-u8DlI77rJo mbr-fullscreen mbr-parallax-background" id="header17-e">
+  <section data-bs-version="5.1" class="header16 cid-u8DlI77rJo mbr-fullscreen jarallax" id="header17-e" data-jarallax-speed="0.8">
   
   <div class="mbr-overlay" style="opacity: 0.2; background-color: rgb(0, 0, 0);"></div>
   <div class="container-fluid">
@@ -61,7 +62,7 @@
       </div>
       <div class="col-lg-8 side-features">
         <div class="image-wrapper mb-4">
-          <img class="w-100" src="../assets/images/img20240617192228-1.webp" alt="Einsatzabteilung">
+          <img class="w-100" src="assets/images/img20240617192228-1.webp" alt="Einsatzabteilung">
         </div>
       </div>
     </div>
@@ -84,7 +85,7 @@
       </div>
       <div class="col-lg-8 side-features">
         <div class="image-wrapper mb-4">
-          <img class="w-100" src="../assets/images/dsc-620.webp" alt="Voraus-Helfer">
+          <img class="w-100" src="assets/images/dsc-620.webp" alt="Voraus-Helfer">
         </div>
       </div>
     </div>
@@ -128,7 +129,7 @@
       </div>
       <div class="col-lg-8 side-features">
         <div class="image-wrapper mb-4">
-          <img class="w-100" src="../assets/images/img20240825115107.webp" alt="Realistische Unfalldarstellung">
+          <img class="w-100" src="assets/images/img20240825115107.webp" alt="Realistische Unfalldarstellung">
         </div>
       </div>
     </div>
@@ -147,16 +148,16 @@
     <div class="grid-container">
       <div class="grid-container-3 moving-left" style="transform: translate3d(-200px, 0px, 0px);">
         <div class="grid-item">
-          <img src="../assets/images/img20240715191603.webp" alt="Feuerwehr Reichenbach">
+          <img src="assets/images/img20240715191603.webp" alt="Feuerwehr Reichenbach">
         </div>
         <div class="grid-item">
-          <img src="../assets/images/img-3957.webp" alt="Feuerwehr Reichenbach">
+          <img src="assets/images/img-3957.webp" alt="Feuerwehr Reichenbach">
         </div>
         <div class="grid-item">
-          <img src="../assets/images/img-3392.webp" alt="Feuerwehr Reichenbach">
+          <img src="assets/images/img-3392.webp" alt="Feuerwehr Reichenbach">
         </div>
         <div class="grid-item">
-          <img src="../assets/images/img20240715200605.webp" alt="Feuerwehr Reichenbach">
+          <img src="assets/images/img20240715200605.webp" alt="Feuerwehr Reichenbach">
         </div>
       </div>
     </div>
@@ -179,7 +180,7 @@
       </div>
       <div class="col-lg-8 side-features">
         <div class="image-wrapper mb-4">
-          <img class="w-100" src="../assets/images/whatsapp-bild-2024-08-13-um-19.38.10-b7588198-kopie.webp" alt="Jugendfeuerwehr">
+          <img class="w-100" src="assets/images/whatsapp-bild-2024-08-13-um-19.38.10-b7588198-kopie.webp" alt="Jugendfeuerwehr">
         </div>
       </div>
     </div>
@@ -202,7 +203,7 @@
       </div>
       <div class="col-lg-8 side-features">
         <div class="image-wrapper mb-4">
-          <img class="w-100" src="../assets/images/img-20240821-wa0082.webp" alt="Kinderfeuerwehr">
+          <img class="w-100" src="assets/images/img-20240821-wa0082.webp" alt="Kinderfeuerwehr">
         </div>
       </div>
     </div>
@@ -325,6 +326,22 @@
 <?php include 'assets/includes/socialFooter.php'; ?>
 <?php include 'assets/includes/footer.php'; ?>
  
-  
+  <!-- Parallax Scripts -->
+  <script src="assets/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/smoothscroll/smooth-scroll.js"></script>
+  <script src="assets/ytplayer/index.js"></script>
+  <script src="assets/dropdown/js/navbar-dropdown.js"></script>
+  <script src="assets/theme/js/script.js"></script>
+  <script src="assets/parallax/jarallax.js"></script>
+  <script>
+    // Initialisiere Jarallax nach dem Laden der Seite
+    document.addEventListener("DOMContentLoaded", function() {
+      jarallax(document.querySelectorAll('.jarallax'), {
+        speed: 0.6,
+        imgPosition: '50% 50%',
+        imgSize: 'cover'
+      });
+    });
+  </script>
 </body>
 </html>

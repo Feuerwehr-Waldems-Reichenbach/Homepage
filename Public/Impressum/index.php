@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html  >
+<html>
 <head>
   <!-- FFR Seite -->
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
   <link rel="shortcut icon" href="../assets/images/gravatar-logo-dunkel-1.jpg" type="image/x-icon">
-  <meta name="description" content="Hier findest du das Impressum der Freiwilligen Feuerwehr Reichenbach mit allen wichtigen rechtlichen Informationen und Kontaktdaten.">
+  <meta name="description" content="Impressum der Freiwilligen Feuerwehr Reichenbach. Rechtliche Informationen und Kontaktdaten.">
   
   
   <title>Impressum</title>
