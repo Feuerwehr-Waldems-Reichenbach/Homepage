@@ -29,46 +29,9 @@
 </head>
 <body>
   
-  <section data-bs-version="5.1" class="menu menu1 cid-u8CwqCiTr0" once="menu" id="menu1-0">
-    
+  <?php include 'assets/includes/navbar.html'; ?>
 
-    <nav class="navbar navbar-dropdown navbar-fixed-top navbar-expand-lg">
-        <div class="container-fluid">
-            <div class="navbar-brand">
-                <span class="navbar-logo">
-                    <a href="/">
-                        <img src="../assets/images/gravatar-logo-dunkel-1.webp" alt="Feuerwehr Reichenbach" style="height: 3rem;">
-                    </a>
-                </span>
-                <span class="navbar-caption-wrap"><a class="navbar-caption text-white display-5" href="/">Feuerwehr Reichenbach</a></span>
-            </div>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbarSupportedContent" data-bs-target="#navbarSupportedContent" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-                <div class="hamburger">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav nav-dropdown nav-right" data-app-modern-menu="true"><li class="nav-item dropdown"><a class="nav-link link dropdown-toggle text-info display-4" href="https://mobiri.se" data-toggle="dropdown-submenu" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="true">Das sind wir</a><div class="dropdown-menu" aria-labelledby="dropdown-813"><div class="dropdown"><a class="dropdown-item dropdown-toggle text-info display-4" href="Einsatzabteilung.html" data-toggle="dropdown-submenu" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">Einsatzabteilung</a><div class="dropdown-menu dropdown-submenu" aria-labelledby="dropdown-692"><a class="dropdown-item text-info display-4" href="/Einsatzabteilung">Einsatzabteilung</a><a class="dropdown-item text-info display-4" href="/Fahrzeuge">Fahrzeuge</a><a class="dropdown-item text-info display-4" href="/Feuerwehrhaus">Feuerwehrhaus</a></div></div><a class="dropdown-item text-info display-4" href="/Voraus-Helfer">Voraus-Helfer</a><a class="dropdown-item text-info display-4" href="/Realistische-Unfalldarstellung">Realistische Unfalldarstellung<br></a><a class="show dropdown-item text-info display-4" href="/Jugendfeuerwehr">Jugendfeuerwehr</a><a class="show dropdown-item text-info display-4" href="/Kinderfeuerwehr">Kinderfeuerwehr</a><a class="dropdown-item text-info display-4" href="/Foerderverein">Förderverein</a></div></li><li class="nav-item dropdown"><a class="nav-link link dropdown-toggle text-info display-4" href="Mitmachen.html" data-toggle="dropdown-submenu" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">Unterstützen</a><div class="dropdown-menu" aria-labelledby="dropdown-997"><a class="dropdown-item text-info display-4" href="/Mitmachen">Mitmachen</a><a class="dropdown-item text-info display-4" href="/Unterstuetzen">Unterstützen</a></div></li><li class="nav-item dropdown"><a class="nav-link link dropdown-toggle text-info display-4" href="Mitmachen.html" data-toggle="dropdown-submenu" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">Neuigkeiten</a><div class="dropdown-menu" aria-labelledby="dropdown-416"><a class="dropdown-item text-info display-4" href="/Veranstaltungen">Veranstaltungen</a><a class="show dropdown-item text-info display-4" href="/Einsaetze">Einsätze</a></div></li><li class="nav-item"><a class="nav-link link text-info display-4" href="/Grillhuette">Grillhütte</a></li></ul>
-                <div class="icons-menu">
-                    <a class="iconfont-wrapper" href="https://www.facebook.com/groups/163127135137/" target="_blank">
-                        <span class="p-2 mbr-iconfont socicon-facebook socicon" style="color: rgb(255, 255, 255); fill: rgb(255, 255, 255);"></span>
-                    </a>
-                    <a class="iconfont-wrapper" href="https://www.instagram.com/feuerwehrreichenbach/" target="_blank">
-                        <span class="p-2 mbr-iconfont socicon-instagram socicon" style="color: rgb(255, 255, 255); fill: rgb(255, 255, 255);"></span>
-                    </a>
-                    
-                    
-                </div>
-                
-            </div>
-        </div>
-    </nav>
-</section>
-
-<section data-bs-version="5.1" class="header16 cid-u8DlI77rJo mbr-fullscreen mbr-parallax-background" id="header17-e">
+  <section data-bs-version="5.1" class="header16 cid-u8DlI77rJo mbr-fullscreen mbr-parallax-background" id="header17-e">
   
   <div class="mbr-overlay" style="opacity: 0.2; background-color: rgb(0, 0, 0);"></div>
   <div class="container-fluid">
