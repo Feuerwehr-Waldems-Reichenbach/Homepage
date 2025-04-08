@@ -102,11 +102,14 @@
 .dropdown-menu {
     background-color: #A72920;
     border: none;
+    padding: 0.5rem 0;
+    margin: 0;
 }
 
 .dropdown-item {
     color: white;
     font-size: 1rem;
+    padding: 0.5rem 1.5rem;
 }
 
 .dropdown-item:hover {
@@ -121,18 +124,131 @@
 .dropdown-submenu .dropdown-menu {
     top: 0;
     left: 100%;
-    margin-top: -1px;
+    margin-top: 0;
+    margin-left: 0.1rem;
 }
 
 @media (min-width: 992px) {
     .dropdown-submenu:hover .dropdown-menu {
         display: block;
     }
+    
+    .dropdown-submenu .dropdown-toggle::after {
+        transform: rotate(-90deg);
+        position: absolute;
+        right: 1rem;
+        top: 1.2rem;
+    }
 }
 
 .mbr-iconfont {
     font-size: 1.5rem;
     margin: 0 0.5rem;
+}
+
+/* Hamburger Menu Styles */
+.navbar-toggler {
+    border: none;
+    padding: 0.5rem;
+    background: transparent;
+    margin-left: auto;
+    margin-right: 1rem;
+}
+
+.hamburger {
+    width: 30px;
+    height: 20px;
+    position: relative;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.hamburger span {
+    display: block;
+    height: 2px;
+    width: 100%;
+    background: white;
+    border-radius: 2px;
+    transition: 0.3s ease-in-out;
+}
+
+/* Mobile Styles */
+@media (max-width: 991px) {
+    .navbar-collapse {
+        background-color: #A72920;
+        padding: 1rem;
+        margin-top: 1rem;
+    }
+
+    .navbar-nav {
+        width: 100%;
+    }
+
+    .nav-item {
+        margin-bottom: 0.5rem;
+    }
+
+    .dropdown-menu {
+        background-color: rgba(167, 41, 32, 0.9);
+        margin: 0.25rem 0 0.25rem 1rem;
+        border-left: 2px solid rgba(255, 255, 255, 0.2);
+        padding: 0;
+        position: static !important;
+        float: none;
+        width: auto;
+        display: block;
+    }
+
+    .dropdown-menu .dropdown {
+        position: relative;
+    }
+
+    .dropdown-submenu .dropdown-menu {
+        left: 0;
+        margin: 0 0 0 1rem;
+        position: static !important;
+        transform: none !important;
+        width: auto;
+        border-left: 2px solid rgba(255, 255, 255, 0.2);
+        display: none;
+    }
+
+    .dropdown-submenu .dropdown-menu.show {
+        display: block;
+    }
+
+    .dropdown-item {
+        padding: 0.5rem 1rem;
+        white-space: normal;
+    }
+
+    .dropdown-toggle::after {
+        float: right;
+        margin-top: 0.5rem;
+    }
+
+    .dropdown-submenu .dropdown-toggle::after {
+        transform: none;
+        position: static;
+    }
+
+    .icons-menu {
+        margin-top: 1rem;
+        padding-left: 1rem;
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+    }
+
+    .navbar-brand {
+        flex: 1;
+    }
+
+    .navbar-toggler {
+        order: 2;
+    }
 }
 </style>
 
@@ -141,14 +257,34 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Handle submenu hover
+    // Handle mobile submenu clicks
+    var dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+    dropdownToggles.forEach(function(toggle) {
+        toggle.addEventListener('click', function(e) {
+            if (window.innerWidth < 992) {
+                e.preventDefault();
+                e.stopPropagation();
+                var parent = this.closest('.dropdown');
+                var submenu = parent.querySelector('.dropdown-menu');
+                if (submenu) {
+                    submenu.classList.toggle('show');
+                }
+            }
+        });
+    });
+
+    // Desktop hover behavior
     var dropdownSubmenus = document.querySelectorAll('.dropdown-submenu');
     dropdownSubmenus.forEach(function(submenu) {
         submenu.addEventListener('mouseenter', function() {
-            this.querySelector('.dropdown-menu').classList.add('show');
+            if (window.innerWidth >= 992) {
+                this.querySelector('.dropdown-menu').classList.add('show');
+            }
         });
         submenu.addEventListener('mouseleave', function() {
-            this.querySelector('.dropdown-menu').classList.remove('show');
+            if (window.innerWidth >= 992) {
+                this.querySelector('.dropdown-menu').classList.remove('show');
+            }
         });
     });
 });

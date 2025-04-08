@@ -29,7 +29,7 @@
 </head>
 <body>
   
-  <?php include 'assets/includes/navbar.html'; ?>
+  <?php include 'assets/includes/navbar.php'; ?>
 
   <section data-bs-version="5.1" class="header16 cid-u8DlI77rJo mbr-fullscreen mbr-parallax-background" id="header17-e">
   
