@@ -39,7 +39,7 @@
         <h1 class="mbr-section-title mbr-fonts-style mbr-white mb-4 display-1"><strong>Feuerwehr Reichenbach</strong></h1>
         
         <p class="mbr-fonts-style mbr-text mbr-white mb-4 display-7">Im Glanz der Flammen, im Herzen des Dorfes.</p>
-        <div class="mbr-section-btn"><a class="btn btn-secondary display-7" href="index.html#image08-h">Erfahre mehr</a></div>
+        <div class="mbr-section-btn"><a class="btn btn-secondary display-7" href="#image08-h">Erfahre mehr</a></div>
       </div>
     </div>
   </div>
