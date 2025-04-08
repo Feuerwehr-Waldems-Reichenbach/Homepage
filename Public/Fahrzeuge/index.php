@@ -1,16 +1,15 @@
 <!DOCTYPE html>
 <html  >
 <head>
-  <!-- Site made with Mobirise Website Builder v5.9.17, https://mobirise.com -->
+  <!-- FFR Seite -->
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="generator" content="Mobirise v5.9.17, mobirise.com">
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
   <link rel="shortcut icon" href="../assets/images/gravatar-logo-dunkel-1.jpg" type="image/x-icon">
-  <meta name="description" content="Besuche unsere Veranstaltungen und lerne die Freiwillige Feuerwehr Reichenbach kennen. Erfahre mehr über unsere kommenden Events und Aktivitäten.">
+  <meta name="description" content="Erfahre mehr über die Fahrzeuge der Freiwilligen Feuerwehr Reichenbach. Wir verfügen über ein TSF-W und ein MTF, die für verschiedene Einsatzszenarien bereitstehen.">
   
   
-  <title>Veranstaltungen</title>
+  <title>Fahrzeuge</title>
   <link rel="stylesheet" href="../assets/web/assets/mobirise-icons2/mobirise2.css">
   <link rel="stylesheet" href="../assets/bootstrap/css/bootstrap.min.css">
   <link rel="stylesheet" href="../assets/bootstrap/css/bootstrap-grid.min.css">
@@ -21,7 +20,7 @@
   <link rel="stylesheet" href="../assets/theme/css/style.css">
   <link rel="preload" href="https://fonts.googleapis.com/css?family=Inter+Tight:100,200,300,400,500,600,700,800,900,100i,200i,300i,400i,500i,600i,700i,800i,900i&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter+Tight:100,200,300,400,500,600,700,800,900,100i,200i,300i,400i,500i,600i,700i,800i,900i&display=swap"></noscript>
-  <link rel="preload" as="style" href="../assets/mobirise/css/mbr-additional.css?v=niI2VT"><link rel="stylesheet" href="../assets/mobirise/css/mbr-additional.css?v=niI2VT" type="text/css">
+  <link rel="preload" as="style" href="../assets/mobirise/css/mbr-additional.css?v=rW5fBK"><link rel="stylesheet" href="../assets/mobirise/css/mbr-additional.css?v=rW5fBK" type="text/css">
 
   
   
@@ -29,78 +28,110 @@
 </head>
 <body>
   
-  <section data-bs-version="5.1" class="menu menu1 cid-u8CwqCiTr0" once="menu" id="menu1-2a">
-    
+<?php include '../assets/includes/navbar.php'; ?>
 
-    <nav class="navbar navbar-dropdown navbar-fixed-top navbar-expand-lg">
-        <div class="container-fluid">
-            <div class="navbar-brand">
-                <span class="navbar-logo">
-                    <a href="/">
-                        <img src="../assets/images/gravatar-logo-dunkel-1.webp" alt="Feuerwehr Reichenbach" style="height: 3rem;">
-                    </a>
-                </span>
-                <span class="navbar-caption-wrap"><a class="navbar-caption text-white display-5" href="/">Feuerwehr Reichenbach</a></span>
-            </div>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbarSupportedContent" data-bs-target="#navbarSupportedContent" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-                <div class="hamburger">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav nav-dropdown nav-right" data-app-modern-menu="true"><li class="nav-item dropdown"><a class="nav-link link dropdown-toggle text-info display-4" href="https://mobiri.se" data-toggle="dropdown-submenu" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="true">Das sind wir</a><div class="dropdown-menu" aria-labelledby="dropdown-813"><div class="dropdown"><a class="dropdown-item dropdown-toggle text-info display-4" href="Einsatzabteilung.html" data-toggle="dropdown-submenu" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">Einsatzabteilung</a><div class="dropdown-menu dropdown-submenu" aria-labelledby="dropdown-692"><a class="dropdown-item text-info display-4" href="/Einsatzabteilung">Einsatzabteilung</a><a class="dropdown-item text-info display-4" href="/Fahrzeuge">Fahrzeuge</a><a class="dropdown-item text-info display-4" href="/Feuerwehrhaus">Feuerwehrhaus</a></div></div><a class="dropdown-item text-info display-4" href="/Voraus-Helfer">Voraus-Helfer</a><a class="dropdown-item text-info display-4" href="/Realistische-Unfalldarstellung">Realistische Unfalldarstellung<br></a><a class="show dropdown-item text-info display-4" href="/Jugendfeuerwehr">Jugendfeuerwehr</a><a class="show dropdown-item text-info display-4" href="/Kinderfeuerwehr">Kinderfeuerwehr</a><a class="dropdown-item text-info display-4" href="/Foerderverein">Förderverein</a></div></li><li class="nav-item dropdown"><a class="nav-link link dropdown-toggle text-info display-4" href="Mitmachen.html" data-toggle="dropdown-submenu" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">Unterstützen</a><div class="dropdown-menu" aria-labelledby="dropdown-997"><a class="dropdown-item text-info display-4" href="/Mitmachen">Mitmachen</a><a class="dropdown-item text-info display-4" href="/Unterstuetzen">Unterstützen</a></div></li><li class="nav-item dropdown"><a class="nav-link link dropdown-toggle text-info display-4" href="Mitmachen.html" data-toggle="dropdown-submenu" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">Neuigkeiten</a><div class="dropdown-menu" aria-labelledby="dropdown-416"><a class="dropdown-item text-info display-4" href="/Veranstaltungen">Veranstaltungen</a><a class="show dropdown-item text-info display-4" href="/Einsaetze">Einsätze</a></div></li><li class="nav-item"><a class="nav-link link text-info display-4" href="/Grillhuette">Grillhütte</a></li></ul>
-                <div class="icons-menu">
-                    <a class="iconfont-wrapper" href="https://www.facebook.com/groups/163127135137/" target="_blank">
-                        <span class="p-2 mbr-iconfont socicon-facebook socicon" style="color: rgb(255, 255, 255); fill: rgb(255, 255, 255);"></span>
-                    </a>
-                    <a class="iconfont-wrapper" href="https://www.instagram.com/feuerwehrreichenbach/" target="_blank">
-                        <span class="p-2 mbr-iconfont socicon-instagram socicon" style="color: rgb(255, 255, 255); fill: rgb(255, 255, 255);"></span>
-                    </a>
-                    
-                    
-                </div>
-                
-            </div>
-        </div>
-    </nav>
-</section>
-
-<section data-bs-version="5.1" class="header16 cid-u8ZmTBFujS mbr-fullscreen mbr-parallax-background" id="header17-3p">
+<section data-bs-version="5.1" class="header16 cid-u8ToD2yyQl mbr-fullscreen mbr-parallax-background" id="header17-2q">
   
   <div class="mbr-overlay" style="opacity: 0.5; background-color: rgb(0, 0, 0);"></div>
   <div class="container-fluid">
     <div class="row">
       <div class="content-wrap col-12 col-md-12">
-        <h1 class="mbr-section-title mbr-fonts-style mbr-white mb-4 display-1"><strong>Veranstaltungen</strong></h1>
+        <h1 class="mbr-section-title mbr-fonts-style mbr-white mb-4 display-1"><strong>Fahrzeuge</strong></h1>
         
         
-        <div class="mbr-section-btn"><a class="btn btn-white-outline display-7" href="Veranstaltungen.html#article11-4q">Erfahre mehr!</a></div>
+        <div class="mbr-section-btn"><a class="btn btn-white-outline display-7" href="Fahrzeuge.html#image08-2r">Erfahre mehr</a></div>
       </div>
     </div>
   </div>
 </section>
 
-<section data-bs-version="5.1" class="article11 cid-ukzEavxMa7" id="article11-4q">
-    
-
-    
-    
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="title col-md-12 col-lg-10">
-                <h3 class="mbr-section-title mbr-fonts-style align-center mt-0 mb-0 display-2">
-                <strong>Veranstaltungen Platzhalter</strong></h3>
-                
-                
-            </div>
+<section data-bs-version="5.1" class="image08 cid-u8UEWIhu82" id="image08-2r">
+  
+  
+  
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-4">
+        <div class="col-12 col-md-12">
+          <h5 class="mbr-section-title mbr-fonts-style mt-0 mb-4 display-2"><strong>TSF-W (Tragkraftspritzenfahrzeug mit Wassertank)</strong></h5>
+          <h6 class="mbr-section-subtitle mbr-fonts-style mt-0 mb-4 display-7">Unser TSF-W ist ein vielseitiges Einsatzfahrzeug, das speziell für die Brandbekämpfung und technische Hilfeleistungen ausgestattet ist. Mit einem integrierten Wassertank und leistungsstarker Pumpe sind wir in der Lage, schnell und effektiv auf Brände zu reagieren. Das Fahrzeug verfügt zudem über moderne Ausrüstung für Rettungseinsätze, wodurch es ein unverzichtbarer Bestandteil unserer Einsatztabteilung ist.</h6>
+          
         </div>
+      </div>
+      <div class="col-lg-8 side-features">
+        <div class="image-wrapper mb-4">
+          <img class="w-100" src="../assets/images/img-3899.webp" alt="">
+        </div>
+      </div>
     </div>
+  </div>
 </section>
 
-<section data-bs-version="5.1" class="social02 cid-u8Zq101Sbg" id="social02-3x">
+<section data-bs-version="5.1" class="image08 cid-u8UGspFSKh" id="image08-2u">
+  
+  
+  
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-4">
+        <div class="col-12 col-md-12">
+          <h5 class="mbr-section-title mbr-fonts-style mt-0 mb-4 display-2"><strong>MTF (Mannschaftstransportfahrzeug)</strong></h5>
+          <h6 class="mbr-section-subtitle mbr-fonts-style mt-0 mb-4 display-7">Unser MTF dient hauptsächlich dem sicheren Transport unserer Einsatzkräfte zum Einsatzort. Es bietet ausreichend Platz für die gesamte Mannschaft und die notwendige Ausrüstung. Darüber hinaus wird das MTF für logistische Aufgaben und als mobiles Einsatzleitfahrzeug genutzt. Flexibilität und Schnelligkeit machen unser MTF zu einem wichtigen Fahrzeug in unserer Flotte.</h6>
+          
+        </div>
+      </div>
+      <div class="col-lg-8 side-features">
+        <div class="image-wrapper mb-4">
+          <img class="w-100" src="../assets/images/img20240819093838-1.webp" alt="">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-bs-version="5.1" class="gallery4 cid-u8UG7oxgEZ" id="gallery04-2t">
+  
+  
+  <div class="container-fluid gallery-wrapper">
+    <div class="row justify-content-center">
+      <div class="col-12 content-head">
+        
+      </div>
+    </div>
+    <div class="grid-container">
+      <div class="grid-container-1" style="transform: translate3d(-200px, 0px, 0px);">
+        <div class="grid-item">
+          <img src="../assets/images/img-3672.webp" alt="Feuerwehr Reichenbach">
+        </div>
+        <div class="grid-item">
+          <img src="../assets/images/ac95b9a1-230d-438b-bea7-d28b9ce2fdeb.webp" alt="Feuerwehr Reichenbach">
+        </div>
+        <div class="grid-item">
+          <img src="../assets/images/img20240715193842.webp" alt="Feuerwehr Reichenbach">
+        </div>
+        <div class="grid-item">
+          <img src="../assets/images/img-3392.webp" alt="Feuerwehr Reichenbach">
+        </div>
+      </div>
+      <div class="grid-container-2" style="transform: translate3d(-70px, 0px, 0px);">
+        <div class="grid-item">
+          <img src="../assets/images/img-4899.webp" alt="Feuerwehr Reichenbach">
+        </div>
+        <div class="grid-item">
+          <img src="../assets/images/img-4072.webp" alt="Feuerwehr Reichenbach">
+        </div>
+        <div class="grid-item">
+          <img src="../assets/images/img-3958.webp" alt="Feuerwehr Reichenbach">
+        </div>
+        <div class="grid-item">
+          <img src="../assets/images/787360b5-c8a3-4574-9109-9de8440c0bed.webp" alt="Feuerwehr Reichenbach">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-bs-version="5.1" class="social02 cid-u8TozI7tzQ" id="social02-2p">
 	
 
 	
@@ -152,7 +183,7 @@
 	</div>
 </section>
 
-<section data-bs-version="5.1" class="footer6 cid-u8DcwC0mHb" once="footers" id="footer6-2b">
+<section data-bs-version="5.1" class="footer6 cid-u8DcwC0mHb" once="footers" id="footer6-21">
 
     
 
@@ -206,7 +237,7 @@
             </div>
         </div>
     </div>
-
+ 
   
 </body>
 </html>
