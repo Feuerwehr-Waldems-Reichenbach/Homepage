@@ -116,28 +116,56 @@ function renderMenu($items, $level = 0) {
     align-items: center;
 }
 
+.navbar-logo img {
+    transition: transform 0.3s ease;
+}
+
+.navbar-logo:hover img {
+    transform: scale(1.05);
+}
+
 .navbar-caption {
     text-decoration: none;
+    transition: opacity 0.3s ease;
+}
+
+.navbar-caption:hover {
+    opacity: 0.9;
 }
 
 .dropdown-menu {
     background-color: #A72920;
     border: none;
     border-radius: 0;
+    transition: opacity 0.2s ease;
 }
 
 .dropdown-menu .dropdown-menu {
     background-color: #8f221a;
 }
 
+.nav-link, .dropdown-item {
+    position: relative;
+    transition: all 0.3s ease !important;
+    display: flex;
+    align-items: center;
+}
+
+.nav-link:hover, .dropdown-item:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    transform: translateX(5px);
+}
+
 .dropdown-toggle::after {
     display: inline-block;
-    margin-left: 0.255em;
-    vertical-align: 0.255em;
+    margin-left: 0.5em;
     content: "";
     border-top: 0.3em solid;
     border-right: 0.3em solid transparent;
     border-left: 0.3em solid transparent;
+    transition: transform 0.3s ease;
+    position: relative;
+    top: 2px;
 }
 
 .dropdown-item.dropdown-toggle::after {
@@ -146,9 +174,17 @@ function renderMenu($items, $level = 0) {
     border-bottom: 0.3em solid transparent;
     border-left: 0.3em solid;
     position: absolute;
-    right: 10px;
+    right: 1rem;
     top: 50%;
     transform: translateY(-50%);
+}
+
+.dropdown:hover > .dropdown-toggle::after {
+    transform: rotate(180deg);
+}
+
+.dropdown-item.dropdown-toggle:hover::after {
+    transform: translateY(-50%) translateX(3px);
 }
 
 .navbar-buttons.mbr-section-btn .btn {
@@ -156,6 +192,12 @@ function renderMenu($items, $level = 0) {
     border: none;
     color: white;
     padding: 0.5rem;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.navbar-buttons.mbr-section-btn .btn:hover {
+    transform: translateY(-2px);
+    opacity: 0.8;
 }
 
 .navbar-buttons.mbr-section-btn .socicon {
@@ -182,25 +224,54 @@ function renderMenu($items, $level = 0) {
     
     .dropdown-item.dropdown-toggle::after {
         transform: rotate(90deg);
-        right: 20px;
+        right: 1.5rem;
+    }
+
+    .nav-link:hover, .dropdown-item:hover {
+        transform: translateX(10px);
     }
     
     .navbar-buttons.mbr-section-btn {
         margin-top: 1rem;
         justify-content: center;
         display: flex;
+        gap: 1rem;
     }
 }
 
 @media (min-width: 992px) {
     .dropdown:hover > .dropdown-menu {
         display: block;
+        animation: fadeInMenu 0.3s ease forwards;
     }
     
     .dropdown-menu .dropdown:hover > .dropdown-menu {
         display: block;
         top: 0;
         left: 100%;
+        animation: slideInMenu 0.3s ease forwards;
+    }
+}
+
+@keyframes fadeInMenu {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInMenu {
+    from {
+        opacity: 0;
+        transform: translateX(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
     }
 }
 
@@ -219,6 +290,19 @@ function renderMenu($items, $level = 0) {
     width: 100%;
     background: white;
     border-radius: 2px;
+    transition: all 0.3s ease;
+}
+
+.navbar-toggler:hover .hamburger span {
+    background: rgba(255, 255, 255, 0.8);
+}
+
+.navbar-toggler:hover .hamburger span:nth-child(1) {
+    transform: translateY(-2px);
+}
+
+.navbar-toggler:hover .hamburger span:nth-child(3) {
+    transform: translateY(2px);
 }
 </style>
 
