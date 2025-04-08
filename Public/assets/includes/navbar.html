@@ -5,65 +5,68 @@
 <!-- Socicon CSS -->
 <link rel="stylesheet" href="../assets/socicon/css/styles.css">
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+<nav class="navbar navbar-dropdown navbar-fixed-top navbar-expand-lg">
     <div class="container-fluid">
-        <a class="navbar-brand" href="/">
-            <img src="../assets/images/gravatar-logo-dunkel-1.webp" alt="Feuerwehr Reichenbach" style="height: 3rem;">
-            <span class="ms-2">Feuerwehr Reichenbach</span>
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
+        <div class="navbar-brand">
+            <span class="navbar-logo">
+                <a href="/">
+                    <img src="../assets/images/gravatar-logo-dunkel-1.webp" alt="Feuerwehr Reichenbach" style="height: 3rem;">
+                </a>
+            </span>
+            <span class="navbar-caption-wrap"><a class="navbar-caption text-white display-5" href="/">Feuerwehr Reichenbach</a></span>
+        </div>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbarSupportedContent" data-bs-target="#navbarSupportedContent" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
         </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto">
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav nav-dropdown nav-right" data-app-modern-menu="true">
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown1" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Das sind wir
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown1">
-                        <li class="dropdown-submenu">
-                            <a class="dropdown-item dropdown-toggle" href="#" data-bs-toggle="dropdown">Einsatzabteilung</a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="/Einsatzabteilung">Einsatzabteilung</a></li>
-                                <li><a class="dropdown-item" href="/Fahrzeuge">Fahrzeuge</a></li>
-                                <li><a class="dropdown-item" href="/Feuerwehrhaus">Feuerwehrhaus</a></li>
-                            </ul>
-                        </li>
-                        <li><a class="dropdown-item" href="/Voraus-Helfer">Voraus-Helfer</a></li>
-                        <li><a class="dropdown-item" href="/Realistische-Unfalldarstellung">Realistische Unfalldarstellung</a></li>
-                        <li><a class="dropdown-item" href="/Jugendfeuerwehr">Jugendfeuerwehr</a></li>
-                        <li><a class="dropdown-item" href="/Kinderfeuerwehr">Kinderfeuerwehr</a></li>
-                        <li><a class="dropdown-item" href="/Foerderverein">Förderverein</a></li>
-                    </ul>
+                    <a class="nav-link link dropdown-toggle text-info display-4" href="#" data-toggle="dropdown-submenu" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="true">Das sind wir</a>
+                    <div class="dropdown-menu" aria-labelledby="dropdown-813">
+                        <div class="dropdown">
+                            <a class="dropdown-item dropdown-toggle text-info display-4" href="#" data-toggle="dropdown-submenu" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">Einsatzabteilung</a>
+                            <div class="dropdown-menu dropdown-submenu" aria-labelledby="dropdown-692">
+                                <a class="dropdown-item text-info display-4" href="/Einsatzabteilung">Einsatzabteilung</a>
+                                <a class="dropdown-item text-info display-4" href="/Fahrzeuge">Fahrzeuge</a>
+                                <a class="dropdown-item text-info display-4" href="/Feuerwehrhaus">Feuerwehrhaus</a>
+                            </div>
+                        </div>
+                        <a class="dropdown-item text-info display-4" href="/Voraus-Helfer">Voraus-Helfer</a>
+                        <a class="dropdown-item text-info display-4" href="/Realistische-Unfalldarstellung">Realistische Unfalldarstellung</a>
+                        <a class="dropdown-item text-info display-4" href="/Jugendfeuerwehr">Jugendfeuerwehr</a>
+                        <a class="dropdown-item text-info display-4" href="/Kinderfeuerwehr">Kinderfeuerwehr</a>
+                        <a class="dropdown-item text-info display-4" href="/Foerderverein">Förderverein</a>
+                    </div>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown2" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Unterstützen
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown2">
-                        <li><a class="dropdown-item" href="/Mitmachen">Mitmachen</a></li>
-                        <li><a class="dropdown-item" href="/Unterstuetzen">Unterstützen</a></li>
-                    </ul>
+                    <a class="nav-link link dropdown-toggle text-info display-4" href="#" data-toggle="dropdown-submenu" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">Unterstützen</a>
+                    <div class="dropdown-menu" aria-labelledby="dropdown-997">
+                        <a class="dropdown-item text-info display-4" href="/Mitmachen">Mitmachen</a>
+                        <a class="dropdown-item text-info display-4" href="/Unterstuetzen">Unterstützen</a>
+                    </div>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown3" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Neuigkeiten
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown3">
-                        <li><a class="dropdown-item" href="/Veranstaltungen">Veranstaltungen</a></li>
-                        <li><a class="dropdown-item" href="/Einsaetze">Einsätze</a></li>
-                    </ul>
+                    <a class="nav-link link dropdown-toggle text-info display-4" href="#" data-toggle="dropdown-submenu" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">Neuigkeiten</a>
+                    <div class="dropdown-menu" aria-labelledby="dropdown-416">
+                        <a class="dropdown-item text-info display-4" href="/Veranstaltungen">Veranstaltungen</a>
+                        <a class="dropdown-item text-info display-4" href="/Einsaetze">Einsätze</a>
+                    </div>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/Grillhuette">Grillhütte</a>
+                    <a class="nav-link link text-info display-4" href="/Grillhuette">Grillhütte</a>
                 </li>
             </ul>
-            <div class="ms-3">
-                <a class="text-white me-3" href="https://www.facebook.com/groups/163127135137/" target="_blank">
-                    <span class="mbr-iconfont socicon-facebook socicon"></span>
+            <div class="icons-menu">
+                <a class="iconfont-wrapper" href="https://www.facebook.com/groups/163127135137/" target="_blank">
+                    <span class="p-2 mbr-iconfont socicon-facebook socicon" style="color: rgb(255, 255, 255); fill: rgb(255, 255, 255);"></span>
                 </a>
-                <a class="text-white" href="https://www.instagram.com/feuerwehrreichenbach/" target="_blank">
-                    <span class="mbr-iconfont socicon-instagram socicon"></span>
+                <a class="iconfont-wrapper" href="https://www.instagram.com/feuerwehrreichenbach/" target="_blank">
+                    <span class="p-2 mbr-iconfont socicon-instagram socicon" style="color: rgb(255, 255, 255); fill: rgb(255, 255, 255);"></span>
                 </a>
             </div>
         </div>
@@ -72,7 +75,7 @@
 
 <style>
 .navbar {
-    background-color: rgba(0, 0, 0, 0.8) !important;
+    background-color: #A72920 !important;
     padding: 0.5rem 1rem;
 }
 
@@ -87,28 +90,28 @@
 }
 
 .nav-link {
-    color: #17a2b8 !important;
+    color: white !important;
     font-size: 1.1rem;
     padding: 0.5rem 1rem;
 }
 
 .nav-link:hover {
-    color: #138496 !important;
+    color: rgba(255, 255, 255, 0.8) !important;
 }
 
 .dropdown-menu {
-    background-color: rgba(0, 0, 0, 0.9);
+    background-color: #A72920;
     border: none;
 }
 
 .dropdown-item {
-    color: #17a2b8;
+    color: white;
     font-size: 1rem;
 }
 
 .dropdown-item:hover {
-    background-color: rgba(23, 162, 184, 0.1);
-    color: #138496;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
 }
 
 .dropdown-submenu {
