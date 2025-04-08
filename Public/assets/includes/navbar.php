@@ -68,7 +68,7 @@ function renderMenu($items, $level = 0) {
 ?>
 
 <nav class="navbar navbar-dropdown navbar-fixed-top navbar-expand-lg">
-    <div class="container">
+
         <div class="navbar-brand">
             <span class="navbar-logo">
                 <a href="/">
@@ -102,7 +102,7 @@ function renderMenu($items, $level = 0) {
                 </a>
             </div>
         </div>
-    </div>
+
 </nav>
 
 <style>
