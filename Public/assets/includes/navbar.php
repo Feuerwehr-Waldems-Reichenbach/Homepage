@@ -109,11 +109,13 @@ function renderMenu($items, $level = 0) {
 .navbar {
     background-color: #A72920;
     padding: 0.5rem 1rem;
+    position: relative;
 }
 
 .navbar-brand {
     display: flex;
     align-items: center;
+    flex-wrap: nowrap;
 }
 
 .navbar-logo img {
@@ -127,6 +129,14 @@ function renderMenu($items, $level = 0) {
 .navbar-caption {
     text-decoration: none;
     transition: opacity 0.3s ease;
+    white-space: nowrap;
+    font-family: 'Inter Tight', sans-serif;
+    font-weight: 500;
+}
+
+.navbar-caption-full {
+    font-weight: inherit;
+    font-family: inherit;
 }
 
 .navbar-caption:hover {
@@ -204,7 +214,74 @@ function renderMenu($items, $level = 0) {
     font-size: 1.5rem;
 }
 
+.navbar-toggler {
+    padding: 0.25rem;
+    margin-left: auto;
+    border: none;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+/* Hamburger Menu */
+.hamburger {
+    width: 24px;
+    height: 18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    cursor: pointer;
+}
+
+.hamburger span {
+    display: block;
+    height: 2px;
+    width: 100%;
+    background: white;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+}
+
+.navbar-toggler:hover .hamburger span {
+    background: rgba(255, 255, 255, 0.8);
+}
+
+.navbar-toggler:hover .hamburger span:nth-child(1) {
+    transform: translateY(-2px);
+}
+
+.navbar-toggler:hover .hamburger span:nth-child(3) {
+    transform: translateY(2px);
+}
+
 @media (max-width: 991px) {
+    .navbar {
+        padding: 0.3rem 0.8rem;
+    }
+    
+    .navbar-brand {
+        flex-wrap: nowrap;
+        max-width: 80%;
+    }
+    
+    .navbar-logo img {
+        height: 2.5rem !important;
+    }
+    
+    .navbar-caption {
+        font-size: 1.4rem !important;
+    }
+    
+    .navbar-toggler {
+        padding: 0.25rem;
+        margin-left: auto;
+    }
+    
+    .navbar > .container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
     .navbar-collapse {
         max-height: 90vh;
         overflow-y: auto;
@@ -236,6 +313,35 @@ function renderMenu($items, $level = 0) {
         justify-content: center;
         display: flex;
         gap: 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .navbar-logo {
+        display: none;
+    }
+    
+    .navbar-caption {
+        font-size: 1.2rem !important;
+    }
+    
+    .navbar-logo img {
+        height: 2rem !important;
+    }
+    
+    .navbar-caption-full {
+        display: none;
+    }
+}
+
+@media (max-width: 400px) {
+    .navbar-caption {
+        font-size: 1.1rem !important;
+    }
+    
+    .hamburger {
+        width: 20px;
+        height: 16px;
     }
 }
 
@@ -273,36 +379,6 @@ function renderMenu($items, $level = 0) {
         opacity: 1;
         transform: translateX(0);
     }
-}
-
-/* Hamburger Menu */
-.hamburger {
-    width: 30px;
-    height: 20px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-
-.hamburger span {
-    display: block;
-    height: 2px;
-    width: 100%;
-    background: white;
-    border-radius: 2px;
-    transition: all 0.3s ease;
-}
-
-.navbar-toggler:hover .hamburger span {
-    background: rgba(255, 255, 255, 0.8);
-}
-
-.navbar-toggler:hover .hamburger span:nth-child(1) {
-    transform: translateY(-2px);
-}
-
-.navbar-toggler:hover .hamburger span:nth-child(3) {
-    transform: translateY(2px);
 }
 </style>
 
