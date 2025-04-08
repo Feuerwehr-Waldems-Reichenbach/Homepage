@@ -500,20 +500,20 @@
               </div>
 
               <div class="item features-without-image col-12">
-                <div class="item-wrapper">
+              <div class="item-wrapper">
                   <h4 class="mbr-section-subtitle mbr-fonts-style mb-3 display-5">
                     <div><strong>8. Aktualität und Änderung dieser Datenschutzerklärung</strong></div>
                   </h4>
-                  <p class="mbr-text mbr-fonts-style display-7">Diese Datenschutzerklärung ist aktuell gültig und hat
-                    den Stand
+                  <p class="mbr-text mbr-fonts-style display-7">
+                    Diese Datenschutzerklärung ist aktuell gültig und hat den Stand
                     <?php echo date('d.m.Y'); ?>.
                   </p>
-                  <p class="mbr-text mbr-fonts-style display-7">Wir behalten uns vor, diese Datenschutzerklärung
-                    anzupassen, damit sie stets den aktuellen rechtlichen Anforderungen entspricht oder um Änderungen
-                    unserer Leistungen zu berücksichtigen, z.B. bei der Einführung neuer Funktionen. Bei Ihrem nächsten
-                    Besuch gilt dann die neue Datenschutzerklärung.</p>
-                  <p class="mbr-text mbr-fonts-style display-7">Wir empfehlen Ihnen, diese Datenschutzerklärung
-                    regelmäßig zu überprüfen, um über den Schutz Ihrer Daten auf dem Laufenden zu bleiben.</p>
+                  <p class="mbr-text mbr-fonts-style display-7">
+                    Wir behalten uns vor, diese Datenschutzerklärung anzupassen, um sie an geänderte Rechtslagen oder bei Änderungen unserer Leistungen sowie der Datenverarbeitung anzupassen. Die jeweils aktuelle Version ist stets auf unserer Website verfügbar und gilt ab dem Zeitpunkt ihrer Veröffentlichung.
+                  </p>
+                  <p class="mbr-text mbr-fonts-style display-7">
+                    Wir empfehlen Ihnen, diese Datenschutzerklärung regelmäßig zu überprüfen, um über den Schutz Ihrer Daten auf dem Laufenden zu bleiben.
+                  </p>
                 </div>
               </div>
             </div>
@@ -525,9 +525,6 @@
   </section>
 
   <section data-bs-version="5.1" class="social02 cid-u8MJEG7lfh" id="social02-11">
-
-
-
 
     <div class="container">
       <div class="row justify-content-center">
