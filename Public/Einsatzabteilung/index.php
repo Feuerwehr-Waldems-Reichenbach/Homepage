@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html  >
 <head>
-  <!-- Site made with Mobirise Website Builder v5.9.17, https://mobirise.com -->
+    <!-- FFR Seite -->
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="generator" content="Mobirise v5.9.17, mobirise.com">
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
   <link rel="shortcut icon" href="../assets/images/gravatar-logo-dunkel-1.jpg" type="image/x-icon">
   <meta name="description" content="Unsere Einsatztabteilung der Freiwilligen Feuerwehr Reichenbach ist rund um die Uhr einsatzbereit. Erfahre mehr über unsere Übungen, Einsätze und wie du Teil unseres Teams werden kannst.">
@@ -30,44 +29,7 @@
 </head>
 <body>
   
-  <section data-bs-version="5.1" class="menu menu1 cid-u8CwqCiTr0" once="menu" id="menu1-1">
-    
-
-    <nav class="navbar navbar-dropdown navbar-fixed-top navbar-expand-lg">
-        <div class="container-fluid">
-            <div class="navbar-brand">
-                <span class="navbar-logo">
-                    <a href="/">
-                        <img src="../assets/images/gravatar-logo-dunkel-1.webp" alt="Feuerwehr Reichenbach" style="height: 3rem;">
-                    </a>
-                </span>
-                <span class="navbar-caption-wrap"><a class="navbar-caption text-white display-5" href="/">Feuerwehr Reichenbach</a></span>
-            </div>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbarSupportedContent" data-bs-target="#navbarSupportedContent" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-                <div class="hamburger">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav nav-dropdown nav-right" data-app-modern-menu="true"><li class="nav-item dropdown"><a class="nav-link link dropdown-toggle text-info display-4" href="https://mobiri.se" data-toggle="dropdown-submenu" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="true">Das sind wir</a><div class="dropdown-menu" aria-labelledby="dropdown-813"><div class="dropdown"><a class="dropdown-item dropdown-toggle text-info display-4" href="Einsatzabteilung.html" data-toggle="dropdown-submenu" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">Einsatzabteilung</a><div class="dropdown-menu dropdown-submenu" aria-labelledby="dropdown-692"><a class="dropdown-item text-info display-4" href="/Einsatzabteilung">Einsatzabteilung</a><a class="dropdown-item text-info display-4" href="/Fahrzeuge">Fahrzeuge</a><a class="dropdown-item text-info display-4" href="/Feuerwehrhaus">Feuerwehrhaus</a></div></div><a class="dropdown-item text-info display-4" href="/Voraus-Helfer">Voraus-Helfer</a><a class="dropdown-item text-info display-4" href="/Realistische-Unfalldarstellung">Realistische Unfalldarstellung<br></a><a class="show dropdown-item text-info display-4" href="/Jugendfeuerwehr">Jugendfeuerwehr</a><a class="show dropdown-item text-info display-4" href="/Kinderfeuerwehr">Kinderfeuerwehr</a><a class="dropdown-item text-info display-4" href="/Foerderverein">Förderverein</a></div></li><li class="nav-item dropdown"><a class="nav-link link dropdown-toggle text-info display-4" href="Mitmachen.html" data-toggle="dropdown-submenu" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">Unterstützen</a><div class="dropdown-menu" aria-labelledby="dropdown-997"><a class="dropdown-item text-info display-4" href="/Mitmachen">Mitmachen</a><a class="dropdown-item text-info display-4" href="/Unterstuetzen">Unterstützen</a></div></li><li class="nav-item dropdown"><a class="nav-link link dropdown-toggle text-info display-4" href="Mitmachen.html" data-toggle="dropdown-submenu" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">Neuigkeiten</a><div class="dropdown-menu" aria-labelledby="dropdown-416"><a class="dropdown-item text-info display-4" href="/Veranstaltungen">Veranstaltungen</a><a class="show dropdown-item text-info display-4" href="/Einsaetze">Einsätze</a></div></li><li class="nav-item"><a class="nav-link link text-info display-4" href="/Grillhuette">Grillhütte</a></li></ul>
-                <div class="icons-menu">
-                    <a class="iconfont-wrapper" href="https://www.facebook.com/groups/163127135137/" target="_blank">
-                        <span class="p-2 mbr-iconfont socicon-facebook socicon" style="color: rgb(255, 255, 255); fill: rgb(255, 255, 255);"></span>
-                    </a>
-                    <a class="iconfont-wrapper" href="https://www.instagram.com/feuerwehrreichenbach/" target="_blank">
-                        <span class="p-2 mbr-iconfont socicon-instagram socicon" style="color: rgb(255, 255, 255); fill: rgb(255, 255, 255);"></span>
-                    </a>
-                    
-                    
-                </div>
-                
-            </div>
-        </div>
-    </nav>
-</section>
+<?php include '../assets/includes/navbar.php'; ?>
 
 <section data-bs-version="5.1" class="header16 cid-u8MWnMVRSd mbr-fullscreen mbr-parallax-background" id="header17-1c">
   
@@ -78,7 +40,7 @@
         <h1 class="mbr-section-title mbr-fonts-style mbr-white mb-4 display-1"><strong>Einsatzabteilung</strong></h1>
         
         
-        <div class="mbr-section-btn"><a class="btn btn-white-outline display-7" href="Einsatzabteilung.html#image08-2k">Erfahre mehr!</a></div>
+        <div class="mbr-section-btn"><a class="btn btn-white-outline display-7" href="#image08-2k">Erfahre mehr!</a></div>
       </div>
     </div>
   </div>
@@ -510,112 +472,9 @@
     </div>
 </section>
 
-<section data-bs-version="5.1" class="social02 cid-u8MJ2uMLmt" id="social02-r">
-	
 
-	
-	
-	<div class="container">
-		<div class="row justify-content-center">
-			<div class="col-12 content-head">
-				<div class="mb-5">
-					<h5 class="mbr-section-title mbr-fonts-style align-center mb-0 display-2"><strong>Vernetze dich mit uns</strong></h5>
-					
-				</div>
-			</div>
-		</div>
-		<div class="row">
-			<div class="item features-without-image col-12 col-md-6 col-lg-4 active">
-				<div class="item-wrapper">
-					<a href="https://www.instagram.com/feuerwehrreichenbach/" target="_blank"><span class="mbr-iconfont m-auto socicon-instagram socicon"></span></a>
-					<div class="card-box">
-						<h4 class="card-title mbr-fonts-style mb-1 display-7">
-							<strong>Instagram</strong>
-						</h4>
-						<h5 class="card-text mbr-fonts-style display-7">Sieh uns in Aktion und erlebe, wie wir für Sicherheit sorgen – folge uns auf Instagram!</h5>
-					</div>
-				</div>
-			</div><div class="item features-without-image col-12 col-md-6 col-lg-4">
-				<div class="item-wrapper">
-					<a href="Startseite.html#social02-p"><span class="mbr-iconfont m-auto mobi-mbri-smile-face mobi-mbri" style="color: rgb(167, 41, 32); fill: rgb(167, 41, 32);"></span></a>
-					<div class="card-box">
-						<h4 class="card-title mbr-fonts-style mb-1 display-7"><strong>&nbsp;</strong></h4>
-						<h5 class="card-text mbr-fonts-style display-7">&nbsp;</h5>
-					</div>
-				</div>
-			</div><div class="item features-without-image col-12 col-md-6 col-lg-4">
-				<div class="item-wrapper">
-					<a href="https://www.facebook.com/groups/163127135137/" target="_blank"><span class="mbr-iconfont m-auto socicon-facebook socicon"></span></a>
-					<div class="card-box">
-						<h4 class="card-title mbr-fonts-style mb-1 display-7">
-							<strong>Facebook</strong></h4>
-						<h5 class="card-text mbr-fonts-style display-7">Bleib auf dem Laufenden und werde Teil unserer Gemeinschaft – finde uns auf Facebook!</h5>
-					</div>
-				</div>
-			</div>
-			
-			
-			
-			
-			
-		</div>
-	</div>
-</section>
-
-<section data-bs-version="5.1" class="footer6 cid-u8DcwC0mHb" once="footers" id="footer6-d">
-
-    
-
-    
-
-    <div class="container">
-        <div class="row content mbr-white">
-            <div class="col-12 col-md-3 mbr-fonts-style display-7">
-                <h5 class="mbr-section-subtitle mbr-fonts-style mb-2 display-7"><strong>Rechtliches</strong></h5>
-                <p class="mbr-text mbr-fonts-style display-7"><a href="/Impressum" class="text-white">Impressum</a><br><a href="/Datenschutz" class="text-white">Datenschutz</a></p> <br>
-                <h5 class="mbr-section-subtitle mbr-fonts-style mb-2 mt-4 display-7"><a href="Kontakt.html" class="text-white"><strong>Kontakt</strong></a></h5>
-                <p class="mbr-text mbr-fonts-style mb-4 display-7">Fragen? Melde Dich!&nbsp;<br><a href="mailto:info@feuerwehr-waldems-reichenbach.de" class="text-info">info@feuerwehr-waldems-reichenbach.de</a><br></p>
-            </div>
-            <div class="col-12 col-md-3 mbr-fonts-style display-7">
-                <h5 class="mbr-section-subtitle mbr-fonts-style mb-2 display-7"><strong>Adresse</strong></h5>
-                <ul class="list mbr-fonts-style mb-4 display-4">Am Dorfgemeinschaftshaus 1, 65529 Waldems</ul>
-                <h5 class="mbr-section-subtitle mbr-fonts-style mb-2 mt-5 display-7"></h5>
-                <p class="mbr-text mbr-fonts-style mb-4 display-7"></p>
-            </div>
-            <div class="col-12 col-md-6">
-                <div class="google-map"><iframe frameborder="0" style="border:0" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2550.0765696607805!2d8.371063376928547!3d50.27182890020835!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47bdb1c0618ad845%3A0x8cb4e6795a859e93!2sFreiwillige%20Feuerwehr%20Waldems-Reichenbach!5e0!3m2!1sde!2sde!4v1711914944503!5m2!1sde!2sde" allowfullscreen=""></iframe></div>
-            </div>
-            <div class="col-md-6">
-                <div class="social-list align-left">
-                    <div class="soc-item">
-                        <a href="https://www.instagram.com/feuerwehrreichenbach/" target="_blank">
-                            <span class="mbr-iconfont mbr-iconfont-social socicon-instagram socicon" style="color: rgb(255, 255, 255); fill: rgb(255, 255, 255);"></span>
-                        </a>
-                    </div>
-                    <div class="soc-item">
-                        <a href="https://www.facebook.com/groups/163127135137/" target="_blank">
-                            <span class="mbr-iconfont mbr-iconfont-social socicon-facebook socicon"></span>
-                        </a>
-                    </div>
-                    
-                    
-                    
-                    
-                </div>
-            </div>
-        </div>
-        <div class="footer-lower">
-            <div class="media-container-row">
-                <div class="col-sm-12">
-                    <hr>
-                </div>
-            </div>
-            <div class="col-sm-12 copyright pl-0">
-                <p class="mbr-text mbr-fonts-style mbr-white display-7">
-                    © Copyright 2024 Förderverein der Freiwilligen Feuerwehr Waldems-Reichenbach e.V. im Auftrag für die Freiwillige Feuerwehr Waldems Reichenbach - Alle Rechte vorbehalten</p>
-            </div>
-        </div>
-    </div>
+<?php include '../assets/includes/socialFooter.php'; ?>
+<?php include '../assets/includes/footer.php'; ?>
 
   
 </body>
