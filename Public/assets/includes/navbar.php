@@ -110,6 +110,13 @@ function renderMenu($items, $level = 0) {
     background-color: #A72920;
     padding: 0.5rem 1rem;
     position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.navbar > .container {
+    display: flex;
+    align-items: center;
 }
 
 .navbar-brand {
@@ -215,11 +222,16 @@ function renderMenu($items, $level = 0) {
 }
 
 .navbar-toggler {
-    padding: 0.25rem;
+    padding: 0;
     margin-left: auto;
     border: none;
     outline: none !important;
     box-shadow: none !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    width: 40px;
 }
 
 /* Hamburger Menu */
@@ -230,6 +242,7 @@ function renderMenu($items, $level = 0) {
     flex-direction: column;
     justify-content: space-between;
     cursor: pointer;
+    margin: 0;
 }
 
 .hamburger span {
@@ -256,11 +269,14 @@ function renderMenu($items, $level = 0) {
 @media (max-width: 991px) {
     .navbar {
         padding: 0.3rem 0.8rem;
+        min-height: 60px;
     }
     
     .navbar-brand {
         flex-wrap: nowrap;
         max-width: 80%;
+        display: flex;
+        align-items: center;
     }
     
     .navbar-logo img {
@@ -272,8 +288,9 @@ function renderMenu($items, $level = 0) {
     }
     
     .navbar-toggler {
-        padding: 0.25rem;
-        margin-left: auto;
+        height: 40px;
+        width: 40px;
+        padding: 0;
     }
     
     .navbar > .container {
@@ -317,12 +334,21 @@ function renderMenu($items, $level = 0) {
 }
 
 @media (max-width: 576px) {
+    .navbar {
+        min-height: 50px;
+    }
+    
     .navbar-logo {
         display: none;
     }
     
     .navbar-caption {
         font-size: 1.2rem !important;
+    }
+    
+    .navbar-toggler {
+        height: 38px;
+        width: 38px;
     }
     
     .navbar-logo img {
@@ -335,6 +361,11 @@ function renderMenu($items, $level = 0) {
 }
 
 @media (max-width: 400px) {
+    .navbar {
+        min-height: 45px;
+        padding: 0.2rem 0.7rem;
+    }
+    
     .navbar-caption {
         font-size: 1.1rem !important;
     }
@@ -342,6 +373,11 @@ function renderMenu($items, $level = 0) {
     .hamburger {
         width: 20px;
         height: 16px;
+    }
+    
+    .navbar-toggler {
+        height: 36px;
+        width: 36px;
     }
 }
 
