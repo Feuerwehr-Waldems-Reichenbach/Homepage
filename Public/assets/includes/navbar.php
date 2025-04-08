@@ -1,8 +1,9 @@
-
 <!-- Bootstrap Icons -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
 <!-- Socicon CSS -->
 <link rel="stylesheet" href="../assets/socicon/css/styles.css">
+<!-- Dropdown CSS -->
+<link rel="stylesheet" href="../assets/dropdown/css/style.css">
 
 <?php
 $menu = [
@@ -10,7 +11,7 @@ $menu = [
         'submenu' => [
             'Einsatzabteilung' => [
                 'submenu' => [
-                    'Einsatzabteilung' => '/Einsatzabteilung',
+                    'Übersicht' => '/Einsatzabteilung',
                     'Fahrzeuge' => '/Fahrzeuge',
                     'Feuerwehrhaus' => '/Feuerwehrhaus'
                 ]
@@ -40,9 +41,13 @@ $menu = [
 function renderMenu($items, $level = 0) {
     foreach ($items as $label => $item) {
         if (is_array($item) && isset($item['submenu'])) {
-            echo '<li class="nav-item dropdown">';
-            echo '<a class="nav-link link ' . ($level == 0 ? 'dropdown-toggle' : '') . ' text-white display-4" href="#" 
-                    data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">' . $label . '</a>';
+            if ($level == 0) {
+                echo '<li class="nav-item dropdown">';
+                echo '<a class="nav-link dropdown-toggle text-white display-4" href="#" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">' . $label . '</a>';
+            } else {
+                echo '<li class="dropdown">';
+                echo '<a class="dropdown-item dropdown-toggle text-white" href="#" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">' . $label . '</a>';
+            }
             echo '<ul class="dropdown-menu">';
             renderMenu($item['submenu'], $level + 1);
             echo '</ul>';
@@ -54,7 +59,7 @@ function renderMenu($items, $level = 0) {
                 echo '</li>';
             } else {
                 echo '<li class="nav-item">';
-                echo '<a class="nav-link link text-white display-4" href="' . $item . '">' . $label . '</a>';
+                echo '<a class="nav-link text-white display-4" href="' . $item . '">' . $label . '</a>';
                 echo '</li>';
             }
         }
@@ -62,8 +67,8 @@ function renderMenu($items, $level = 0) {
 }
 ?>
 
-<nav class="navbar navbar-expand-lg fixed-top">
-    <div class="container-fluid">
+<nav class="navbar navbar-dropdown navbar-fixed-top navbar-expand-lg">
+    <div class="container">
         <div class="navbar-brand">
             <span class="navbar-logo">
                 <a href="/">
@@ -84,15 +89,16 @@ function renderMenu($items, $level = 0) {
         </button>
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+            <ul class="navbar-nav nav-dropdown ms-auto">
                 <?php renderMenu($menu); ?>
             </ul>
-            <div class="icons-menu">
-                <a class="iconfont-wrapper" href="https://www.facebook.com/groups/163127135137/" target="_blank">
-                    <span class="p-2 mbr-iconfont socicon-facebook socicon"></span>
+            
+            <div class="navbar-buttons mbr-section-btn">
+                <a class="btn btn-sm" href="https://www.facebook.com/groups/163127135137/" target="_blank">
+                    <span class="socicon-facebook socicon"></span>
                 </a>
-                <a class="iconfont-wrapper" href="https://www.instagram.com/feuerwehrreichenbach/" target="_blank">
-                    <span class="p-2 mbr-iconfont socicon-instagram socicon"></span>
+                <a class="btn btn-sm" href="https://www.instagram.com/feuerwehrreichenbach/" target="_blank">
+                    <span class="socicon-instagram socicon"></span>
                 </a>
             </div>
         </div>
@@ -103,96 +109,108 @@ function renderMenu($items, $level = 0) {
 .navbar {
     background-color: #A72920;
     padding: 0.5rem 1rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
 }
 
 .navbar-brand {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-}
-
-.navbar-logo img {
-    transition: transform 0.3s ease;
-}
-
-.navbar-logo img:hover {
-    transform: scale(1.05);
 }
 
 .navbar-caption {
     text-decoration: none;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-}
-
-.nav-link, .dropdown-item {
-    color: white !important;
-    padding: 0.5rem 1rem !important;
-    border-radius: 4px;
-    transition: all 0.2s ease;
-    position: relative;
-}
-
-.nav-link:hover, .dropdown-item:hover {
-    color: white !important;
-    background-color: rgba(255, 255, 255, 0.15);
-    transform: translateY(-1px);
 }
 
 .dropdown-menu {
     background-color: #A72920;
     border: none;
-    margin-top: 0;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    padding: 0.5rem;
+    border-radius: 0;
 }
 
 .dropdown-menu .dropdown-menu {
-    margin-left: 0;
+    background-color: #8f221a;
+}
+
+.dropdown-toggle::after {
+    display: inline-block;
+    margin-left: 0.255em;
+    vertical-align: 0.255em;
+    content: "";
+    border-top: 0.3em solid;
+    border-right: 0.3em solid transparent;
+    border-left: 0.3em solid transparent;
+}
+
+.dropdown-item.dropdown-toggle::after {
+    border-top: 0.3em solid transparent;
+    border-right: 0;
+    border-bottom: 0.3em solid transparent;
+    border-left: 0.3em solid;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.navbar-buttons.mbr-section-btn .btn {
+    background-color: transparent;
+    border: none;
+    color: white;
+    padding: 0.5rem;
+}
+
+.navbar-buttons.mbr-section-btn .socicon {
+    font-size: 1.5rem;
+}
+
+@media (max-width: 991px) {
+    .navbar-collapse {
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+    
+    .navbar-nav.nav-dropdown {
+        display: block;
+        width: 100%;
+    }
+    
+    .dropdown-menu {
+        position: static;
+        float: none;
+        margin-left: 1rem;
+        border-left: 2px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .dropdown-item.dropdown-toggle::after {
+        transform: rotate(90deg);
+        right: 20px;
+    }
+    
+    .navbar-buttons.mbr-section-btn {
+        margin-top: 1rem;
+        justify-content: center;
+        display: flex;
+    }
 }
 
 @media (min-width: 992px) {
     .dropdown:hover > .dropdown-menu {
         display: block;
-        animation: fadeIn 0.2s ease-in-out;
     }
     
     .dropdown-menu .dropdown:hover > .dropdown-menu {
         display: block;
-        position: absolute;
-        left: 100%;
         top: 0;
-        animation: slideIn 0.2s ease-in-out;
+        left: 100%;
     }
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes slideIn {
-    from { opacity: 0; transform: translateX(-10px); }
-    to { opacity: 1; transform: translateX(0); }
-}
-
 /* Hamburger Menu */
-.navbar-toggler {
-    border: none;
-    padding: 0.5rem;
-    transition: all 0.3s ease;
-}
-
 .hamburger {
     width: 30px;
     height: 20px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    transition: all 0.3s ease;
 }
 
 .hamburger span {
@@ -201,64 +219,30 @@ function renderMenu($items, $level = 0) {
     width: 100%;
     background: white;
     border-radius: 2px;
-    transition: all 0.3s ease;
-}
-
-.navbar-toggler:hover .hamburger span {
-    background: rgba(255, 255, 255, 0.8);
-}
-
-/* Mobile Styles */
-@media (max-width: 991px) {
-    .navbar-collapse {
-        background-color: #A72920;
-        padding: 1rem;
-        border-radius: 8px;
-        margin-top: 0.5rem;
-    }
-    
-    .dropdown-menu {
-        background-color: rgba(167, 41, 32, 0.9);
-        margin-left: 1rem;
-        border-left: 2px solid rgba(255, 255, 255, 0.2);
-    }
-    
-    .icons-menu {
-        display: flex;
-        justify-content: center;
-        gap: 1.5rem;
-        margin-top: 1.5rem;
-        padding: 1rem 0;
-    }
-    
-    .navbar-nav {
-        margin-top: 1rem;
-    }
-
-    .nav-link, .dropdown-item {
-        padding: 0.75rem 1rem !important;
-    }
-}
-
-.icons-menu .iconfont-wrapper {
-    text-decoration: none;
-    transition: all 0.3s ease;
-}
-
-.icons-menu .iconfont-wrapper:hover {
-    transform: translateY(-2px);
-}
-
-.mbr-iconfont {
-    color: white;
-    font-size: 1.5rem;
-    transition: all 0.3s ease;
-}
-
-.mbr-iconfont:hover {
-    color: rgba(255, 255, 255, 0.8);
 }
 </style>
 
 <!-- Bootstrap Bundle with Popper -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script> 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // Make mobile dropdowns work with click instead of hover
+    if (window.innerWidth < 992) {
+        document.querySelectorAll('.dropdown-toggle').forEach(function(element) {
+            element.addEventListener('click', function(e) {
+                e.preventDefault();
+                let nextEl = this.nextElementSibling;
+                if (nextEl && nextEl.classList.contains('dropdown-menu')) {
+                    // If visible, hide it
+                    if (nextEl.style.display === 'block') {
+                        nextEl.style.display = 'none';
+                    } else {
+                        // Otherwise, show it
+                        nextEl.style.display = 'block';
+                    }
+                }
+            });
+        });
+    }
+});
+</script> 
