@@ -20,10 +20,7 @@
             
             <div class="row pt-3 border-top border-secondary">
                 <div class="col-md-6 mb-3 mb-md-0">
-                    <div class="d-flex flex-column h-100">
-                        <h5 class="mb-2">Grillhütte Reichenbach</h5>
-                        <p class="mb-0">Ein Service der Feuerwehr Waldems-Reichenbach</p>
-                        
+                    <div class="d-flex flex-column h-100">                       
                         <div class="contact-info mt-3">
                             <div class="d-flex align-items-start mb-2">
                                 <i class="bi bi-geo-alt-fill me-2 mt-1 text-danger"></i>
@@ -46,7 +43,7 @@
                     </div>
                 </div>
                 <div class="col-md-6 text-md-end">
-                    <p class="mb-2 mb-md-0">&copy; <?php echo date('Y'); ?> Feuerwehr Waldems-Reichenbach</p>
+                    <p class="mb-2 mb-md-0">&copy; <?php echo date('Y'); ?> Förderverein der Freiwilligen Feuerwehr Waldems-Reichenbach e.V. im Auftrag für die Freiwillige Feuerwehr Waldems Reichenbach - Alle Rechte vorbehalten</p>
                     <!-- Footer links -->
                     <div class="d-flex flex-wrap justify-content-start justify-content-md-end mt-2 footer-links">
                         <a href="<?php echo getRelativePath('Nutzungsbedingungen'); ?>" class="text-white me-3 mb-2">
@@ -55,10 +52,10 @@
                         <a href="<?php echo getRelativePath('Anleitung'); ?>" class="text-white me-3 mb-2">
                             <i class="bi bi-question-circle me-1"></i>Anleitung
                         </a>
-                        <a href="<?php echo getRelativePath('Datenschutz'); ?>" class="text-white me-3 mb-2">
+                        <a href="/Datenschutz" class="text-white me-3 mb-2">
                             <i class="bi bi-shield-lock me-1"></i>Datenschutz
                         </a>
-                        <a href="<?php echo getRelativePath('Impressum'); ?>" class="text-white mb-2">
+                        <a href="/Impressum" class="text-white mb-2">
                             <i class="bi bi-info-circle me-1"></i>Impressum
                         </a>
                     </div>
