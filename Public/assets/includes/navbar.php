@@ -7,12 +7,12 @@
 
 <?php
 $menu = [
-    'Das sind wir' => [
+    'Unsere Abteilungen' => [
         'submenu' => [
             'Einsatzabteilung' => [
                 'submenu' => [
                     'Übersicht' => '/Einsatzabteilung',
-                    'Fahrzeuge' => '/Fahrzeuge',
+                    'Fahrzeuge' => '/Fahrzeuge', 
                     'Feuerwehrhaus' => '/Feuerwehrhaus'
                 ]
             ],
@@ -23,19 +23,19 @@ $menu = [
             'Förderverein' => '/Foerderverein'
         ]
     ],
-    'Unterstützen' => [
+    'Mitmachen & Helfen' => [
         'submenu' => [
             'Mitmachen' => '/Mitmachen',
             'Unterstützen' => '/Unterstuetzen'
         ]
     ],
-    'Neuigkeiten' => [
+    'Aktuelles' => [
         'submenu' => [
             'Veranstaltungen' => '/Veranstaltungen',
             'Einsätze' => '/Einsaetze'
         ]
     ],
-    'Grillhütte' => '/Grillhuette'
+    'Grillhütte mieten' => '/Grillhuette'
 ];
 
 function renderMenu($items, $level = 0) {
