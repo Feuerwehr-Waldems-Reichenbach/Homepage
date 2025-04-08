@@ -39,7 +39,7 @@
         <h1 class="mbr-section-title mbr-fonts-style mbr-white mb-4 display-1"><strong>Förderverein&nbsp;</strong></h1>
         
         
-        <div class="mbr-section-btn"><a class="btn btn-white-outline display-7" href="Foerderverein.html#article07-57">Erfahre mehr!</a></div>
+        <div class="mbr-section-btn"><a class="btn btn-white-outline display-7" href="#article07-57">Erfahre mehr!</a></div>
       </div>
     </div>
   </div>

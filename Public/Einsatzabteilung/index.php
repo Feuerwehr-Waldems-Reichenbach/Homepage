@@ -40,7 +40,7 @@
         <h1 class="mbr-section-title mbr-fonts-style mbr-white mb-4 display-1"><strong>Einsatzabteilung</strong></h1>
         
         
-        <div class="mbr-section-btn"><a class="btn btn-white-outline display-7" href="Einsatzabteilung.html#image08-2k">Erfahre mehr!</a></div>
+        <div class="mbr-section-btn"><a class="btn btn-white-outline display-7" href="#image08-2k">Erfahre mehr!</a></div>
       </div>
     </div>
   </div>

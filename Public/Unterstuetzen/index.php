@@ -39,7 +39,7 @@
         <h1 class="mbr-section-title mbr-fonts-style mbr-white mb-4 display-1"><strong>Unterstützen</strong></h1>
         
         
-        <div class="mbr-section-btn"><a class="btn btn-white-outline display-7" href="Unterstuetzen.html#features05-1q">Wie kann ich helfen?</a></div>
+        <div class="mbr-section-btn"><a class="btn btn-white-outline display-7" href="#features05-1q">Wie kann ich helfen?</a></div>
       </div>
     </div>
   </div>

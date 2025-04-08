@@ -39,7 +39,7 @@
         <h1 class="mbr-section-title mbr-fonts-style mbr-white mb-4 display-1"><strong>Jugendfeuerwehr</strong></h1>
         
         
-        <div class="mbr-section-btn"><a class="btn btn-white-outline display-7" href="Jugendfeuerwehr.html#image08-3g">Erfahre mehr!</a></div>
+        <div class="mbr-section-btn"><a class="btn btn-white-outline display-7" href="#image08-3g">Erfahre mehr!</a></div>
       </div>
     </div>
   </div>

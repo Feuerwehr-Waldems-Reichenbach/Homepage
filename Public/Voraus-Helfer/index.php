@@ -39,7 +39,7 @@
         <h1 class="mbr-section-title mbr-fonts-style mbr-white mb-4 display-1"><strong>Voraus-Helfer</strong></h1>
         
         
-        <div class="mbr-section-btn"><a class="btn btn-white-outline display-7" href="Voraus-Helfer.html#image08-34">Erfahre mehr!</a></div>
+        <div class="mbr-section-btn"><a class="btn btn-white-outline display-7" href="#image08-34">Erfahre mehr!</a></div>
       </div>
     </div>
   </div>
