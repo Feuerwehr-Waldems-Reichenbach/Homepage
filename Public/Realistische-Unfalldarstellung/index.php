@@ -236,58 +236,7 @@
     </div>
 </section>
 
-<section data-bs-version="5.1" class="social02 cid-u8ZiNcGlRq" id="social02-38">
-	
-
-	
-	
-	<div class="container">
-		<div class="row justify-content-center">
-			<div class="col-12 content-head">
-				<div class="mb-5">
-					<h5 class="mbr-section-title mbr-fonts-style align-center mb-0 display-2"><strong>Vernetze dich mit uns</strong></h5>
-					
-				</div>
-			</div>
-		</div>
-		<div class="row">
-			<div class="item features-without-image col-12 col-md-6 col-lg-4 active">
-				<div class="item-wrapper">
-					<a href="https://www.instagram.com/feuerwehrreichenbach/" target="_blank"><span class="mbr-iconfont m-auto socicon-instagram socicon"></span></a>
-					<div class="card-box">
-						<h4 class="card-title mbr-fonts-style mb-1 display-7">
-							<strong>Instagram</strong>
-						</h4>
-						<h5 class="card-text mbr-fonts-style display-7">Sieh uns in Aktion und erlebe, wie wir für Sicherheit sorgen <br>– folge uns auf Instagram!</h5>
-					</div>
-				</div>
-			</div><div class="item features-without-image col-12 col-md-6 col-lg-4">
-				<div class="item-wrapper">
-					<a href="Startseite.html#social02-p"><span class="mbr-iconfont m-auto mobi-mbri-smile-face mobi-mbri" style="color: rgb(167, 41, 32); fill: rgb(167, 41, 32);"></span></a>
-					<div class="card-box">
-						<h4 class="card-title mbr-fonts-style mb-1 display-7"><strong>&nbsp;</strong></h4>
-						<h5 class="card-text mbr-fonts-style display-7">&nbsp;</h5>
-					</div>
-				</div>
-			</div><div class="item features-without-image col-12 col-md-6 col-lg-4">
-				<div class="item-wrapper">
-					<a href="https://www.facebook.com/groups/163127135137/" target="_blank"><span class="mbr-iconfont m-auto socicon-facebook socicon"></span></a>
-					<div class="card-box">
-						<h4 class="card-title mbr-fonts-style mb-1 display-7">
-							<strong>Facebook</strong></h4>
-						<h5 class="card-text mbr-fonts-style display-7">Bleib auf dem Laufenden und werde Teil unserer Gemeinschaft<br> – finde uns auf Facebook!</h5>
-					</div>
-				</div>
-			</div>
-			
-			
-			
-			
-			
-		</div>
-	</div>
-</section>
-
+<?php include '../assets/includes/socialFooter.php'; ?>
 <?php include '../assets/includes/footer.php'; ?>
  
   
