@@ -1,0 +1,156 @@
+/* Neuigkeiten Card Styling */
+.neuigkeiten-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    margin: 2rem 0;
+}
+
+.karte {
+    display: flex;
+    width: 700px;
+    height: 350px;
+    overflow: hidden;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    background-color: #ffffff;
+}
+
+.bildbereich {
+    flex: 1;
+    overflow: hidden;
+}
+
+.bildbereich img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.infobereich {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.infobereich h2 {
+    margin: 0 0 10px;
+    color: #A72920;
+}
+
+.info-details {
+    font-size: 0.9em;
+    color: #555;
+    margin-bottom: 15px;
+}
+
+.kurzinfo {
+    flex: 1;
+    overflow-y: auto;
+    margin-bottom: 15px;
+}
+
+.datum, .ort {
+    font-weight: bold;
+}
+
+/* Scrollbar styling */
+.kurzinfo::-webkit-scrollbar {
+    width: 5px;
+}
+.kurzinfo::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 10px;
+}
+
+/* Pagination styling */
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 1.5rem;
+}
+
+.page-link {
+    margin: 0 5px;
+    padding: 8px 16px;
+    border-radius: 4px;
+    color: #A72920;
+    background-color: #f8f9fa;
+    text-decoration: none;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.page-link.active {
+    background-color: #A72920;
+    color: white;
+}
+
+.page-link:hover {
+    background-color: #e9ecef;
+}
+
+/* Popup styling */
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.7);
+    z-index: 1000;
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+
+.popup-container {
+    position: relative;
+    max-width: 800px;
+    max-height: 80vh;
+    width: 90%;
+    background-color: white;
+    border-radius: 15px;
+    padding: 20px;
+    overflow: auto;
+}
+
+.popup-close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 100;
+    color: #333;
+}
+
+/* Responsive styling */
+@media (max-width: 767px) {
+    .karte {
+        width: 100%;
+        flex-direction: column;
+        height: auto;
+    }
+    
+    .bildbereich, .infobereich {
+        flex: none;
+    }
+    
+    .bildbereich {
+        height: 200px;
+    }
+    
+    .neuigkeiten-latest .karte {
+        margin-bottom: 2rem;
+    }
+}
+
+/* Neuigkeit detail view */
+.neuigkeit-volltext {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    line-height: 1.6;
+} 
