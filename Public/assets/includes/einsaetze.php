@@ -196,6 +196,18 @@ function showEinsaetze($itemsPerPage = 5, $customClass = '') {
             background-color: #fff;
             cursor: not-allowed;
         }
+        .pagination .current-page-info span {
+            background-color: transparent;
+            border: none;
+            color: #585858;
+            padding: 0.5rem 0.8rem;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+        }
         .pagination a.loading {
             position: relative;
             background-color: #f8f9fa;
@@ -282,6 +294,28 @@ function showEinsaetze($itemsPerPage = 5, $customClass = '') {
                 min-width: 2.5rem;
             }
         }
+        
+        /* Smartphone pagination styles */
+        @media (max-width: 480px) {
+            .pagination {
+                gap: 0.5rem;
+                justify-content: space-between;
+                max-width: 100%;
+            }
+            .pagination li:first-child,
+            .pagination li:last-child {
+                flex: 0 0 auto;
+            }
+            .pagination .current-page-info {
+                flex: 1 1 auto;
+                text-align: center;
+            }
+            .pagination .current-page-info span {
+                justify-content: center;
+                font-size: 0.85rem;
+                padding: 0.4rem;
+            }
+        }
     </style>';
     
     // Container mit optionaler benutzerdefinierter Klasse
@@ -345,6 +379,15 @@ function showEinsaetze($itemsPerPage = 5, $customClass = '') {
             $path = $urlParts['path'] ?? '';
             $query = [];
             $containerId = 'einsaetze-container';
+            
+            // Erkennung von Mobilgeräten/Smartphones
+            $isMobile = isset($_SERVER['HTTP_USER_AGENT']) && preg_match('/(android|iphone|ipad|mobile)/i', $_SERVER['HTTP_USER_AGENT']);
+            $isSmartphone = $isMobile && (
+                strpos($_SERVER['HTTP_USER_AGENT'], 'iPhone') !== false || 
+                strpos($_SERVER['HTTP_USER_AGENT'], 'Android') !== false ||
+                (strpos($_SERVER['HTTP_USER_AGENT'], 'Mobile') !== false && strpos($_SERVER['HTTP_USER_AGENT'], 'iPad') === false)
+            );
+            $pageRange = $isMobile && !$isSmartphone ? 1 : 2; // Auf Tablets nur 1 Seite links/rechts anzeigen
             
             // Container-ID setzen und Pagination-Handling
             echo '<script>
@@ -427,44 +470,48 @@ function showEinsaetze($itemsPerPage = 5, $customClass = '') {
                 echo '<li class="disabled"><span>&laquo;</span></li>';
             }
             
-            // Seitenzahlen mit reduziertem Bereich für mobile Geräte
-            $isMobile = isset($_SERVER['HTTP_USER_AGENT']) && preg_match('/(android|iphone|ipad|mobile)/i', $_SERVER['HTTP_USER_AGENT']);
-            $pageRange = $isMobile ? 1 : 2; // Auf Mobilgeräten nur 1 Seite links/rechts anzeigen
-            
-            $startPage = max(1, $page - $pageRange);
-            $endPage = min($totalPages, $page + $pageRange);
-            
-            // Immer Seite 1 anzeigen
-            if ($startPage > 1) {
-                $query['einsatz_page'] = 1;
-                $firstUrl = $path . '?' . http_build_query($query);
-                echo '<li><a href="' . htmlspecialchars($firstUrl) . '">1</a></li>';
+            // Auf Smartphones nur die aktuelle Seite anzeigen
+            if ($isSmartphone) {
+                // Aktuelle Seite und Gesamtanzahl anzeigen
+                echo '<li class="current-page-info"><span>Seite ' . $page . ' von ' . $totalPages . '</span></li>';
+            } else {
+                // Normale Paginierung für Desktop und Tablets
                 
-                if ($startPage > 2) {
-                    echo '<li class="disabled"><span>...</span></li>';
-                }
-            }
-            
-            // Seitennummern anzeigen
-            for ($i = $startPage; $i <= $endPage; $i++) {
-                if ($i == $page) {
-                    echo '<li class="active"><span>' . $i . '</span></li>';
-                } else {
-                    $query['einsatz_page'] = $i;
-                    $pageUrl = $path . '?' . http_build_query($query);
-                    echo '<li><a href="' . htmlspecialchars($pageUrl) . '">' . $i . '</a></li>';
-                }
-            }
-            
-            // Immer die letzte Seite anzeigen
-            if ($endPage < $totalPages) {
-                if ($endPage < $totalPages - 1) {
-                    echo '<li class="disabled"><span>...</span></li>';
+                $startPage = max(1, $page - $pageRange);
+                $endPage = min($totalPages, $page + $pageRange);
+                
+                // Immer Seite 1 anzeigen
+                if ($startPage > 1) {
+                    $query['einsatz_page'] = 1;
+                    $firstUrl = $path . '?' . http_build_query($query);
+                    echo '<li><a href="' . htmlspecialchars($firstUrl) . '">1</a></li>';
+                    
+                    if ($startPage > 2) {
+                        echo '<li class="disabled"><span>...</span></li>';
+                    }
                 }
                 
-                $query['einsatz_page'] = $totalPages;
-                $lastUrl = $path . '?' . http_build_query($query);
-                echo '<li><a href="' . htmlspecialchars($lastUrl) . '">' . $totalPages . '</a></li>';
+                // Seitennummern anzeigen
+                for ($i = $startPage; $i <= $endPage; $i++) {
+                    if ($i == $page) {
+                        echo '<li class="active"><span>' . $i . '</span></li>';
+                    } else {
+                        $query['einsatz_page'] = $i;
+                        $pageUrl = $path . '?' . http_build_query($query);
+                        echo '<li><a href="' . htmlspecialchars($pageUrl) . '">' . $i . '</a></li>';
+                    }
+                }
+                
+                // Immer die letzte Seite anzeigen
+                if ($endPage < $totalPages) {
+                    if ($endPage < $totalPages - 1) {
+                        echo '<li class="disabled"><span>...</span></li>';
+                    }
+                    
+                    $query['einsatz_page'] = $totalPages;
+                    $lastUrl = $path . '?' . http_build_query($query);
+                    echo '<li><a href="' . htmlspecialchars($lastUrl) . '">' . $totalPages . '</a></li>';
+                }
             }
             
             // Weiter-Button
