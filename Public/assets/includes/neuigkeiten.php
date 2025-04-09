@@ -82,9 +82,11 @@ function renderNeuigkeitCard($neuigkeit) {
     $html .= '<div class="info-details neuigkeit-details">';
     $html .= '<span class="datum neuigkeit-datum">' . $formatiertesDatum . '</span> | ';
     $html .= '<span class="ort neuigkeit-ort">' . htmlspecialchars($neuigkeit['Ort']) . '</span>';
-    $html .= '<a href="/assets/includes/kalender-download.php?id=' . $neuigkeit['ID'] . '" class="kalender-download-btn" title="In Kalender eintragen"><i class="fas fa-calendar-plus"></i> Kalendereintrag</a>';
     $html .= '</div>';
     $html .= '<div class="neuigkeit-volltext">' . nl2br(htmlspecialchars($neuigkeit['Information'])) . '</div>';
+    $html .= '<div class="neuigkeit-footer">';
+    $html .= '<a href="/assets/includes/kalender-download.php?id=' . $neuigkeit['ID'] . '" class="kalender-download-btn" title="In Kalender eintragen"><i class="fas fa-calendar-plus"></i> Kalendereintrag</a>';
+    $html .= '</div>';
     $html .= '</div>';
     $html .= '</div>';
     

@@ -112,23 +112,38 @@
     text-transform: none !important;
 }
 
+/* Neuigkeit Volltext und Footer */
+.neuigkeiten-container .neuigkeit-volltext {
+    flex: 1 !important;
+    overflow-y: auto !important;
+    margin-bottom: 10px !important;
+    line-height: 1.5 !important;
+    font-size: 0.9rem !important;
+}
+
+.neuigkeiten-container .neuigkeit-footer {
+    display: flex !important;
+    justify-content: flex-end !important;
+    margin-top: auto !important;
+}
+
 /* Kalender-Download-Button */
 .neuigkeiten-container .kalender-download-btn {
-    margin-left: auto !important;
-    padding: 5px 10px !important;
-    background-color: #556B2F !important;
+    background-color: #0066cc !important; /* Blau */
     color: white !important;
     border-radius: 4px !important;
-    text-decoration: none !important;
+    padding: 6px 12px !important;
     font-size: 0.85em !important;
-    transition: background-color 0.2s !important;
+    text-decoration: none !important;
     display: inline-flex !important;
     align-items: center !important;
     gap: 5px !important;
+    transition: background-color 0.3s !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
 }
 
 .neuigkeiten-container .kalender-download-btn:hover {
-    background-color: #A72920 !important;
+    background-color: #004999 !important;
     text-decoration: none !important;
 }
 
@@ -258,10 +273,8 @@
         gap: 5px !important;
     }
 
-    .neuigkeiten-container .kalender-download-btn {
-        margin-left: 0 !important;
-        align-self: flex-start !important;
-        margin-top: 5px !important;
+    .neuigkeiten-container .neuigkeit-footer {
+        margin-top: 15px !important;
     }
 }
 
