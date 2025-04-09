@@ -836,6 +836,19 @@ function showEinsatzStatistik($jahr = null, $customClass = '') {
     // Add JavaScript for modal functionality
     echo '<script>
         document.addEventListener("DOMContentLoaded", function() {
+            // Check if we need to scroll to the statistics section
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has("anchor")) {
+                const anchorId = urlParams.get("anchor");
+                const element = document.getElementById(anchorId);
+                if (element) {
+                    // Scroll to the element with a slight delay to ensure page is fully loaded
+                    setTimeout(function() {
+                        element.scrollIntoView({ behavior: "smooth" });
+                    }, 100);
+                }
+            }
+            
             const modal = document.getElementById("statistikModal");
             const modalContent = document.getElementById("statistikModalContent");
             const closeBtn = document.querySelector(".statistik-modal-close");
@@ -964,6 +977,9 @@ function showEinsatzStatistik($jahr = null, $customClass = '') {
             echo '<input type="hidden" name="' . htmlspecialchars($key) . '" value="' . htmlspecialchars($value) . '">';
         }
     }
+    
+    // Füge Anker-Hash hinzu, um zur Statistik zu springen
+    echo '<input type="hidden" name="anchor" value="einsatz-statistik-container">';
     
     echo '<button type="submit" class="statistik-jahr-button">Anzeigen</button>';
     echo '</form>';
