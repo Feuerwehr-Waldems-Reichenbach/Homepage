@@ -54,6 +54,52 @@ echo "Webhook empfangen: ";
 
 // Parameter validieren
 list($isValid, $errorMessage) = validateWebhookParams($params);
+
+// Wenn Validierung fehlschlägt, versuche vollständige URL manuell zu parsen (für Fälle mit # im URL)
+if (!$isValid && strpos($errorMessage, "EinsatzID fehlt") !== false) {
+    // Vollständige URL aus Server-Variablen rekonstruieren
+    $fullUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . 
+               "://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+    echo "Full URL: " . $fullUrl . "\n";
+    
+    // Direktes Parsen des URL-Query-Strings
+    $rawQuery = $_SERVER['QUERY_STRING'] ?? '';
+    echo "Raw Query: " . $rawQuery . "\n";
+    
+    // Nach einsatzID in der URL suchen
+    if (preg_match('/einsatzID=([^&]+)/', $fullUrl, $matches)) {
+        $params['einsatzID'] = urldecode($matches[1]);
+        echo "EinsatzID gefunden: " . $params['einsatzID'] . "\n";
+        
+        // Neuer Validierungsversuch mit der gefundenen einsatzID
+        list($isValid, $errorMessage) = validateWebhookParams($params);
+    }
+    else {
+        echo "EinsatzID nicht gefunden - generiere Ersatz-ID\n";
+        
+        // Generiere eine eindeutige ID beginnend mit "999"
+        // Verwende einen Teil der Adresse + Zeitstempel für Eindeutigkeit
+        $adresseHash = '';
+        if (isset($_GET['adresse']) && !empty($_GET['adresse'])) {
+            // Nehme nur die Zahlen aus der Adresse für den Hash
+            preg_match_all('/\d+/', $_GET['adresse'], $matches);
+            $adresseHash = implode('', $matches[0]);
+            // Beschränke auf 6 Zeichen, wenn vorhanden
+            $adresseHash = substr($adresseHash, 0, min(6, strlen($adresseHash)));
+        }
+        
+        // Aktuelle Uhrzeit in Sekunden seit Mitternacht
+        $sekundenSeitMitternacht = (time() - strtotime('today')) % 100000;
+        
+        // Erstelle die EinsatzID mit 999 + AdresseHash + Zeit
+        $params['einsatzID'] = '999' . $adresseHash . $sekundenSeitMitternacht;
+        echo "Generierte EinsatzID: " . $params['einsatzID'] . "\n";
+        
+        // Neuer Validierungsversuch mit der generierten einsatzID
+        list($isValid, $errorMessage) = validateWebhookParams($params);
+    }
+}
+
 if (!$isValid) {
     echo $errorMessage;
     exit;
@@ -89,6 +135,6 @@ try {
         echo $message;
     }
 } catch (PDOException $e) {
-    echo "Ein technischer Fehler ist aufgetreten. Bitte kontaktieren Sie den Administrator.";
+    echo "Ein technischer Fehler ist aufgetreten. Bitte kontaktieren Sie den Administrator." . $e->getMessage();
 }
 ?>

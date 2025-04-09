@@ -122,20 +122,6 @@ function validateWebhookParams($params)
         return [false, "Fehler: EinsatzID fehlt oder ist ungültig."];
     }
     
-    // Prüfen, ob zu viele Parameter unbekannt sind
-    $unbekanntCount = 0;
-    $criticalParams = ['sachverhalt', 'stichwort', 'adresse', 'alarmgruppen'];
-    
-    foreach ($criticalParams as $param) {
-        if (!isset($params[$param]) || $params[$param] === 'Unbekannt') {
-            $unbekanntCount++;
-        }
-    }
-    
-    if ($unbekanntCount >= 2) {
-        return [false, "Fehler: Zu viele unbekannte Werte."];
-    }
-    
     return [true, ""];
 }
 
