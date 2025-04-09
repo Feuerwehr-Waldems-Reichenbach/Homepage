@@ -2295,7 +2295,7 @@ function showStatistikTagesverlauf() {
 
 /**
  * Zeigt Einsatzverteilung nach Tagen im Monat
- * @return void
+ * @return string HTML der Statistik
  */
 function showStatistikTageImMonat() {
     global $stats;
