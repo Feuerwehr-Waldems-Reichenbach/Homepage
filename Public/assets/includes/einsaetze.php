@@ -22,6 +22,12 @@ require_once dirname(__DIR__, 3) . '/Private/Database/Database.php';
  * @return void
  */
 function showEinsaetze($itemsPerPage = 5, $customClass = '') {
+    // Für mobile Geräte weniger Einträge pro Seite anzeigen
+    $isMobile = isset($_SERVER['HTTP_USER_AGENT']) && preg_match('/(android|iphone|ipad|mobile)/i', $_SERVER['HTTP_USER_AGENT']);
+    if ($isMobile && $itemsPerPage === 5) { // Nur überschreiben, wenn Standardwert verwendet wird
+        $itemsPerPage = 3;
+    }
+    
     // Aktuelle Seite aus der URL abrufen
     $page = isset($_GET['einsatz_page']) ? (int)$_GET['einsatz_page'] : 1;
     if ($page < 1) {
@@ -70,6 +76,7 @@ function showEinsaetze($itemsPerPage = 5, $customClass = '') {
             background-color: #f8f9fa;
             border-radius: 8px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            scroll-margin-top: 20px;
         }
         .einsaetze-title {
             color: #A72920;
@@ -93,12 +100,19 @@ function showEinsaetze($itemsPerPage = 5, $customClass = '') {
         .einsatz-header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-start;
+            flex-wrap: wrap;
             margin-bottom: 0.5rem;
         }
         .einsatz-date {
             color: #6c757d;
             font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        .einsatz-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
         }
         .einsatz-stichwort {
             background-color: #A72920;
@@ -107,6 +121,7 @@ function showEinsaetze($itemsPerPage = 5, $customClass = '') {
             border-radius: 4px;
             font-size: 0.8rem;
             display: inline-block;
+            margin-bottom: 0.3rem;
         }
         .einsatz-kategorie {
             background-color: #585858;
@@ -114,8 +129,9 @@ function showEinsaetze($itemsPerPage = 5, $customClass = '') {
             padding: 0.2rem 0.5rem;
             border-radius: 4px;
             font-size: 0.8rem;
-            margin-left: 0.5rem;
             display: inline-block;
+            margin-bottom: 0.3rem;
+            margin-left: 0;
         }
         .einsatz-sachverhalt {
             font-weight: bold;
@@ -124,11 +140,13 @@ function showEinsaetze($itemsPerPage = 5, $customClass = '') {
         .einsatz-details {
             display: flex;
             justify-content: space-between;
+            flex-wrap: wrap;
             font-size: 0.9rem;
         }
         .einsatz-ort, .einsatz-einheit {
             display: flex;
             align-items: center;
+            margin-bottom: 0.5rem;
         }
         .einsatz-ort i, .einsatz-einheit i {
             margin-right: 0.3rem;
@@ -143,12 +161,14 @@ function showEinsaetze($itemsPerPage = 5, $customClass = '') {
         .pagination {
             display: flex;
             justify-content: center;
+            flex-wrap: wrap;
             list-style: none;
             padding: 0;
             margin-top: 1.5rem;
+            gap: 0.3rem;
         }
         .pagination li {
-            margin: 0 0.2rem;
+            margin: 0.2rem;
         }
         .pagination a, .pagination span {
             display: block;
@@ -159,6 +179,8 @@ function showEinsaetze($itemsPerPage = 5, $customClass = '') {
             background-color: #fff;
             border: 1px solid #dee2e6;
             transition: all 0.2s ease;
+            min-width: 2.5rem;
+            text-align: center;
         }
         .pagination a:hover {
             background-color: #f0f0f0;
@@ -174,10 +196,91 @@ function showEinsaetze($itemsPerPage = 5, $customClass = '') {
             background-color: #fff;
             cursor: not-allowed;
         }
+        .pagination a.loading {
+            position: relative;
+            background-color: #f8f9fa;
+        }
+        .pagination a.loading::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 10px;
+            height: 10px;
+            margin: -5px 0 0 -5px;
+            border-radius: 50%;
+            border: 2px solid rgba(167, 41, 32, 0.2);
+            border-top-color: #A72920;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin {
+            to {transform: rotate(360deg);}
+        }
         .no-einsaetze {
             text-align: center;
             padding: 2rem;
             color: #6c757d;
+        }
+        
+        /* Mobile-specific styles */
+        @media (max-width: 768px) {
+            .einsaetze-container {
+                padding: 0.8rem;
+                margin: 1.5rem 0;
+            }
+            .einsatz-item {
+                padding: 0.8rem;
+            }
+            .einsatz-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .einsatz-badges {
+                width: 100%;
+            }
+            .einsatz-stichwort, .einsatz-kategorie {
+                margin-left: 0;
+            }
+            .einsatz-details {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .einsatz-ort, .einsatz-einheit {
+                margin-right: 0;
+                margin-bottom: 0.4rem;
+            }
+            .einsatz-duration {
+                text-align: left;
+            }
+            .pagination {
+                gap: 0.2rem;
+            }
+            .pagination li {
+                margin: 0.1rem;
+            }
+            .pagination a, .pagination span {
+                padding: 0.4rem 0.6rem;
+                min-width: 2.2rem;
+                min-height: 2.2rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+        }
+        
+        /* Small mobile devices */
+        @media (max-width: 480px) {
+            .pagination a, .pagination span {
+                padding: 0.3rem 0.5rem;
+                min-width: 2.2rem;
+                min-height: 2.2rem;
+                font-size: 0.9rem;
+                touch-action: manipulation;
+            }
+            .pagination li:first-child a,
+            .pagination li:last-child a {
+                min-width: 2.5rem;
+            }
         }
     </style>';
     
@@ -216,7 +319,7 @@ function showEinsaetze($itemsPerPage = 5, $customClass = '') {
             echo '<div class="einsatz-item">';
             echo '<div class="einsatz-header">';
             echo '<div class="einsatz-date">' . $formattedDatum . ' Uhr</div>';
-            echo '<div>';
+            echo '<div class="einsatz-badges">';
             echo '<span class="einsatz-stichwort">' . htmlspecialchars($einsatz['Stichwort']) . '</span>';
             if (!empty($einsatz['Kategorie'])) {
                 echo '<span class="einsatz-kategorie">' . htmlspecialchars($einsatz['Kategorie']) . '</span>';
@@ -241,6 +344,73 @@ function showEinsaetze($itemsPerPage = 5, $customClass = '') {
             $urlParts = parse_url($_SERVER['REQUEST_URI']);
             $path = $urlParts['path'] ?? '';
             $query = [];
+            $containerId = 'einsaetze-container';
+            
+            // Container-ID setzen und Pagination-Handling
+            echo '<script>
+                // Container ID setzen
+                document.querySelector(".einsaetze-container").id = "' . $containerId . '";
+                
+                // Nach dem Laden der Seite zum Container scrollen, wenn die Seitenzahl in der URL ist
+                if (window.location.search.includes("einsatz_page=")) {
+                    // Sowohl bei DOMContentLoaded als auch bei load versuchen zu scrollen
+                    // für maximale Kompatibilität mit verschiedenen Browsern
+                    const scrollToContainer = function() {
+                        setTimeout(function() {
+                            const container = document.getElementById("' . $containerId . '");
+                            if (container) {
+                                container.scrollIntoView({ behavior: "smooth", block: "start" });
+                            }
+                        }, 100); // Kleiner Timeout für bessere Kompatibilität
+                    };
+                    
+                    // Bei beiden Events versuchen zu scrollen
+                    window.addEventListener("DOMContentLoaded", scrollToContainer);
+                    window.addEventListener("load", scrollToContainer);
+                    
+                    // Falls die Events bereits ausgelöst wurden, direkt scrollen
+                    if (document.readyState === "complete" || document.readyState === "interactive") {
+                        scrollToContainer();
+                    }
+                }
+                
+                // Funktion, um zu prüfen, ob wir den Zustand aktualisieren müssen
+                function isSamePage(url) {
+                    const currentParams = new URLSearchParams(window.location.search);
+                    const newParams = new URLSearchParams(new URL(url, window.location.href).search);
+                    
+                    // Prüfen, ob sich nur der einsatz_page Parameter geändert hat
+                    const currentPage = currentParams.get("einsatz_page") || "1";
+                    const newPage = newParams.get("einsatz_page") || "1";
+                    
+                    return currentPage === newPage;
+                }
+                
+                // Pagination-Listener für interaktives Laden
+                document.addEventListener("DOMContentLoaded", function() {
+                    const paginationLinks = document.querySelectorAll(".pagination a");
+                    paginationLinks.forEach(function(link) {
+                        link.addEventListener("click", function(e) {
+                            // Visuelles Feedback hinzufügen
+                            this.classList.add("loading");
+                            
+                            // Prüfen, ob wir schon auf der angeklickten Seite sind
+                            if (isSamePage(this.href)) {
+                                e.preventDefault();
+                                const container = document.getElementById("' . $containerId . '");
+                                if (container) {
+                                    container.scrollIntoView({ behavior: "smooth", block: "start" });
+                                }
+                                this.classList.remove("loading");
+                                return;
+                            }
+                            
+                            // Normale Navigation erlauben
+                            // Link wird normal verarbeitet und die Seite neu geladen
+                        });
+                    });
+                });
+            </script>';
             
             if (isset($urlParts['query'])) {
                 parse_str($urlParts['query'], $query);
@@ -257,9 +427,12 @@ function showEinsaetze($itemsPerPage = 5, $customClass = '') {
                 echo '<li class="disabled"><span>&laquo;</span></li>';
             }
             
-            // Seitenzahlen
-            $startPage = max(1, $page - 2);
-            $endPage = min($totalPages, $page + 2);
+            // Seitenzahlen mit reduziertem Bereich für mobile Geräte
+            $isMobile = isset($_SERVER['HTTP_USER_AGENT']) && preg_match('/(android|iphone|ipad|mobile)/i', $_SERVER['HTTP_USER_AGENT']);
+            $pageRange = $isMobile ? 1 : 2; // Auf Mobilgeräten nur 1 Seite links/rechts anzeigen
+            
+            $startPage = max(1, $page - $pageRange);
+            $endPage = min($totalPages, $page + $pageRange);
             
             // Immer Seite 1 anzeigen
             if ($startPage > 1) {
