@@ -164,7 +164,7 @@ function showLatestNeuigkeiten($count = 3, $customClass = '') {
  * @return string The link tag for the CSS
  */
 function loadNeuigkeitenCSS() {
-    $version = '1.0.3'; // Increment this when you make CSS changes
+    $version = '1.0.5'; // Increment this when you make CSS changes
     return '<link rel="stylesheet" href="/assets/css/neuigkeiten.css?v=' . $version . '">';
 }
 

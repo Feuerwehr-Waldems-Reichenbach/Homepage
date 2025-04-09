@@ -1,21 +1,24 @@
 /* Neuigkeiten Card Styling */
 .neuigkeiten-container {
     display: flex !important;
-    flex-direction: column !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
     gap: 2rem !important;
     margin: 2rem 0 !important;
+    justify-content: center !important;
 }
 
 .neuigkeiten-container .karte,
 .neuigkeiten-container .neuigkeit-karte {
     display: flex !important;
-    width: 700px !important;
+    width: 550px !important;
     height: 350px !important;
     overflow: hidden !important;
     border-radius: 15px !important;
     box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
     background-color: #ffffff !important;
-    margin: 0 auto !important;
+    margin: 0 !important;
+    flex: 0 0 auto !important;
 }
 
 .neuigkeiten-container .bildbereich,
@@ -56,6 +59,7 @@
     transform: none !important;
     transition: none !important;
     filter: none !important;
+    background-color: #f8f8f8 !important;
 }
 
 .neuigkeiten-container .infobereich,
@@ -72,7 +76,7 @@
 .neuigkeiten-container .neuigkeit-titel {
     margin: 0 0 10px !important;
     color: #A72920 !important;
-    font-size: 1.5rem !important;
+    font-size: 1.3rem !important;
     line-height: 1.2 !important;
     text-transform: none !important;
     letter-spacing: normal !important;
@@ -92,7 +96,7 @@
     overflow-y: auto !important;
     margin-bottom: 15px !important;
     line-height: 1.5 !important;
-    font-size: 0.95rem !important;
+    font-size: 0.9rem !important;
 }
 
 .neuigkeiten-container .datum,
@@ -120,6 +124,7 @@
     display: flex !important;
     justify-content: center !important;
     margin-top: 1.5rem !important;
+    width: 100% !important;
 }
 
 .neuigkeiten-container .page-link {
@@ -142,12 +147,37 @@
 }
 
 /* Responsive styling */
-@media (max-width: 767px) {
+@media (max-width: 1200px) {
+    .neuigkeiten-container {
+        justify-content: center !important;
+    }
+    
+    .neuigkeiten-container .karte,
+    .neuigkeiten-container .neuigkeit-karte {
+        width: 450px !important;
+        height: 300px !important;
+    }
+}
+
+@media (max-width: 992px) {
+    .neuigkeiten-container {
+        flex-direction: column !important;
+        align-items: center !important;
+    }
+    
     .neuigkeiten-container .karte,
     .neuigkeiten-container .neuigkeit-karte {
         width: 100% !important;
+        max-width: 550px !important;
+    }
+}
+
+@media (max-width: 767px) {
+    .neuigkeiten-container .karte,
+    .neuigkeiten-container .neuigkeit-karte {
         flex-direction: column !important;
         height: auto !important;
+        max-width: 450px !important;
     }
     
     .neuigkeiten-container .bildbereich,
@@ -159,7 +189,7 @@
     
     .neuigkeiten-container .bildbereich,
     .neuigkeiten-container .neuigkeit-bildbereich {
-        height: 200px !important;
+        height: 250px !important;
         border-radius: 0 !important;
         border-top-left-radius: 15px !important;
         border-top-right-radius: 15px !important;
@@ -190,11 +220,6 @@
         border-bottom-left-radius: 15px !important;
         border-bottom-right-radius: 15px !important;
     }
-    
-    .neuigkeiten-latest .karte,
-    .neuigkeiten-latest .neuigkeit-karte {
-        margin-bottom: 2rem !important;
-    }
 }
 
 /* Neuigkeit detail view */
@@ -212,6 +237,12 @@
     flex-direction: column !important;
     gap: 2rem !important;
     margin: 2rem 0 !important;
+    align-items: center !important;
+}
+
+.neuigkeiten-latest .karte,
+.neuigkeiten-latest .neuigkeit-karte {
+    margin-bottom: 1rem !important;
 }
 
 /* Reset für alle möglichen Bild-Styles */
