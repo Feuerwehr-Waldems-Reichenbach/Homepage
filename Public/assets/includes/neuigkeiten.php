@@ -13,8 +13,8 @@ require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/Private/Database/Database.ph
  * @return string HTML output
  */
 function showNeuigkeiten($itemsPerPage = 5, $customClass = '') {
-    // Include CSS
-    $output = '<link rel="stylesheet" href="/assets/css/neuigkeiten.css">';
+    // Always include CSS as the first step
+    $output = loadNeuigkeitenCSS();
     
     // Get current page from URL parameter
     $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
@@ -73,17 +73,17 @@ function renderNeuigkeitCard($neuigkeit) {
     
     $imagePath = !empty($neuigkeit['path_to_image']) ? $neuigkeit['path_to_image'] : '/assets/images/default-news.jpg';
     
-    $html = '<div class="karte">';
-    $html .= '<div class="bildbereich">';
-    $html .= '<img src="' . htmlspecialchars($imagePath) . '" alt="' . htmlspecialchars($neuigkeit['Ueberschrift']) . '">';
+    $html = '<div class="karte neuigkeit-karte">';
+    $html .= '<div class="bildbereich neuigkeit-bildbereich">';
+    $html .= '<img src="' . htmlspecialchars($imagePath) . '" alt="' . htmlspecialchars($neuigkeit['Ueberschrift']) . '" class="neuigkeit-bild">';
     $html .= '</div>';
-    $html .= '<div class="infobereich">';
-    $html .= '<h2>' . htmlspecialchars($neuigkeit['Ueberschrift']) . '</h2>';
-    $html .= '<div class="info-details">';
-    $html .= '<span class="datum">' . $formatiertesDatum . '</span> | ';
-    $html .= '<span class="ort">' . htmlspecialchars($neuigkeit['Ort']) . '</span>';
+    $html .= '<div class="infobereich neuigkeit-infobereich">';
+    $html .= '<h2 class="neuigkeit-titel">' . htmlspecialchars($neuigkeit['Ueberschrift']) . '</h2>';
+    $html .= '<div class="info-details neuigkeit-details">';
+    $html .= '<span class="datum neuigkeit-datum">' . $formatiertesDatum . '</span> | ';
+    $html .= '<span class="ort neuigkeit-ort">' . htmlspecialchars($neuigkeit['Ort']) . '</span>';
     $html .= '</div>';
-    $html .= '<div class="kurzinfo">' . htmlspecialchars($neuigkeit['kurzinfo']) . '</div>';
+    $html .= '<div class="kurzinfo neuigkeit-kurzinfo">' . htmlspecialchars($neuigkeit['kurzinfo']) . '</div>';
     $html .= '</div>';
     $html .= '</div>';
     
@@ -99,7 +99,7 @@ function renderNeuigkeitCard($neuigkeit) {
  */
 function showNeuigkeitById($id, $customClass = '') {
     // Include CSS
-    $output = '<link rel="stylesheet" href="/assets/css/neuigkeiten.css">';
+    $output = loadNeuigkeitenCSS();
     
     $db = Database::getInstance()->getConnection();
     
@@ -133,7 +133,7 @@ function showNeuigkeitById($id, $customClass = '') {
  */
 function showLatestNeuigkeiten($count = 3, $customClass = '') {
     // Include CSS
-    $output = '<link rel="stylesheet" href="/assets/css/neuigkeiten.css">';
+    $output = loadNeuigkeitenCSS();
     
     $db = Database::getInstance()->getConnection();
     
@@ -158,44 +158,33 @@ function showLatestNeuigkeiten($count = 3, $customClass = '') {
 }
 
 /**
- * Shows news popup if there is an active popup
+ * Helper function to load the Neuigkeiten CSS
+ * Uses a version number to prevent caching issues
  * 
- * @return string HTML output for the popup
+ * @return string The link tag for the CSS
  */
-function checkAndShowNeuigkeitenPopup() {
-    $db = Database::getInstance()->getConnection();
-    
-    $now = date('Y-m-d H:i:s');
-    $stmt = $db->prepare("SELECT * FROM neuigkeiten WHERE aktiv = 1 AND is_popup = 1 
-                          AND popup_start <= :now AND popup_end >= :now 
-                          ORDER BY Datum DESC LIMIT 1");
-    $stmt->bindParam(':now', $now);
-    $stmt->execute();
-    $popup = $stmt->fetch(PDO::FETCH_ASSOC);
-    
-    $output = '';
-    
-    if ($popup) {
-        $output .= '<link rel="stylesheet" href="/assets/css/neuigkeiten.css">';
-        $output .= '<div id="neuigkeit-popup-overlay" class="popup-overlay">';
-        $output .= '<div class="popup-container">';
-        $output .= '<div class="popup-close" onclick="closeNeuigkeitenPopup()">×</div>';
-        $output .= renderNeuigkeitCard($popup);
-        $output .= '</div>';
-        $output .= '</div>';
-        $output .= '<script>
-            function closeNeuigkeitenPopup() {
-                document.getElementById("neuigkeit-popup-overlay").style.display = "none";
-                // Save in session that this popup was closed
-                sessionStorage.setItem("popup_' . $popup['ID'] . '_closed", "true");
-            }
-            
-            // Check if popup was already closed in this session
-            if (sessionStorage.getItem("popup_' . $popup['ID'] . '_closed") !== "true") {
-                document.getElementById("neuigkeit-popup-overlay").style.display = "flex";
-            }
-        </script>';
-    }
-    
-    return $output;
+function loadNeuigkeitenCSS() {
+    $version = '1.0.3'; // Increment this when you make CSS changes
+    return '<link rel="stylesheet" href="/assets/css/neuigkeiten.css?v=' . $version . '">';
 }
+
+/**
+ * Example of usage in other files:
+ * 
+ * <?php
+ * require_once $_SERVER['DOCUMENT_ROOT'] . '/assets/includes/neuigkeiten.php';
+ * 
+ * // Show all news items with pagination
+ * echo showNeuigkeiten();
+ * 
+ * // Show latest 3 news items
+ * // echo showLatestNeuigkeiten(3);
+ * 
+ * // Show with additional CSS class
+ * // echo showNeuigkeiten(5, 'my-custom-class');
+ * 
+ * // Show a single news item by ID
+ * // echo showNeuigkeitById($_GET['id']);
+ * ?>
+ */
+?>

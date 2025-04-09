@@ -51,7 +51,7 @@
         require_once $_SERVER['DOCUMENT_ROOT'] . '/assets/includes/neuigkeiten.php';
         
         // Neuigkeiten anzeigen
-        showNeuigkeiten();
+       echo showNeuigkeiten();
         ?>
     </div>
 </section>
