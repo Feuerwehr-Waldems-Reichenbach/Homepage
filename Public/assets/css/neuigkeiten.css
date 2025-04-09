@@ -123,8 +123,49 @@
 
 .neuigkeiten-container .neuigkeit-footer {
     display: flex !important;
+    flex-wrap: wrap !important;
     justify-content: flex-end !important;
-    margin-top: auto !important;
+    margin-top: 10px !important;
+    gap: 5px !important;
+}
+
+/* Button Styling für Neuigkeiten */
+.neuigkeiten-container .btn-neuigkeit-aktion {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 8px 12px !important;
+    background-color: #A72920 !important;
+    color: white !important;
+    text-decoration: none !important;
+    border-radius: 4px !important;
+    font-size: 0.85rem !important;
+    transition: background-color 0.2s ease-in-out !important;
+    border: none !important;
+    cursor: pointer !important;
+    margin: 2px !important;
+    flex: 1 1 auto !important;
+    min-width: 100px !important;
+    max-width: 130px !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+}
+
+/* Spezielles Styling für den Kalender-Button */
+.neuigkeiten-container .btn-neuigkeit-aktion.kalender-btn {
+    background-color: #0066cc !important; /* Blau */
+}
+
+.neuigkeiten-container .btn-neuigkeit-aktion.kalender-btn:hover {
+    background-color: #0052a3 !important;
+}
+
+.neuigkeiten-container .btn-neuigkeit-aktion:hover {
+    background-color: #8A211A !important;
+}
+
+.neuigkeiten-container .btn-neuigkeit-aktion i {
+    margin-right: 5px !important;
 }
 
 /* Kalender-Download-Button */
@@ -148,6 +189,30 @@
 }
 
 .neuigkeiten-container .kalender-download-btn i {
+    font-size: 1em !important;
+}
+
+/* Flyer-Download-Button */
+.neuigkeiten-container .flyer-download-btn {
+    background-color: #d32f2f !important; /* Rot */
+    color: white !important;
+    border-radius: 4px !important;
+    padding: 6px 12px !important;
+    font-size: 0.85em !important;
+    text-decoration: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 5px !important;
+    transition: background-color 0.3s !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+}
+
+.neuigkeiten-container .flyer-download-btn:hover {
+    background-color: #b71c1c !important;
+    text-decoration: none !important;
+}
+
+.neuigkeiten-container .flyer-download-btn i {
     font-size: 1em !important;
 }
 
@@ -274,7 +339,14 @@
     }
 
     .neuigkeiten-container .neuigkeit-footer {
-        margin-top: 15px !important;
+        justify-content: center !important;
+    }
+    
+    .neuigkeiten-container .btn-neuigkeit-aktion {
+        min-width: 0 !important;
+        margin: 3px !important;
+        font-size: 0.8rem !important;
+        padding: 6px 10px !important;
     }
 }
 
