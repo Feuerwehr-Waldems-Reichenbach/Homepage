@@ -53,42 +53,43 @@
         
         $jahr = isset($_GET['statistik_jahr']) ? (int)$_GET['statistik_jahr'] : date('Y');
 
-        showEinsaetze(10);
+        showEinsaetze(4);
         showEinsatzStatistik($jahr);
 
 
-        EinsatzStatistikMonate();
-        EinsatzStatistikWochentagTageszeit();
-        EinsatzStatistikJahresvergleich();
-        EinsatzStatistikTageszeit();
+        // Übersicht
         EinsatzStatistikGesamt();
-        EinsatzStatistikEinsaetzeProJahreszeit();
-        EinsatzStatistikTagesverlauf();
-        EinsatzStatistikDauer();
-        EinsatzStatistikWochentage();
+        EinsatzStatistikJahresvergleich();
         
-        
-        /*
-        EinsatzStatistikStichworte();
-        EinsatzStatistikKategorien();
+        // Zeitliche Verteilung
         EinsatzStatistikMonate();
+        EinsatzStatistikTageImMonat();
+        EinsatzStatistikWochentage();
+        EinsatzStatistikTagesverlauf();
+        EinsatzStatistikTageszeit();
+        EinsatzStatistikEinsaetzeProJahreszeit();
         
-        EinsatzStatistikArtenNachJahreszeit();
+        // Einsatzarten und Kategorien
+        EinsatzStatistikStichworte();
+        EinsatzStatistikKategorien(); 
         EinsatzStatistikStichwortKategorie();
-        EinsatzStatistikMonatStichwort();
-        EinsatzStatistikDauerNachStichwort();
-
+     
+        
+        // Einsatzorte und Einheiten
         EinsatzStatistikOrtKategorie();
         EinsatzStatistikEinheiten();
+        
+        // Kombinierte Auswertungen
+        EinsatzStatistikWochentagTageszeit();
+        
+        // Einsatzdauer
+        EinsatzStatistikDauer();
+        EinsatzStatistikDauerNachStichwort();
         EinsatzStatistikDauerNachOrt();
-        EinsatzStatistikMonatsvergleichArten();
-        EinsatzStatistikTageImMonat();
-
         EinsatzStatistikDauerNachKategorie();
-        EinsatzStatistikUhrzeitKategorie();
-        EinsatzStatistikDauergruppen();
+        
 
-        */
+        
         ?>
     </div>
 </section>
