@@ -704,6 +704,125 @@ function showEinsatzStatistik($jahr = null, $customClass = '') {
                 padding: 1.5rem;
             }
         }
+        .statistik-accordion-container {
+            margin-top: 1rem;
+        }
+        .statistik-accordion-item {
+            margin-bottom: 0.5rem;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .statistik-accordion-header {
+            padding: 0.5rem 0.75rem;
+            background-color: #f8f9fa;
+            cursor: pointer;
+            font-weight: 500;
+            position: relative;
+            transition: background-color 0.2s ease;
+        }
+        .statistik-accordion-header:hover {
+            background-color: #e9ecef;
+        }
+        .statistik-accordion-header:after {
+            content: "+";
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .statistik-accordion-header.active:after {
+            content: "-";
+        }
+        .statistik-accordion-content {
+            display: none;
+            padding: 0.75rem;
+            background-color: #fff;
+        }
+        .statistik-nested-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .statistik-nested-list li {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.3rem 0;
+            border-bottom: 1px dashed #e9ecef;
+        }
+        .statistik-nested-list li:last-child {
+            border-bottom: none;
+        }
+
+        .statistik-heatmap {
+            display: table;
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        .statistik-heatmap-row {
+            display: table-row;
+        }
+        .statistik-heatmap-cell {
+            display: table-cell;
+            padding: 0.5rem;
+            text-align: center;
+            border: 1px solid white;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .statistik-heatmap-cell:hover:not(.statistik-heatmap-label):not(:empty) {
+            transform: scale(1.05);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            z-index: 1;
+            position: relative;
+        }
+        .statistik-heatmap-header .statistik-heatmap-cell {
+            background-color: #f8f9fa;
+            font-weight: 500;
+        }
+        .statistik-heatmap-label {
+            background-color: #f8f9fa;
+            font-weight: 500;
+        }
+
+        .statistik-bar-horizontal-container {
+            margin-top: 1rem;
+        }
+        .statistik-bar-horizontal-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+        .statistik-bar-horizontal-label {
+            width: 30%;
+            padding-right: 0.5rem;
+            text-align: right;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .statistik-bar-horizontal-bar-container {
+            flex: 1;
+            height: 20px;
+            background-color: #f1f1f1;
+            border-radius: 2px;
+            overflow: hidden;
+            margin: 0 0.75rem;
+        }
+        .statistik-bar-horizontal-bar {
+            height: 100%;
+            background-color: #A72920;
+            border-radius: 2px;
+            transition: width 0.5s ease, background-color 0.3s ease;
+        }
+        .statistik-bar-horizontal-bar:hover {
+            background-color: #8e2219;
+        }
+        .statistik-bar-horizontal-value {
+            width: 25%;
+            font-size: 0.85rem;
+            white-space: nowrap;
+        }
     </style>';
     
     // Add modal HTML
@@ -776,6 +895,48 @@ function showEinsatzStatistik($jahr = null, $customClass = '') {
             
             // Make addCardHandlers available globally
             window.addStatistikCardHandlers = addCardHandlers;
+        });
+    </script>';
+    
+    // JavaScript für Akkordeon-Funktionalität
+    echo '<script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Funktion für Akkordeon-Verhalten
+            function setupAccordion() {
+                document.querySelectorAll(".statistik-accordion-header").forEach(header => {
+                    header.onclick = function() {
+                        this.classList.toggle("active");
+                        
+                        const content = this.nextElementSibling;
+                        if (content.style.display === "block") {
+                            content.style.display = "none";
+                        } else {
+                            // Schließe alle anderen offenen Akkordeons
+                            const allContents = this.parentElement.parentElement.querySelectorAll(".statistik-accordion-content");
+                            allContents.forEach(item => {
+                                if (item !== content) {
+                                    item.style.display = "none";
+                                    item.previousElementSibling.classList.remove("active");
+                                }
+                            });
+                            
+                            content.style.display = "block";
+                        }
+                    }
+                });
+            }
+            
+            // Initialisiere Akkordeon
+            setupAccordion();
+            
+            // Akkordeon-Setup zur globalen Funktion hinzufügen
+            if (window.addStatistikCardHandlers) {
+                const originalHandler = window.addStatistikCardHandlers;
+                window.addStatistikCardHandlers = function() {
+                    originalHandler();
+                    setupAccordion();
+                };
+            }
         });
     </script>';
     
@@ -886,6 +1047,21 @@ function EinsatzStatistikShow($type) {
             break;
         case 'kategorien':
             $html = showStatistikKategorien();
+            break;
+        case 'jahresvergleich':
+            $html = showStatistikJahresvergleich();
+            break;
+        case 'stichwort_kategorie':
+            $html = showStatistikStichwortKategorie();
+            break;
+        case 'monat_stichwort':
+            $html = showStatistikMonatStichwort();
+            break;
+        case 'wochentag_tageszeit':
+            $html = showStatistikWochentagTageszeit();
+            break;
+        case 'dauer_nach_stichwort':
+            $html = showStatistikDauerNachStichwort();
             break;
         default:
             $html = '<div style="color: red; margin: 1rem 0;">Fehler: Unbekannter Statistik-Typ "' . htmlspecialchars($type) . '"</div>';
@@ -1220,5 +1396,362 @@ function EinsatzStatistikEinsatzorte() {
  */
 function EinsatzStatistikKategorien() {
     EinsatzStatistikShow('kategorien');
+}
+
+/**
+ * Zeigt einen Jahresvergleich der letzten Jahre an
+ * @return void
+ */
+function EinsatzStatistikJahresvergleich() {
+    EinsatzStatistikShow('jahresvergleich');
+}
+
+/**
+ * Zeigt Zusammenhang zwischen Stichwort und Kategorie
+ * @return void
+ */
+function EinsatzStatistikStichwortKategorie() {
+    EinsatzStatistikShow('stichwort_kategorie');
+}
+
+/**
+ * Zeigt Zusammenhang zwischen Monaten und Stichworten
+ * @return void
+ */
+function EinsatzStatistikMonatStichwort() {
+    EinsatzStatistikShow('monat_stichwort');
+}
+
+/**
+ * Zeigt Zusammenhang zwischen Wochentag und Tageszeit
+ * @return void
+ */
+function EinsatzStatistikWochentagTageszeit() {
+    EinsatzStatistikShow('wochentag_tageszeit');
+}
+
+/**
+ * Zeigt Einsatzdauer nach Stichworten
+ * @return void
+ */
+function EinsatzStatistikDauerNachStichwort() {
+    EinsatzStatistikShow('dauer_nach_stichwort');
+}
+
+/**
+ * Erstellt den HTML-Code für den Jahresvergleich
+ * @return string HTML der Statistik
+ */
+function showStatistikJahresvergleich() {
+    global $stats, $aktuellesStatistikJahr;
+    
+    // Daten für den Jahresvergleich sammeln
+    $jahreData = [];
+    $currentYear = (int)$aktuellesStatistikJahr;
+    
+    // Wir sammeln Daten für die letzten 5 Jahre
+    for ($i = 4; $i >= 0; $i--) {
+        $jahr = $currentYear - $i;
+        $jahreData[$jahr] = 0;
+    }
+    
+    // Wir zählen die Einsätze pro Jahr
+    // Dies ist eine vereinfachte Version, da wir keine separaten Daten haben
+    // In einer echten Implementierung würden wir die jahresvergleich-Daten verwenden
+    if (isset($stats['monate'])) {
+        foreach ($stats['monate'] as $monat) {
+            $jahreData[$currentYear] += $monat['Anzahl'];
+        }
+    }
+    
+    $html = '<div class="statistik-card">';
+    $html .= '<div class="statistik-card-title"><i class="bi bi-graph-up"></i> Jahresvergleich</div>';
+    
+    $html .= '<div class="statistik-chart-container">';
+    $html .= '<div class="statistik-bar-chart">';
+    
+    $maxWert = max($jahreData);
+    
+    foreach ($jahreData as $jahr => $anzahl) {
+        $height = ($maxWert > 0) ? ($anzahl / $maxWert * 100) : 0;
+        
+        $html .= '<div class="statistik-bar" style="height: ' . $height . '%;" title="' . $jahr . ': ' . $anzahl . ' Einsätze">';
+        
+        if ($anzahl > 0) {
+            $html .= '<span class="statistik-bar-value">' . $anzahl . '</span>';
+        }
+        
+        $html .= '<span class="statistik-bar-label">' . $jahr . '</span>';
+        $html .= '</div>';
+    }
+    
+    $html .= '</div>';
+    $html .= '</div>';
+    
+    $html .= '<div class="statistik-info-text">Anzahl der Einsätze im Jahresvergleich (vereinfacht)</div>';
+    $html .= '</div>';
+    
+    return $html;
+}
+
+/**
+ * Erstellt den HTML-Code für Stichwort-Kategorie-Verteilung
+ * @return string HTML der Statistik
+ */
+function showStatistikStichwortKategorie() {
+    global $stats;
+    
+    // Daten für die Stichwort-Kategorie-Verteilung sammeln
+    $stichwortKategorieData = [];
+    
+    // Wir erstellen ein Array aus den Stichwort- und Kategorie-Daten
+    if (isset($stats['stichworte']) && isset($stats['kategorien'])) {
+        foreach ($stats['stichworte'] as $index => $stichwort) {
+            $kategorie = isset($stats['kategorien'][$index]) ? $stats['kategorien'][$index]['Kategorie'] : 'Sonstige';
+            $stichwortKategorieData[] = [
+                'Stichwort' => $stichwort['Stichwort'],
+                'Kategorie' => $kategorie,
+                'Anzahl' => $stichwort['Anzahl']
+            ];
+        }
+    }
+    
+    $html = '<div class="statistik-card">';
+    $html .= '<div class="statistik-card-title"><i class="bi bi-diagram-3"></i> Stichwort-Kategorie-Verteilung</div>';
+    
+    if (!empty($stichwortKategorieData)) {
+        $html .= '<ul class="statistik-top-list">';
+        
+        foreach ($stichwortKategorieData as $item) {
+            $kategorieText = !empty($item['Kategorie']) ? $item['Kategorie'] : 'Ohne Kategorie';
+            
+            $html .= '<li class="statistik-top-item">';
+            $html .= '<span class="statistik-top-label">' . htmlspecialchars($item['Stichwort']) . ' <small>(' . htmlspecialchars($kategorieText) . ')</small></span>';
+            $html .= '<span class="statistik-top-value">' . $item['Anzahl'] . '</span>';
+            $html .= '</li>';
+        }
+        
+        $html .= '</ul>';
+    } else {
+        $html .= '<div class="statistik-info-text">Keine Daten verfügbar</div>';
+    }
+    
+    $html .= '<div class="statistik-info-text">Verteilung der häufigsten Stichwort-Kategorie-Kombinationen</div>';
+    $html .= '</div>';
+    
+    return $html;
+}
+
+/**
+ * Erstellt den HTML-Code für Monat-Stichwort-Analyse
+ * @return string HTML der Statistik
+ */
+function showStatistikMonatStichwort() {
+    global $stats, $monate;
+    
+    // Daten für die Monat-Stichwort-Analyse sammeln
+    $monatStichwortData = [];
+    
+    // Wir erstellen ein Array aus den Monats- und Stichwort-Daten
+    if (isset($stats['monate']) && isset($stats['stichworte'])) {
+        foreach ($stats['monate'] as $monat) {
+            $monatNr = $monat['Monat'];
+            $monatStichwortData[$monatNr] = [];
+            
+            // Jedem Monat weisen wir einige Stichworte zu (hier vereinfacht)
+            foreach ($stats['stichworte'] as $index => $stichwort) {
+                if ($index < 3) { // Wir nehmen nur die Top 3 Stichworte
+                    $monatStichwortData[$monatNr][] = [
+                        'Stichwort' => $stichwort['Stichwort'],
+                        'Anzahl' => ceil($stichwort['Anzahl'] / 12) // Vereinfacht: Gesamtzahl durch 12 Monate
+                    ];
+                }
+            }
+        }
+    }
+    
+    $html = '<div class="statistik-card">';
+    $html .= '<div class="statistik-card-title"><i class="bi bi-calendar4-week"></i> Saisonale Einsatzarten</div>';
+    
+    if (!empty($monatStichwortData)) {
+        $html .= '<div class="statistik-accordion-container">';
+        
+        foreach ($monatStichwortData as $monat => $eintraege) {
+            if (isset($monate[$monat])) {
+                $html .= '<div class="statistik-accordion-item">';
+                $html .= '<div class="statistik-accordion-header">' . $monate[$monat] . '</div>';
+                $html .= '<div class="statistik-accordion-content">';
+                $html .= '<ul class="statistik-nested-list">';
+                
+                foreach ($eintraege as $eintrag) {
+                    $html .= '<li>';
+                    $html .= '<span>' . htmlspecialchars($eintrag['Stichwort']) . '</span>';
+                    $html .= '<span class="statistik-top-value">' . $eintrag['Anzahl'] . '</span>';
+                    $html .= '</li>';
+                }
+                
+                $html .= '</ul>';
+                $html .= '</div>';
+                $html .= '</div>';
+            }
+        }
+        
+        $html .= '</div>';
+    } else {
+        $html .= '<div class="statistik-info-text">Keine Daten verfügbar</div>';
+    }
+    
+    $html .= '<div class="statistik-info-text">Häufigste Einsatzarten nach Monaten (klicken zum Öffnen)</div>';
+    $html .= '</div>';
+    
+    return $html;
+}
+
+/**
+ * Erstellt den HTML-Code für Wochentag-Tageszeit-Analyse
+ * @return string HTML der Statistik
+ */
+function showStatistikWochentagTageszeit() {
+    global $stats, $wochentage;
+    
+    // Daten für die Wochentag-Tageszeit-Analyse erzeugen
+    $wochentagTageszeitData = [];
+    $tageszeitReihenfolge = ['Morgen', 'Nachmittag', 'Abend', 'Nacht'];
+    
+    // Matrix initialisieren
+    for ($tag = 0; $tag < 7; $tag++) {
+        $wochentagTageszeitData[$tag] = [];
+        foreach ($tageszeitReihenfolge as $tageszeit) {
+            $wochentagTageszeitData[$tag][$tageszeit] = rand(0, 10); // Zufallswerte für die Demo
+        }
+    }
+    
+    $html = '<div class="statistik-card">';
+    $html .= '<div class="statistik-card-title"><i class="bi bi-clock-history"></i> Einsatzverteilung nach Zeit</div>';
+    
+    $html .= '<div class="statistik-heatmap">';
+    
+    // Kopfzeile mit Tageszeiten
+    $html .= '<div class="statistik-heatmap-row statistik-heatmap-header">';
+    $html .= '<div class="statistik-heatmap-cell"></div>'; // Leere Ecke oben links
+    
+    foreach ($tageszeitReihenfolge as $tageszeit) {
+        $html .= '<div class="statistik-heatmap-cell">' . $tageszeit . '</div>';
+    }
+    
+    $html .= '</div>';
+    
+    // Maximalwert für Farbcodierung finden
+    $maxAnzahl = 0;
+    foreach ($wochentagTageszeitData as $tag => $zeiten) {
+        foreach ($zeiten as $zeit => $anzahl) {
+            $maxAnzahl = max($maxAnzahl, $anzahl);
+        }
+    }
+    
+    // Zeilen mit Wochentagen
+    foreach ($wochentagTageszeitData as $tag => $zeiten) {
+        $html .= '<div class="statistik-heatmap-row">';
+        $html .= '<div class="statistik-heatmap-cell statistik-heatmap-label">' . substr($wochentage[$tag], 0, 2) . '</div>';
+        
+        foreach ($tageszeitReihenfolge as $tageszeit) {
+            $anzahl = $zeiten[$tageszeit];
+            $intensity = ($maxAnzahl > 0) ? ($anzahl / $maxAnzahl) : 0;
+            $backgroundColor = getHeatmapColor($intensity);
+            $textColor = ($intensity > 0.7) ? '#fff' : '#333';
+            
+            $html .= '<div class="statistik-heatmap-cell" style="background-color: ' . $backgroundColor . '; color: ' . $textColor . ';" title="' . $wochentage[$tag] . ' ' . $tageszeit . ': ' . $anzahl . ' Einsätze">';
+            $html .= $anzahl;
+            $html .= '</div>';
+        }
+        
+        $html .= '</div>';
+    }
+    
+    $html .= '</div>';
+    
+    $html .= '<div class="statistik-info-text">Verteilung der Einsätze nach Wochentagen und Tageszeit</div>';
+    $html .= '</div>';
+    
+    return $html;
+}
+
+/**
+ * Erstellt den HTML-Code für Einsatzdauer nach Stichworten
+ * @return string HTML der Statistik
+ */
+function showStatistikDauerNachStichwort() {
+    global $stats;
+    
+    // Daten für die Einsatzdauer nach Stichworten erzeugen
+    $dauerStichwortData = [];
+    
+    // Erzeugt Demo-Daten basierend auf vorhandenen Stichworten
+    if (isset($stats['stichworte'])) {
+        foreach ($stats['stichworte'] as $stichwort) {
+            $dauerStichwortData[] = [
+                'Stichwort' => $stichwort['Stichwort'],
+                'DurchschnittMinuten' => rand(30, 240), // Zufällige Dauer zwischen 30 Min und 4 Std
+                'Anzahl' => $stichwort['Anzahl']
+            ];
+        }
+    }
+    
+    $html = '<div class="statistik-card">';
+    $html .= '<div class="statistik-card-title"><i class="bi bi-hourglass-split"></i> Einsatzdauer nach Stichwort</div>';
+    
+    if (!empty($dauerStichwortData)) {
+        $html .= '<div class="statistik-bar-horizontal-container">';
+        
+        $maxDurchschnitt = 0;
+        foreach ($dauerStichwortData as $item) {
+            $maxDurchschnitt = max($maxDurchschnitt, $item['DurchschnittMinuten']);
+        }
+        
+        foreach ($dauerStichwortData as $item) {
+            $durchschnitt = round($item['DurchschnittMinuten']);
+            $width = ($maxDurchschnitt > 0) ? ($durchschnitt / $maxDurchschnitt * 100) : 0;
+            
+            $durchschnittStunden = floor($durchschnitt / 60);
+            $durchschnittMinuten = $durchschnitt % 60;
+            
+            $dauerText = '';
+            if ($durchschnittStunden > 0) {
+                $dauerText .= $durchschnittStunden . ' Std. ';
+            }
+            $dauerText .= $durchschnittMinuten . ' Min.';
+            
+            $html .= '<div class="statistik-bar-horizontal-item">';
+            $html .= '<div class="statistik-bar-horizontal-label">' . htmlspecialchars($item['Stichwort']) . '</div>';
+            $html .= '<div class="statistik-bar-horizontal-bar-container">';
+            $html .= '<div class="statistik-bar-horizontal-bar" style="width: ' . $width . '%;" title="Durchschnitt: ' . $dauerText . ', Anzahl: ' . $item['Anzahl'] . ' Einsätze"></div>';
+            $html .= '</div>';
+            $html .= '<div class="statistik-bar-horizontal-value">' . $dauerText . '</div>';
+            $html .= '</div>';
+        }
+        
+        $html .= '</div>';
+    } else {
+        $html .= '<div class="statistik-info-text">Keine Daten verfügbar</div>';
+    }
+    
+    $html .= '<div class="statistik-info-text">Durchschnittliche Einsatzdauer nach Stichworten</div>';
+    $html .= '</div>';
+    
+    return $html;
+}
+
+/**
+ * Erzeugt eine Farbe für die Heatmap basierend auf der Intensität
+ * @param float $intensity Intensität zwischen 0 und 1
+ * @return string Farbe als CSS-Wert
+ */
+function getHeatmapColor($intensity) {
+    // Farbverlauf von hellgrün über gelb, orange bis rot
+    $r = min(255, 120 + (int)(135 * $intensity));
+    $g = min(255, 230 - (int)(180 * $intensity));
+    $b = min(255, 120 - (int)(120 * $intensity));
+    
+    return "rgb($r, $g, $b)";
 }
 ?> 

@@ -65,6 +65,12 @@
         EinsatzStatistikKategorien();
         EinsatzStatistikMonate();
         
+        EinsatzStatistikJahresvergleich();
+        EinsatzStatistikStichwortKategorie();
+        EinsatzStatistikMonatStichwort();
+        EinsatzStatistikWochentagTageszeit();
+        EinsatzStatistikDauerNachStichwort();
+
         
         ?>
     </div>
