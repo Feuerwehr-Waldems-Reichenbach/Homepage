@@ -71,7 +71,7 @@ function renderNeuigkeitCard($neuigkeit) {
     $datum = new DateTime($neuigkeit['Datum']);
     $formatiertesDatum = $datum->format('d.m.Y');
     
-    $imagePath = !empty($neuigkeit['path_to_image']) ? $neuigkeit['path_to_image'] : '/assets/images/default-news.jpg';
+    $imagePath = !empty($neuigkeit['path_to_image']) ? $neuigkeit['path_to_image'] : '/assets/images/default-news.png';
     
     $html = '<div class="karte neuigkeit-karte">';
     $html .= '<div class="bildbereich neuigkeit-bildbereich">';
@@ -82,8 +82,9 @@ function renderNeuigkeitCard($neuigkeit) {
     $html .= '<div class="info-details neuigkeit-details">';
     $html .= '<span class="datum neuigkeit-datum">' . $formatiertesDatum . '</span> | ';
     $html .= '<span class="ort neuigkeit-ort">' . htmlspecialchars($neuigkeit['Ort']) . '</span>';
+    $html .= '<a href="/assets/includes/kalender-download.php?id=' . $neuigkeit['ID'] . '" class="kalender-download-btn" title="In Kalender eintragen"><i class="fas fa-calendar-plus"></i> Kalendereintrag</a>';
     $html .= '</div>';
-    $html .= '<div class="kurzinfo neuigkeit-kurzinfo">' . htmlspecialchars($neuigkeit['kurzinfo']) . '</div>';
+    $html .= '<div class="neuigkeit-volltext">' . nl2br(htmlspecialchars($neuigkeit['Information'])) . '</div>';
     $html .= '</div>';
     $html .= '</div>';
     
@@ -111,11 +112,6 @@ function showNeuigkeitById($id, $customClass = '') {
     if ($neuigkeit) {
         $output .= '<div class="neuigkeit-detail ' . $customClass . '">';
         $output .= renderNeuigkeitCard($neuigkeit);
-        
-        // Show full content below the card
-        $output .= '<div class="neuigkeit-volltext">';
-        $output .= nl2br(htmlspecialchars($neuigkeit['Information']));
-        $output .= '</div>';
         $output .= '</div>';
     } else {
         $output .= '<p>Neuigkeit nicht gefunden.</p>';
@@ -164,8 +160,9 @@ function showLatestNeuigkeiten($count = 3, $customClass = '') {
  * @return string The link tag for the CSS
  */
 function loadNeuigkeitenCSS() {
-    $version = '1.0.5'; // Increment this when you make CSS changes
-    return '<link rel="stylesheet" href="/assets/css/neuigkeiten.css?v=' . $version . '">';
+    $version = '1.0.6'; // Increment this when you make CSS changes
+    return '<link rel="stylesheet" href="/assets/css/neuigkeiten.css?v=' . $version . '">' . 
+           '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">';
 }
 
 /**
