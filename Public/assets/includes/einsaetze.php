@@ -1443,25 +1443,53 @@ function EinsatzStatistikDauerNachStichwort() {
  * @return string HTML der Statistik
  */
 function showStatistikJahresvergleich() {
-    global $stats, $aktuellesStatistikJahr;
+    global $stats, $aktuellesStatistikJahr, $verfuegbareStatistikJahre;
+    
+    // Datenbankobjekt holen
+    $db = Database::getInstance();
+    $conn = $db->getConnection();
     
     // Daten für den Jahresvergleich sammeln
     $jahreData = [];
     $currentYear = (int)$aktuellesStatistikJahr;
     
-    // Wir sammeln Daten für die letzten 5 Jahre
-    for ($i = 4; $i >= 0; $i--) {
-        $jahr = $currentYear - $i;
+    // Wir sammeln Daten für die letzten 5 Jahre oder alle verfügbaren Jahre
+    $yearsToShow = [];
+    
+    // Ermittle die letzten 5 Jahre oder alle verfügbaren Jahre
+    if (count($verfuegbareStatistikJahre) > 0) {
+        // Sortiere Jahre absteigend
+        rsort($verfuegbareStatistikJahre);
+        
+        // Nimm maximal 5 Jahre
+        $yearsToShow = array_slice($verfuegbareStatistikJahre, 0, 5);
+    } else {
+        // Fallback: Die letzten 5 Jahre
+        for ($i = 0; $i < 5; $i++) {
+            $yearsToShow[] = $currentYear - $i;
+        }
+    }
+    
+    // Sortiere aufsteigend für die Anzeige
+    sort($yearsToShow);
+    
+    // Initialisiere das Array mit 0 für alle Jahre
+    foreach ($yearsToShow as $jahr) {
         $jahreData[$jahr] = 0;
     }
     
-    // Wir zählen die Einsätze pro Jahr
-    // Dies ist eine vereinfachte Version, da wir keine separaten Daten haben
-    // In einer echten Implementierung würden wir die jahresvergleich-Daten verwenden
-    if (isset($stats['monate'])) {
-        foreach ($stats['monate'] as $monat) {
-            $jahreData[$currentYear] += $monat['Anzahl'];
-        }
+    // Hole die Anzahl der Einsätze für jedes Jahr aus der Datenbank
+    foreach ($yearsToShow as $jahr) {
+        $startDate = $jahr . '-01-01 00:00:00';
+        $endDate = $jahr . '-12-31 23:59:59';
+        
+        $query = "SELECT COUNT(*) as Anzahl FROM einsatz WHERE Anzeigen = 1 AND Datum BETWEEN :startDate AND :endDate";
+        $stmt = $conn->prepare($query);
+        $stmt->bindParam(':startDate', $startDate);
+        $stmt->bindParam(':endDate', $endDate);
+        $stmt->execute();
+        
+        $jahreData[$jahr] = (int)$stmt->fetchColumn();
     }
     
     $html = '<div class="statistik-card">';
@@ -1474,8 +1502,9 @@ function showStatistikJahresvergleich() {
     
     foreach ($jahreData as $jahr => $anzahl) {
         $height = ($maxWert > 0) ? ($anzahl / $maxWert * 100) : 0;
+        $isCurrentYear = ($jahr == $currentYear) ? 'style="background-color: #8e2219; font-weight: bold;"' : '';
         
-        $html .= '<div class="statistik-bar" style="height: ' . $height . '%;" title="' . $jahr . ': ' . $anzahl . ' Einsätze">';
+        $html .= '<div class="statistik-bar" style="height: ' . $height . '%;" ' . $isCurrentYear . ' title="' . $jahr . ': ' . $anzahl . ' Einsätze">';
         
         if ($anzahl > 0) {
             $html .= '<span class="statistik-bar-value">' . $anzahl . '</span>';
@@ -1488,7 +1517,7 @@ function showStatistikJahresvergleich() {
     $html .= '</div>';
     $html .= '</div>';
     
-    $html .= '<div class="statistik-info-text">Anzahl der Einsätze im Jahresvergleich (vereinfacht)</div>';
+    $html .= '<div class="statistik-info-text">Anzahl der Einsätze im Jahresvergleich</div>';
     $html .= '</div>';
     
     return $html;
