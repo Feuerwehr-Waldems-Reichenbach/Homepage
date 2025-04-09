@@ -315,9 +315,25 @@ function showEinsaetze($itemsPerPage = 5, $customClass = '') {
  * 
  * @param int|null $jahr Jahr für die Statistik (null = aktuelles Jahr)
  * @param string $customClass Benutzerdefinierte CSS-Klasse für den Container
+ * @param array $config Konfiguration für die Statistik-Anzeige
  * @return void
  */
-function showEinsatzStatistik($jahr = null, $customClass = '') {
+function showEinsatzStatistik($jahr = null, $customClass = '', $config = []) {
+    // Default configuration
+    $defaultConfig = [
+        'show_gesamt' => true,
+        'show_dauer' => true,
+        'show_monate' => true,
+        'show_wochentage' => true,
+        'show_tageszeit' => true,
+        'show_stichworte' => true,
+        'show_einsatzorte' => true,
+        'show_kategorien' => true
+    ];
+    
+    // Merge user config with defaults
+    $config = array_merge($defaultConfig, $config);
+    
     // Wenn kein Jahr angegeben ist, aktuelles Jahr verwenden
     if ($jahr === null) {
         $jahr = date('Y');
@@ -573,7 +589,88 @@ function showEinsatzStatistik($jahr = null, $customClass = '') {
                 grid-template-columns: 1fr;
             }
         }
+        
+        .statistik-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+        .statistik-modal-content {
+            position: relative;
+            background-color: white;
+            margin: 5% auto;
+            padding: 2rem;
+            width: 80%;
+            max-width: 800px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .statistik-modal-close {
+            position: absolute;
+            right: 1rem;
+            top: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6c757d;
+        }
+        .statistik-modal-close:hover {
+            color: #414141;
+        }
+        .statistik-card {
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        .statistik-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 3px 6px rgba(0,0,0,0.12);
+        }
     </style>';
+    
+    // Add modal HTML
+    echo '<div id="statistikModal" class="statistik-modal">
+        <div class="statistik-modal-content">
+            <span class="statistik-modal-close">&times;</span>
+            <div id="statistikModalContent"></div>
+        </div>
+    </div>';
+    
+    // Add JavaScript for modal functionality
+    echo '<script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const modal = document.getElementById("statistikModal");
+            const modalContent = document.getElementById("statistikModalContent");
+            const closeBtn = document.querySelector(".statistik-modal-close");
+            
+            // Close modal when clicking outside
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                }
+            }
+            
+            // Close modal when clicking close button
+            closeBtn.onclick = function() {
+                modal.style.display = "none";
+            }
+            
+            // Add click handlers to all stat cards
+            document.querySelectorAll(".statistik-card").forEach(card => {
+                card.onclick = function() {
+                    const title = this.querySelector(".statistik-card-title").textContent;
+                    const content = this.innerHTML;
+                    modalContent.innerHTML = `<h2>${title}</h2>${content}`;
+                    modal.style.display = "block";
+                }
+            });
+        });
+    </script>';
     
     // HTML für die Statistik generieren
     echo '<div class="einsatz-statistik ' . htmlspecialchars($customClass) . '">';
@@ -611,188 +708,205 @@ function showEinsatzStatistik($jahr = null, $customClass = '') {
         // Statistik-Grid mit Karten
         echo '<div class="statistik-grid">';
         
-        // Karte: Gesamtzahl der Einsätze
-        echo '<div class="statistik-card">';
-        echo '<div class="statistik-card-title"><i class="bi bi-flag"></i> Einsätze gesamt</div>';
-        echo '<div class="statistik-highlight">' . number_format($stats['gesamt'], 0, ',', '.') . '</div>';
-        echo '<div class="statistik-info-text">im Jahr ' . htmlspecialchars($jahr) . '</div>';
-        echo '</div>';
-        
-        // Karte: Durchschnittliche Einsatzdauer
-        echo '<div class="statistik-card">';
-        echo '<div class="statistik-card-title"><i class="bi bi-clock"></i> Durchschnittliche Einsatzdauer</div>';
-        
-        // Durchschnittsdauer in Stunden und Minuten umrechnen
-        $durchschnittMinuten = round($stats['durchschnittsdauer']);
-        $durchschnittStunden = floor($durchschnittMinuten / 60);
-        $restMinuten = $durchschnittMinuten % 60;
-        
-        $dauerText = '';
-        if ($durchschnittStunden > 0) {
-            $dauerText .= $durchschnittStunden . ' Std. ';
-        }
-        $dauerText .= $restMinuten . ' Min.';
-        
-        echo '<div class="statistik-highlight">' . $dauerText . '</div>';
-        
-        if (isset($stats['laengster']) && is_array($stats['laengster'])) {
-            $laengsterMinuten = $stats['laengster']['Dauer'];
-            $laengsterStunden = floor($laengsterMinuten / 60);
-            $laengsterRestMinuten = $laengsterMinuten % 60;
-            
-            $laengsterText = '';
-            if ($laengsterStunden > 0) {
-                $laengsterText .= $laengsterStunden . ' Std. ';
-            }
-            $laengsterText .= $laengsterRestMinuten . ' Min.';
-            
-            $datumObj = new DateTime($stats['laengster']['Datum']);
-            $formattedDatum = $datumObj->format('d.m.Y');
-            
-            echo '<div class="statistik-info-text">Längster Einsatz: ' . $laengsterText . ' am ' . $formattedDatum . '</div>';
-        }
-        
-        echo '</div>';
-        
-        // Karte: Monatsübersicht
-        echo '<div class="statistik-card">';
-        echo '<div class="statistik-card-title"><i class="bi bi-calendar3"></i> Einsätze pro Monat</div>';
-        
-        echo '<div class="statistik-chart-container">';
-        echo '<div class="statistik-bar-chart">';
-        
-        $maxMonatsWert = max($monatsdaten);
-        
-        for ($i = 1; $i <= 12; $i++) {
-            $anzahl = $monatsdaten[$i];
-            $height = ($maxMonatsWert > 0) ? ($anzahl / $maxMonatsWert * 100) : 0;
-            
-            echo '<div class="statistik-bar" style="height: ' . $height . '%;" title="' . $monate[$i] . ': ' . $anzahl . ' Einsätze">';
-            
-            if ($anzahl > 0) {
-                echo '<span class="statistik-bar-value">' . $anzahl . '</span>';
-            }
-            
-            echo '<span class="statistik-bar-label">' . substr($monate[$i], 0, 3) . '</span>';
+        // Only show statistics based on config
+        if ($config['show_gesamt']) {
+            // Karte: Gesamtzahl der Einsätze
+            echo '<div class="statistik-card">';
+            echo '<div class="statistik-card-title"><i class="bi bi-flag"></i> Einsätze gesamt</div>';
+            echo '<div class="statistik-highlight">' . number_format($stats['gesamt'], 0, ',', '.') . '</div>';
+            echo '<div class="statistik-info-text">im Jahr ' . htmlspecialchars($jahr) . '</div>';
             echo '</div>';
         }
         
-        echo '</div>';
-        echo '</div>';
-        echo '</div>';
-        
-        // Karte: Wochentage
-        echo '<div class="statistik-card">';
-        echo '<div class="statistik-card-title"><i class="bi bi-calendar-week"></i> Einsätze nach Wochentagen</div>';
-        
-        echo '<div class="statistik-chart-container">';
-        echo '<div class="statistik-bar-chart">';
-        
-        $maxTagWert = max($wochentagsdaten);
-        
-        for ($i = 0; $i < 7; $i++) {
-            $anzahl = $wochentagsdaten[$i];
-            $height = ($maxTagWert > 0) ? ($anzahl / $maxTagWert * 100) : 0;
+        if ($config['show_dauer']) {
+            // Karte: Durchschnittliche Einsatzdauer
+            echo '<div class="statistik-card">';
+            echo '<div class="statistik-card-title"><i class="bi bi-clock"></i> Durchschnittliche Einsatzdauer</div>';
             
-            echo '<div class="statistik-bar" style="height: ' . $height . '%;" title="' . $wochentage[$i] . ': ' . $anzahl . ' Einsätze">';
+            // Durchschnittsdauer in Stunden und Minuten umrechnen
+            $durchschnittMinuten = round($stats['durchschnittsdauer']);
+            $durchschnittStunden = floor($durchschnittMinuten / 60);
+            $restMinuten = $durchschnittMinuten % 60;
             
-            if ($anzahl > 0) {
-                echo '<span class="statistik-bar-value">' . $anzahl . '</span>';
+            $dauerText = '';
+            if ($durchschnittStunden > 0) {
+                $dauerText .= $durchschnittStunden . ' Std. ';
             }
+            $dauerText .= $restMinuten . ' Min.';
             
-            echo '<span class="statistik-bar-label">' . substr($wochentage[$i], 0, 2) . '</span>';
-            echo '</div>';
-        }
-        
-        echo '</div>';
-        echo '</div>';
-        echo '</div>';
-        
-        // Karte: Tageszeiten
-        echo '<div class="statistik-card">';
-        echo '<div class="statistik-card-title"><i class="bi bi-sun"></i> Einsätze nach Tageszeit</div>';
-        
-        if (!empty($stats['tageszeit'])) {
-            echo '<ul class="statistik-top-list">';
+            echo '<div class="statistik-highlight">' . $dauerText . '</div>';
             
-            foreach ($stats['tageszeit'] as $tageszeit) {
-                echo '<li class="statistik-top-item">';
-                echo '<span class="statistik-top-label">' . htmlspecialchars($tageszeit['Tageszeit']) . '</span>';
-                echo '<span class="statistik-top-value">' . $tageszeit['Anzahl'] . '</span>';
-                echo '</li>';
-            }
-            
-            echo '</ul>';
-        } else {
-            echo '<div class="statistik-info-text">Keine Daten verfügbar</div>';
-        }
-        
-        echo '</div>';
-        
-        // Karte: Top 5 Einsatzarten
-        echo '<div class="statistik-card">';
-        echo '<div class="statistik-card-title"><i class="bi bi-tags"></i> Häufigste Einsatzarten</div>';
-        
-        if (!empty($stats['stichworte'])) {
-            echo '<ul class="statistik-top-list">';
-            
-            foreach ($stats['stichworte'] as $stichwort) {
-                echo '<li class="statistik-top-item">';
-                echo '<span class="statistik-top-label">' . htmlspecialchars($stichwort['Stichwort']) . '</span>';
-                echo '<span class="statistik-top-value">' . $stichwort['Anzahl'] . '</span>';
-                echo '</li>';
-            }
-            
-            echo '</ul>';
-        } else {
-            echo '<div class="statistik-info-text">Keine Daten verfügbar</div>';
-        }
-        
-        echo '</div>';
-        
-        // Karte: Top 5 Einsatzorte
-        echo '<div class="statistik-card">';
-        echo '<div class="statistik-card-title"><i class="bi bi-geo-alt"></i> Häufigste Einsatzorte</div>';
-        
-        if (!empty($stats['einsatzorte'])) {
-            echo '<ul class="statistik-top-list">';
-            
-            foreach ($stats['einsatzorte'] as $ort) {
-                echo '<li class="statistik-top-item">';
-                echo '<span class="statistik-top-label">' . htmlspecialchars($ort['Ort']) . '</span>';
-                echo '<span class="statistik-top-value">' . $ort['Anzahl'] . '</span>';
-                echo '</li>';
-            }
-            
-            echo '</ul>';
-        } else {
-            echo '<div class="statistik-info-text">Keine Daten verfügbar</div>';
-        }
-        
-        echo '</div>';
-        
-        // Karte: Einsatzkategorien
-        echo '<div class="statistik-card">';
-        echo '<div class="statistik-card-title"><i class="bi bi-list-check"></i> Einsatzkategorien</div>';
-        
-        if (!empty($stats['kategorien'])) {
-            echo '<ul class="statistik-top-list">';
-            
-            foreach ($stats['kategorien'] as $kategorie) {
-                $kategorienName = !empty($kategorie['Kategorie']) ? $kategorie['Kategorie'] : 'Ohne Kategorie';
+            if (isset($stats['laengster']) && is_array($stats['laengster'])) {
+                $laengsterMinuten = $stats['laengster']['Dauer'];
+                $laengsterStunden = floor($laengsterMinuten / 60);
+                $laengsterRestMinuten = $laengsterMinuten % 60;
                 
-                echo '<li class="statistik-top-item">';
-                echo '<span class="statistik-top-label">' . htmlspecialchars($kategorienName) . '</span>';
-                echo '<span class="statistik-top-value">' . $kategorie['Anzahl'] . '</span>';
-                echo '</li>';
+                $laengsterText = '';
+                if ($laengsterStunden > 0) {
+                    $laengsterText .= $laengsterStunden . ' Std. ';
+                }
+                $laengsterText .= $laengsterRestMinuten . ' Min.';
+                
+                $datumObj = new DateTime($stats['laengster']['Datum']);
+                $formattedDatum = $datumObj->format('d.m.Y');
+                
+                echo '<div class="statistik-info-text">Längster Einsatz: ' . $laengsterText . ' am ' . $formattedDatum . '</div>';
             }
             
-            echo '</ul>';
-        } else {
-            echo '<div class="statistik-info-text">Keine Daten verfügbar</div>';
+            echo '</div>';
         }
         
-        echo '</div>';
+        if ($config['show_monate']) {
+            // Karte: Monatsübersicht
+            echo '<div class="statistik-card">';
+            echo '<div class="statistik-card-title"><i class="bi bi-calendar3"></i> Einsätze pro Monat</div>';
+            
+            echo '<div class="statistik-chart-container">';
+            echo '<div class="statistik-bar-chart">';
+            
+            $maxMonatsWert = max($monatsdaten);
+            
+            for ($i = 1; $i <= 12; $i++) {
+                $anzahl = $monatsdaten[$i];
+                $height = ($maxMonatsWert > 0) ? ($anzahl / $maxMonatsWert * 100) : 0;
+                
+                echo '<div class="statistik-bar" style="height: ' . $height . '%;" title="' . $monate[$i] . ': ' . $anzahl . ' Einsätze">';
+                
+                if ($anzahl > 0) {
+                    echo '<span class="statistik-bar-value">' . $anzahl . '</span>';
+                }
+                
+                echo '<span class="statistik-bar-label">' . substr($monate[$i], 0, 3) . '</span>';
+                echo '</div>';
+            }
+            
+            echo '</div>';
+            echo '</div>';
+            echo '</div>';
+        }
+        
+        if ($config['show_wochentage']) {
+            // Karte: Wochentage
+            echo '<div class="statistik-card">';
+            echo '<div class="statistik-card-title"><i class="bi bi-calendar-week"></i> Einsätze nach Wochentagen</div>';
+            
+            echo '<div class="statistik-chart-container">';
+            echo '<div class="statistik-bar-chart">';
+            
+            $maxTagWert = max($wochentagsdaten);
+            
+            for ($i = 0; $i < 7; $i++) {
+                $anzahl = $wochentagsdaten[$i];
+                $height = ($maxTagWert > 0) ? ($anzahl / $maxTagWert * 100) : 0;
+                
+                echo '<div class="statistik-bar" style="height: ' . $height . '%;" title="' . $wochentage[$i] . ': ' . $anzahl . ' Einsätze">';
+                
+                if ($anzahl > 0) {
+                    echo '<span class="statistik-bar-value">' . $anzahl . '</span>';
+                }
+                
+                echo '<span class="statistik-bar-label">' . substr($wochentage[$i], 0, 2) . '</span>';
+                echo '</div>';
+            }
+            
+            echo '</div>';
+            echo '</div>';
+            echo '</div>';
+        }
+        
+        if ($config['show_tageszeit']) {
+            // Karte: Tageszeiten
+            echo '<div class="statistik-card">';
+            echo '<div class="statistik-card-title"><i class="bi bi-sun"></i> Einsätze nach Tageszeit</div>';
+            
+            if (!empty($stats['tageszeit'])) {
+                echo '<ul class="statistik-top-list">';
+                
+                foreach ($stats['tageszeit'] as $tageszeit) {
+                    echo '<li class="statistik-top-item">';
+                    echo '<span class="statistik-top-label">' . htmlspecialchars($tageszeit['Tageszeit']) . '</span>';
+                    echo '<span class="statistik-top-value">' . $tageszeit['Anzahl'] . '</span>';
+                    echo '</li>';
+                }
+                
+                echo '</ul>';
+            } else {
+                echo '<div class="statistik-info-text">Keine Daten verfügbar</div>';
+            }
+            
+            echo '</div>';
+        }
+        
+        if ($config['show_stichworte']) {
+            // Karte: Top 5 Einsatzarten
+            echo '<div class="statistik-card">';
+            echo '<div class="statistik-card-title"><i class="bi bi-tags"></i> Häufigste Einsatzarten</div>';
+            
+            if (!empty($stats['stichworte'])) {
+                echo '<ul class="statistik-top-list">';
+                
+                foreach ($stats['stichworte'] as $stichwort) {
+                    echo '<li class="statistik-top-item">';
+                    echo '<span class="statistik-top-label">' . htmlspecialchars($stichwort['Stichwort']) . '</span>';
+                    echo '<span class="statistik-top-value">' . $stichwort['Anzahl'] . '</span>';
+                    echo '</li>';
+                }
+                
+                echo '</ul>';
+            } else {
+                echo '<div class="statistik-info-text">Keine Daten verfügbar</div>';
+            }
+            
+            echo '</div>';
+        }
+        
+        if ($config['show_einsatzorte']) {
+            // Karte: Top 5 Einsatzorte
+            echo '<div class="statistik-card">';
+            echo '<div class="statistik-card-title"><i class="bi bi-geo-alt"></i> Häufigste Einsatzorte</div>';
+            
+            if (!empty($stats['einsatzorte'])) {
+                echo '<ul class="statistik-top-list">';
+                
+                foreach ($stats['einsatzorte'] as $ort) {
+                    echo '<li class="statistik-top-item">';
+                    echo '<span class="statistik-top-label">' . htmlspecialchars($ort['Ort']) . '</span>';
+                    echo '<span class="statistik-top-value">' . $ort['Anzahl'] . '</span>';
+                    echo '</li>';
+                }
+                
+                echo '</ul>';
+            } else {
+                echo '<div class="statistik-info-text">Keine Daten verfügbar</div>';
+            }
+            
+            echo '</div>';
+        }
+        
+        if ($config['show_kategorien']) {
+            // Karte: Einsatzkategorien
+            echo '<div class="statistik-card">';
+            echo '<div class="statistik-card-title"><i class="bi bi-list-check"></i> Einsatzkategorien</div>';
+            
+            if (!empty($stats['kategorien'])) {
+                echo '<ul class="statistik-top-list">';
+                
+                foreach ($stats['kategorien'] as $kategorie) {
+                    $kategorienName = !empty($kategorie['Kategorie']) ? $kategorie['Kategorie'] : 'Ohne Kategorie';
+                    
+                    echo '<li class="statistik-top-item">';
+                    echo '<span class="statistik-top-label">' . htmlspecialchars($kategorienName) . '</span>';
+                    echo '<span class="statistik-top-value">' . $kategorie['Anzahl'] . '</span>';
+                    echo '</li>';
+                }
+                
+                echo '</ul>';
+            } else {
+                echo '<div class="statistik-info-text">Keine Daten verfügbar</div>';
+            }
+            
+            echo '</div>';
+        }
         
         // Ende des Statistik-Grids
         echo '</div>';
