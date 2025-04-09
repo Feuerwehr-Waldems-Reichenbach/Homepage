@@ -71,7 +71,12 @@
         EinsatzStatistikWochentagTageszeit();
         EinsatzStatistikDauerNachStichwort();
 
-        
+        EinsatzStatistikOrtKategorie();
+        EinsatzStatistikEinheiten();
+        EinsatzStatistikDauerNachOrt();
+        EinsatzStatistikMonatsvergleichArten();
+        EinsatzStatistikTagesverlauf();
+        EinsatzStatistikTageImMonat();
         ?>
     </div>
 </section>

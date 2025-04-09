@@ -1021,7 +1021,7 @@ function showEinsatzStatistik($jahr = null, $customClass = '') {
 /**
  * Zeigt eine einzelne Statistik an
  * 
- * @param string $type Typ der Statistik (gesamt, dauer, monate, wochentage, tageszeit, stichworte, einsatzorte, kategorien)
+ * @param string $type Typ der Statistik
  * @return void
  */
 function EinsatzStatistikShow($type) {
@@ -1078,6 +1078,24 @@ function EinsatzStatistikShow($type) {
             break;
         case 'dauer_nach_stichwort':
             $html = showStatistikDauerNachStichwort();
+            break;
+        case 'ort_kategorie':
+            $html = showStatistikOrtKategorie();
+            break;
+        case 'einheiten':
+            $html = showStatistikEinheiten();
+            break;
+        case 'dauer_nach_ort':
+            $html = showStatistikDauerNachOrt();
+            break;
+        case 'monatsvergleich_arten':
+            $html = showStatistikMonatsvergleichArten();
+            break;
+        case 'tagesverlauf':
+            $html = showStatistikTagesverlauf();
+            break;
+        case 'tage_im_monat':
+            $html = showStatistikTageImMonat();
             break;
         default:
             $html = '<div style="color: red; margin: 1rem 0;">Fehler: Unbekannter Statistik-Typ "' . htmlspecialchars($type) . '"</div>';
@@ -1452,6 +1470,558 @@ function EinsatzStatistikWochentagTageszeit() {
  */
 function EinsatzStatistikDauerNachStichwort() {
     EinsatzStatistikShow('dauer_nach_stichwort');
+}
+
+/**
+ * Zeigt den Zusammenhang zwischen Einsatzort und Kategorie
+ * @return void
+ */
+function EinsatzStatistikOrtKategorie() {
+    EinsatzStatistikShow('ort_kategorie');
+}
+
+/**
+ * Zeigt Einsatzverteilung nach Einheiten
+ * @return void
+ */
+function EinsatzStatistikEinheiten() {
+    EinsatzStatistikShow('einheiten');
+}
+
+/**
+ * Zeigt Einsatzdauer nach Orten
+ * @return void
+ */
+function EinsatzStatistikDauerNachOrt() {
+    EinsatzStatistikShow('dauer_nach_ort');
+}
+
+/**
+ * Zeigt Monatsvergleich der Einsatzarten
+ * @return void
+ */
+function EinsatzStatistikMonatsvergleichArten() {
+    EinsatzStatistikShow('monatsvergleich_arten');
+}
+
+/**
+ * Zeigt Tagesverlauf der Einsätze
+ * @return void
+ */
+function EinsatzStatistikTagesverlauf() {
+    EinsatzStatistikShow('tagesverlauf');
+}
+
+/**
+ * Zeigt Einsatzverteilung nach Tagen im Monat
+ * @return void
+ */
+function EinsatzStatistikTageImMonat() {
+    EinsatzStatistikShow('tage_im_monat');
+}
+
+/**
+ * Zeigt den Zusammenhang zwischen Einsatzort und Kategorie
+ * @return string HTML der Statistik
+ */
+function showStatistikOrtKategorie() {
+    global $stats;
+    
+    // Datenbankobjekt holen
+    $db = Database::getInstance();
+    $conn = $db->getConnection();
+    
+    // Startdatum und Enddatum aus der globalen Konfiguration holen
+    global $aktuellesStatistikJahr;
+    $startDate = $aktuellesStatistikJahr . '-01-01 00:00:00';
+    $endDate = $aktuellesStatistikJahr . '-12-31 23:59:59';
+    
+    // Ort-Kategorie-Verteilung abfragen
+    $query = "SELECT Ort, Kategorie, COUNT(*) as Anzahl 
+              FROM einsatz 
+              WHERE Anzeigen = 1 AND Datum BETWEEN :startDate AND :endDate 
+              GROUP BY Ort, Kategorie 
+              ORDER BY Anzahl DESC, Ort, Kategorie
+              LIMIT 15";
+              
+    $stmt = $conn->prepare($query);
+    $stmt->bindParam(':startDate', $startDate);
+    $stmt->bindParam(':endDate', $endDate);
+    $stmt->execute();
+    
+    $ortKategorieData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    $html = '<div class="statistik-card">';
+    $html .= '<div class="statistik-card-title"><i class="bi bi-geo-alt-fill"></i> Einsatzorte nach Kategorien</div>';
+    
+    if (!empty($ortKategorieData)) {
+        $html .= '<div class="statistik-accordion-container">';
+        
+        // Gruppiere nach Ort
+        $gruppierteOrte = [];
+        foreach ($ortKategorieData as $item) {
+            $ort = $item['Ort'];
+            if (!isset($gruppierteOrte[$ort])) {
+                $gruppierteOrte[$ort] = [];
+            }
+            $gruppierteOrte[$ort][] = $item;
+        }
+        
+        // Sortiere Orte nach Gesamtzahl der Einsätze (absteigend)
+        $orteNachAnzahl = [];
+        foreach ($gruppierteOrte as $ort => $items) {
+            $gesamtAnzahl = array_sum(array_column($items, 'Anzahl'));
+            $orteNachAnzahl[$ort] = $gesamtAnzahl;
+        }
+        arsort($orteNachAnzahl);
+        
+        // Zeige die Top-Orte an
+        foreach ($orteNachAnzahl as $ort => $gesamtAnzahl) {
+            $html .= '<div class="statistik-accordion-item">';
+            $html .= '<div class="statistik-accordion-header">' . htmlspecialchars($ort) . ' <small>(' . $gesamtAnzahl . ' Einsätze)</small></div>';
+            $html .= '<div class="statistik-accordion-content">';
+            $html .= '<ul class="statistik-nested-list">';
+            
+            foreach ($gruppierteOrte[$ort] as $item) {
+                $kategorieText = !empty($item['Kategorie']) ? $item['Kategorie'] : 'Ohne Kategorie';
+                $html .= '<li>';
+                $html .= '<span>' . htmlspecialchars($kategorieText) . '</span>';
+                $html .= '<span class="statistik-top-value">' . $item['Anzahl'] . '</span>';
+                $html .= '</li>';
+            }
+            
+            $html .= '</ul>';
+            $html .= '</div>';
+            $html .= '</div>';
+        }
+        
+        $html .= '</div>';
+    } else {
+        $html .= '<div class="statistik-info-text">Keine Daten verfügbar</div>';
+    }
+    
+    $html .= '<div class="statistik-info-text">Verteilung der Einsatzkategorien nach Orten</div>';
+    $html .= '</div>';
+    
+    return $html;
+}
+
+/**
+ * Zeigt Einsatzverteilung nach Einheiten
+ * @return string HTML der Statistik
+ */
+function showStatistikEinheiten() {
+    global $stats;
+    
+    // Datenbankobjekt holen
+    $db = Database::getInstance();
+    $conn = $db->getConnection();
+    
+    // Startdatum und Enddatum aus der globalen Konfiguration holen
+    global $aktuellesStatistikJahr;
+    $startDate = $aktuellesStatistikJahr . '-01-01 00:00:00';
+    $endDate = $aktuellesStatistikJahr . '-12-31 23:59:59';
+    
+    // Abfrage für Einheiten
+    $query = "SELECT Einheit, COUNT(*) as Anzahl 
+              FROM einsatz 
+              WHERE Anzeigen = 1 AND Datum BETWEEN :startDate AND :endDate 
+              GROUP BY Einheit 
+              ORDER BY Anzahl DESC";
+              
+    $stmt = $conn->prepare($query);
+    $stmt->bindParam(':startDate', $startDate);
+    $stmt->bindParam(':endDate', $endDate);
+    $stmt->execute();
+    
+    $einheitenData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    $html = '<div class="statistik-card">';
+    $html .= '<div class="statistik-card-title"><i class="bi bi-people-fill"></i> Einsätze nach Einheiten</div>';
+    
+    if (!empty($einheitenData)) {
+        $html .= '<div class="statistik-bar-horizontal-container">';
+        
+        $maxAnzahl = max(array_column($einheitenData, 'Anzahl'));
+        
+        foreach ($einheitenData as $item) {
+            $width = ($maxAnzahl > 0) ? ($item['Anzahl'] / $maxAnzahl * 100) : 0;
+            
+            $html .= '<div class="statistik-bar-horizontal-item">';
+            $html .= '<div class="statistik-bar-horizontal-label">' . htmlspecialchars($item['Einheit']) . '</div>';
+            $html .= '<div class="statistik-bar-horizontal-bar-container">';
+            $html .= '<div class="statistik-bar-horizontal-bar" style="width: ' . $width . '%;" title="' . htmlspecialchars($item['Einheit']) . ': ' . $item['Anzahl'] . ' Einsätze"></div>';
+            $html .= '</div>';
+            $html .= '<div class="statistik-bar-horizontal-value">' . $item['Anzahl'] . '</div>';
+            $html .= '</div>';
+        }
+        
+        $html .= '</div>';
+    } else {
+        $html .= '<div class="statistik-info-text">Keine Daten verfügbar</div>';
+    }
+    
+    $html .= '</div>';
+    
+    return $html;
+}
+
+/**
+ * Zeigt Einsatzdauer nach Orten
+ * @return string HTML der Statistik
+ */
+function showStatistikDauerNachOrt() {
+    global $stats;
+    
+    // Datenbankobjekt holen
+    $db = Database::getInstance();
+    $conn = $db->getConnection();
+    
+    // Startdatum und Enddatum aus der globalen Konfiguration holen
+    global $aktuellesStatistikJahr;
+    $startDate = $aktuellesStatistikJahr . '-01-01 00:00:00';
+    $endDate = $aktuellesStatistikJahr . '-12-31 23:59:59';
+    
+    // Abfrage für durchschnittliche Dauer nach Ort
+    $query = "SELECT Ort, 
+              AVG(TIMESTAMPDIFF(MINUTE, Datum, Endzeit)) as DurchschnittMinuten,
+              COUNT(*) as Anzahl
+              FROM einsatz 
+              WHERE Anzeigen = 1 AND Datum BETWEEN :startDate AND :endDate 
+              GROUP BY Ort 
+              HAVING Anzahl >= 3
+              ORDER BY DurchschnittMinuten DESC
+              LIMIT 10";
+              
+    $stmt = $conn->prepare($query);
+    $stmt->bindParam(':startDate', $startDate);
+    $stmt->bindParam(':endDate', $endDate);
+    $stmt->execute();
+    
+    $dauerOrtData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    $html = '<div class="statistik-card">';
+    $html .= '<div class="statistik-card-title"><i class="bi bi-hourglass-split"></i> Einsatzdauer nach Orten</div>';
+    
+    if (!empty($dauerOrtData)) {
+        $html .= '<div class="statistik-bar-horizontal-container">';
+        
+        $maxDurchschnitt = 0;
+        foreach ($dauerOrtData as $item) {
+            $maxDurchschnitt = max($maxDurchschnitt, $item['DurchschnittMinuten']);
+        }
+        
+        foreach ($dauerOrtData as $item) {
+            $durchschnitt = round($item['DurchschnittMinuten']);
+            $width = ($maxDurchschnitt > 0) ? ($durchschnitt / $maxDurchschnitt * 100) : 0;
+            
+            $durchschnittStunden = floor($durchschnitt / 60);
+            $durchschnittMinuten = $durchschnitt % 60;
+            
+            $dauerText = '';
+            if ($durchschnittStunden > 0) {
+                $dauerText .= $durchschnittStunden . ' Std. ';
+            }
+            $dauerText .= $durchschnittMinuten . ' Min.';
+            
+            $html .= '<div class="statistik-bar-horizontal-item">';
+            $html .= '<div class="statistik-bar-horizontal-label">' . htmlspecialchars($item['Ort']) . '</div>';
+            $html .= '<div class="statistik-bar-horizontal-bar-container">';
+            $html .= '<div class="statistik-bar-horizontal-bar" style="width: ' . $width . '%;" title="Durchschnitt: ' . $dauerText . ', Anzahl: ' . $item['Anzahl'] . ' Einsätze"></div>';
+            $html .= '</div>';
+            $html .= '<div class="statistik-bar-horizontal-value">' . $dauerText . '</div>';
+            $html .= '</div>';
+        }
+        
+        $html .= '</div>';
+    } else {
+        $html .= '<div class="statistik-info-text">Keine Daten verfügbar (min. 3 Einsätze pro Ort nötig)</div>';
+    }
+    
+    $html .= '<div class="statistik-info-text">Durchschnittliche Einsatzdauer nach Einsatzorten</div>';
+    $html .= '</div>';
+    
+    return $html;
+}
+
+/**
+ * Zeigt Monatsvergleich der Einsatzarten
+ * @return string HTML der Statistik
+ */
+function showStatistikMonatsvergleichArten() {
+    global $stats, $monate;
+    
+    // Datenbankobjekt holen
+    $db = Database::getInstance();
+    $conn = $db->getConnection();
+    
+    // Startdatum und Enddatum aus der globalen Konfiguration holen
+    global $aktuellesStatistikJahr;
+    $startDate = $aktuellesStatistikJahr . '-01-01 00:00:00';
+    $endDate = $aktuellesStatistikJahr . '-12-31 23:59:59';
+    
+    // Top-5 Einsatzarten (Stichworte) ermitteln
+    $topStichwortQuery = "SELECT Stichwort, COUNT(*) as Anzahl 
+                         FROM einsatz 
+                         WHERE Anzeigen = 1 AND Datum BETWEEN :startDate AND :endDate 
+                         GROUP BY Stichwort 
+                         ORDER BY Anzahl DESC 
+                         LIMIT 5";
+                         
+    $stmt = $conn->prepare($topStichwortQuery);
+    $stmt->bindParam(':startDate', $startDate);
+    $stmt->bindParam(':endDate', $endDate);
+    $stmt->execute();
+    
+    $topStichworte = $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
+    
+    // Für jedes Stichwort die monatliche Verteilung abfragen
+    $stichwortMonatData = [];
+    
+    foreach ($topStichworte as $stichwort) {
+        $monatQuery = "SELECT MONTH(Datum) as Monat, COUNT(*) as Anzahl 
+                       FROM einsatz 
+                       WHERE Anzeigen = 1 AND Datum BETWEEN :startDate AND :endDate 
+                       AND Stichwort = :stichwort 
+                       GROUP BY MONTH(Datum) 
+                       ORDER BY Monat";
+                       
+        $stmt = $conn->prepare($monatQuery);
+        $stmt->bindParam(':startDate', $startDate);
+        $stmt->bindParam(':endDate', $endDate);
+        $stmt->bindParam(':stichwort', $stichwort);
+        $stmt->execute();
+        
+        $monatDaten = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        // Initialisiere alle Monate mit 0
+        $stichwortMonatData[$stichwort] = array_fill(1, 12, 0);
+        
+        // Fülle die tatsächlichen Daten ein
+        foreach ($monatDaten as $monat) {
+            $stichwortMonatData[$stichwort][$monat['Monat']] = $monat['Anzahl'];
+        }
+    }
+    
+    $html = '<div class="statistik-card">';
+    $html .= '<div class="statistik-card-title"><i class="bi bi-bar-chart-line"></i> Monatsvergleich der Einsatzarten</div>';
+    
+    if (!empty($stichwortMonatData)) {
+        $html .= '<div class="statistik-accordion-container">';
+        
+        // Für jedes Stichwort ein Akkordeon erstellen
+        foreach ($stichwortMonatData as $stichwort => $monatsdaten) {
+            $gesamtAnzahl = array_sum($monatsdaten);
+            
+            $html .= '<div class="statistik-accordion-item">';
+            $html .= '<div class="statistik-accordion-header">' . htmlspecialchars($stichwort) . ' <small>(' . $gesamtAnzahl . ' Einsätze)</small></div>';
+            $html .= '<div class="statistik-accordion-content">';
+            
+            // Balkendiagramm für die monatliche Verteilung
+            $html .= '<div class="statistik-chart-container">';
+            $html .= '<div class="statistik-bar-chart">';
+            
+            $maxMonatsWert = max($monatsdaten);
+            
+            for ($i = 1; $i <= 12; $i++) {
+                $anzahl = $monatsdaten[$i];
+                $height = ($maxMonatsWert > 0) ? ($anzahl / $maxMonatsWert * 100) : 0;
+                
+                $html .= '<div class="statistik-bar" style="height: ' . $height . '%;" title="' . $monate[$i] . ': ' . $anzahl . ' Einsätze (' . $stichwort . ')">';
+                
+                if ($anzahl > 0) {
+                    $html .= '<span class="statistik-bar-value">' . $anzahl . '</span>';
+                }
+                
+                $html .= '<span class="statistik-bar-label">' . substr($monate[$i], 0, 3) . '</span>';
+                $html .= '</div>';
+            }
+            
+            $html .= '</div>';
+            $html .= '</div>';
+            
+            $html .= '</div>';
+            $html .= '</div>';
+        }
+        
+        $html .= '</div>';
+    } else {
+        $html .= '<div class="statistik-info-text">Keine Daten verfügbar</div>';
+    }
+    
+    $html .= '<div class="statistik-info-text">Monatliche Verteilung der häufigsten Einsatzarten</div>';
+    $html .= '</div>';
+    
+    return $html;
+}
+
+/**
+ * Zeigt Tagesverlauf der Einsätze
+ * @return string HTML der Statistik
+ */
+function showStatistikTagesverlauf() {
+    global $stats;
+    
+    // Datenbankobjekt holen
+    $db = Database::getInstance();
+    $conn = $db->getConnection();
+    
+    // Startdatum und Enddatum aus der globalen Konfiguration holen
+    global $aktuellesStatistikJahr;
+    $startDate = $aktuellesStatistikJahr . '-01-01 00:00:00';
+    $endDate = $aktuellesStatistikJahr . '-12-31 23:59:59';
+    
+    // Stundendaten abfragen
+    $query = "SELECT HOUR(Datum) as Stunde, COUNT(*) as Anzahl 
+              FROM einsatz 
+              WHERE Anzeigen = 1 AND Datum BETWEEN :startDate AND :endDate 
+              GROUP BY HOUR(Datum) 
+              ORDER BY Stunde";
+              
+    $stmt = $conn->prepare($query);
+    $stmt->bindParam(':startDate', $startDate);
+    $stmt->bindParam(':endDate', $endDate);
+    $stmt->execute();
+    
+    $stundenData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    // Initialisiere Stundendaten mit 0
+    $stundendaten = array_fill(0, 24, 0);
+    
+    // Fülle die tatsächlichen Daten ein
+    foreach ($stundenData as $stunde) {
+        $stundendaten[$stunde['Stunde']] = $stunde['Anzahl'];
+    }
+    
+    $html = '<div class="statistik-card">';
+    $html .= '<div class="statistik-card-title"><i class="bi bi-clock"></i> Tagesverlauf der Einsätze</div>';
+    
+    if (!empty($stundendaten)) {
+        $html .= '<div class="statistik-chart-container">';
+        $html .= '<div class="statistik-bar-chart">';
+        
+        $maxStundenWert = max($stundendaten);
+        
+        for ($i = 0; $i < 24; $i++) {
+            $anzahl = $stundendaten[$i];
+            $height = ($maxStundenWert > 0) ? ($anzahl / $maxStundenWert * 100) : 0;
+            
+            // Farbcodierung nach Tageszeit
+            $barColor = '#A72920'; // Standard rot
+            if ($i >= 5 && $i < 12) {
+                $barColor = '#F9A825'; // Gelb/Orange für Morgen
+            } else if ($i >= 12 && $i < 18) {
+                $barColor = '#FBC02D'; // Gelb für Nachmittag
+            } else if ($i >= 18 && $i < 22) {
+                $barColor = '#5D4037'; // Braun für Abend
+            } else {
+                $barColor = '#263238'; // Dunkelblau für Nacht
+            }
+            
+            $stundeText = str_pad($i, 2, '0', STR_PAD_LEFT);
+            
+            $html .= '<div class="statistik-bar" style="height: ' . $height . '%; background-color: ' . $barColor . ';" title="' . $stundeText . ':00 Uhr: ' . $anzahl . ' Einsätze">';
+            
+            if ($anzahl > 0) {
+                $html .= '<span class="statistik-bar-value">' . $anzahl . '</span>';
+            }
+            
+            $html .= '<span class="statistik-bar-label">' . $stundeText . '</span>';
+            $html .= '</div>';
+        }
+        
+        $html .= '</div>';
+        $html .= '</div>';
+    } else {
+        $html .= '<div class="statistik-info-text">Keine Daten verfügbar</div>';
+    }
+    
+    $html .= '<div class="statistik-info-text">Anzahl der Einsätze nach Uhrzeit (24h)</div>';
+    $html .= '</div>';
+    
+    return $html;
+}
+
+/**
+ * Zeigt Einsatzverteilung nach Tagen im Monat
+ * @return string HTML der Statistik
+ */
+function showStatistikTageImMonat() {
+    global $stats;
+    
+    // Datenbankobjekt holen
+    $db = Database::getInstance();
+    $conn = $db->getConnection();
+    
+    // Startdatum und Enddatum aus der globalen Konfiguration holen
+    global $aktuellesStatistikJahr;
+    $startDate = $aktuellesStatistikJahr . '-01-01 00:00:00';
+    $endDate = $aktuellesStatistikJahr . '-12-31 23:59:59';
+    
+    // Tage im Monat abfragen
+    $query = "SELECT DAY(Datum) as Tag, COUNT(*) as Anzahl 
+              FROM einsatz 
+              WHERE Anzeigen = 1 AND Datum BETWEEN :startDate AND :endDate 
+              GROUP BY DAY(Datum) 
+              ORDER BY Tag";
+              
+    $stmt = $conn->prepare($query);
+    $stmt->bindParam(':startDate', $startDate);
+    $stmt->bindParam(':endDate', $endDate);
+    $stmt->execute();
+    
+    $tageData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    // Initialisiere Tagesdaten (1-31) mit 0
+    $tagesdaten = array_fill(1, 31, 0);
+    
+    // Fülle die tatsächlichen Daten ein
+    foreach ($tageData as $tag) {
+        $tagesdaten[$tag['Tag']] = $tag['Anzahl'];
+    }
+    
+    $html = '<div class="statistik-card">';
+    $html .= '<div class="statistik-card-title"><i class="bi bi-calendar-date"></i> Einsätze nach Tag im Monat</div>';
+    
+    if (!empty($tagesdaten)) {
+        $html .= '<div class="statistik-chart-container">';
+        $html .= '<div class="statistik-bar-chart" style="gap: 2px;">';
+        
+        $maxTagWert = max($tagesdaten);
+        
+        for ($i = 1; $i <= 31; $i++) {
+            $anzahl = $tagesdaten[$i];
+            $height = ($maxTagWert > 0) ? ($anzahl / $maxTagWert * 100) : 0;
+            
+            // Überprüfen ob es sich um einen besonderen Tag handelt (1., 15., letzter Tag)
+            $highlight = '';
+            if ($i == 1 || $i == 15 || $i == 31) {
+                $highlight = 'style="background-color: #8e2219;"';
+            }
+            
+            $html .= '<div class="statistik-bar" style="height: ' . $height . '%;" ' . $highlight . ' title="Tag ' . $i . ': ' . $anzahl . ' Einsätze">';
+            
+            if ($anzahl > 0 && $i % 5 == 0) {
+                $html .= '<span class="statistik-bar-value">' . $anzahl . '</span>';
+            }
+            
+            if ($i % 5 == 0 || $i == 1) {
+                $html .= '<span class="statistik-bar-label">' . $i . '</span>';
+            }
+            
+            $html .= '</div>';
+        }
+        
+        $html .= '</div>';
+        $html .= '</div>';
+    } else {
+        $html .= '<div class="statistik-info-text">Keine Daten verfügbar</div>';
+    }
+    
+    $html .= '<div class="statistik-info-text">Einsatzverteilung nach Monatstag (1-31)</div>';
+    $html .= '</div>';
+    
+    return $html;
 }
 
 /**
