@@ -1145,6 +1145,18 @@ function EinsatzStatistikShow($type) {
         case 'tage_im_monat':
             $html = showStatistikTageImMonat();
             break;
+        case 'arten_nach_jahreszeit':
+            $html = showStatistikArtenNachJahreszeit();
+            break;
+        case 'dauer_nach_kategorie':
+            $html = showStatistikDauerNachKategorie();
+            break;
+        case 'uhrzeit_kategorie':
+            $html = showStatistikUhrzeitKategorie();
+            break;
+        case 'dauergruppen':
+            $html = showStatistikDauergruppen();
+            break;
         default:
             $html = '<div style="color: red; margin: 1rem 0;">Fehler: Unbekannter Statistik-Typ "' . htmlspecialchars($type) . '"</div>';
     }
@@ -2416,5 +2428,339 @@ function getHeatmapColor($intensity) {
     $b = min(255, 120 - (int)(120 * $intensity));
     
     return "rgb($r, $g, $b)";
+}
+
+/**
+ * Zeigt Einsatzarten nach Jahreszeit
+ * @return void
+ */
+function EinsatzStatistikArtenNachJahreszeit() {
+    EinsatzStatistikShow('arten_nach_jahreszeit');
+}
+
+/**
+ * Zeigt Einsatzdauer nach Kategorie
+ * @return void
+ */
+function EinsatzStatistikDauerNachKategorie() {
+    EinsatzStatistikShow('dauer_nach_kategorie');
+}
+
+/**
+ * Zeigt Einsätze nach Uhrzeit und Kategorie
+ * @return void
+ */
+function EinsatzStatistikUhrzeitKategorie() {
+    EinsatzStatistikShow('uhrzeit_kategorie');
+}
+
+/**
+ * Zeigt Einsätze nach Dauergruppen
+ * @return void
+ */
+function EinsatzStatistikDauergruppen() {
+    EinsatzStatistikShow('dauergruppen');
+}
+
+/**
+ * Zeigt Einsatzarten nach Jahreszeit
+ * @return string HTML der Statistik
+ */
+function showStatistikArtenNachJahreszeit() {
+    global $stats;
+    
+    // Datenbankobjekt holen
+    $db = Database::getInstance();
+    $conn = $db->getConnection();
+    
+    // Startdatum und Enddatum aus der globalen Konfiguration holen
+    global $aktuellesStatistikJahr;
+    $startDate = $aktuellesStatistikJahr . '-01-01 00:00:00';
+    $endDate = $aktuellesStatistikJahr . '-12-31 23:59:59';
+    
+    // Abfrage für Einsatzarten nach Jahreszeit
+    $query = "SELECT 
+                CASE 
+                    WHEN MONTH(Datum) IN (12, 1, 2) THEN 'Winter'
+                    WHEN MONTH(Datum) IN (3, 4, 5) THEN 'Frühling'
+                    WHEN MONTH(Datum) IN (6, 7, 8) THEN 'Sommer'
+                    ELSE 'Herbst'
+                END as Jahreszeit,
+                Stichwort, COUNT(*) as Anzahl
+              FROM einsatz 
+              WHERE Anzeigen = 1 AND Datum BETWEEN :startDate AND :endDate 
+              GROUP BY Jahreszeit, Stichwort 
+              ORDER BY Jahreszeit, Anzahl DESC";
+              
+    $stmt = $conn->prepare($query);
+    $stmt->bindParam(':startDate', $startDate);
+    $stmt->bindParam(':endDate', $endDate);
+    $stmt->execute();
+    
+    $artenJahreszeitData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    $html = '<div class="statistik-card">';
+    $html .= '<div class="statistik-card-title"><i class="bi bi-calendar"></i> Einsatzarten nach Jahreszeit</div>';
+    
+    if (!empty($artenJahreszeitData)) {
+        $html .= '<div class="statistik-accordion-container">';
+        
+        // Gruppiere nach Jahreszeit
+        $gruppierteJahreszeiten = [];
+        foreach ($artenJahreszeitData as $item) {
+            $jahreszeit = $item['Jahreszeit'];
+            if (!isset($gruppierteJahreszeiten[$jahreszeit])) {
+                $gruppierteJahreszeiten[$jahreszeit] = [];
+            }
+            $gruppierteJahreszeiten[$jahreszeit][] = $item;
+        }
+        
+        // Zeige die Jahreszeiten an
+        foreach ($gruppierteJahreszeiten as $jahreszeit => $items) {
+            $html .= '<div class="statistik-accordion-item">';
+            $html .= '<div class="statistik-accordion-header">' . htmlspecialchars($jahreszeit) . '</div>';
+            $html .= '<div class="statistik-accordion-content">';
+            $html .= '<ul class="statistik-nested-list">';
+            
+            foreach ($items as $item) {
+                $html .= '<li>';
+                $html .= '<span>' . htmlspecialchars($item['Stichwort']) . '</span>';
+                $html .= '<span class="statistik-top-value">' . $item['Anzahl'] . '</span>';
+                $html .= '</li>';
+            }
+            
+            $html .= '</ul>';
+            $html .= '</div>';
+            $html .= '</div>';
+        }
+        
+        $html .= '</div>';
+    } else {
+        $html .= '<div class="statistik-info-text">Keine Daten verfügbar</div>';
+    }
+    
+    $html .= '<div class="statistik-info-text">Verteilung der Einsatzarten nach Jahreszeiten</div>';
+    $html .= '</div>';
+    
+    return $html;
+}
+
+/**
+ * Zeigt Einsatzdauer nach Kategorie
+ * @return string HTML der Statistik
+ */
+function showStatistikDauerNachKategorie() {
+    global $stats;
+    
+    // Datenbankobjekt holen
+    $db = Database::getInstance();
+    $conn = $db->getConnection();
+    
+    // Startdatum und Enddatum aus der globalen Konfiguration holen
+    global $aktuellesStatistikJahr;
+    $startDate = $aktuellesStatistikJahr . '-01-01 00:00:00';
+    $endDate = $aktuellesStatistikJahr . '-12-31 23:59:59';
+    
+    // Abfrage für durchschnittliche Dauer nach Kategorie
+    $query = "SELECT Kategorie, 
+              AVG(TIMESTAMPDIFF(MINUTE, Datum, Endzeit)) as DurchschnittMinuten,
+              COUNT(*) as Anzahl
+              FROM einsatz 
+              WHERE Anzeigen = 1 AND Datum BETWEEN :startDate AND :endDate 
+              GROUP BY Kategorie 
+              ORDER BY DurchschnittMinuten DESC";
+              
+    $stmt = $conn->prepare($query);
+    $stmt->bindParam(':startDate', $startDate);
+    $stmt->bindParam(':endDate', $endDate);
+    $stmt->execute();
+    
+    $dauerKategorieData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    $html = '<div class="statistik-card">';
+    $html .= '<div class="statistik-card-title"><i class="bi bi-hourglass"></i> Einsatzdauer nach Kategorie</div>';
+    
+    if (!empty($dauerKategorieData)) {
+        $html .= '<div class="statistik-bar-horizontal-container">';
+        
+        $maxDurchschnitt = 0;
+        foreach ($dauerKategorieData as $item) {
+            $maxDurchschnitt = max($maxDurchschnitt, $item['DurchschnittMinuten']);
+        }
+        
+        foreach ($dauerKategorieData as $item) {
+            $durchschnitt = round($item['DurchschnittMinuten']);
+            $width = ($maxDurchschnitt > 0) ? ($durchschnitt / $maxDurchschnitt * 100) : 0;
+            
+            $durchschnittStunden = floor($durchschnitt / 60);
+            $durchschnittMinuten = $durchschnitt % 60;
+            
+            $dauerText = '';
+            if ($durchschnittStunden > 0) {
+                $dauerText .= $durchschnittStunden . ' Std. ';
+            }
+            $dauerText .= $durchschnittMinuten . ' Min.';
+            
+            $html .= '<div class="statistik-bar-horizontal-item">';
+            $html .= '<div class="statistik-bar-horizontal-label">' . htmlspecialchars($item['Kategorie']) . '</div>';
+            $html .= '<div class="statistik-bar-horizontal-bar-container">';
+            $html .= '<div class="statistik-bar-horizontal-bar" style="width: ' . $width . '%;" title="Durchschnitt: ' . $dauerText . ', Anzahl: ' . $item['Anzahl'] . ' Einsätze"></div>';
+            $html .= '</div>';
+            $html .= '<div class="statistik-bar-horizontal-value">' . $dauerText . '</div>';
+            $html .= '</div>';
+        }
+        
+        $html .= '</div>';
+    } else {
+        $html .= '<div class="statistik-info-text">Keine Daten verfügbar</div>';
+    }
+    
+    $html .= '<div class="statistik-info-text">Durchschnittliche Einsatzdauer nach Kategorien</div>';
+    $html .= '</div>';
+    
+    return $html;
+}
+
+/**
+ * Zeigt Einsätze nach Uhrzeit und Kategorie
+ * @return string HTML der Statistik
+ */
+function showStatistikUhrzeitKategorie() {
+    global $stats;
+    
+    // Datenbankobjekt holen
+    $db = Database::getInstance();
+    $conn = $db->getConnection();
+    
+    // Startdatum und Enddatum aus der globalen Konfiguration holen
+    global $aktuellesStatistikJahr;
+    $startDate = $aktuellesStatistikJahr . '-01-01 00:00:00';
+    $endDate = $aktuellesStatistikJahr . '-12-31 23:59:59';
+    
+    // Abfrage für Einsätze nach Uhrzeit und Kategorie
+    $query = "SELECT 
+                CASE 
+                    WHEN HOUR(Datum) BETWEEN 6 AND 11 THEN 'Morgen (6-12 Uhr)'
+                    WHEN HOUR(Datum) BETWEEN 12 AND 17 THEN 'Nachmittag (12-18 Uhr)'
+                    WHEN HOUR(Datum) BETWEEN 18 AND 22 THEN 'Abend (18-23 Uhr)'
+                    ELSE 'Nacht (23-6 Uhr)'
+                END as Tageszeit,
+                Kategorie, COUNT(*) as Anzahl
+              FROM einsatz 
+              WHERE Anzeigen = 1 AND Datum BETWEEN :startDate AND :endDate 
+              GROUP BY Tageszeit, Kategorie 
+              ORDER BY Tageszeit, Anzahl DESC";
+              
+    $stmt = $conn->prepare($query);
+    $stmt->bindParam(':startDate', $startDate);
+    $stmt->bindParam(':endDate', $endDate);
+    $stmt->execute();
+    
+    $uhrzeitKategorieData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    $html = '<div class="statistik-card">';
+    $html .= '<div class="statistik-card-title"><i class="bi bi-clock"></i> Einsätze nach Uhrzeit und Kategorie</div>';
+    
+    if (!empty($uhrzeitKategorieData)) {
+        $html .= '<div class="statistik-accordion-container">';
+        
+        // Gruppiere nach Tageszeit
+        $gruppierteTageszeiten = [];
+        foreach ($uhrzeitKategorieData as $item) {
+            $tageszeit = $item['Tageszeit'];
+            if (!isset($gruppierteTageszeiten[$tageszeit])) {
+                $gruppierteTageszeiten[$tageszeit] = [];
+            }
+            $gruppierteTageszeiten[$tageszeit][] = $item;
+        }
+        
+        // Zeige die Tageszeiten an
+        foreach ($gruppierteTageszeiten as $tageszeit => $items) {
+            $html .= '<div class="statistik-accordion-item">';
+            $html .= '<div class="statistik-accordion-header">' . htmlspecialchars($tageszeit) . '</div>';
+            $html .= '<div class="statistik-accordion-content">';
+            $html .= '<ul class="statistik-nested-list">';
+            
+            foreach ($items as $item) {
+                $html .= '<li>';
+                $html .= '<span>' . htmlspecialchars($item['Kategorie']) . '</span>';
+                $html .= '<span class="statistik-top-value">' . $item['Anzahl'] . '</span>';
+                $html .= '</li>';
+            }
+            
+            $html .= '</ul>';
+            $html .= '</div>';
+            $html .= '</div>';
+        }
+        
+        $html .= '</div>';
+    } else {
+        $html .= '<div class="statistik-info-text">Keine Daten verfügbar</div>';
+    }
+    
+    $html .= '<div class="statistik-info-text">Verteilung der Einsätze nach Uhrzeit und Kategorie</div>';
+    $html .= '</div>';
+    
+    return $html;
+}
+
+/**
+ * Zeigt Einsätze nach Dauergruppen
+ * @return string HTML der Statistik
+ */
+function showStatistikDauergruppen() {
+    global $stats;
+    
+    // Datenbankobjekt holen
+    $db = Database::getInstance();
+    $conn = $db->getConnection();
+    
+    // Startdatum und Enddatum aus der globalen Konfiguration holen
+    global $aktuellesStatistikJahr;
+    $startDate = $aktuellesStatistikJahr . '-01-01 00:00:00';
+    $endDate = $aktuellesStatistikJahr . '-12-31 23:59:59';
+    
+    // Abfrage für Einsätze nach Dauergruppen
+    $query = "SELECT 
+                CASE 
+                    WHEN TIMESTAMPDIFF(MINUTE, Datum, Endzeit) < 30 THEN '< 30 Min'
+                    WHEN TIMESTAMPDIFF(MINUTE, Datum, Endzeit) BETWEEN 30 AND 60 THEN '30-60 Min'
+                    ELSE '> 60 Min'
+                END as Dauergruppe,
+                COUNT(*) as Anzahl
+              FROM einsatz 
+              WHERE Anzeigen = 1 AND Datum BETWEEN :startDate AND :endDate 
+              GROUP BY Dauergruppe 
+              ORDER BY Anzahl DESC";
+              
+    $stmt = $conn->prepare($query);
+    $stmt->bindParam(':startDate', $startDate);
+    $stmt->bindParam(':endDate', $endDate);
+    $stmt->execute();
+    
+    $dauergruppenData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    $html = '<div class="statistik-card">';
+    $html .= '<div class="statistik-card-title"><i class="bi bi-hourglass-split"></i> Einsätze nach Dauergruppen</div>';
+    
+    if (!empty($dauergruppenData)) {
+        $html .= '<ul class="statistik-top-list">';
+        
+        foreach ($dauergruppenData as $item) {
+            $html .= '<li class="statistik-top-item">';
+            $html .= '<span class="statistik-top-label">' . htmlspecialchars($item['Dauergruppe']) . '</span>';
+            $html .= '<span class="statistik-top-value">' . $item['Anzahl'] . '</span>';
+            $html .= '</li>';
+        }
+        
+        $html .= '</ul>';
+    } else {
+        $html .= '<div class="statistik-info-text">Keine Daten verfügbar</div>';
+    }
+    
+    $html .= '<div class="statistik-info-text">Verteilung der Einsätze nach Dauergruppen</div>';
+    $html .= '</div>';
+    
+    return $html;
 }
 ?> 

@@ -77,6 +77,11 @@
         EinsatzStatistikMonatsvergleichArten();
         EinsatzStatistikTagesverlauf();
         EinsatzStatistikTageImMonat();
+
+        EinsatzStatistikArtenNachJahreszeit();
+        EinsatzStatistikDauerNachKategorie();
+        EinsatzStatistikUhrzeitKategorie();
+        EinsatzStatistikDauergruppen();
         ?>
     </div>
 </section>
