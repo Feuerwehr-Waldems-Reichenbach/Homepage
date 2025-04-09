@@ -54,15 +54,17 @@
         $jahr = isset($_GET['statistik_jahr']) ? (int)$_GET['statistik_jahr'] : date('Y');
 
         showEinsaetze(10);
-        showEinsatzStatistik(date($jahr), '',
-                            ['show_gesamt' => false, 
-                            'show_dauer' => false, 
-                            'show_monate' => true, 
-                            'show_wochentage' => false, 
-                            'show_tageszeit' => true, 
-                            'show_stichworte' => false, 
-                            'show_einsatzorte' => false, 
-                            'show_kategorien' => true]);
+        showEinsatzStatistik();
+
+        EinsatzStatistikGesamt();
+        EinsatzStatistikMonate();
+        EinsatzStatistikDauer();
+        EinsatzStatistikWochentage();
+        EinsatzStatistikTageszeit();
+        EinsatzStatistikStichworte();
+        EinsatzStatistikKategorien();
+        EinsatzStatistikMonate();
+        
         
         ?>
     </div>
