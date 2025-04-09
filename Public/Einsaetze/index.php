@@ -47,20 +47,24 @@
   </div>
 </section>
 
-<section data-bs-version="5.1" class="article11 cid-ukzz9Maa6f" id="article11-4p">
-    
-
-    
-    
+<section data-bs-version="5.1" class="article11 cid-ukzz9Maa6f" id="article11-4p">  
     <div class="container">
-        <div class="row justify-content-center">
-            <div class="title col-md-12 col-lg-10">
-                <h3 class="mbr-section-title mbr-fonts-style align-center mt-0 mb-0 display-2">
-                <strong>Einsätze Platzhalter</strong></h3>
-                
-                
-            </div>
-        </div>
+        <?php include_once "../assets/includes/einsaetze.php";
+        
+        $jahr = isset($_GET['statistik_jahr']) ? (int)$_GET['statistik_jahr'] : date('Y');
+
+        showEinsaetze(10);
+        showEinsatzStatistik(date($jahr), '',
+                            ['show_gesamt' => false, 
+                            'show_dauer' => false, 
+                            'show_monate' => true, 
+                            'show_wochentage' => false, 
+                            'show_tageszeit' => true, 
+                            'show_stichworte' => false, 
+                            'show_einsatzorte' => false, 
+                            'show_kategorien' => true]);
+        
+        ?>
     </div>
 </section>
 
