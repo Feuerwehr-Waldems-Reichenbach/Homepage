@@ -505,14 +505,16 @@ function showEinsatzStatistik($jahr = null, $customClass = '') {
         }
         .statistik-chart-container {
             position: relative;
-            height: 200px;
+            height: 250px;  /* Noch mehr Höhe für besseren Platz */
             margin-top: 1rem;
         }
         .statistik-bar-chart {
             display: flex;
             align-items: flex-end;
-            height: 180px;
+            height: 150px;  /* Reduzierte Höhe */
             gap: 8px;
+            margin-top: 30px;   /* Mehr Platz für Werte oben */
+            margin-bottom: 40px; /* Mehr Platz für Labels unten */
         }
         .statistik-bar {
             flex: 1;
@@ -530,24 +532,21 @@ function showEinsatzStatistik($jahr = null, $customClass = '') {
         }
         .statistik-bar-label {
             position: absolute;
-            bottom: -25px;
+            bottom: -35px;  /* Mehr Abstand nach unten */
             left: 50%;
             transform: translateX(-50%);
-            font-size: 0.75rem;
-            text-align: center;
-            width: 100%;
+            font-size: 0.65rem;  /* Noch kleinere Schrift */
+            width: auto;
             white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            text-align: center;
         }
         .statistik-bar-value {
             position: absolute;
             top: -20px;
             left: 50%;
             transform: translateX(-50%);
-            font-size: 0.75rem;
-            font-weight: bold;
-            color: #414141;
+            font-size: 0.65rem;
+            white-space: nowrap;
         }
         .statistik-top-list {
             list-style: none;
@@ -822,6 +821,55 @@ function showEinsatzStatistik($jahr = null, $customClass = '') {
             width: 25%;
             font-size: 0.85rem;
             white-space: nowrap;
+        }
+
+        /* Spezielle Anpassungen für Tagesverlauf und TageImMonat */
+        .statistik-tagesverlauf .statistik-bar-chart,
+        .statistik-tage-monat .statistik-bar-chart {
+            gap: 0;  /* Kein Abstand zwischen Balken */
+        }
+        .statistik-tagesverlauf .statistik-bar,
+        .statistik-tage-monat .statistik-bar {
+            min-width: 7px;  /* Noch schmalere Balken */
+            margin: 0 1px;   /* Minimaler Abstand durch Margin */
+        }
+        .statistik-tagesverlauf .statistik-bar-label {
+            transform: translateX(-50%) rotate(-45deg);
+            transform-origin: top left;
+            bottom: -25px;
+            left: 50%;
+        }
+        .statistik-tagesverlauf .statistik-bar-value {
+            font-size: 0.65rem;
+            white-space: nowrap;
+        }
+
+        .statistik-tage-monat .statistik-bar-label {
+            font-size: 0.6rem;
+            transform: translateX(-50%);
+            bottom: -20px;
+        }
+        .statistik-tage-monat .statistik-bar-value {
+            font-size: 0.65rem;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 768px) {
+            .statistik-chart-container {
+                height: 220px;
+            }
+            .statistik-bar-chart {
+                height: 130px;
+            }
+            .statistik-tagesverlauf .statistik-bar,
+            .statistik-tage-monat .statistik-bar {
+                min-width: 5px;
+                margin: 0;
+            }
+            .statistik-bar-label,
+            .statistik-bar-value {
+                font-size: 0.55rem;
+            }
         }
     </style>';
     
@@ -1893,7 +1941,7 @@ function showStatistikTagesverlauf() {
         $stundendaten[$stunde['Stunde']] = $stunde['Anzahl'];
     }
     
-    $html = '<div class="statistik-card">';
+    $html = '<div class="statistik-card statistik-tagesverlauf">';
     $html .= '<div class="statistik-card-title"><i class="bi bi-clock"></i> Tagesverlauf der Einsätze</div>';
     
     if (!empty($stundendaten)) {
@@ -1909,13 +1957,13 @@ function showStatistikTagesverlauf() {
             // Farbcodierung nach Tageszeit
             $barColor = '#A72920'; // Standard rot
             if ($i >= 5 && $i < 12) {
-                $barColor = '#F9A825'; // Gelb/Orange für Morgen
+                $barColor = '#D4453B'; // Helles Rot für Morgen
             } else if ($i >= 12 && $i < 18) {
-                $barColor = '#FBC02D'; // Gelb für Nachmittag
+                $barColor = '#C13830'; // Mittleres Rot für Nachmittag
             } else if ($i >= 18 && $i < 22) {
-                $barColor = '#5D4037'; // Braun für Abend
+                $barColor = '#B32E25'; // Dunkleres Rot für Abend
             } else {
-                $barColor = '#263238'; // Dunkelblau für Nacht
+                $barColor = '#8E2219'; // Sehr dunkles Rot für Nacht
             }
             
             $stundeText = str_pad($i, 2, '0', STR_PAD_LEFT);
@@ -1944,7 +1992,7 @@ function showStatistikTagesverlauf() {
 
 /**
  * Zeigt Einsatzverteilung nach Tagen im Monat
- * @return string HTML der Statistik
+ * @return void
  */
 function showStatistikTageImMonat() {
     global $stats;
@@ -1980,12 +2028,12 @@ function showStatistikTageImMonat() {
         $tagesdaten[$tag['Tag']] = $tag['Anzahl'];
     }
     
-    $html = '<div class="statistik-card">';
+    $html = '<div class="statistik-card statistik-tage-monat">';
     $html .= '<div class="statistik-card-title"><i class="bi bi-calendar-date"></i> Einsätze nach Tag im Monat</div>';
     
     if (!empty($tagesdaten)) {
         $html .= '<div class="statistik-chart-container">';
-        $html .= '<div class="statistik-bar-chart" style="gap: 2px;">';
+        $html .= '<div class="statistik-bar-chart">';
         
         $maxTagWert = max($tagesdaten);
         
