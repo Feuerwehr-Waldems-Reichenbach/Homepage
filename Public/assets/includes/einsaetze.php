@@ -1163,7 +1163,7 @@ ORDER BY Anzahl DESC"
             // Add click handlers to all stat cards
             function addCardHandlers() {
                 document.querySelectorAll(".statistik-card").forEach(card => {
-                    card.onclick = function() {
+                    card.onclick = function() {                 
                         const title = this.querySelector(".statistik-card-title").textContent;
                         const content = this.innerHTML;
                         modalContent.innerHTML = `<h2>${title}</h2>${content}`;
@@ -1234,6 +1234,62 @@ ORDER BY Anzahl DESC"
     </script>';
     
     // HTML für die Statistik generieren
+    echo '<style>
+        /* Responsive Styling für Statistikkarten */
+        @media screen and (max-width: 768px) {
+            .statistik-grid {
+                grid-template-columns: 1fr !important;
+            }
+            
+            .statistik-card {
+                width: 100%;
+                overflow: hidden;
+            }
+            
+            .statistik-chart-container {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                max-width: 100%;
+            }
+            
+            .statistik-bar-chart {
+                min-width: 200px;
+                padding: 0 5px;
+            }
+            
+            .statistik-bar {
+                min-width: 20px;
+            }
+            
+            .statistik-top-list {
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+            
+            .statistik-top-item {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: space-between;
+            }
+            
+            .statistik-top-label {
+                max-width: 70%;
+                word-break: break-word;
+            }
+            
+            /* Für Accordion-Inhalte */
+            .statistik-accordion-content {
+                overflow-x: auto;
+                max-width: 100%;
+            }
+            
+            /* Allgemeine Anpassungen */
+            .statistik-info-text {
+                word-break: break-word;
+            }
+        }
+    </style>';
+    
     echo '<div class="einsatz-statistik ' . htmlspecialchars($customClass) . '" id="einsatz-statistik-container">';
     
     echo '<div class="statistik-header">';
