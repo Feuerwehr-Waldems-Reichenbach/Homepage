@@ -356,7 +356,19 @@ function showEinsatzStatistik($jahr = null, $customClass = '') {
                         FROM einsatz 
                         WHERE Anzeigen = 1 AND Datum BETWEEN :startDate AND :endDate 
                         ORDER BY Dauer DESC 
-                        LIMIT 1"
+                        LIMIT 1",
+        'jahreszeiten' => "SELECT 
+    CASE 
+        WHEN MONTH(Datum) IN (12, 1, 2) THEN 'Winter'
+        WHEN MONTH(Datum) IN (3, 4, 5) THEN 'Frühling'
+        WHEN MONTH(Datum) IN (6, 7, 8) THEN 'Sommer'
+        ELSE 'Herbst'
+    END as Jahreszeit,
+    COUNT(*) as Anzahl
+FROM einsatz 
+WHERE Anzeigen = 1 AND Datum BETWEEN :startDate AND :endDate 
+GROUP BY Jahreszeit 
+ORDER BY Anzahl DESC"
     ];
     
     // Ergebnisse sammeln
@@ -1156,6 +1168,9 @@ function EinsatzStatistikShow($type) {
             break;
         case 'dauergruppen':
             $html = showStatistikDauergruppen();
+            break;
+        case 'jahreszeiten':
+            $html = showStatistikEinsaetzeProJahreszeit();
             break;
         default:
             $html = '<div style="color: red; margin: 1rem 0;">Fehler: Unbekannter Statistik-Typ "' . htmlspecialchars($type) . '"</div>';
@@ -2762,5 +2777,43 @@ function showStatistikDauergruppen() {
     $html .= '</div>';
     
     return $html;
+}
+
+/**
+ * Zeigt Einsätze pro Jahreszeit
+ * @return string HTML der Statistik
+ */
+function showStatistikEinsaetzeProJahreszeit() {
+    global $stats;
+    
+    $html = '<div class="statistik-card">';
+    $html .= '<div class="statistik-card-title"><i class="bi bi-calendar"></i> Einsätze pro Jahreszeit</div>';
+    
+    if (!empty($stats['jahreszeiten'])) {
+        $html .= '<ul class="statistik-top-list">';
+        
+        foreach ($stats['jahreszeiten'] as $jahreszeit) {
+            $html .= '<li class="statistik-top-item">';
+            $html .= '<span class="statistik-top-label">' . htmlspecialchars($jahreszeit['Jahreszeit']) . '</span>';
+            $html .= '<span class="statistik-top-value">' . $jahreszeit['Anzahl'] . '</span>';
+            $html .= '</li>';
+        }
+        
+        $html .= '</ul>';
+    } else {
+        $html .= '<div class="statistik-info-text">Keine Daten verfügbar</div>';
+    }
+    
+    $html .= '</div>';
+    
+    return $html;
+}
+
+/**
+ * Zeigt Einsätze pro Jahreszeit
+ * @return void
+ */
+function EinsatzStatistikEinsaetzeProJahreszeit() {
+    EinsatzStatistikShow('jahreszeiten');
 }
 ?> 

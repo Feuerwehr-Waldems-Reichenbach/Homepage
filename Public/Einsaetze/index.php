@@ -56,32 +56,39 @@
         showEinsaetze(10);
         showEinsatzStatistik($jahr);
 
-        EinsatzStatistikGesamt();
+
         EinsatzStatistikMonate();
+        EinsatzStatistikWochentagTageszeit();
+        EinsatzStatistikJahresvergleich();
+        EinsatzStatistikTageszeit();
+        EinsatzStatistikGesamt();
+        EinsatzStatistikEinsaetzeProJahreszeit();
+        EinsatzStatistikTagesverlauf();
         EinsatzStatistikDauer();
         EinsatzStatistikWochentage();
-        EinsatzStatistikTageszeit();
+        
+        
+        /*
         EinsatzStatistikStichworte();
         EinsatzStatistikKategorien();
         EinsatzStatistikMonate();
-
-        EinsatzStatistikJahresvergleich();
+        
+        EinsatzStatistikArtenNachJahreszeit();
         EinsatzStatistikStichwortKategorie();
         EinsatzStatistikMonatStichwort();
-        EinsatzStatistikWochentagTageszeit();
         EinsatzStatistikDauerNachStichwort();
 
         EinsatzStatistikOrtKategorie();
         EinsatzStatistikEinheiten();
         EinsatzStatistikDauerNachOrt();
         EinsatzStatistikMonatsvergleichArten();
-        EinsatzStatistikTagesverlauf();
         EinsatzStatistikTageImMonat();
 
-        EinsatzStatistikArtenNachJahreszeit();
         EinsatzStatistikDauerNachKategorie();
         EinsatzStatistikUhrzeitKategorie();
         EinsatzStatistikDauergruppen();
+
+        */
         ?>
     </div>
 </section>
