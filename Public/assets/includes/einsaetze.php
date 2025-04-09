@@ -477,7 +477,7 @@ function showEinsatzStatistik($jahr = null, $customClass = '') {
             border-radius: 8px;
             padding: 1.5rem;
             box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-            transition: transform 0.2s ease;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
             cursor: pointer;
         }
         .statistik-card:hover {
@@ -520,7 +520,13 @@ function showEinsatzStatistik($jahr = null, $customClass = '') {
             min-width: 20px;
             border-radius: 4px 4px 0 0;
             position: relative;
-            transition: height 0.3s ease;
+            transition: height 0.3s ease, background-color 0.3s ease;
+        }
+        .statistik-bar:hover {
+            background-color: #8e2219;
+            transform: scaleY(1.05);
+            transform-origin: bottom;
+            box-shadow: 0 0 8px rgba(167, 41, 32, 0.4);
         }
         .statistik-bar-label {
             position: absolute;
@@ -553,6 +559,13 @@ function showEinsatzStatistik($jahr = null, $customClass = '') {
             justify-content: space-between;
             padding: 0.5rem 0;
             border-bottom: 1px solid #e9ecef;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+        .statistik-top-item:hover {
+            background-color: #f8f9fa;
+            transform: translateX(5px);
+            padding-left: 5px;
+            border-left: 3px solid #A72920;
         }
         .statistik-top-item:last-child {
             border-bottom: none;
@@ -584,31 +597,97 @@ function showEinsatzStatistik($jahr = null, $customClass = '') {
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0,0,0,0.5);
+            background-color: rgba(0,0,0,0.7);
             z-index: 1000;
+            overflow: auto;
+            padding: 0;
+            margin: 0;
+            align-items: center;
+            justify-content: center;
         }
         .statistik-modal-content {
             position: relative;
             background-color: white;
-            margin: 5% auto;
-            padding: 2rem;
-            width: 80%;
-            max-width: 800px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            max-height: 80vh;
+            margin: auto;
+            padding: 2.5rem;
+            width: 90%;
+            max-width: 900px;
+            border-radius: 10px;
+            box-shadow: 0 5px 30px rgba(0,0,0,0.3);
+            max-height: 90vh;
             overflow-y: auto;
+            transform: translateY(0);
+            animation: modal-slide-in 0.3s ease;
+        }
+        @keyframes modal-slide-in {
+            from {
+                transform: translateY(-30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
         .statistik-modal-close {
             position: absolute;
-            right: 1rem;
-            top: 1rem;
-            font-size: 1.5rem;
+            right: 1.5rem;
+            top: 1.5rem;
+            font-size: 1.75rem;
             cursor: pointer;
             color: #6c757d;
+            transition: color 0.2s ease, transform 0.2s ease;
+            z-index: 10;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
         }
         .statistik-modal-close:hover {
-            color: #414141;
+            color: #A72920;
+            transform: rotate(90deg);
+            background-color: #f8f9fa;
+        }
+        .statistik-modal h2 {
+            color: #A72920;
+            margin-bottom: 2rem;
+            font-size: 1.8rem;
+            border-bottom: 2px solid #A72920;
+            padding-bottom: 0.5rem;
+        }
+        
+        /* Modal content specific styles */
+        #statistikModalContent .statistik-card {
+            box-shadow: none;
+            cursor: default;
+            padding: 0;
+            background: none;
+        }
+        #statistikModalContent .statistik-card:hover {
+            transform: none;
+            box-shadow: none;
+        }
+        #statistikModalContent .statistik-card-title {
+            display: none;
+        }
+        #statistikModalContent .statistik-chart-container {
+            height: 300px;
+            margin-top: 2rem;
+        }
+        #statistikModalContent .statistik-bar-chart {
+            height: 280px;
+        }
+        #statistikModalContent .statistik-bar {
+            min-width: 40px;
+            border-radius: 6px 6px 0 0;
+        }
+        #statistikModalContent .statistik-highlight {
+            font-size: 3rem;
+        }
+        #statistikModalContent .statistik-top-list {
+            font-size: 1.1rem;
         }
         
         @media (max-width: 768px) {
@@ -619,6 +698,10 @@ function showEinsatzStatistik($jahr = null, $customClass = '') {
             }
             .statistik-grid {
                 grid-template-columns: 1fr;
+            }
+            .statistik-modal-content {
+                width: 95%;
+                padding: 1.5rem;
             }
         }
     </style>';
@@ -641,13 +724,28 @@ function showEinsatzStatistik($jahr = null, $customClass = '') {
             // Close modal when clicking outside
             window.onclick = function(event) {
                 if (event.target == modal) {
-                    modal.style.display = "none";
+                    closeModal();
                 }
             }
             
             // Close modal when clicking close button
             closeBtn.onclick = function() {
-                modal.style.display = "none";
+                closeModal();
+            }
+            
+            // Add escape key to close modal
+            document.addEventListener("keydown", function(event) {
+                if (event.key === "Escape" && modal.style.display === "flex") {
+                    closeModal();
+                }
+            });
+            
+            function closeModal() {
+                modal.style.opacity = "0";
+                setTimeout(() => {
+                    modal.style.display = "none";
+                    modal.style.opacity = "1";
+                }, 300);
             }
             
             // Add click handlers to all stat cards
@@ -657,7 +755,18 @@ function showEinsatzStatistik($jahr = null, $customClass = '') {
                         const title = this.querySelector(".statistik-card-title").textContent;
                         const content = this.innerHTML;
                         modalContent.innerHTML = `<h2>${title}</h2>${content}`;
-                        modal.style.display = "block";
+                        modal.style.display = "flex";
+                        
+                        // Add animation class to bars in modal
+                        setTimeout(function() {
+                            const modalBars = modalContent.querySelectorAll(".statistik-bar");
+                            modalBars.forEach((bar, index) => {
+                                setTimeout(() => {
+                                    bar.style.transition = "height 0.5s ease";
+                                    bar.style.height = bar.style.height;
+                                }, index * 50);
+                            });
+                        }, 100);
                     }
                 });
             }
