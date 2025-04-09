@@ -1288,6 +1288,51 @@ ORDER BY Anzahl DESC"
                 word-break: break-word;
             }
         }
+        
+        /* Expander Styling */
+        .statistik-expander-container {
+            position: relative;
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .statistik-expander-preview {
+            position: relative;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 70px;
+            max-height: 150px;
+            overflow: hidden;
+            mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.5) 70%, rgba(0,0,0,0) 100%);
+            -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.5) 70%, rgba(0,0,0,0) 100%);
+        }
+        
+        @media screen and (max-width: 768px) {
+            .statistik-expander-preview {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .statistik-expander-btn {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #d32f2f;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            z-index: 10;
+        }
+        
+        .statistik-expander-btn:hover {
+            background-color: #b71c1c;
+        }
     </style>';
     
     echo '<div class="einsatz-statistik ' . htmlspecialchars($customClass) . '" id="einsatz-statistik-container">';
@@ -1328,19 +1373,35 @@ ORDER BY Anzahl DESC"
         // Statistik-Grid starten
         echo '<div class="statistik-grid" id="einsatz-statistik-grid"></div>';
         
+        // Expander-Button und Container hinzufügen
+        echo '<div class="statistik-expander-container">
+            <div class="statistik-expander-preview" id="statistik-preview"></div>
+            <button id="statistik-expander-btn" class="statistik-expander-btn">Mehr anzeigen</button>
+        </div>';
+        
         // Add JavaScript to append stats to the grid
         echo '<script>
+            // Zähler für hinzugefügte Karten
+            let cardCount = 0;
+            const initialVisibleCards = 3; // Anzahl der direkt sichtbaren Karten
+            
             function appendToStatistikGrid(html) {
                 const grid = document.getElementById("einsatz-statistik-grid");
+                const preview = document.getElementById("statistik-preview");
                 const tempDiv = document.createElement("div");
                 tempDiv.innerHTML = html;
                 
                 // Get the statistik-card element from the tempDiv
                 const card = tempDiv.querySelector(".statistik-card");
                 
-                // Append to grid
+                // Append to grid or preview based on count
                 if (card) {
-                    grid.appendChild(card);
+                    if (cardCount < initialVisibleCards) {
+                        grid.appendChild(card);
+                    } else {
+                        preview.appendChild(card);
+                    }
+                    cardCount++;
                 }
                 
                 // Re-initialize click handlers
@@ -1348,6 +1409,28 @@ ORDER BY Anzahl DESC"
                     window.addStatistikCardHandlers();
                 }
             }
+            
+            // Warte auf DOM-Fertigstellung für Expander-Funktionalität
+            document.addEventListener("DOMContentLoaded", function() {
+                const expanderBtn = document.getElementById("statistik-expander-btn");
+                const preview = document.getElementById("statistik-preview");
+                const grid = document.getElementById("einsatz-statistik-grid");
+                
+                expanderBtn.addEventListener("click", function() {
+                    // Verschiebe alle Karten aus dem Preview ins Grid
+                    while (preview.firstChild) {
+                        grid.appendChild(preview.firstChild);
+                    }
+                    
+                    // Verstecke den Expander
+                    document.querySelector(".statistik-expander-container").style.display = "none";
+                    
+                    // Re-initialize click handlers
+                    if (window.addStatistikCardHandlers) {
+                        window.addStatistikCardHandlers();
+                    }
+                });
+            });
         </script>';
     }
     
