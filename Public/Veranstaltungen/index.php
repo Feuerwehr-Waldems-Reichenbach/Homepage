@@ -52,14 +52,16 @@
     
     
     <div class="container">
-        <div class="row justify-content-center">
-            <div class="title col-md-12 col-lg-10">
-                <h3 class="mbr-section-title mbr-fonts-style align-center mt-0 mb-0 display-2">
-                <strong>Veranstaltungen Platzhalter</strong></h3>
-                
-                
-            </div>
-        </div>
+        <?php
+        // Neuigkeiten-Modul einbinden
+        require_once $_SERVER['DOCUMENT_ROOT'] . '/assets/includes/neuigkeiten.php';
+
+        // Neuigkeiten-Objekt erstellen
+        $neuigkeiten = new Neuigkeiten();
+        
+        // Neuigkeiten als Karten anzeigen
+        echo $neuigkeiten->zeigeNeuigkeitenKarten();
+        ?>
     </div>
 </section>
 
