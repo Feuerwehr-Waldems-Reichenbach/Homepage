@@ -61,29 +61,24 @@
         EinsatzStatistikGesamt();
         EinsatzStatistikJahresvergleich();
         
+        // Einsatzdauer
+        EinsatzStatistikDauer();
+
         // Zeitliche Verteilung
         EinsatzStatistikMonate();
         EinsatzStatistikTageImMonat();
         EinsatzStatistikWochentage();
-        EinsatzStatistikTagesverlauf();
         EinsatzStatistikTageszeit();
         EinsatzStatistikEinsaetzeProJahreszeit();
         
         // Einsatzarten und Kategorien
         EinsatzStatistikStichworte();
         EinsatzStatistikKategorien(); 
-        EinsatzStatistikStichwortKategorie();
-     
-        
-        // Einsatzorte und Einheiten
-        EinsatzStatistikOrtKategorie();
-        EinsatzStatistikEinheiten();
         
         // Kombinierte Auswertungen
         EinsatzStatistikWochentagTageszeit();
-        
+
         // Einsatzdauer
-        EinsatzStatistikDauer();
         EinsatzStatistikDauerNachStichwort();
         EinsatzStatistikDauerNachOrt();
         EinsatzStatistikDauerNachKategorie();
