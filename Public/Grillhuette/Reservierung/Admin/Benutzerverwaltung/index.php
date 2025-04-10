@@ -306,8 +306,7 @@ if (isset($_SESSION['cleanup_message'])) {
                                                     data-is-admin="<?php echo $userItem['is_admin']; ?>"
                                                     data-is-verified="<?php echo $userItem['is_verified']; ?>"
                                                     data-is-aktivesmitglied="<?php echo isset($userItem['is_AktivesMitglied']) && $userItem['is_AktivesMitglied'] ? 1 : 0; ?>"
-                                                    data-is-feuerwehr="<?php echo isset($userItem['is_Feuerwehr']) && $userItem['is_Feuerwehr'] ? 1 : 0; ?>"
-                                                    onclick="prepareEditUserModal(this)">
+                                                    data-is-feuerwehr="<?php echo isset($userItem['is_Feuerwehr']) && $userItem['is_Feuerwehr'] ? 1 : 0; ?>">
                                                 <i class="bi bi-pencil"></i> Bearbeiten
                                             </button>
                                         </td>
@@ -403,7 +402,7 @@ if (isset($_SESSION['cleanup_message'])) {
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Abbrechen</button>
-                <button type="button" class="btn btn-primary" onclick="document.getElementById('createUserForm').submit();">Benutzer erstellen</button>
+                <button type="button" class="btn btn-primary" id="createUserButton">Benutzer erstellen</button>
             </div>
         </div>
     </div>
@@ -483,11 +482,11 @@ if (isset($_SESSION['cleanup_message'])) {
             <div class="modal-footer">
                 <div class="d-flex justify-content-between w-100">
                     <div>
-                        <button type="button" id="deleteUserBtn" class="btn btn-danger" onclick="confirmDelete()">Benutzer löschen</button>
+                        <button type="button" id="deleteUserBtn" class="btn btn-danger">Benutzer löschen</button>
                     </div>
                     <div>
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Abbrechen</button>
-                        <button type="button" class="btn btn-primary" onclick="document.getElementById('editUserForm').submit();">Änderungen speichern</button>
+                        <button type="button" class="btn btn-primary" id="saveUserChangesButton">Änderungen speichern</button>
                     </div>
                 </div>
             </div>
@@ -549,4 +548,28 @@ function confirmDelete() {
         document.getElementById('deleteUserForm').submit();
     }
 }
+
+// Event listeners für Buttons und andere Elemente
+document.addEventListener('DOMContentLoaded', function() {
+    // Für neuen Benutzer anlegen
+    document.getElementById('createUserButton').addEventListener('click', function() {
+        document.getElementById('createUserForm').submit();
+    });
+    
+    // Für Benutzer speichern
+    document.getElementById('saveUserChangesButton').addEventListener('click', function() {
+        document.getElementById('editUserForm').submit();
+    });
+    
+    // Für Benutzer löschen
+    document.getElementById('deleteUserBtn').addEventListener('click', confirmDelete);
+    
+    // Für "Bearbeiten" Buttons
+    const editButtons = document.querySelectorAll('.btn-info.btn-sm');
+    editButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            prepareEditUserModal(this);
+        });
+    });
+});
 </script> 

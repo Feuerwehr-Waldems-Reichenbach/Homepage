@@ -561,8 +561,7 @@ require_once '../../includes/header.php';
                                                     data-key-handover-date="<?php echo !empty($res['key_handover_datetime']) ? date('Y-m-d', strtotime($res['key_handover_datetime'])) : ''; ?>"
                                                     data-key-handover-time="<?php echo !empty($res['key_handover_datetime']) ? date('H:i', strtotime($res['key_handover_datetime'])) : ''; ?>"
                                                     data-key-return-date="<?php echo !empty($res['key_return_datetime']) ? date('Y-m-d', strtotime($res['key_return_datetime'])) : ''; ?>"
-                                                    data-key-return-time="<?php echo !empty($res['key_return_datetime']) ? date('H:i', strtotime($res['key_return_datetime'])) : ''; ?>"
-                                                    onclick="prepareEditModal(this)">
+                                                    data-key-return-time="<?php echo !empty($res['key_return_datetime']) ? date('H:i', strtotime($res['key_return_datetime'])) : ''; ?>">
                                                 <i class="bi bi-pencil"></i> Bearbeiten
                                             </button>
                                         </td>
@@ -729,7 +728,7 @@ require_once '../../includes/header.php';
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Abbrechen</button>
-                <button type="button" class="btn btn-primary" onclick="document.getElementById('createReservationForm').submit();">Reservierung erstellen</button>
+                <button type="button" class="btn btn-primary" id="createReservationButton">Reservierung erstellen</button>
             </div>
         </div>
     </div>
@@ -901,11 +900,11 @@ require_once '../../includes/header.php';
             <div class="modal-footer">
                 <div class="d-flex justify-content-between w-100">
                     <div>
-                        <button type="button" id="deleteReservationBtn" class="btn btn-danger" onclick="confirmDeleteReservation()">Reservierung löschen</button>
+                        <button type="button" id="deleteReservationBtn" class="btn btn-danger">Reservierung löschen</button>
                     </div>
                     <div>
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Abbrechen</button>
-                        <button type="button" class="btn btn-primary" onclick="document.getElementById('editReservationForm').submit();">Änderungen speichern</button>
+                        <button type="button" class="btn btn-primary" id="saveReservationChangesButton">Änderungen speichern</button>
                     </div>
                 </div>
             </div>
@@ -1174,8 +1173,39 @@ function calculateStandardCost(startDate, endDate, dayCountElement, totalCostEle
     }) + '€';
 }
 
-// Initialisierung beim Laden des Modals
+// Event-Listener für die Buttons und andere Elemente
 document.addEventListener('DOMContentLoaded', function() {
+    // Setup for edit buttons
+    const editButtons = document.querySelectorAll('.btn-primary.btn-sm');
+    editButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            prepareEditModal(this);
+        });
+    });
+    
+    // Setup for delete reservation button
+    const deleteReservationBtn = document.getElementById('deleteReservationBtn');
+    if (deleteReservationBtn) {
+        deleteReservationBtn.addEventListener('click', confirmDeleteReservation);
+    }
+    
+    // Setup for save changes button
+    const saveReservationChangesButton = document.getElementById('saveReservationChangesButton');
+    if (saveReservationChangesButton) {
+        saveReservationChangesButton.addEventListener('click', function() {
+            document.getElementById('editReservationForm').submit();
+        });
+    }
+    
+    // Setup for new reservation button
+    const createReservationButton = document.querySelector('.modal-footer .btn-primary');
+    if (createReservationButton && !createReservationButton.id) {
+        createReservationButton.id = 'createReservationButton';
+        createReservationButton.addEventListener('click', function() {
+            document.getElementById('createReservationForm').submit();
+        });
+    }
+    
     // Add event listeners to the time inputs in the new reservation form directly
     const newStartTimeField = document.getElementById('start_time');
     const newEndTimeField = document.getElementById('end_time');
