@@ -175,6 +175,42 @@ function ShowPotentialPopup() {
                 overflow: visible;
             }
             
+            .popup-headline {
+                text-align: center;
+                margin-bottom: 15px;
+                color: white;
+                font-size: 1.5rem;
+                font-weight: bold;
+                text-shadow: 0px 0px 5px rgba(0,0,0,0.7);
+                animation: pulse 2s infinite;
+                position: relative;
+                padding-bottom: 10px;
+            }
+            
+            .popup-headline:after {
+                content: "";
+                position: absolute;
+                bottom: 0;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 80px;
+                height: 3px;
+                background-color: #A72920;
+                border-radius: 3px;
+            }
+            
+            @keyframes pulse {
+                0% {
+                    transform: scale(1);
+                }
+                50% {
+                    transform: scale(1.05);
+                }
+                100% {
+                    transform: scale(1);
+                }
+            }
+            
             .popup-navigation {
                 position: absolute;
                 top: 50%;
@@ -235,6 +271,10 @@ function ShowPotentialPopup() {
             }
             
             @media (max-width: 767px) {
+                .popup-headline {
+                    font-size: 1.2rem;
+                }
+                
                 .popup-navigation {
                     width: 30px;
                     height: 30px;
@@ -251,9 +291,10 @@ function ShowPotentialPopup() {
             }
         </style>';
         
-        // Add the popup modal HTML
+        // Add the popup modal HTML with a default headline (will be updated by JavaScript)
         echo '<div id="popupModal" class="popup-modal">
             <div class="popup-container">
+                <h2 class="popup-headline">🔥 Nicht verpassen! 🔥</h2>
                 <button class="popup-close">&times;</button>
                 <div id="popupContent"></div>
             </div>
@@ -264,7 +305,7 @@ function ShowPotentialPopup() {
         // Render cards for each popup (initially hidden)
         echo '<div id="popupCardsContainer" style="display: none;">';
         foreach ($popups as $index => $popup) {
-            echo '<div class="popup-card" data-index="' . $index . '">';
+            echo '<div class="popup-card" data-index="' . $index . '" data-title="' . htmlspecialchars($popup['Ueberschrift']) . '">';
             echo '<div class="neuigkeiten-container">';
             echo renderNeuigkeitCard($popup);
             echo '</div>';
@@ -279,6 +320,7 @@ function ShowPotentialPopup() {
                 let currentPopupIndex = 0;
                 const modal = document.getElementById("popupModal");
                 const content = document.getElementById("popupContent");
+                const headline = document.querySelector(".popup-headline");
                 const cardsContainer = document.getElementById("popupCardsContainer");
                 const cards = document.querySelectorAll(".popup-card");
                 const prevBtn = document.getElementById("popupPrev");
@@ -289,7 +331,12 @@ function ShowPotentialPopup() {
                     // Get the rendered card HTML
                     const cardToShow = document.querySelector(`.popup-card[data-index="${index}"]`);
                     if (cardToShow) {
+                        // Set the content
                         content.innerHTML = cardToShow.innerHTML;
+                        
+                        // Update headline with the event title
+                        const eventTitle = cardToShow.getAttribute("data-title");
+                        headline.textContent = `🔥 Nicht verpassen: ${eventTitle} 🔥`;
                         
                         modal.style.display = "flex";
                         
