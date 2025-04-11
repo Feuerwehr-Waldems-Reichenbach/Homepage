@@ -126,7 +126,7 @@
     
 
     <div class="image-block m-auto">
-        <img src="../assets/images/screenshot-2024-04-10.webp" alt="Kalender">
+        <img src="Datei/Jahreskalender Feuerwehr Reichenbach.jpg" alt="Kalender">
         
     </div>
 </section>
