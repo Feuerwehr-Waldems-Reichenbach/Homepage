@@ -154,9 +154,8 @@
     <div class="row justify-content-center">
       <div class="col-lg-4">
         <div class="col-12 col-md-12">
-          
-          
-          
+          <h5 class="mbr-section-title mbr-fonts-style mt-0 mb-4 display-2"><strong>Sanitäre Einrichtungen</strong></h5>
+          <h6 class="mbr-section-subtitle mbr-fonts-style mt-0 mb-4 display-7">Unsere Grillhütte verfügt über eine Toilette. Strom- und Wasseranschluss sind ebenfalls vorhanden.</h6>
         </div>
       </div>
       <div class="col-lg-8 side-features">
@@ -176,9 +175,8 @@
     <div class="row justify-content-center">
       <div class="col-lg-4">
         <div class="col-12 col-md-12">
-          
-          
-          
+          <h5 class="mbr-section-title mbr-fonts-style mt-0 mb-4 display-2"><strong>Gemütliche Atmosphäre</strong></h5>
+          <h6 class="mbr-section-subtitle mbr-fonts-style mt-0 mb-4 display-7">Die Hütte bietet eine rustikale und gemütliche Atmosphäre für Ihre Gäste. Der überdachte Bereich schützt bei jedem Wetter und sorgt für ein angenehmes Ambiente.</h6>
         </div>
       </div>
       <div class="col-lg-8 side-features">
@@ -218,9 +216,8 @@
     <div class="row justify-content-center">
       <div class="col-lg-4">
         <div class="col-12 col-md-12">
-          
-          
-          
+          <h5 class="mbr-section-title mbr-fonts-style mt-0 mb-4 display-2"><strong>Weitläufiges Gelände</strong></h5>
+          <h6 class="mbr-section-subtitle mbr-fonts-style mt-0 mb-4 display-7">Das großzügige Gelände bietet ausreichend Platz für Biertischgarnituren und zum Feiern unter freiem Himmel. Die natürliche Umgebung mit Bäumen spendet angenehmen Schatten.</h6>
         </div>
       </div>
       <div class="col-lg-8 side-features">
@@ -240,9 +237,8 @@
     <div class="row justify-content-center">
       <div class="col-lg-4">
         <div class="col-12 col-md-12">
-          
-          
-          
+          <h5 class="mbr-section-title mbr-fonts-style mt-0 mb-4 display-2"><strong>Perfekt für Feiern</strong></h5>
+          <h6 class="mbr-section-subtitle mbr-fonts-style mt-0 mb-4 display-7">Ob Geburtstag, Familientreffen oder Vereinsfeier - unsere Grillhütte bietet den idealen Rahmen für Ihre Veranstaltung. Das Überdachte Häuschen ermöglicht auch bei wechselhaftem Wetter einen angenehmen Aufenthalt.</h6>
         </div>
       </div>
       <div class="col-lg-8 side-features">
