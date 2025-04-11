@@ -102,13 +102,13 @@ function renderNeuigkeitCard($neuigkeit) {
         
         // Bild-Download-Button
         $html .= '<a href="' . $imageUrl . '" class="btn-neuigkeit-aktion" download>';
-        $html .= '<i class="fas fa-download"></i> Bild';
+        $html .= '<i class="fas fa-download"></i> Flyer';
         $html .= '</a>';
         
         // WhatsApp Teilen
         $whatsappText = urlencode("Schau dir dieses Event an: " . $absoluteImageUrl);
         $html .= '<a href="https://wa.me/?text=' . $whatsappText . '" target="_blank" class="btn-neuigkeit-aktion">';
-        $html .= '<i class="fab fa-whatsapp"></i> WhatsApp';
+        $html .= '<i class="fab fa-whatsapp"></i> Teilen';
         $html .= '</a>';
     }
     
@@ -127,7 +127,7 @@ function renderNeuigkeitCard($neuigkeit) {
  * @return string The link tag for the CSS
  */
 function loadNeuigkeitenCSS() {
-    $version = '1.0.8'; // Increment this when you make CSS changes
+    $version = '1.0.9'; // Increment this when you make CSS changes
     return '<link rel="stylesheet" href="/assets/css/neuigkeiten.css?v=' . $version . '">' . 
            '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">';
 }
@@ -270,6 +270,28 @@ function ShowPotentialPopup() {
                 display: none;
             }
             
+            /* Scrollbar für Neuigkeiten-Text */
+            .neuigkeit-volltext {
+                max-height: 250px;
+                overflow-y: auto;
+                padding-right: 5px;
+            }
+            
+            /* Customizing scrollbar */
+            .neuigkeit-volltext::-webkit-scrollbar {
+                width: 6px;
+            }
+            
+            .neuigkeit-volltext::-webkit-scrollbar-track {
+                background: #f1f1f1;
+                border-radius: 10px;
+            }
+            
+            .neuigkeit-volltext::-webkit-scrollbar-thumb {
+                background: #A72920;
+                border-radius: 10px;
+            }
+            
             @media (max-width: 767px) {
                 .popup-headline {
                     font-size: 1.2rem;
@@ -287,6 +309,44 @@ function ShowPotentialPopup() {
                 
                 .popup-next {
                     right: 10px;
+                }
+                
+                /* Mobile scrolling for news content */
+                .neuigkeit-volltext {
+                    max-height: 150px;
+                    overflow-y: auto;
+                    border-top: 1px solid rgba(0,0,0,0.1);
+                    border-bottom: 1px solid rgba(0,0,0,0.1);
+                    padding: 8px 0;
+                    margin: 8px 0;
+                }
+                
+                /* Make popup content scrollable on mobile */
+                #popupContent .neuigkeit-karte {
+                    max-height: 80vh;
+                    overflow-y: auto;
+                }
+                
+                /* Limit image size on mobile */
+                .neuigkeit-bildbereich {
+                    max-height: 200px;
+                    overflow: hidden;
+                }
+                
+                .neuigkeit-bild {
+                    width: 100%;
+                    height: auto;
+                    max-height: 200px;
+                    object-fit: contain;
+                }
+                
+                /* Specific adjustments for popup images */
+                #popupContent .neuigkeit-bildbereich {
+                    max-height: 180px;
+                }
+                
+                #popupContent .neuigkeit-bild {
+                    max-height: 180px;
                 }
             }
         </style>';
