@@ -31,6 +31,11 @@
   
   <?php include 'assets/includes/navbar.php'; ?>
 
+  <?php
+    require_once $_SERVER['DOCUMENT_ROOT'] . '/assets/includes/neuigkeiten.php';
+    ShowPotentialPopup();
+  ?>
+
   <section data-bs-version="5.1" class="header16 cid-u8DlI77rJo mbr-fullscreen jarallax" id="header17-e" data-jarallax-speed="0.8">
   
   <div class="mbr-overlay" style="opacity: 0.2; background-color: rgb(0, 0, 0);"></div>
