@@ -94,22 +94,19 @@ function renderNeuigkeitCard($neuigkeit) {
     $html .= '<i class="far fa-calendar-alt"></i> Kalender';
     $html .= '</a>';
     
-    // Bild-/Flyer-Buttons nur anzeigen, wenn ein Bild existiert
+    // Bild-URL oder Veranstaltungsseite-URL für den Teilen-Button festlegen
+    $title = htmlspecialchars($neuigkeit['Ueberschrift']);
     if (!empty($neuigkeit['path_to_image'])) {
         $imageUrl = htmlspecialchars($neuigkeit['path_to_image']);
-        $absoluteImageUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://" . $_SERVER['HTTP_HOST'] . $imageUrl;
-        $title = htmlspecialchars($neuigkeit['Ueberschrift']);
-        
-        // Bild-Download-Button
-        $html .= '<a href="' . $imageUrl . '" class="btn-neuigkeit-aktion" download>';
-        $html .= '<i class="fas fa-download"></i> Flyer';
-        $html .= '</a>';
-        
-        // Teilen-Button (verwendet Web Share API auf unterstützten Geräten)
-        $html .= '<button class="btn-neuigkeit-aktion share-btn" data-title="' . $title . '" data-url="' . $absoluteImageUrl . '">';
-        $html .= '<i class="fas fa-share-alt"></i> Teilen';
-        $html .= '</button>';
+        $shareUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://" . $_SERVER['HTTP_HOST'] . $imageUrl;
+    } else {
+        $shareUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://" . $_SERVER['HTTP_HOST'] . "/Veranstaltungen";
     }
+    
+    // Teilen-Button (immer anzeigen)
+    $html .= '<button class="btn-neuigkeit-aktion share-btn" data-title="' . $title . '" data-url="' . $shareUrl . '">';
+    $html .= '<i class="fas fa-share-alt"></i> Teilen';
+    $html .= '</button>';
     
     $html .= '</div>';
     
@@ -126,166 +123,211 @@ function renderNeuigkeitCard($neuigkeit) {
  * @return string The link tag for the CSS
  */
 function loadNeuigkeitenCSS() {
-    $version = '1.1.0'; // Increment this when you make CSS changes
+    $version = '1.1.1'; // Increment this when you make CSS changes
     return '<link rel="stylesheet" href="/assets/css/neuigkeiten.css?v=' . $version . '">' . 
            '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">' . 
+           '<style>
+                .btn-neuigkeit-aktion {
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 5px 10px;
+                    background-color: #f8f9fa;
+                    border: 1px solid #ddd;
+                    border-radius: 4px;
+                    font-size: 0.85rem;
+                    cursor: pointer;
+                    color: #333;
+                    margin-right: 5px;
+                    text-decoration: none;
+                    transition: background-color 0.2s;
+                }
+                
+                .btn-neuigkeit-aktion:hover {
+                    background-color: #e9ecef;
+                }
+                
+                .btn-neuigkeit-aktion i {
+                    margin-right: 5px;
+                }
+            </style>' . 
            '<script>
                 document.addEventListener("DOMContentLoaded", function() {
-                    // Füge Event-Listener zu allen Share-Buttons hinzu
-                    document.querySelectorAll(".share-btn").forEach(function(button) {
-                        button.addEventListener("click", function() {
-                            const title = this.getAttribute("data-title");
-                            const url = this.getAttribute("data-url");
-                            const text = "Schau dir dieses Event an: " + title;
-                            
-                            // Teilen-Dialog mit Fallback-Optionen
-                            const shareOptionsContainer = document.getElementById("shareOptionsContainer");
-                            if (!shareOptionsContainer) {
-                                // Erstelle Share-Options-Container
-                                const container = document.createElement("div");
-                                container.id = "shareOptionsContainer";
-                                container.style.position = "fixed";
-                                container.style.bottom = "0";
-                                container.style.left = "0";
-                                container.style.right = "0";
-                                container.style.backgroundColor = "white";
-                                container.style.padding = "15px";
-                                container.style.boxShadow = "0 -2px 10px rgba(0, 0, 0, 0.2)";
-                                container.style.zIndex = "99999";
-                                container.style.borderTopLeftRadius = "15px";
-                                container.style.borderTopRightRadius = "15px";
-                                container.style.transform = "translateY(100%)";
-                                container.style.transition = "transform 0.3s ease-out";
-                                
-                                // Titel
-                                const shareTitle = document.createElement("h3");
-                                shareTitle.textContent = "Teilen über";
-                                shareTitle.style.textAlign = "center";
-                                shareTitle.style.marginBottom = "15px";
-                                container.appendChild(shareTitle);
-                                
-                                // Schließen-Button
-                                const closeButton = document.createElement("button");
-                                closeButton.innerHTML = "&times;";
-                                closeButton.style.position = "absolute";
-                                closeButton.style.top = "10px";
-                                closeButton.style.right = "10px";
-                                closeButton.style.background = "none";
-                                closeButton.style.border = "none";
-                                closeButton.style.fontSize = "20px";
-                                closeButton.style.cursor = "pointer";
-                                closeButton.onclick = function() {
-                                    container.style.transform = "translateY(100%)";
-                                    setTimeout(() => {
-                                        container.remove();
-                                    }, 300);
-                                };
-                                container.appendChild(closeButton);
-                                
-                                // Optionen Container
-                                const optionsGrid = document.createElement("div");
-                                optionsGrid.style.display = "grid";
-                                optionsGrid.style.gridTemplateColumns = "repeat(4, 1fr)";
-                                optionsGrid.style.gap = "10px";
-                                optionsGrid.style.justifyItems = "center";
-                                container.appendChild(optionsGrid);
-                                
-                                // WhatsApp
-                                addShareOption(optionsGrid, "WhatsApp", "fab fa-whatsapp", "#25D366", function() {
-                                    window.open("https://wa.me/?text=" + encodeURIComponent(text + " " + url), "_blank");
-                                });
-                                
-                                // Telegram
-                                addShareOption(optionsGrid, "Telegram", "fab fa-telegram-plane", "#0088cc", function() {
-                                    window.open("https://t.me/share/url?url=" + encodeURIComponent(url) + "&text=" + encodeURIComponent(text), "_blank");
-                                });
-                                
-                                // E-Mail
-                                addShareOption(optionsGrid, "E-Mail", "fas fa-envelope", "#dd4b39", function() {
-                                    window.location.href = "mailto:?subject=" + encodeURIComponent(title) + "&body=" + encodeURIComponent(text + " " + url);
-                                });
-                                
-                                // SMS
-                                addShareOption(optionsGrid, "SMS", "fas fa-sms", "#5BC236", function() {
-                                    window.location.href = "sms:?body=" + encodeURIComponent(text + " " + url);
-                                });
-                                
-                                // Facebook
-                                addShareOption(optionsGrid, "Facebook", "fab fa-facebook", "#3b5998", function() {
-                                    window.open("https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(url), "_blank");
-                                });
-                                
-                                // Twitter/X
-                                addShareOption(optionsGrid, "X", "fab fa-x-twitter", "#000000", function() {
-                                    window.open("https://twitter.com/intent/tweet?text=" + encodeURIComponent(text) + "&url=" + encodeURIComponent(url), "_blank");
-                                });
+                    initShareButtons();
 
-                                
-                                // Link kopieren
-                                addShareOption(optionsGrid, "Link kopieren", "fas fa-link", "#333333", function() {
-                                    navigator.clipboard.writeText(url).then(function() {
-                                        alert("Link in die Zwischenablage kopiert!");
-                                    }).catch(function() {
-                                        prompt("Link zum Kopieren:", url);
-                                    });
-                                });
-                                
-                                // Bild-Download
-                                addShareOption(optionsGrid, "Bild speichern", "fas fa-download", "#A72920", function() {
-                                    const a = document.createElement("a");
-                                    a.href = url;
-                                    a.download = title + ".jpg";
-                                    document.body.appendChild(a);
-                                    a.click();
-                                    document.body.removeChild(a);
-                                });
-                                
-                                // Hinzufügen zum DOM und anzeigen
-                                document.body.appendChild(container);
-                                setTimeout(() => {
-                                    container.style.transform = "translateY(0)";
-                                }, 10);
-                            } else {
-                                shareOptionsContainer.style.transform = "translateY(0)";
-                            }
-                            
-                            // Helper-Funktion zum Hinzufügen von Teilen-Optionen
-                            function addShareOption(parent, name, iconClass, color, clickHandler) {
-                                const option = document.createElement("div");
-                                option.style.display = "flex";
-                                option.style.flexDirection = "column";
-                                option.style.alignItems = "center";
-                                option.style.cursor = "pointer";
-                                
-                                const iconContainer = document.createElement("div");
-                                iconContainer.style.width = "50px";
-                                iconContainer.style.height = "50px";
-                                iconContainer.style.borderRadius = "50%";
-                                iconContainer.style.backgroundColor = color;
-                                iconContainer.style.display = "flex";
-                                iconContainer.style.justifyContent = "center";
-                                iconContainer.style.alignItems = "center";
-                                iconContainer.style.marginBottom = "5px";
-                                
-                                const icon = document.createElement("i");
-                                icon.className = iconClass;
-                                icon.style.color = "white";
-                                icon.style.fontSize = "24px";
-                                iconContainer.appendChild(icon);
-                                
-                                const label = document.createElement("span");
-                                label.textContent = name;
-                                label.style.fontSize = "12px";
-                                label.style.textAlign = "center";
-                                
-                                option.appendChild(iconContainer);
-                                option.appendChild(label);
-                                option.addEventListener("click", clickHandler);
-                                
-                                parent.appendChild(option);
+                    // Initialisierung nach jeder Änderung im Popup-Inhalt
+                    const observer = new MutationObserver(function(mutations) {
+                        mutations.forEach(function(mutation) {
+                            if (mutation.type === "childList" && 
+                                (mutation.target.id === "popupContent" || 
+                                 document.getElementById("popupContent").contains(mutation.target))) {
+                                initShareButtons();
                             }
                         });
                     });
+                    
+                    // Popup-Inhalt beobachten
+                    const popupContent = document.getElementById("popupContent");
+                    if (popupContent) {
+                        observer.observe(popupContent, { childList: true, subtree: true });
+                    }
+                    
+                    // Alle Share-Buttons initialisieren
+                    function initShareButtons() {
+                        document.querySelectorAll(".share-btn").forEach(function(button) {
+                            button.addEventListener("click", function() {
+                                const title = this.getAttribute("data-title");
+                                const url = this.getAttribute("data-url");
+                                const text = "Schau dir dieses Event an: " + title;
+                                
+                                // Teilen-Dialog mit Fallback-Optionen
+                                const shareOptionsContainer = document.getElementById("shareOptionsContainer");
+                                if (!shareOptionsContainer) {
+                                    // Erstelle Share-Options-Container
+                                    const container = document.createElement("div");
+                                    container.id = "shareOptionsContainer";
+                                    container.style.position = "fixed";
+                                    container.style.bottom = "0";
+                                    container.style.left = "0";
+                                    container.style.right = "0";
+                                    container.style.backgroundColor = "white";
+                                    container.style.padding = "15px";
+                                    container.style.boxShadow = "0 -2px 10px rgba(0, 0, 0, 0.2)";
+                                    container.style.zIndex = "99999";
+                                    container.style.borderTopLeftRadius = "15px";
+                                    container.style.borderTopRightRadius = "15px";
+                                    container.style.transform = "translateY(100%)";
+                                    container.style.transition = "transform 0.3s ease-out";
+                                    
+                                    // Titel
+                                    const shareTitle = document.createElement("h3");
+                                    shareTitle.textContent = "Teilen über";
+                                    shareTitle.style.textAlign = "center";
+                                    shareTitle.style.marginBottom = "15px";
+                                    container.appendChild(shareTitle);
+                                    
+                                    // Schließen-Button
+                                    const closeButton = document.createElement("button");
+                                    closeButton.innerHTML = "&times;";
+                                    closeButton.style.position = "absolute";
+                                    closeButton.style.top = "10px";
+                                    closeButton.style.right = "10px";
+                                    closeButton.style.background = "none";
+                                    closeButton.style.border = "none";
+                                    closeButton.style.fontSize = "20px";
+                                    closeButton.style.cursor = "pointer";
+                                    closeButton.onclick = function() {
+                                        container.style.transform = "translateY(100%)";
+                                        setTimeout(() => {
+                                            container.remove();
+                                        }, 300);
+                                    };
+                                    container.appendChild(closeButton);
+                                    
+                                    // Optionen Container
+                                    const optionsGrid = document.createElement("div");
+                                    optionsGrid.style.display = "grid";
+                                    optionsGrid.style.gridTemplateColumns = "repeat(4, 1fr)";
+                                    optionsGrid.style.gap = "10px";
+                                    optionsGrid.style.justifyItems = "center";
+                                    container.appendChild(optionsGrid);
+                                    
+                                    // WhatsApp
+                                    addShareOption(optionsGrid, "WhatsApp", "fab fa-whatsapp", "#25D366", function() {
+                                        window.open("https://wa.me/?text=" + encodeURIComponent(text + " " + url), "_blank");
+                                    });
+                                    
+                                    // Telegram
+                                    addShareOption(optionsGrid, "Telegram", "fab fa-telegram-plane", "#0088cc", function() {
+                                        window.open("https://t.me/share/url?url=" + encodeURIComponent(url) + "&text=" + encodeURIComponent(text), "_blank");
+                                    });
+                                    
+                                    // E-Mail
+                                    addShareOption(optionsGrid, "E-Mail", "fas fa-envelope", "#dd4b39", function() {
+                                        window.location.href = "mailto:?subject=" + encodeURIComponent(title) + "&body=" + encodeURIComponent(text + " " + url);
+                                    });
+                                    
+                                    // SMS
+                                    addShareOption(optionsGrid, "SMS", "fas fa-sms", "#5BC236", function() {
+                                        window.location.href = "sms:?body=" + encodeURIComponent(text + " " + url);
+                                    });
+                                    
+                                    // Facebook
+                                    addShareOption(optionsGrid, "Facebook", "fab fa-facebook", "#3b5998", function() {
+                                        window.open("https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(url), "_blank");
+                                    });
+                                    
+                                    // Twitter/X
+                                    addShareOption(optionsGrid, "X", "fab fa-x-twitter", "#000000", function() {
+                                        window.open("https://twitter.com/intent/tweet?text=" + encodeURIComponent(text) + "&url=" + encodeURIComponent(url), "_blank");
+                                    });
+                                    
+                                    // Link kopieren
+                                    addShareOption(optionsGrid, "Link kopieren", "fas fa-link", "#333333", function() {
+                                        navigator.clipboard.writeText(url).then(function() {
+                                            alert("Link in die Zwischenablage kopiert!");
+                                        }).catch(function() {
+                                            prompt("Link zum Kopieren:", url);
+                                        });
+                                    });
+                                    
+                                    // Bild-Download
+                                    addShareOption(optionsGrid, "Bild speichern", "fas fa-download", "#A72920", function() {
+                                        const a = document.createElement("a");
+                                        a.href = url;
+                                        a.download = title + ".jpg";
+                                        document.body.appendChild(a);
+                                        a.click();
+                                        document.body.removeChild(a);
+                                    });
+                                    
+                                    // Hinzufügen zum DOM und anzeigen
+                                    document.body.appendChild(container);
+                                    setTimeout(() => {
+                                        container.style.transform = "translateY(0)";
+                                    }, 10);
+                                } else {
+                                    shareOptionsContainer.style.transform = "translateY(0)";
+                                }
+                                
+                                // Helper-Funktion zum Hinzufügen von Teilen-Optionen
+                                function addShareOption(parent, name, iconClass, color, clickHandler) {
+                                    const option = document.createElement("div");
+                                    option.style.display = "flex";
+                                    option.style.flexDirection = "column";
+                                    option.style.alignItems = "center";
+                                    option.style.cursor = "pointer";
+                                    
+                                    const iconContainer = document.createElement("div");
+                                    iconContainer.style.width = "50px";
+                                    iconContainer.style.height = "50px";
+                                    iconContainer.style.borderRadius = "50%";
+                                    iconContainer.style.backgroundColor = color;
+                                    iconContainer.style.display = "flex";
+                                    iconContainer.style.justifyContent = "center";
+                                    iconContainer.style.alignItems = "center";
+                                    iconContainer.style.marginBottom = "5px";
+                                    
+                                    const icon = document.createElement("i");
+                                    icon.className = iconClass;
+                                    icon.style.color = "white";
+                                    icon.style.fontSize = "24px";
+                                    iconContainer.appendChild(icon);
+                                    
+                                    const label = document.createElement("span");
+                                    label.textContent = name;
+                                    label.style.fontSize = "12px";
+                                    label.style.textAlign = "center";
+                                    
+                                    option.appendChild(iconContainer);
+                                    option.appendChild(label);
+                                    option.addEventListener("click", clickHandler);
+                                    
+                                    parent.appendChild(option);
+                                }
+                            });
+                        });
+                    }
                 });
             </script>';
 }
