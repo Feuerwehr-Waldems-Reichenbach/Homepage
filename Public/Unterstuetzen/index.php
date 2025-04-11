@@ -74,7 +74,7 @@
               Unterstütze uns als passives Mitglied durch finanzielle Beiträge. Deine Unterstützung hilft uns, notwendige Ausrüstung zu beschaffen und unsere Einsatzbereitschaft zu sichern.
             </p>
 
-            <div class="mbr-section-btn item-footer"><a href="Unterstuetzen.html#header14-1r" class="btn item-btn btn-secondary display-7">Erfahre mehr</a></div>
+            <div class="mbr-section-btn item-footer"><a href="#header14-1r" class="btn item-btn btn-secondary display-7">Erfahre mehr</a></div>
           </div>
         </div>
       </div>
