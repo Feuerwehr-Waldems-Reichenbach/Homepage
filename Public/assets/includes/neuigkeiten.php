@@ -105,11 +105,10 @@ function renderNeuigkeitCard($neuigkeit) {
         $html .= '<i class="fas fa-download"></i> Flyer';
         $html .= '</a>';
         
-        // WhatsApp Teilen
-        $whatsappText = urlencode("Schau dir dieses Event an: " . $absoluteImageUrl);
-        $html .= '<a href="https://wa.me/?text=' . $whatsappText . '" target="_blank" class="btn-neuigkeit-aktion">';
-        $html .= '<i class="fab fa-whatsapp"></i> Teilen';
-        $html .= '</a>';
+        // Teilen-Button (verwendet Web Share API auf unterstützten Geräten)
+        $html .= '<button class="btn-neuigkeit-aktion share-btn" data-title="' . $title . '" data-url="' . $absoluteImageUrl . '">';
+        $html .= '<i class="fas fa-share-alt"></i> Teilen';
+        $html .= '</button>';
     }
     
     $html .= '</div>';
@@ -129,7 +128,52 @@ function renderNeuigkeitCard($neuigkeit) {
 function loadNeuigkeitenCSS() {
     $version = '1.0.9'; // Increment this when you make CSS changes
     return '<link rel="stylesheet" href="/assets/css/neuigkeiten.css?v=' . $version . '">' . 
-           '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">';
+           '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">' . 
+           '<script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    // Füge Event-Listener zu allen Share-Buttons hinzu
+                    document.querySelectorAll(".share-btn").forEach(function(button) {
+                        button.addEventListener("click", async function() {
+                            const title = this.getAttribute("data-title");
+                            const url = this.getAttribute("data-url");
+                            const text = "Schau dir dieses Event an: " + title;
+                            
+                            try {
+                                // Prüfen, ob Web Share API unterstützt wird
+                                if (navigator.share) {
+                                    // Bild herunterladen und als File teilen
+                                    const response = await fetch(url);
+                                    const blob = await response.blob();
+                                    const file = new File([blob], title + ".jpg", { type: blob.type });
+                                    
+                                    // Teilen mit dem Bild als File
+                                    navigator.share({
+                                        title: title,
+                                        text: text,
+                                        files: [file]
+                                    })
+                                    .catch(error => {
+                                        console.log("Fehler beim Teilen des Bildes", error);
+                                        // Fallback auf URL-Teilen, falls File-Sharing nicht unterstützt wird
+                                        navigator.share({
+                                            title: title,
+                                            text: text,
+                                            url: url
+                                        }).catch(err => console.log("Fehler beim Teilen", err));
+                                    });
+                                } else {
+                                    // Fallback für Browser ohne Web Share API
+                                    window.open("https://wa.me/?text=" + encodeURIComponent(text + " " + url), "_blank");
+                                }
+                            } catch (error) {
+                                console.log("Fehler beim Teilen", error);
+                                // Letzter Fallback
+                                window.open("https://wa.me/?text=" + encodeURIComponent(text + " " + url), "_blank");
+                            }
+                        });
+                    });
+                });
+            </script>';
 }
 
 /**
