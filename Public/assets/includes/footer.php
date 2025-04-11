@@ -170,7 +170,8 @@
                 <div class="contact-info">
                     <p class="mbr-text mbr-fonts-style display-7">
                         <a href="/Impressum" class="text-white">Impressum</a><br>
-                        <a href="/Datenschutz" class="text-white">Datenschutz</a>
+                        <a href="/Datenschutz" class="text-white">Datenschutz</a><br>
+                        <a href="/Satzung" class="text-white">Satzungen</a>
                     </p>
                 </div>
                 
