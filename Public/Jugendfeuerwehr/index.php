@@ -77,7 +77,8 @@
     <div class="row justify-content-center">
       <div class="col-lg-4">
         <div class="col-12 col-md-12">
-          <h5 class="mbr-section-title mbr-fonts-style mt-0 mb-4 display-5">Mehr als Feuerlöschen: Vielseitige Fähigkeiten für den Ernstfall</h5>
+          <h5 class="mbr-section-title mbr-fonts-style mt-0 mb-4 display-2"> 
+            <strong>Mehr als Feuerlöschen:</strong> Vielseitige Fähigkeiten für den Ernstfall</h5>
           <h6 class="mbr-section-subtitle mbr-fonts-style mt-0 mb-4 display-7">Neben den Grundlagen der Brandbekämpfung werden auch die Fähigkeiten der Technischen Hilfeleistung und der Ersten Hilfe geübt.</h6>
           
         </div>
@@ -121,7 +122,8 @@
     <div class="row justify-content-center">
       <div class="col-lg-4">
         <div class="col-12 col-md-12">
-          <h5 class="mbr-section-title mbr-fonts-style mt-0 mb-4 display-5">Abenteuer und Teamgeist: Zeltlager der Jugendfeuerwehr</h5>
+          <h5 class="mbr-section-title mbr-fonts-style mt-0 mb-4 display-2"> 
+            <strong>Abenteuer und Teamgeist:</strong> Zeltlager der Jugendfeuerwehr</h5>
           <h6 class="mbr-section-subtitle mbr-fonts-style mt-0 mb-4 display-7">Einmal im Jahr verbringt die Jugendfeuerwehr eine Woche im Zeltlager. Neben der spannenden Lagerolympiade stehen vielfältige Freizeitaktivitäten auf dem Programm, darunter Kanufahren, Klettern, Minigolf und Ausflüge in Freizeitparks.</h6>
           
         </div>
@@ -143,7 +145,8 @@
     <div class="row justify-content-center">
       <div class="col-lg-4">
         <div class="col-12 col-md-12">
-          <h5 class="mbr-section-title mbr-fonts-style mt-0 mb-4 display-5">Jährliche Weihnachtsbaum-Sammelaktion</h5>
+          <h5 class="mbr-section-title mbr-fonts-style mt-0 mb-4 display-2">
+            <strong>Jährliche Weihnachtsbaum-Sammelaktion</strong></h5>
           <h6 class="mbr-section-subtitle mbr-fonts-style mt-0 mb-4 display-7"><em>"Grünt der Weihnachtsbaum nicht mehr,</em><div><em>kommt die Jugendfeuerwehr daher.</em></div><div><em>Sammelt fleißig Bäume ein,</em></div><div><em>und verbrennt sie dann im Feuerschein."</em></div><br><br><div>Gegen eine kleine Spende sammeln wir Anfang des Jahres die alten Weihnachtsbäume in Reichenbach ein.</div></h6>
           
         </div>
