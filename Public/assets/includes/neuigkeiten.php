@@ -216,9 +216,10 @@ function loadNeuigkeitenCSS() {
                                 });
                                 
                                 // Twitter/X
-                                addShareOption(optionsGrid, "Twitter", "fab fa-twitter", "#1DA1F2", function() {
+                                addShareOption(optionsGrid, "X", "fab fa-x-twitter", "#000000", function() {
                                     window.open("https://twitter.com/intent/tweet?text=" + encodeURIComponent(text) + "&url=" + encodeURIComponent(url), "_blank");
                                 });
+
                                 
                                 // Link kopieren
                                 addShareOption(optionsGrid, "Link kopieren", "fas fa-link", "#333333", function() {
