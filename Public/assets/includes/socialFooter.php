@@ -4,7 +4,7 @@
             <div class="col-12 content-head">
                 <div class="mb-5">
                     <h5 class="mbr-section-title mbr-fonts-style align-center mb-0 display-2"><strong>Vernetze dich mit uns</strong></h5>
-                    <p class="mbr-text mbr-fonts-style align-center mt-3 display-7">Folge uns auf Social Media und bleibe immer auf dem neuesten Stand.</p>
+                    <p class="mbr-text mbr-fonts-style align-center mt-3 display-7 text-white">Folge uns auf Social Media und bleibe immer auf dem neuesten Stand.</p>
                 </div>
             </div>
         </div>
