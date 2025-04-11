@@ -172,6 +172,7 @@ function ShowPotentialPopup() {
                 position: relative;
                 max-width: 100%;
                 max-height: 90vh;
+                overflow: visible;
             }
             
             .popup-navigation {
@@ -223,9 +224,14 @@ function ShowPotentialPopup() {
                 z-index: 10000;
             }
             
-            /* Überschreibe Standard-Styling für das Popup */
-            .popup-container .neuigkeit-karte {
+            /* Popup-spezifische Anpassungen */
+            #popupContent .neuigkeiten-container {
                 margin: 0 !important;
+                gap: 0 !important;
+            }
+            
+            #popupCardsContainer {
+                display: none;
             }
             
             @media (max-width: 767px) {
@@ -259,7 +265,9 @@ function ShowPotentialPopup() {
         echo '<div id="popupCardsContainer" style="display: none;">';
         foreach ($popups as $index => $popup) {
             echo '<div class="popup-card" data-index="' . $index . '">';
+            echo '<div class="neuigkeiten-container">';
             echo renderNeuigkeitCard($popup);
+            echo '</div>';
             echo '</div>';
         }
         echo '</div>';
