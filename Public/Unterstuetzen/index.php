@@ -104,9 +104,9 @@
 			<div class="card col-12 col-md-12 col-lg-12">
 				<div class="card-wrapper">
 					<div class="card-box align-center">
-						<h1 class="card-title mbr-fonts-style mb-4 display-2"><strong>Lade dir den Mitgliedsantrag herunter</strong></h1>
-						
-						<div class="mbr-section-btn mt-4"><a class="btn btn-primary display-7" href="../assets/files/Beitrittsantrag .pdf">Download</a></div>
+						<h1 class="card-title mbr-fonts-style mb-4 display-2"><strong>Lade dir den Aufnahmeantrag herunter</strong></h1>
+						<p class="mbr-text mbr-fonts-style mb-4 display-7">Als passives Mitglied unterstützt du die Feuerwehr mit einem jährlichen Beitrag von 15€. Diese Mittel helfen uns dabei, wichtige Ausrüstung anzuschaffen und unsere Einsatzbereitschaft aufrechtzuerhalten.</p>
+						<div class="mbr-section-btn mt-4"><a class="btn btn-primary display-7" href="Datei/Aufnahmeantrag.pdf">Download</a></div>
 					</div>
 				</div>
 			</div>
