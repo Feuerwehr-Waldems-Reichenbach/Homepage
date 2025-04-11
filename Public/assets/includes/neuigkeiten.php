@@ -23,13 +23,16 @@ function showNeuigkeiten($itemsPerPage = 5, $customClass = '') {
     // Get total count for pagination
     $db = Database::getInstance()->getConnection();
     
-    $stmt = $db->prepare("SELECT COUNT(*) FROM neuigkeiten WHERE aktiv = 1");
+    $currentDate = date('Y-m-d');
+    $stmt = $db->prepare("SELECT COUNT(*) FROM neuigkeiten WHERE aktiv = 1 AND Datum >= :currentDate");
+    $stmt->bindParam(':currentDate', $currentDate);
     $stmt->execute();
     $totalItems = $stmt->fetchColumn();
     $totalPages = ceil($totalItems / $itemsPerPage);
     
     // Get news items for current page
-    $stmt = $db->prepare("SELECT * FROM neuigkeiten WHERE aktiv = 1 ORDER BY Datum DESC LIMIT :limit OFFSET :offset");
+    $stmt = $db->prepare("SELECT * FROM neuigkeiten WHERE aktiv = 1 AND Datum >= :currentDate ORDER BY Datum ASC LIMIT :limit OFFSET :offset");
+    $stmt->bindParam(':currentDate', $currentDate);
     $stmt->bindParam(':limit', $itemsPerPage, PDO::PARAM_INT);
     $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
     $stmt->execute();
@@ -118,64 +121,6 @@ function renderNeuigkeitCard($neuigkeit) {
 }
 
 /**
- * Shows a single news item by ID
- * 
- * @param int $id ID of the news item to display
- * @param string $customClass Additional CSS class for styling
- * @return void
- */
-function showNeuigkeitById($id, $customClass = '') {
-    // Include CSS
-    echo loadNeuigkeitenCSS();
-    
-    $db = Database::getInstance()->getConnection();
-    
-    $stmt = $db->prepare("SELECT * FROM neuigkeiten WHERE ID = :id AND aktiv = 1");
-    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-    $stmt->execute();
-    $neuigkeit = $stmt->fetch(PDO::FETCH_ASSOC);
-    
-    if ($neuigkeit) {
-        echo '<div class="neuigkeit-detail ' . $customClass . '">';
-        echo renderNeuigkeitCard($neuigkeit);
-        echo '</div>';
-    } else {
-        echo '<p>Neuigkeit nicht gefunden.</p>';
-    }
-}
-
-/**
- * Shows the latest news items
- * 
- * @param int $count Number of latest news to display
- * @param string $customClass Additional CSS class for styling
- * @return void
- */
-function showLatestNeuigkeiten($count = 3, $customClass = '') {
-    // Include CSS
-    echo loadNeuigkeitenCSS();
-    
-    $db = Database::getInstance()->getConnection();
-    
-    $stmt = $db->prepare("SELECT * FROM neuigkeiten WHERE aktiv = 1 ORDER BY Datum DESC LIMIT :limit");
-    $stmt->bindParam(':limit', $count, PDO::PARAM_INT);
-    $stmt->execute();
-    $neuigkeiten = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
-    echo '<div class="neuigkeiten-latest ' . $customClass . '">';
-    
-    if (count($neuigkeiten) > 0) {
-        foreach ($neuigkeiten as $neuigkeit) {
-            echo renderNeuigkeitCard($neuigkeit);
-        }
-    } else {
-        echo '<p>Keine Neuigkeiten vorhanden.</p>';
-    }
-    
-    echo '</div>';
-}
-
-/**
  * Helper function to load the Neuigkeiten CSS
  * Uses a version number to prevent caching issues
  * 
@@ -196,14 +141,6 @@ function loadNeuigkeitenCSS() {
  * // Show all news items with pagination
  * showNeuigkeiten();
  * 
- * // Show latest 3 news items
- * // showLatestNeuigkeiten(3);
- * 
- * // Show with additional CSS class
- * // showNeuigkeiten(5, 'my-custom-class');
- * 
- * // Show a single news item by ID
- * // showNeuigkeitById($_GET['id']);
  * ?>
  */
 ?>
