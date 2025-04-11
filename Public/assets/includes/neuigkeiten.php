@@ -10,11 +10,11 @@ require_once dirname($_SERVER['DOCUMENT_ROOT']) . '/Private/Database/Database.ph
  * 
  * @param int $itemsPerPage Number of items to display per page
  * @param string $customClass Additional CSS class for styling
- * @return string HTML output
+ * @return void
  */
 function showNeuigkeiten($itemsPerPage = 5, $customClass = '') {
     // Always include CSS as the first step
-    $output = loadNeuigkeitenCSS();
+    echo loadNeuigkeitenCSS();
     
     // Get current page from URL parameter
     $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
@@ -36,29 +36,27 @@ function showNeuigkeiten($itemsPerPage = 5, $customClass = '') {
     $neuigkeiten = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
     // Output the news items
-    $output .= '<div class="neuigkeiten-container ' . $customClass . '">';
+    echo '<div class="neuigkeiten-container ' . $customClass . '">';
     
     if (count($neuigkeiten) > 0) {
         foreach ($neuigkeiten as $neuigkeit) {
-            $output .= renderNeuigkeitCard($neuigkeit);
+            echo renderNeuigkeitCard($neuigkeit);
         }
         
         // Pagination
         if ($totalPages > 1) {
-            $output .= '<div class="pagination">';
+            echo '<div class="pagination">';
             for ($i = 1; $i <= $totalPages; $i++) {
                 $activeClass = ($i == $page) ? 'active' : '';
-                $output .= '<a href="?page=' . $i . '" class="page-link ' . $activeClass . '">' . $i . '</a>';
+                echo '<a href="?page=' . $i . '" class="page-link ' . $activeClass . '">' . $i . '</a>';
             }
-            $output .= '</div>';
+            echo '</div>';
         }
     } else {
-        $output .= '<p>Keine Neuigkeiten vorhanden.</p>';
+        echo '<p>Keine Neuigkeiten vorhanden.</p>';
     }
     
-    $output .= '</div>';
-    
-    return $output;
+    echo '</div>';
 }
 
 /**
@@ -124,11 +122,11 @@ function renderNeuigkeitCard($neuigkeit) {
  * 
  * @param int $id ID of the news item to display
  * @param string $customClass Additional CSS class for styling
- * @return string HTML output
+ * @return void
  */
 function showNeuigkeitById($id, $customClass = '') {
     // Include CSS
-    $output = loadNeuigkeitenCSS();
+    echo loadNeuigkeitenCSS();
     
     $db = Database::getInstance()->getConnection();
     
@@ -138,14 +136,12 @@ function showNeuigkeitById($id, $customClass = '') {
     $neuigkeit = $stmt->fetch(PDO::FETCH_ASSOC);
     
     if ($neuigkeit) {
-        $output .= '<div class="neuigkeit-detail ' . $customClass . '">';
-        $output .= renderNeuigkeitCard($neuigkeit);
-        $output .= '</div>';
+        echo '<div class="neuigkeit-detail ' . $customClass . '">';
+        echo renderNeuigkeitCard($neuigkeit);
+        echo '</div>';
     } else {
-        $output .= '<p>Neuigkeit nicht gefunden.</p>';
+        echo '<p>Neuigkeit nicht gefunden.</p>';
     }
-    
-    return $output;
 }
 
 /**
@@ -153,11 +149,11 @@ function showNeuigkeitById($id, $customClass = '') {
  * 
  * @param int $count Number of latest news to display
  * @param string $customClass Additional CSS class for styling
- * @return string HTML output
+ * @return void
  */
 function showLatestNeuigkeiten($count = 3, $customClass = '') {
     // Include CSS
-    $output = loadNeuigkeitenCSS();
+    echo loadNeuigkeitenCSS();
     
     $db = Database::getInstance()->getConnection();
     
@@ -166,19 +162,17 @@ function showLatestNeuigkeiten($count = 3, $customClass = '') {
     $stmt->execute();
     $neuigkeiten = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
-    $output .= '<div class="neuigkeiten-latest ' . $customClass . '">';
+    echo '<div class="neuigkeiten-latest ' . $customClass . '">';
     
     if (count($neuigkeiten) > 0) {
         foreach ($neuigkeiten as $neuigkeit) {
-            $output .= renderNeuigkeitCard($neuigkeit);
+            echo renderNeuigkeitCard($neuigkeit);
         }
     } else {
-        $output .= '<p>Keine Neuigkeiten vorhanden.</p>';
+        echo '<p>Keine Neuigkeiten vorhanden.</p>';
     }
     
-    $output .= '</div>';
-    
-    return $output;
+    echo '</div>';
 }
 
 /**
@@ -200,16 +194,16 @@ function loadNeuigkeitenCSS() {
  * require_once $_SERVER['DOCUMENT_ROOT'] . '/assets/includes/neuigkeiten.php';
  * 
  * // Show all news items with pagination
- * echo showNeuigkeiten();
+ * showNeuigkeiten();
  * 
  * // Show latest 3 news items
- * // echo showLatestNeuigkeiten(3);
+ * // showLatestNeuigkeiten(3);
  * 
  * // Show with additional CSS class
- * // echo showNeuigkeiten(5, 'my-custom-class');
+ * // showNeuigkeiten(5, 'my-custom-class');
  * 
  * // Show a single news item by ID
- * // echo showNeuigkeitById($_GET['id']);
+ * // showNeuigkeitById($_GET['id']);
  * ?>
  */
 ?>
