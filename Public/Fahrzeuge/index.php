@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
-  <link rel="shortcut icon" href="../assets/images/gravatar-logo-dunkel-1.jpg" type="image/x-icon">
+  <link rel="shortcut icon" href="../assets/images/gravatar-logo-dunkel.jpg" type="image/x-icon">
   <meta name="description" content="Erfahre mehr über die Fahrzeuge der Freiwilligen Feuerwehr Reichenbach. Wir verfügen über ein TSF-W und ein MTF, die für verschiedene Einsatzszenarien bereitstehen.">
   
   
