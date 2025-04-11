@@ -236,7 +236,7 @@
 							<div id="collapse1_21" class="panel-collapse noScroll collapse" role="tabpanel" aria-labelledby="headingOne" data-parent="#accordion" data-bs-parent="#bootstrap-accordion_21">
 								<div class="panel-body">
 									<p class="mbr-fonts-style panel-text display-7">
-										Sofort raus und die 112 rufen. Wir kümmern uns um den Rest. Deine Sicherheit zuerst
+										Sofort raus und die 112 rufen. Wir kümmern uns um den Rest. Deine Sicherheit zuerst.
 									</p>
 								</div>
 							</div>
