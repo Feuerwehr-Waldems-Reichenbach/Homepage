@@ -29,6 +29,7 @@
 </head>
 <body>
   
+<?php include '../assets/includes/warningModal.php'; ?>
 <?php include '../assets/includes/navbar.php'; ?>
 
 <section data-bs-version="5.1" class="header16 cid-u8ZjnL00u3 mbr-fullscreen jarallax" id="header17-3a" data-jarallax-speed="0.8">
