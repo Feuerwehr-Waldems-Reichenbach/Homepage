@@ -149,7 +149,10 @@ function ShowPotentialPopup() {
     $popups = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
     if (count($popups) > 0) {
-        // Add CSS for the popup modal
+        // Load the existing CSS
+        echo loadNeuigkeitenCSS();
+        
+        // Add additional CSS for the popup modal
         echo '<style>
             .popup-modal {
                 display: none;
@@ -162,17 +165,13 @@ function ShowPotentialPopup() {
                 z-index: 9999;
                 justify-content: center;
                 align-items: center;
+                padding: 20px;
             }
             
-            .popup-content {
-                background: white;
-                padding: 20px;
-                border-radius: 10px;
-                max-width: 90%;
-                max-height: 90vh;
-                overflow-y: auto;
+            .popup-container {
                 position: relative;
-                width: 600px;
+                max-width: 100%;
+                max-height: 90vh;
             }
             
             .popup-navigation {
@@ -191,6 +190,7 @@ function ShowPotentialPopup() {
                 justify-content: center;
                 font-size: 20px;
                 transition: background-color 0.3s;
+                z-index: 10000;
             }
             
             .popup-navigation:hover {
@@ -198,25 +198,37 @@ function ShowPotentialPopup() {
             }
             
             .popup-prev {
-                left: -50px;
+                left: -20px;
             }
             
             .popup-next {
-                right: -50px;
+                right: -20px;
             }
             
             .popup-close {
                 position: absolute;
-                top: 10px;
-                right: 10px;
-                background: none;
+                top: -15px;
+                right: -15px;
+                background: rgba(0,0,0,0.5);
                 border: none;
-                font-size: 24px;
+                width: 30px;
+                height: 30px;
+                border-radius: 50%;
+                color: white;
+                font-size: 20px;
                 cursor: pointer;
-                color: #666;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 10000;
             }
             
-            @media (max-width: 768px) {
+            /* Überschreibe Standard-Styling für das Popup */
+            .popup-container .neuigkeit-karte {
+                margin: 0 !important;
+            }
+            
+            @media (max-width: 767px) {
                 .popup-navigation {
                     width: 30px;
                     height: 30px;
@@ -224,18 +236,18 @@ function ShowPotentialPopup() {
                 }
                 
                 .popup-prev {
-                    left: -35px;
+                    left: 10px;
                 }
                 
                 .popup-next {
-                    right: -35px;
+                    right: 10px;
                 }
             }
         </style>';
         
         // Add the popup modal HTML
         echo '<div id="popupModal" class="popup-modal">
-            <div class="popup-content">
+            <div class="popup-container">
                 <button class="popup-close">&times;</button>
                 <div id="popupContent"></div>
             </div>
@@ -243,36 +255,40 @@ function ShowPotentialPopup() {
             <button class="popup-navigation popup-next" id="popupNext">&gt;</button>
         </div>';
         
+        // Render cards for each popup (initially hidden)
+        echo '<div id="popupCardsContainer" style="display: none;">';
+        foreach ($popups as $index => $popup) {
+            echo '<div class="popup-card" data-index="' . $index . '">';
+            echo renderNeuigkeitCard($popup);
+            echo '</div>';
+        }
+        echo '</div>';
+        
         // Add JavaScript for popup functionality
         echo '<script>
             document.addEventListener("DOMContentLoaded", function() {
-                const popups = ' . json_encode($popups) .';
+                const popups = ' . json_encode(array_keys($popups)) .';
                 let currentPopupIndex = 0;
                 const modal = document.getElementById("popupModal");
                 const content = document.getElementById("popupContent");
+                const cardsContainer = document.getElementById("popupCardsContainer");
+                const cards = document.querySelectorAll(".popup-card");
                 const prevBtn = document.getElementById("popupPrev");
                 const nextBtn = document.getElementById("popupNext");
                 const closeBtn = document.querySelector(".popup-close");
                 
                 function showPopup(index) {
-                    const popup = popups[index];
-                    const date = new Date(popup.popup_start);
-                    const formattedDate = date.toLocaleDateString("de-DE", {day: "2-digit", month: "2-digit", year: "numeric"});
-                    
-                    content.innerHTML = `
-                        <h2>${popup.Ueberschrift}</h2>
-                        <div class="info-details">
-                            <span class="datum">${formattedDate}</span>
-                            ${popup.Ort ? ` | <span class="ort">${popup.Ort}</span>` : ""}
-                        </div>
-                        <div class="neuigkeit-volltext">${popup.Information.replace(/\\n/g, "<br>")}</div>
-                    `;
-                    
-                    modal.style.display = "flex";
-                    
-                    // Update navigation buttons
-                    prevBtn.style.display = popups.length > 1 ? "flex" : "none";
-                    nextBtn.style.display = popups.length > 1 ? "flex" : "none";
+                    // Get the rendered card HTML
+                    const cardToShow = document.querySelector(`.popup-card[data-index="${index}"]`);
+                    if (cardToShow) {
+                        content.innerHTML = cardToShow.innerHTML;
+                        
+                        modal.style.display = "flex";
+                        
+                        // Update navigation buttons
+                        prevBtn.style.display = popups.length > 1 ? "flex" : "none";
+                        nextBtn.style.display = popups.length > 1 ? "flex" : "none";
+                    }
                 }
                 
                 function showNextPopup() {
@@ -296,6 +312,19 @@ function ShowPotentialPopup() {
                 modal.addEventListener("click", function(e) {
                     if (e.target === modal) {
                         modal.style.display = "none";
+                    }
+                });
+                
+                // Handle keyboard navigation
+                document.addEventListener("keydown", function(e) {
+                    if (modal.style.display === "flex") {
+                        if (e.key === "Escape") {
+                            modal.style.display = "none";
+                        } else if (e.key === "ArrowRight") {
+                            showNextPopup();
+                        } else if (e.key === "ArrowLeft") {
+                            showPrevPopup();
+                        }
                     }
                 });
                 
