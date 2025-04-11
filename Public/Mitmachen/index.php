@@ -132,10 +132,6 @@
 </section>
 
 <section data-bs-version="5.1" class="header14 cid-u8N5PcjmYp" id="header14-1n">
-	
-
-	
-	
 	<div class="container">
 		<div class="row justify-content-center">
 			<div class="card col-12 col-md-12 col-lg-12">
@@ -143,7 +139,10 @@
 					<div class="card-box align-center">
 						<h1 class="card-title mbr-fonts-style mb-4 display-2"><strong>Hier gibt's unseren Übungsplan&nbsp;</strong></h1>
 						
-						<div class="mbr-section-btn mt-4"><a class="btn btn-primary display-7" href="../assets/files/Kalender2024.pdf">Herunterladen</a></div>
+						<div class="mbr-section-btn mt-4">
+							<a class="btn btn-primary display-7" href="Datei/Jahreskalender Feuerwehr Reichenbach final.pdf">PDF herunterladen</a>
+							<a class="btn btn-primary display-7" href="Datei/Jahreskalender Feuerwehr Reichenbach.jpg">Bild herunterladen</a>
+						</div>
 					</div>
 				</div>
 			</div>
