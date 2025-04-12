@@ -272,7 +272,7 @@ function loadNeuigkeitenCSS() {
                                     });
                                     
                                     // Bild-Download
-                                    addShareOption(optionsGrid, "Bild speichern", "fas fa-download", "#A72920", function() {
+                                    addShareOption(optionsGrid, "Flyer speichern", "fas fa-download", "#A72920", function() {
                                         const a = document.createElement("a");
                                         a.href = url;
                                         a.download = title + ".jpg";
