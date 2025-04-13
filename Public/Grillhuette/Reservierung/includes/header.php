@@ -52,7 +52,7 @@ header("Permissions-Policy: geolocation=(), camera=(), microphone=()");
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#343a40">
     <meta http-equiv="Content-Security-Policy" content="<?php echo $cspMeta; ?>">
-    <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/Grillhuette/Reservierung/includes/favicon.ico" type="image/x-icon">
     <title>Reservierungssystem der Grillhütte Waldems Reichenbach</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
