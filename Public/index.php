@@ -225,8 +225,7 @@
 					<div class="row justify-content-center mb-5">
 						<div class="col-12 content-head">
 							<div class="mbr-section-head">
-								<h4 class="mbr-section-title mbr-fonts-style align-center mb-0 display-2"><strong>Wissenswertes für den Notfall</strong></h4>
-								
+								<h4 class="mbr-section-title mbr-fonts-style align-center mb-0 display-2"><strong>Wissenswertes für den Notfall</strong></h4>								
 							</div>
 						</div>
 					</div>
@@ -240,7 +239,7 @@
 							</div>
 							<div id="collapse1_21" class="panel-collapse noScroll collapse" role="tabpanel" aria-labelledby="headingOne" data-parent="#accordion" data-bs-parent="#bootstrap-accordion_21">
 								<div class="panel-body">
-									<p class="mbr-fonts-style panel-text display-7">
+									<p class="mbr-fonts-style panel-text display-7 text-white">
 										Sofort raus und die 112 rufen. Wir kümmern uns um den Rest. Deine Sicherheit zuerst.
 									</p>
 								</div>
@@ -255,7 +254,7 @@
 							</div>
 							<div id="collapse2_21" class="panel-collapse noScroll collapse" role="tabpanel" aria-labelledby="headingOne" data-parent="#accordion" data-bs-parent="#bootstrap-accordion_21">
 								<div class="panel-body">
-									<p class="mbr-fonts-style panel-text display-7">
+									<p class="mbr-fonts-style panel-text display-7 text-white">
 										Merk dir das Kurzwort "PASS": Ziehe die Sicherung (Pull), ziel auf die Basis des Feuers (Aim), drücke den Hebel, um zu löschen (Squeeze), und schwenke den Löscher seitlich über die Flammen (Sweep).
 									</p>
 								</div>
@@ -270,7 +269,7 @@
 							</div>
 							<div id="collapse3_21" class="panel-collapse noScroll collapse" role="tabpanel" aria-labelledby="headingOne" data-parent="#accordion" data-bs-parent="#bootstrap-accordion_21">
 								<div class="panel-body">
-									<p class="mbr-fonts-style panel-text display-7">
+									<p class="mbr-fonts-style panel-text display-7 text-white">
 										Bloß kein Wasser! Deckel oder Löschdecke drauf, um die Flammen zu ersticken. Und immer einen Küchenlöscher parat haben.
 									</p>
 								</div>
@@ -285,7 +284,7 @@
 							</div>
 							<div id="collapse4_21" class="panel-collapse noScroll collapse" role="tabpanel" aria-labelledby="headingOne" data-parent="#accordion" data-bs-parent="#bootstrap-accordion_21">
 								<div class="panel-body">
-									<p class="mbr-fonts-style panel-text display-7">
+									<p class="mbr-fonts-style panel-text display-7 text-white">
 										Sichere die Unfallstelle und leiste Erste Hilfe, wenn du dazu in der Lage bist. Alarmiere umgehend die Rettungsdienste. Wichtig ist, ruhig und besonnen zu handeln.
 									</p>
 								</div>
@@ -300,7 +299,7 @@
 							</div>
 							<div id="collapse5_21" class="panel-collapse noScroll collapse" role="tabpanel" aria-labelledby="headingOne" data-parent="#accordion" data-bs-parent="#bootstrap-accordion_21">
 								<div class="panel-body">
-									<p class="mbr-fonts-style panel-text display-7">
+									<p class="mbr-fonts-style panel-text display-7 text-white">
 										Die stabile Seitenlage und die Herz-Lungen-Wiederbelebung sind lebensrettende Maßnahmen, die jeder beherrschen sollte. Auch das richtige Anlegen eines Druckverbandes kann im Notfall entscheidend sein.
 									</p>
 								</div>
@@ -315,7 +314,7 @@
 							</div>
 							<div id="collapse6_21" class="panel-collapse noScroll collapse" role="tabpanel" aria-labelledby="headingOne" data-parent="#accordion" data-bs-parent="#bootstrap-accordion_21">
 								<div class="panel-body">
-									<p class="mbr-fonts-style panel-text display-7">
+									<p class="mbr-fonts-style panel-text display-7 text-white">
 										Gib genau an, wo der Unfall passiert ist, was geschehen ist und ob Personen verletzt sind. Informationen über Gefahrenstoffe oder besondere Risiken sind ebenfalls hilfreich.
 									</p>
 								</div>

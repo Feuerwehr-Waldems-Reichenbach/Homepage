@@ -19,7 +19,7 @@
                             <strong>Instagram</strong>
                         </h4>
                         <h5 class="card-text mbr-fonts-style display-7">
-                            <a href="https://www.instagram.com/feuerwehrreichenbach/" class="text-primary" target="_blank">
+                            <a href="https://www.instagram.com/feuerwehrreichenbach/" class="text-primary text-white" target="_blank">
                                 Sieh uns in Aktion und erlebe, wie wir für Sicherheit sorgen!
                             </a>
                         </h5>
@@ -36,7 +36,7 @@
                             <strong>Facebook</strong>
                         </h4>
                         <h5 class="card-text mbr-fonts-style display-7">
-                            <a href="https://www.facebook.com/groups/163127135137/" class="text-primary" target="_blank">
+                            <a href="https://www.facebook.com/groups/163127135137/" class="text-primary text-white" target="_blank">
                                 Bleib auf dem Laufenden und werde Teil unserer Gemeinschaft!
                             </a>
                         </h5>
