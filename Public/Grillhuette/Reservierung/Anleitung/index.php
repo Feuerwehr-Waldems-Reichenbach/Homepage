@@ -424,11 +424,11 @@ require_once '../includes/header.php';
                             Bei technischen Problemen mit dem Reservierungssystem:
                         </p>
                         <ul>
-                            <li>E-Mail: <a href="javascript:void(0)" class="email-protect" data-encoded="<?php echo base64_encode($infoData['SystemEmailProbleme'] ?? 'it@feuerwehr-waldems-reichenbach.de'); ?>">IT-Support</a></li>
+                            <li>E-Mail: <a href="javascript:void(0)" class="email-protect" data-encoded="<?php echo base64_encode($infoData['SystemEmailProbleme'] ?? 'hilfe@feuerwehr-waldems-reichenbach.de'); ?>">IT-Support</a></li>
                         </ul>
                         
                         <div class="d-grid gap-2 d-md-flex justify-content-md-start mt-4">
-                            <a href="mailto:<?php echo $infoData['SystemEmailProbleme'] ?? 'it@feuerwehr-waldems-reichenbach.de'; ?>" class="btn btn-primary">
+                            <a href="mailto:<?php echo $infoData['SystemEmailProbleme'] ?? 'hilfe@feuerwehr-waldems-reichenbach.de'; ?>" class="btn btn-primary">
                                 <i class="bi bi-envelope-fill"></i> Technischen Support kontaktieren
                             </a>
                         </div>

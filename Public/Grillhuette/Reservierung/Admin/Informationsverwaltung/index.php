@@ -427,7 +427,7 @@ require_once '../../includes/header.php';
                 </div>
                 
                 <div class="mt-3 alert alert-secondary">
-                    <p class="mb-0"><strong>Hinweis:</strong> Bei technischen Problemen mit dem Reservierungssystem wenden Sie sich bitte an: <?php echo $systemInfos['SystemEmailProbleme'] ?? 'it@feuerwehr-waldems-reichenbach.de'; ?></p>
+                    <p class="mb-0"><strong>Hinweis:</strong> Bei technischen Problemen mit dem Reservierungssystem wenden Sie sich bitte an: <?php echo $systemInfos['SystemEmailProbleme'] ?? 'hilfe@feuerwehr-waldems-reichenbach.de'; ?></p>
                 </div>
             </div>
         </div>
