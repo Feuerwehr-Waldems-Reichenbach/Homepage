@@ -166,12 +166,13 @@
     <div class="container">
         <div class="row content mbr-white">
             <div class="col-12 col-md-3 mbr-fonts-style display-7">
-                <h5 class="mbr-section-subtitle mbr-fonts-style mb-2 display-7"><strong>Rechtliches</strong></h5>
+                <h5 class="mbr-section-subtitle mbr-fonts-style mb-2 display-7"><strong>Weitere Links</strong></h5>
                 <div class="contact-info">
                     <p class="mbr-text mbr-fonts-style display-7">
                         <a href="/Impressum" class="text-white">Impressum</a><br>
                         <a href="/Datenschutz" class="text-white">Datenschutz</a><br>
-                        <a href="/Satzung" class="text-white">Satzungen</a>
+                        <a href="/Satzung" class="text-white">Satzungen</a><br>
+                        <a href="/Downloads" class="text-white">Downloads</a>
                     </p>
                 </div>
                 
