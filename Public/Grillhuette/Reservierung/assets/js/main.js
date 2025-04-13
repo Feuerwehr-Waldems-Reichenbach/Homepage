@@ -1301,23 +1301,6 @@ function updateReservationCosts() {
             // +1 weil wir auch den ersten Tag zählen (inklusiv)
             const days = diffDays + 1;
             
-            // DEBUGGING: Füge temporär ein div hinzu, das anzeigt, was berechnet wurde
-            let debugInfo = `Start: ${startDateInput.value}, End: ${endDateInput.value}, Tage: ${days}`;
-            let debugDiv = document.getElementById('price-debug-info');
-            if (!debugDiv) {
-                debugDiv = document.createElement('div');
-                debugDiv.id = 'price-debug-info';
-                debugDiv.style.padding = '8px';
-                debugDiv.style.backgroundColor = '#f8f9fa';
-                debugDiv.style.fontSize = '12px';
-                debugDiv.style.marginTop = '10px';
-                
-                const costOverview = document.getElementById('cost-overview');
-                if (costOverview && costOverview.parentNode) {
-                    costOverview.parentNode.appendChild(debugDiv);
-                }
-            }
-            debugDiv.textContent = debugInfo;
             
             // Fetch current pricing information via AJAX
             fetch('Helper/get_pricing_info.php')
@@ -1481,23 +1464,6 @@ function calculateDefaultCosts(startDate, endDate, dayCountElement, totalCostEle
         // +1 weil wir auch den ersten Tag zählen (inklusiv)
         const days = diffDays + 1;
         
-        // DEBUGGING: Füge temporär ein div hinzu, das anzeigt, was berechnet wurde
-        let debugInfo = `Start: ${startDate}, End: ${endDate}, Tage: ${days}`;
-        let debugDiv = document.getElementById('price-debug-info');
-        if (!debugDiv) {
-            debugDiv = document.createElement('div');
-            debugDiv.id = 'price-debug-info';
-            debugDiv.style.padding = '8px';
-            debugDiv.style.backgroundColor = '#f8f9fa';
-            debugDiv.style.fontSize = '12px';
-            debugDiv.style.marginTop = '10px';
-            
-            const costOverview = document.getElementById('cost-overview');
-            if (costOverview && costOverview.parentNode) {
-                costOverview.parentNode.appendChild(debugDiv);
-            }
-        }
-        debugDiv.textContent = debugInfo;
         
         // Fetch current pricing information via AJAX
         fetch('Helper/get_pricing_info.php')
