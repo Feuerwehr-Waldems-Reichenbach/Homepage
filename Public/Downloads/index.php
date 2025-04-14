@@ -57,11 +57,23 @@
                     <div class="card-body">
                         <div class="row mb-3">
                             <div class="col-12 col-md-8">
-                                <h5 class="mbr-fonts-style display-7"><strong>Aufnahmeantrag</strong></h5>
-                                <p class="mbr-text mbr-fonts-style display-7">Formular für neue Mitglieder der Feuerwehr Reichenbach</p>
+                                <h5 class="mbr-fonts-style display-7"><strong>Aufnahmeantrag Förderverein</strong></h5>
+                                <p class="mbr-text mbr-fonts-style display-7">Formular für neue Mitglieder des Fördervereins der Freiwilligen Feuerwehr Reichenbach</p>
                             </div>
                             <div class="col-12 col-md-4 text-center text-md-end mt-3 mt-md-0">
                                 <a href="/Unterstuetzen/Datei/Aufnahmeantrag.pdf" class="btn btn-primary display-7" target="_blank">
+                                    <span class="mobi-mbri mobi-mbri-download mbr-iconfont mbr-iconfont-btn"></span>Herunterladen
+                                </a>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row mb-3">
+                            <div class="col-12 col-md-8">
+                                <h5 class="mbr-fonts-style display-7"><strong>Aufnahmeantrag Kinderfeuerwehr</strong></h5>
+                                <p class="mbr-text mbr-fonts-style display-7">Formular für neue Mitglieder der Kinderfeuerwehr der Freiwilligen Feuerwehr Reichenbach</p>
+                            </div>
+                            <div class="col-12 col-md-4 text-center text-md-end mt-3 mt-md-0">
+                                <a href="/Mitmachen/Datei/Aufnahmeantrag%20Kinderfeuerwehr%2013.04.2025.pdf" class="btn btn-primary display-7" target="_blank">
                                     <span class="mobi-mbri mobi-mbri-download mbr-iconfont mbr-iconfont-btn"></span>Herunterladen
                                 </a>
                             </div>
@@ -93,7 +105,7 @@
                         <hr>
                         <div class="row mb-3">
                             <div class="col-12 col-md-8">
-                                <h5 class="mbr-fonts-style display-7"><strong>Feuerwehr Satzung</strong></h5>
+                                <h5 class="mbr-fonts-style display-7"><strong>Satzung Feuerwehr Waldems</strong></h5>
                                 <p class="mbr-text mbr-fonts-style display-7">Aktuelle Feuerwehr Satzung nach GVE vom 16.09.2024 Waldems</p>
                             </div>
                             <div class="col-12 col-md-4 text-center text-md-end mt-3 mt-md-0">
@@ -105,8 +117,8 @@
                         <hr>
                         <div class="row mb-3">
                             <div class="col-12 col-md-8">
-                                <h5 class="mbr-fonts-style display-7"><strong>Vereinssatzung Förderverein</strong></h5>
-                                <p class="mbr-text mbr-fonts-style display-7">Satzung des Fördervereins der Freiwilligen Feuerwehr Reichenbach</p>
+                                <h5 class="mbr-fonts-style display-7"><strong>Satzung Förderverein</strong></h5>
+                                <p class="mbr-text mbr-fonts-style display-7">Satzung des Fördervereins der Freiwilligen Feuerwehr Waldems-Reichenbach e.V.</p>
                             </div>
                             <div class="col-12 col-md-4 text-center text-md-end mt-3 mt-md-0">
                                 <a href="/Satzung/Datei/Vereinssatzung%20des%20Fördervereins%20der%20Freiwilligen%20Feuerwehr%20.pdf" class="btn btn-primary display-7" target="_blank">
