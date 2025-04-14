@@ -30,13 +30,16 @@
     .flyer-item {
       margin-bottom: 30px;
       text-align: center;
+      height: 100%;
     }
     .flyer-item img {
-      max-width: 100%;
-      height: auto;
+      width: 100%;
+      height: 500px; /* Feste Höhe für alle Flyer */
+      object-fit: contain; /* Behält das Seitenverhältnis bei */
       border-radius: 8px;
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
       transition: transform 0.3s ease;
+      background-color:rgba(0, 0, 0, 0); /* Hintergrundfarbe für transparente Bereiche */
     }
     .flyer-item img:hover {
       transform: scale(1.03);
@@ -60,6 +63,12 @@
       color: white;
       text-decoration: none;
     }
+    .year-section {
+      margin-top: 40px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #dc3545;
+      padding-bottom: 10px;
+    }
   </style>
   
 </head>
@@ -81,45 +90,79 @@ include_once( $assetsPath . 'includes/navbar.php');
             </div>
         </div>
         
-        <div class="row">
-            <?php
-            // Ordner mit Flyern
-            $dir = './';
-            
-            // Alle Dateien im Ordner auslesen
-            $files = scandir($dir);
-            
-            // Anzahl gefundener Flyer
-            $flyerCount = 0;
-            
-            // Alle Dateien durchgehen
-            foreach($files as $file) {
-                // Nur jpg und png Dateien verarbeiten
-                $extension = strtolower(pathinfo($file, PATHINFO_EXTENSION));
-                if($extension == 'jpg' || $extension == 'png') {
-                    $flyerCount++;
-                    
-                    // Titel aus dem Dateinamen extrahieren
-                    $filename = pathinfo($file, PATHINFO_FILENAME);
-                    $title = str_replace(['Flyer-', '-'], ['', ' '], $filename);
-                    
-                    // HTML für den Flyer ausgeben
+        <?php
+        // Ordner mit Flyern
+        $dir = './';
+        
+        // Alle Dateien im Ordner auslesen
+        $files = scandir($dir);
+        
+        // Array für sortierte Flyer nach Jahr
+        $flyersByYear = [];
+        
+        // Anzahl gefundener Flyer
+        $flyerCount = 0;
+        
+        // Alle Dateien durchgehen und nach Jahr sortieren
+        foreach($files as $file) {
+            // Nur jpg und png Dateien verarbeiten
+            $extension = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+            if($extension == 'jpg' || $extension == 'png') {
+                $flyerCount++;
+                
+                // Titel aus dem Dateinamen extrahieren
+                $filename = pathinfo($file, PATHINFO_FILENAME);
+                $title = str_replace(['Flyer-', '-'], ['', ' '], $filename);
+                
+                // Jahr aus dem Titel extrahieren
+                // Annahme: Das Jahr ist entweder am Anfang oder am Ende des Titels im Format YYYY
+                if (preg_match('/\b(20\d{2})\b/', $title, $matches)) {
+                    $year = $matches[1];
+                } else {
+                    $year = "Undatiert"; // Falls kein Jahr gefunden wurde
+                }
+                
+                // Flyer zum entsprechenden Jahr hinzufügen
+                $flyersByYear[$year][] = [
+                    'file' => $file,
+                    'title' => $title
+                ];
+            }
+        }
+        
+        // Jahre absteigend sortieren (neueste zuerst)
+        krsort($flyersByYear);
+        
+        // Falls keine Flyer gefunden wurden
+        if($flyerCount == 0) {
+            echo '<div class="row"><div class="col-12 text-center">';
+            echo '<p style="color: white;">Aktuell sind keine Flyer verfügbar.</p>';
+            echo '</div></div>';
+        } else {
+            // Für jedes Jahr die Flyer anzeigen
+            foreach($flyersByYear as $year => $flyers) {
+                echo '<div class="row">';
+                echo '<div class="col-12">';
+                echo '<h3 class="year-section" style="color: white;">' . $year . '</h3>';
+                echo '</div>';
+                echo '</div>';
+                
+                echo '<div class="row">';
+                foreach($flyers as $flyer) {
                     echo '<div class="col-md-4 flyer-item">';
-                    echo '<img src="' . $file . '" alt="' . $title . '">';
-                    echo '<h5 class="flyer-title">' . $title . '</h5>';
-                    echo '<a href="' . $file . '" download class="download-btn">Download</a>';
+                    echo '<div class="card h-100">';
+                    echo '<a href="' . $flyer['file'] . '" target="_blank">';
+                    echo '<img src="' . $flyer['file'] . '" alt="' . $flyer['title'] . '">';
+                    echo '</a>';
+                    echo '<h5 class="flyer-title" style="color: white;">' . $flyer['title'] . '</h5>';
+                    echo '<a href="' . $flyer['file'] . '" download class="download-btn">Download</a>';
+                    echo '</div>';
                     echo '</div>';
                 }
-            }
-            
-            // Falls keine Flyer gefunden wurden
-            if($flyerCount == 0) {
-                echo '<div class="col-12 text-center">';
-                echo '<p>Aktuell sind keine Flyer verfügbar.</p>';
                 echo '</div>';
             }
-            ?>
-        </div>
+        }
+        ?>
     </div>
 </section>
 
