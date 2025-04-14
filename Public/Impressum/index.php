@@ -50,7 +50,7 @@
             <div class="item features-without-image col-12">
               <div class="item-wrapper">
                 <h4 class="mbr-section-subtitle mbr-fonts-style mb-3 display-5"><strong>Vertreten durch:</strong></h4>
-                <p class="mbr-text mbr-fonts-style display-7">Herr Sascha Eder, 1. Vorsitzender<br>Herr Stephan Debus, 2. Vorsitzender</p>
+                <p class="mbr-text mbr-fonts-style display-7">Herr Sascha Eder, 1. Vorsitzender, Telefon: <a href="javascript:void(0)" class="phone-protect" style="color: blue; text-decoration: underline;" data-encoded="<?php echo base64_encode('+49-151-54846375'); ?>">Telefonnummer anzeigen</a><br>Herr Stephan Debus, 2. Vorsitzender</p>
               </div>
             </div>
             <div class="item features-without-image col-12">
@@ -58,7 +58,7 @@
                 <h4 class="mbr-section-subtitle mbr-fonts-style mb-3 display-5">
                   <strong>Kontakt:</strong>
                 </h4>
-                <p class="mbr-text mbr-fonts-style display-7">E-Mail: <a href="mailto:info@feuerwehr-waldems-reichenbach.de" class="text-secondary">info@feuerwehr-waldems-reichenbach.de</a><br></p>
+                <p class="mbr-text mbr-fonts-style display-7">E-Mail: <a href="javascript:void(0)" class="email-protect" style="color: blue; text-decoration: underline;" data-encoded="<?php echo base64_encode('info@feuerwehr-waldems-reichenbach.de'); ?>">E-Mail anzeigen</a><br></p>
               </div>
             </div><div class="item features-without-image col-12">
               <div class="item-wrapper">
@@ -102,6 +102,31 @@
 
 <?php include '../assets/includes/socialFooter.php'; ?>
 <?php include '../assets/includes/footer.php'; ?>
+
+<!-- JavaScript für E-Mail und Telefon Schutz -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // E-Mail Schutz
+    document.querySelectorAll('.email-protect').forEach(function(element) {
+        element.addEventListener('click', function() {
+            var encoded = this.getAttribute('data-encoded');
+            var decoded = atob(encoded);
+            this.textContent = decoded;
+            this.removeEventListener('click', arguments.callee);
+        });
+    });
+    
+    // Telefon Schutz
+    document.querySelectorAll('.phone-protect').forEach(function(element) {
+        element.addEventListener('click', function() {
+            var encoded = this.getAttribute('data-encoded');
+            var decoded = atob(encoded);
+            this.textContent = decoded;
+            this.removeEventListener('click', arguments.callee);
+        });
+    });
+});
+</script>
 
 </body>
 </html>
