@@ -51,7 +51,6 @@
               <div class="item-wrapper">
                 <h4 class="mbr-section-subtitle mbr-fonts-style mb-3 display-5"><strong>Vertreten durch:</strong></h4>
                 <p class="mbr-text mbr-fonts-style display-7">Herr Sascha Eder, 1. Vorsitzender<br>Herr Stephan Debus, 2. Vorsitzender</p>
-                <p class="mbr-text mbr-fonts-style display-7">Wehrführer der Freiwilligen Feuerwehr Reichenbach:<br>Herr Marc Schenk</p>
               </div>
             </div>
             <div class="item features-without-image col-12">
