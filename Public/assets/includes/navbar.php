@@ -1,9 +1,13 @@
 <!-- Bootstrap Icons -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+<?php
+// Basispfad für Assets definieren
+$baseAssetsPath = isset($assetsPath) ? $assetsPath : '../assets';
+?>
 <!-- Socicon CSS -->
-<link rel="stylesheet" href="../assets/socicon/css/styles.css">
+<link rel="stylesheet" href="<?php echo $baseAssetsPath; ?>/socicon/css/styles.css">
 <!-- Dropdown CSS -->
-<link rel="stylesheet" href="../assets/dropdown/css/style.css">
+<link rel="stylesheet" href="<?php echo $baseAssetsPath; ?>/dropdown/css/style.css">
 
 <?php
 $menu = [
@@ -72,7 +76,7 @@ function renderMenu($items, $level = 0) {
         <div class="navbar-brand">
             <span class="navbar-logo">
                 <a href="/">
-                    <img src="../assets/images/gravatar-logo-dunkel-1.webp" alt="Feuerwehr Reichenbach" style="height: 3rem;">
+                    <img src="<?php echo $baseAssetsPath; ?>/images/gravatar-logo-dunkel-1.webp" alt="Feuerwehr Reichenbach" style="height: 3rem;">
                 </a>
             </span>
             <span class="navbar-caption-wrap">

@@ -65,7 +65,12 @@
 </head>
 <body>
   
-<?php include '../../assets/includes/navbar.php'; ?>
+
+<?php
+$assetsPath = '../../assets/';
+
+include_once( $assetsPath . 'includes/navbar.php');
+?>
 
 <!-- Flyer auswahl Seite-->
 <section class="mbr-section content5 cid-u8NdAjmIcn flyer-gallery" id="content5-1">
