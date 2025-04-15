@@ -190,6 +190,17 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="col mb-4">
+                                <div class="p-3 border rounded h-100">
+                                    <h5 class="mbr-fonts-style display-7"><strong>Grillhütte</strong></h5>
+                                    <p class="mbr-text mbr-fonts-style display-7 mb-3">Nutzungsbedingungen der Grillhütte</p>
+                                    <div class="text-end mt-auto">
+                                        <a href="/Grillhuette/Reservierung/Nutzungsbedingungen/" class="btn btn-secondary display-7">
+                                            <span class="mobi-mbri mobi-mbri-right mbr-iconfont mbr-iconfont-btn"></span>Zur Seite
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
