@@ -1341,9 +1341,9 @@ ORDER BY Anzahl DESC"
     echo '<h2 class="statistik-title">Einsatzstatistik ' . htmlspecialchars($jahr) . '</h2>';
     
     // Jahr-Auswahl-Formular
-    echo '<form class="statistik-jahr-form" method="get">';
+    echo '<form class="statistik-jahr-form" method="get" id="statistik-jahr-form">';
     echo '<label for="statistik_jahr">Jahr auswählen:</label>';
-    echo '<select class="statistik-jahr-select" name="statistik_jahr" id="statistik_jahr">';
+    echo '<select class="statistik-jahr-select" name="statistik_jahr" id="statistik_jahr" onchange="document.getElementById(\'statistik-jahr-form\').submit();">';
     
     foreach ($verfuegbareJahre as $verfuegbaresJahr) {
         $selected = ($verfuegbaresJahr == $jahr) ? 'selected' : '';
@@ -1362,7 +1362,6 @@ ORDER BY Anzahl DESC"
     // Füge Anker-Hash hinzu, um zur Statistik zu springen
     echo '<input type="hidden" name="anchor" value="einsatz-statistik-container">';
     
-    echo '<button type="submit" class="statistik-jahr-button">Anzeigen</button>';
     echo '</form>';
     echo '</div>';
     
