@@ -337,7 +337,7 @@
   <script src="assets/dropdown/js/navbar-dropdown.js"></script>
   <script src="assets/theme/js/script.js"></script>
   <script src="assets/parallax/jarallax.js"></script>
-  <script>
+  <script src="assets/scrollgallery/scroll-gallery.js"></script>
     // Initialisiere Jarallax nach dem Laden der Seite
     document.addEventListener("DOMContentLoaded", function() {
       jarallax(document.querySelectorAll('.jarallax'), {
