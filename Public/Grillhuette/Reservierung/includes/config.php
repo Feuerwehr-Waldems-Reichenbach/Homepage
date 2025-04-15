@@ -191,7 +191,7 @@ if (file_exists($emailPath)) {
     // Fallback lokalen emailSender laden
     require_once __DIR__ . '/Email/emailSender.php';
 }
-
+setActiveEmailClient('grillhuette');
 // Hilfsfunktionen
 
 // CSRF-Token generieren

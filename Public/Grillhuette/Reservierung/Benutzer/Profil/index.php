@@ -139,7 +139,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Daten per E-Mail senden
         if (isset($_POST['send_user_data'])) {
             require_once BASE_PATH . '/Private/Email/emailSender.php';
-            
+            setActiveEmailClient('grillhuette');
             // Reservierungen des Benutzers abrufen
             require_once '../../includes/Reservation.php';
             $reservation = new Reservation();

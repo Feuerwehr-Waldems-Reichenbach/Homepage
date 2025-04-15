@@ -1,11 +1,6 @@
 <?php
-// Stammverzeichnis definieren
-$stepsBack = 2;
-$basePath = __DIR__;
-for ($i = 0; $i < $stepsBack; $i++) {
-    $basePath = dirname($basePath);
-}
-define('BASE_PATH_DB', $basePath);
+// Basisverzeichnis auf zwei Ebenen über diesem Script
+define('BASE_PATH_DB', dirname(__DIR__, 2));
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -14,29 +9,45 @@ require BASE_PATH_DB . '/Private/Email/phpmailer/src/Exception.php';
 require BASE_PATH_DB . '/Private/Email/phpmailer/src/PHPMailer.php';
 require BASE_PATH_DB . '/Private/Email/phpmailer/src/SMTP.php';
 
-function getSMTPConfig() {
-    $config = parse_ini_file(BASE_PATH_DB . '/Private/Initializations/smtpEmail_Config.ini');
+// Aktiver E-Mail-Client (Standard: default)
+$GLOBALS['ACTIVE_EMAIL_CLIENT'] = 'default';
+
+function setActiveEmailClient(string $client): void {
+    $GLOBALS['ACTIVE_EMAIL_CLIENT'] = $client;
+}
+
+function getActiveEmailClient(): string {
+    return $GLOBALS['ACTIVE_EMAIL_CLIENT'] ?? 'default';
+}
+
+function getSMTPConfig(): array {
+    $client = getActiveEmailClient();
+    $configPath = BASE_PATH_DB . "/Private/Initializations/smtpEmail_{$client}.ini";
+    if (!file_exists($configPath)) {
+        throw new Exception("Die Konfigurationsdatei für den Client '{$client}' wurde nicht gefunden.");
+    }
+    $config = parse_ini_file($configPath);
     if ($config === false) {
-        throw new Exception("Fehler beim Einlesen der Konfigurationsdatei.");
+        throw new Exception("Fehler beim Einlesen der Konfigurationsdatei für '{$client}'.");
     }
     return $config;
 }
 
-function getEmailSignature() {
-    $signature = file_get_contents(BASE_PATH_DB . '/Private/Email/signatur/emailSignature.html');
+function getEmailSignature(): string {
+    $signaturePath = BASE_PATH_DB . '/Private/Email/signatur/emailSignature.html';
+    $signature = file_get_contents($signaturePath);
     if ($signature === false) {
         throw new Exception("Fehler beim Einlesen der Signaturdatei.");
     }
     return $signature;
 }
 
-function sendEmail($to, $subject, $body) {
+function sendEmail(string $to, string $subject, string $body): array {
     try {
         $mail = new PHPMailer(true);
         $smtpConfig = getSMTPConfig();
         $signature = getEmailSignature();
 
-        // Server settings
         $mail->isSMTP();
         $mail->Host = $smtpConfig['Host'];
         $mail->SMTPAuth = true;
@@ -45,18 +56,13 @@ function sendEmail($to, $subject, $body) {
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
         $mail->Port = $smtpConfig['Port'];
 
-        // Charset settings
         $mail->CharSet = 'UTF-8';
         $mail->Encoding = 'base64';
 
-        // Recipients
-        $mail->setFrom($smtpConfig['Email'], 'Feuerwehr Waldems-Reichenbach');
+        $mail->setFrom($smtpConfig['Email'], $smtpConfig['Absendername'] ?? 'Feuerwehr Waldems-Reichenbach');
         $mail->addAddress($to);
-
-        // Attachments
         $mail->addEmbeddedImage(BASE_PATH_DB . '/Private/Email/signatur/logo.png', 'logo');
 
-        // Content
         $mail->isHTML(true);
         $mail->Subject = $subject;
         $mail->Body = $body . $signature;
@@ -69,7 +75,7 @@ function sendEmail($to, $subject, $body) {
     } catch (Exception $e) {
         return [
             'success' => false,
-            'message' => 'E-Mail konnte nicht gesendet werden. Bitte versuchen Sie es später erneut.'
+            'message' => 'E-Mail konnte nicht gesendet werden: ' . $e->getMessage()
         ];
     }
 }
