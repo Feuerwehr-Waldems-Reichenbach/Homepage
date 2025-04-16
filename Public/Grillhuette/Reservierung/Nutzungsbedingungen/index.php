@@ -17,19 +17,19 @@ require_once '../includes/header.php';
                 </div>
                 <div class="card-body">
                     <h2 class="h4">1. Allgemeines</h2>
-                    <p>Die nachfolgenden Nutzungsbedingungen regeln die Nutzung des Reservierungssystems für die Grillhütte Waldems Reichenbach (nachfolgend "Betreiber" genannt) und stellen einen verbindlichen Vertrag zwischen Ihnen als Nutzer (nachfolgend "Nutzer" genannt) und dem Betreiber dar. Mit der Registrierung und Nutzung des Reservierungssystems erkennen Sie diese Nutzungsbedingungen vollständig an.</p>
+                    <p>Die nachfolgenden Nutzungsbedingungen regeln die Nutzung des Reservierungssystems für die Grillhütte Waldems Reichenbach (nachfolgend "Betreiber" genannt) und stellen eine vertragliche Vereinbarung zwischen Ihnen als Nutzer (nachfolgend "Nutzer" genannt) und dem Betreiber dar. Mit der Registrierung und Nutzung des Reservierungssystems erkennen Sie diese Nutzungsbedingungen vollständig an.</p>
                     <p>Der Betreiber bietet über das Reservierungssystem die Möglichkeit, die Grillhütte Waldems Reichenbach zu reservieren und zu nutzen.</p>
                     
                     <h2 class="h4">2. Registrierung und Benutzerkonto</h2>
                     <p>Für die Nutzung des Reservierungssystems ist eine Registrierung erforderlich. Der Nutzer verpflichtet sich, bei der Registrierung wahrheitsgemäße, genaue, aktuelle und vollständige Angaben zu seiner Person zu machen und diese bei Änderungen unverzüglich zu aktualisieren.</p>
                     <p>Der Nutzer ist für die Geheimhaltung seiner Zugangsdaten (E-Mail und Passwort) verantwortlich und hat sicherzustellen, dass diese nicht in die Hände Dritter gelangen. Jede unter dem Benutzerkonto vorgenommene Handlung wird dem Nutzer zugerechnet. Bei Verdacht auf Missbrauch des Benutzerkontos ist der Nutzer verpflichtet, den Betreiber unverzüglich zu informieren.</p>
-                    <p>Der Betreiber behält sich das Recht vor, Benutzerkonten ohne Vorankündigung zu sperren oder zu löschen, wenn der begründete Verdacht besteht, dass gegen diese Nutzungsbedingungen oder geltendes Recht verstoßen wurde.</p>
+                    <p>Bei gravierenden Verstößen oder begründetem Verdacht auf Rechtsverletzungen behält sich der Betreiber das Recht vor, Benutzerkonten ohne Vorankündigung zu sperren oder zu löschen.</p>
                     <p>Das Erstellen von Reservierungen ohne ernsthaftes Nutzungsinteresse, sogenannte Spaß- oder Trollanfragen, ist ausdrücklich untersagt und kann zur sofortigen Sperrung des Benutzerkontos sowie gegebenenfalls zu Schadensersatzforderungen führen.</p>
                     
                     <h2 class="h4">3. Reservierungen</h2>
-                    <p>Die Anfrage einer Reservierung stellt ein Angebot des Nutzers dar. Eine Reservierung ist erst nach ausdrücklicher Bestätigung durch den Betreiber verbindlich. Der Betreiber behält sich das Recht vor, Reservierungsanfragen ohne Angabe von Gründen abzulehnen.</p>
+                    <p>Die Anfrage einer Reservierung stellt ein Angebot des Nutzers dar. Eine Reservierung ist erst nach ausdrücklicher Bestätigung durch den Betreiber verbindlich. Der Betreiber ist berechtigt, Reservierungsanfragen abzulehnen, insbesondere bei Überschneidungen oder organisatorischen Gründen. Ein Anspruch auf Reservierung besteht nicht.</p>
                     <p>Die Kosten für die Nutzung der Grillhütte richten sich nach der aktuellen Preisliste. Für Mitglieder der Feuerwehr Waldems Reichenbach können Sonderkonditionen gelten.</p>
-                    <p>Eine Stornierung ist bis zu 2 Tage vor dem Reservierungstermin kostenlos möglich. Bei Stornierungen, die weniger als 2 Tage vor dem Termin erfolgen, kann der volle Reservierungspreis in Rechnung gestellt werden, es sei denn, es liegt ein wichtiger Grund vor.</p>
+                    <p>Es besteht die Möglichkeit, eine Reservierung kostenfrei bis zu 48 Stunden vor dem geplanten Termin zu stornieren. Stornierungen, die innerhalb von 48 Stunden vor dem vereinbarten Termin vorgenommen werden, können zur Berechnung des gesamten Reservierungsbetrags führen, sofern keine maßgeblichen Gründe vorliegen.</p>
                     <p>In begründeten Ausnahmefällen (z.B. Krankheit, Todesfall in der Familie) kann der Betreiber von der Erhebung der Stornierungsgebühren absehen.</p>
                     <p>Schlechte Wetterbedingungen (wie z.B. Regen, Kälte oder Hitze) berechtigen nicht zur kostenlosen Stornierung oder Erstattung des Nutzungsentgelts.</p>
                     
@@ -43,7 +43,7 @@ require_once '../includes/header.php';
                         <li>Bei nicht ordnungsgemäßer Müllentsorgung</li>
                     </ul>
                     <p>Die Höhe des einbehaltenen Kautionsbetrags richtet sich nach dem entstandenen Schaden bzw. dem Aufwand zur Beseitigung von Mängeln. Der Betreiber ist verpflichtet, dem Nutzer eine Aufstellung über die einbehaltenen Beträge zu übermitteln.</p>
-                    <p>Übersteigt der entstandene Schaden die Höhe der Kaution, ist der Nutzer verpflichtet, den darüber hinausgehenden Betrag zu erstatten. Der Betreiber wird in diesem Fall eine detaillierte Schadensdokumentation mit Kostenaufstellung vorlegen. Die Zahlung des Schadensersatzes hat innerhalb von 14 Tagen nach Zugang der Schadensmeldung zu erfolgen.</p>
+                    <p>Übersteigt der entstandene Schaden die Höhe der Kaution, ist der Nutzer verpflichtet, den darüber hinausgehenden Betrag zu erstatten. Der Betreiber wird in diesem Fall eine detaillierte Schadensdokumentation mit Kostenaufstellung vorlegen. Die Zahlung des Schadensersatzes hat innerhalb von 30 Tagen nach Zugang der Schadensmeldung zu erfolgen.</p>
                     <p>Bei gravierenden Schäden oder vorsätzlichen Beschädigungen behält sich der Betreiber das Recht vor, rechtliche Schritte einzuleiten und Anzeige zu erstatten.</p>
                     
                     <h2 class="h4">5. Verhaltensregeln und Nutzungsbedingungen der Grillhütte</h2>
@@ -60,10 +60,10 @@ require_once '../includes/header.php';
                     <p>Der Betreiber oder seine Beauftragten haben das Recht, die Einhaltung dieser Regeln zu überprüfen und bei schwerwiegenden Verstößen die Nutzung vorzeitig zu beenden. In diesem Fall besteht kein Anspruch auf Rückerstattung des Nutzungsentgelts.</p>
                     
                     <h2 class="h4">6. Haftung und Versicherung</h2>
-                    <p>Der Betreiber haftet nicht für Schäden, die durch höhere Gewalt, durch das Verhalten Dritter oder durch leicht fahrlässiges Verhalten des Betreibers oder seiner Erfüllungsgehilfen entstehen, sofern diese keine vertragswesentlichen Pflichten betreffen.</p>
-                    <p>Die Nutzer haften für alle Schäden, die sie selbst, ihre Gäste oder sonstige Dritte im Zusammenhang mit der Nutzung an den Einrichtungen, dem Inventar oder dem Grundstück der Grillhütte verursachen. Der Nutzer stellt den Betreiber von allen Ansprüchen Dritter frei, die im Zusammenhang mit der Nutzung entstehen könnten.</p>
-                    <p>Es wird dringend empfohlen, dass der Nutzer für die Dauer der Nutzung eine Privathaftpflichtversicherung besitzt, die etwaige Schäden abdeckt. Auf Verlangen des Betreibers ist der Nachweis über eine solche Versicherung zu erbringen.</p>
-                    <p>Für mitgebrachte Gegenstände und Wertgegenstände übernimmt der Betreiber keine Haftung.</p>
+                    <p>Der Betreiber haftet grundsätzlich nur bei Vorsatz oder grober Fahrlässigkeit. Für einfache Fahrlässigkeit haftet der Betreiber nur bei Verletzung vertragswesentlicher Pflichten, d.h. Pflichten, die für die ordnungsgemäße Erfüllung des Vertrages wesentlich sind und auf deren Einhaltung der Nutzer regelmäßig vertrauen darf (z.B. Bereitstellung der reservierten Grillhütte in nutzungsfähigem Zustand). In diesen Fällen ist die Haftung jedoch auf den vertragstypischen, vorhersehbaren Schaden begrenzt. Die Haftungsbeschränkungen gelten nicht für Schäden aus Verletzungen von Leben, Körper oder Gesundheit oder bei gesetzlich vorgeschriebener Haftung (z.B. Produkthaftungsgesetz).</p>
+                    <p>Der Nutzer haftet gegenüber dem Betreiber für alle Schäden, die er selbst, seine Gäste oder sonstige mit ihm in Verbindung stehende Personen im Rahmen der Nutzung an der Grillhütte, deren Inventar oder dem Grundstück verursachen. Er stellt den Betreiber zudem von allen Ansprüchen Dritter frei, die aufgrund seiner Nutzung entstehen könnten.</p>
+                    <p>Dem Nutzer wird dringend empfohlen, eine Privathaftpflichtversicherung abzuschließen, die Schäden während der Nutzung der Grillhütte abdeckt. Das Fehlen einer solchen Versicherung schließt die Nutzung der Grillhütte jedoch nicht aus. Der Betreiber kann vom Nutzer verlangen, einen entsprechenden Versicherungsnachweis vorzulegen.</p>
+                    <p>Für mitgebrachte Gegenstände und Wertgegenstände des Nutzers übernimmt der Betreiber keine Haftung.</p>
                     
                     <h2 class="h4">7. Datenschutz</h2>
                     <p>Der Betreiber erhebt und verarbeitet personenbezogene Daten gemäß den Bestimmungen der Datenschutz-Grundverordnung (DSGVO) und des Bundesdatenschutzgesetzes (BDSG).</p>
@@ -74,7 +74,7 @@ require_once '../includes/header.php';
                         <li>Telefonnummer</li>
                         <li>Reservierungsdetails (Datum, Uhrzeit, Dauer)</li>
                     </ul>
-                    <p>Diese Daten werden ausschließlich zum Zweck der Abwicklung des Vertragsverhältnisses gespeichert und verarbeitet. Eine Weitergabe an Dritte erfolgt nur, soweit dies zur Vertragserfüllung notwendig ist oder gesetzliche Pflichten dies erfordern.</p>
+                    <p>Diese Daten werden ausschließlich zum Zweck der Abwicklung des Vertragsverhältnisses gespeichert und verarbeitet. Eine Weitergabe an Dritte erfolgt nur, soweit dies zur erfüllung gesetzlicher Pflichten erforderlich ist.</p>
                     <p>Der Nutzer hat das Recht auf Auskunft, Berichtigung, Löschung und Einschränkung der Verarbeitung seiner personenbezogenen Daten sowie das Recht auf Datenübertragbarkeit und das Recht auf Beschwerde bei einer Aufsichtsbehörde.</p>
                     <p>Detaillierte Informationen zum Datenschutz finden Sie in unserer <a href="/Datenschutz" target="_blank">Datenschutzerklärung</a>.</p>
                     
