@@ -1,16 +1,13 @@
 <?php
 require_once '../../includes/config.php';
 require_once '../../includes/User.php';
-
 // Wenn der Benutzer bereits angemeldet ist, weiterleiten
 if (isset($_SESSION['user_id'])) {
     header('Location: ' . getRelativePath('home'));
     exit;
 }
-
 // Token aus der URL holen
 $token = isset($_GET['token']) ? trim($_GET['token']) : '';
-
 // Validierung
 if (empty($token)) {
     $_SESSION['flash_message'] = 'Ungültiger Reset-Link.';
@@ -18,7 +15,6 @@ if (empty($token)) {
     header('Location: ' . getRelativePath('Benutzer/Anmelden'));
     exit;
 }
-
 // POST-Anfrage verarbeiten
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // CSRF-Token überprüfen
@@ -27,7 +23,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         $password = isset($_POST['password']) ? $_POST['password'] : '';
         $password_confirm = isset($_POST['password_confirm']) ? $_POST['password_confirm'] : '';
-        
         // Validierung
         $errors = [];
         if (empty($password)) {
@@ -39,16 +34,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $errors = array_merge($errors, $passwordErrors);
             }
         }
-        
         if ($password !== $password_confirm) {
             $errors[] = 'Die Passwörter stimmen nicht überein.';
         }
-        
         // Wenn keine Fehler, Passwort zurücksetzen
         if (empty($errors)) {
             $user = new User();
             $result = $user->resetPassword($token, $password);
-            
             if ($result['success']) {
                 $_SESSION['reset_success'] = true;
             } else {
@@ -58,33 +50,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['reset_error'] = implode('<br>', $errors);
         }
     }
-    
     // PRG-Muster: Nach POST-Anfrage zurück zur selben Seite weiterleiten mit dem Token
     header('Location: ' . getRelativePath('Benutzer/Passwort-zuruecksetzen') . '?token=' . urlencode($token));
     exit;
 }
-
 // Temporäre Daten aus der Session auslesen und entfernen
 $error = '';
 $success = false;
-
 if (isset($_SESSION['reset_error'])) {
     $error = $_SESSION['reset_error'];
     unset($_SESSION['reset_error']);
 }
-
 if (isset($_SESSION['reset_success'])) {
     $success = true;
     unset($_SESSION['reset_success']);
 }
-
 // Titel für die Seite
 $pageTitle = 'Passwort zurücksetzen';
-
 // Header einbinden
 require_once '../../includes/header.php';
 ?>
-
 <div class="row justify-content-center">
     <div class="col-md-6">
         <div class="card">
@@ -105,10 +90,8 @@ require_once '../../includes/header.php';
                             <?php echo $error; ?>
                         </div>
                     <?php endif; ?>
-                    
                     <form method="post">
                         <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
-                        
                         <div class="mb-3">
                             <label for="password" class="form-label">Neues Passwort</label>
                             <div class="input-group">
@@ -117,19 +100,19 @@ require_once '../../includes/header.php';
                                     <i class="bi bi-eye"></i>
                                 </button>
                             </div>
-                            <div class="form-text">Mindestens 8 Zeichen mit Groß- und Kleinbuchstaben, Zahlen und mindestens einem Sonderzeichen.</div>
+                            <div class="form-text">Mindestens 8 Zeichen mit Groß- und Kleinbuchstaben, Zahlen und mindestens
+                                einem Sonderzeichen.</div>
                         </div>
-                        
                         <div class="mb-3">
                             <label for="password_confirm" class="form-label">Passwort bestätigen</label>
                             <div class="input-group">
-                                <input type="password" class="form-control" id="password_confirm" name="password_confirm" required>
+                                <input type="password" class="form-control" id="password_confirm" name="password_confirm"
+                                    required>
                                 <button class="btn btn-outline-secondary" type="button" id="togglePasswordConfirm">
                                     <i class="bi bi-eye"></i>
                                 </button>
                             </div>
                         </div>
-                        
                         <button type="submit" class="btn btn-primary">Passwort zurücksetzen</button>
                     </form>
                 <?php endif; ?>
@@ -137,31 +120,26 @@ require_once '../../includes/header.php';
         </div>
     </div>
 </div>
-
 <script nonce="<?php echo $cspNonce; ?>">
-document.addEventListener('DOMContentLoaded', function() {
-    // Funktion für den Toggle-Button
-    function setupPasswordToggle(buttonId, passwordId) {
-        const toggleButton = document.querySelector('#' + buttonId);
-        const passwordField = document.querySelector('#' + passwordId);
-        
-        if (toggleButton && passwordField) {
-            toggleButton.addEventListener('click', function() {
-                // Passworttyp umschalten
-                const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
-                passwordField.setAttribute('type', type);
-                
-                // Icon umschalten
-                this.querySelector('i').classList.toggle('bi-eye');
-                this.querySelector('i').classList.toggle('bi-eye-slash');
-            });
+    document.addEventListener('DOMContentLoaded', function () {
+        // Funktion für den Toggle-Button
+        function setupPasswordToggle(buttonId, passwordId) {
+            const toggleButton = document.querySelector('#' + buttonId);
+            const passwordField = document.querySelector('#' + passwordId);
+            if (toggleButton && passwordField) {
+                toggleButton.addEventListener('click', function () {
+                    // Passworttyp umschalten
+                    const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+                    passwordField.setAttribute('type', type);
+                    // Icon umschalten
+                    this.querySelector('i').classList.toggle('bi-eye');
+                    this.querySelector('i').classList.toggle('bi-eye-slash');
+                });
+            }
         }
-    }
-    
-    // Beide Passwortfelder einrichten
-    setupPasswordToggle('togglePassword', 'password');
-    setupPasswordToggle('togglePasswordConfirm', 'password_confirm');
-});
+        // Beide Passwortfelder einrichten
+        setupPasswordToggle('togglePassword', 'password');
+        setupPasswordToggle('togglePasswordConfirm', 'password_confirm');
+    });
 </script>
-
-<?php require_once '../../includes/footer.php'; ?> 
+<?php require_once '../../includes/footer.php'; ?>

@@ -9,8 +9,6 @@
   <link rel="shortcut icon" href="../assets/images/gravatar-logo-dunkel.jpg" type="image/x-icon">
   <meta name="description"
     content="Impressum der Freiwilligen Feuerwehr Reichenbach. Rechtliche Informationen und Kontaktdaten.">
-
-
   <title>Impressum</title>
   <link rel="stylesheet" href="../assets/web/assets/mobirise-icons2/mobirise2.css">
   <link rel="stylesheet" href="../assets/bootstrap/css/bootstrap.min.css">
@@ -28,21 +26,11 @@
   </noscript>
   <link rel="preload" as="style" href="../assets/mobirise/css/mbr-additional.css?v=utNEgj">
   <link rel="stylesheet" href="../assets/mobirise/css/mbr-additional.css?v=utNEgj" type="text/css">
-
-
-
-
 </head>
 
 <body>
-
   <?php include '../assets/includes/navbar.php'; ?>
-
   <section data-bs-version="5.1" class="article07 cid-u8NdAjmIcn" id="article07-1x">
-
-
-
-
     <div class="container">
       <div class="row justify-content-center">
         <div class="card col-md-12 col-lg-10">
@@ -161,11 +149,8 @@
       </div>
     </div>
   </section>
-
-
   <?php include '../assets/includes/socialFooter.php'; ?>
   <?php include '../assets/includes/footer.php'; ?>
-
 </body>
 
 </html>

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <!-- FFR Seite -->
   <meta charset="UTF-8">
@@ -26,6 +27,7 @@
   <link rel="preload" as="style" href="../assets/mobirise/css/mbr-additional.css?v=VoxXpG">
   <link rel="stylesheet" href="../assets/mobirise/css/mbr-additional.css?v=VoxXpG" type="text/css">
 </head>
+
 <body>
   <?php include '../assets/includes/navbar.php'; ?>
   <section data-bs-version="5.1" class="article07 cid-dataprotection-card" id="article07-1y">
@@ -409,4 +411,5 @@
   <?php include '../assets/includes/socialFooter.php'; ?>
   <?php include '../assets/includes/footer.php'; ?>
 </body>
+
 </html>

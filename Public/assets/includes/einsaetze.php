@@ -1,6 +1,5 @@
 <?php
 require_once dirname(__DIR__, 3) . '/Private/Database/Database.php';
-
 /**
  * Einsaetze-Modul - Zeigt Einsätze aus der Datenbank an mit Paginierung
  * 
@@ -13,7 +12,6 @@ require_once dirname(__DIR__, 3) . '/Private/Database/Database.php';
  *    - $jahr: Jahr für die Statistiken (optional, Standard: aktuelles Jahr)
  *    - $customClass: Benutzerdefinierte CSS-Klasse (optional)
  */
-
 /**
  * Zeigt Einsätze mit Paginierung an
  * 
@@ -21,53 +19,44 @@ require_once dirname(__DIR__, 3) . '/Private/Database/Database.php';
  * @param string $customClass Benutzerdefinierte CSS-Klasse für den Container
  * @return void
  */
-function showEinsaetze($itemsPerPage = 5, $customClass = '') {
+function showEinsaetze($itemsPerPage = 5, $customClass = '')
+{
     // Für mobile Geräte weniger Einträge pro Seite anzeigen
     $isMobile = isset($_SERVER['HTTP_USER_AGENT']) && preg_match('/(android|iphone|ipad|mobile)/i', $_SERVER['HTTP_USER_AGENT']);
     if ($isMobile && $itemsPerPage === 5) { // Nur überschreiben, wenn Standardwert verwendet wird
         $itemsPerPage = 3;
     }
-    
     // Aktuelle Seite aus der URL abrufen
-    $page = isset($_GET['einsatz_page']) ? (int)$_GET['einsatz_page'] : 1;
+    $page = isset($_GET['einsatz_page']) ? (int) $_GET['einsatz_page'] : 1;
     if ($page < 1) {
         $page = 1;
     }
-    
     // Datenbankobjekt holen
     $db = Database::getInstance();
     $conn = $db->getConnection();
-    
     // Gesamtzahl der Einsätze abrufen (nur die, die angezeigt werden sollen)
     $countSql = "SELECT COUNT(*) as total FROM einsatz WHERE Anzeigen = 1";
     $countStmt = $conn->prepare($countSql);
     $countStmt->execute();
     $totalItems = $countStmt->fetchColumn();
-    
     // Gesamtzahl der Seiten berechnen
     $totalPages = ceil($totalItems / $itemsPerPage);
-    
     // Sicherstellen, dass die aktuelle Seite nicht größer als die Gesamtzahl der Seiten ist
     if ($page > $totalPages && $totalPages > 0) {
         $page = $totalPages;
     }
-    
     // Offset für die SQL-Abfrage berechnen
     $offset = ($page - 1) * $itemsPerPage;
-    
     // Einsätze abrufen
     $sql = "SELECT * FROM einsatz 
             WHERE Anzeigen = 1 
             ORDER BY Datum DESC 
             LIMIT :limit OFFSET :offset";
-            
     $stmt = $conn->prepare($sql);
     $stmt->bindParam(':limit', $itemsPerPage, PDO::PARAM_INT);
     $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
     $stmt->execute();
-    
     $einsaetze = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
     // CSS-Stile für das Modul
     echo '<style>
         .einsaetze-container {
@@ -233,7 +222,6 @@ function showEinsaetze($itemsPerPage = 5, $customClass = '') {
             padding: 2rem;
             color: #6c757d;
         }
-        
         /* Mobile-specific styles */
         @media (max-width: 768px) {
             .einsaetze-container {
@@ -279,7 +267,6 @@ function showEinsaetze($itemsPerPage = 5, $customClass = '') {
                 justify-content: center;
             }
         }
-        
         /* Small mobile devices */
         @media (max-width: 480px) {
             .pagination a, .pagination span {
@@ -294,7 +281,6 @@ function showEinsaetze($itemsPerPage = 5, $customClass = '') {
                 min-width: 2.5rem;
             }
         }
-        
         /* Smartphone pagination styles */
         @media (max-width: 480px) {
             .pagination {
@@ -317,11 +303,9 @@ function showEinsaetze($itemsPerPage = 5, $customClass = '') {
             }
         }
     </style>';
-    
     // Container mit optionaler benutzerdefinierter Klasse
     echo '<div class="einsaetze-container ' . htmlspecialchars($customClass) . '">';
     echo '<h2 class="einsaetze-title">Einsätze</h2>';
-    
     if (empty($einsaetze)) {
         echo '<div class="no-einsaetze">Aktuell sind keine Einsätze verfügbar.</div>';
     } else {
@@ -330,11 +314,9 @@ function showEinsaetze($itemsPerPage = 5, $customClass = '') {
             $datumObj = new DateTime($einsatz['Datum']);
             $endZeitObj = new DateTime($einsatz['Endzeit']);
             $formattedDatum = $datumObj->format('d.m.Y - H:i');
-            
             // Einsatzdauer berechnen
             $dauer = $datumObj->diff($endZeitObj);
             $dauerText = '';
-            
             if ($dauer->d > 0) {
                 $dauerText .= $dauer->d . ' Tag' . ($dauer->d > 1 ? 'e' : '') . ', ';
             }
@@ -349,7 +331,6 @@ function showEinsaetze($itemsPerPage = 5, $customClass = '') {
             } else if (substr($dauerText, -2) == ', ') {
                 $dauerText = substr($dauerText, 0, -2);
             }
-            
             echo '<div class="einsatz-item">';
             echo '<div class="einsatz-header">';
             echo '<div class="einsatz-date">' . $formattedDatum . ' Uhr</div>';
@@ -360,18 +341,14 @@ function showEinsaetze($itemsPerPage = 5, $customClass = '') {
             }
             echo '</div>';
             echo '</div>';
-            
             echo '<div class="einsatz-sachverhalt">' . htmlspecialchars($einsatz['Sachverhalt']) . '</div>';
-            
             echo '<div class="einsatz-details">';
             echo '<div class="einsatz-ort"><i class="bi bi-geo-alt"></i> ' . htmlspecialchars($einsatz['Ort']) . '</div>';
             echo '<div class="einsatz-einheit"><i class="bi bi-people"></i> ' . htmlspecialchars($einsatz['Einheit']) . '</div>';
             echo '</div>';
-            
             echo '<div class="einsatz-duration">Einsatzdauer: ' . $dauerText . '</div>';
             echo '</div>';
         }
-        
         // Paginierung anzeigen, wenn mehr als eine Seite vorhanden ist
         if ($totalPages > 1) {
             // Aktuelle URL und Parameter abrufen
@@ -379,21 +356,18 @@ function showEinsaetze($itemsPerPage = 5, $customClass = '') {
             $path = $urlParts['path'] ?? '';
             $query = [];
             $containerId = 'einsaetze-container';
-            
             // Erkennung von Mobilgeräten/Smartphones
             $isMobile = isset($_SERVER['HTTP_USER_AGENT']) && preg_match('/(android|iphone|ipad|mobile)/i', $_SERVER['HTTP_USER_AGENT']);
             $isSmartphone = $isMobile && (
-                strpos($_SERVER['HTTP_USER_AGENT'], 'iPhone') !== false || 
+                strpos($_SERVER['HTTP_USER_AGENT'], 'iPhone') !== false ||
                 strpos($_SERVER['HTTP_USER_AGENT'], 'Android') !== false ||
                 (strpos($_SERVER['HTTP_USER_AGENT'], 'Mobile') !== false && strpos($_SERVER['HTTP_USER_AGENT'], 'iPad') === false)
             );
             $pageRange = $isMobile && !$isSmartphone ? 1 : 2; // Auf Tablets nur 1 Seite links/rechts anzeigen
-            
             // Container-ID setzen und Pagination-Handling
             echo '<script>
                 // Container ID setzen
                 document.querySelector(".einsaetze-container").id = "' . $containerId . '";
-                
                 // Nach dem Laden der Seite zum Container scrollen, wenn die Seitenzahl in der URL ist
                 if (window.location.search.includes("einsatz_page=")) {
                     // Sowohl bei DOMContentLoaded als auch bei load versuchen zu scrollen
@@ -406,29 +380,23 @@ function showEinsaetze($itemsPerPage = 5, $customClass = '') {
                             }
                         }, 100); // Kleiner Timeout für bessere Kompatibilität
                     };
-                    
                     // Bei beiden Events versuchen zu scrollen
                     window.addEventListener("DOMContentLoaded", scrollToContainer);
                     window.addEventListener("load", scrollToContainer);
-                    
                     // Falls die Events bereits ausgelöst wurden, direkt scrollen
                     if (document.readyState === "complete" || document.readyState === "interactive") {
                         scrollToContainer();
                     }
                 }
-                
                 // Funktion, um zu prüfen, ob wir den Zustand aktualisieren müssen
                 function isSamePage(url) {
                     const currentParams = new URLSearchParams(window.location.search);
                     const newParams = new URLSearchParams(new URL(url, window.location.href).search);
-                    
                     // Prüfen, ob sich nur der einsatz_page Parameter geändert hat
                     const currentPage = currentParams.get("einsatz_page") || "1";
                     const newPage = newParams.get("einsatz_page") || "1";
-                    
                     return currentPage === newPage;
                 }
-                
                 // Pagination-Listener für interaktives Laden
                 document.addEventListener("DOMContentLoaded", function() {
                     const paginationLinks = document.querySelectorAll(".pagination a");
@@ -436,7 +404,6 @@ function showEinsaetze($itemsPerPage = 5, $customClass = '') {
                         link.addEventListener("click", function(e) {
                             // Visuelles Feedback hinzufügen
                             this.classList.add("loading");
-                            
                             // Prüfen, ob wir schon auf der angeklickten Seite sind
                             if (isSamePage(this.href)) {
                                 e.preventDefault();
@@ -447,20 +414,16 @@ function showEinsaetze($itemsPerPage = 5, $customClass = '') {
                                 this.classList.remove("loading");
                                 return;
                             }
-                            
                             // Normale Navigation erlauben
                             // Link wird normal verarbeitet und die Seite neu geladen
                         });
                     });
                 });
             </script>';
-            
             if (isset($urlParts['query'])) {
                 parse_str($urlParts['query'], $query);
             }
-            
             echo '<ul class="pagination">';
-            
             // Zurück-Button
             if ($page > 1) {
                 $query['einsatz_page'] = $page - 1;
@@ -469,28 +432,23 @@ function showEinsaetze($itemsPerPage = 5, $customClass = '') {
             } else {
                 echo '<li class="disabled"><span>&laquo;</span></li>';
             }
-            
             // Auf Smartphones nur die aktuelle Seite anzeigen
             if ($isSmartphone) {
                 // Aktuelle Seite und Gesamtanzahl anzeigen
                 echo '<li class="current-page-info"><span>Seite ' . $page . ' von ' . $totalPages . '</span></li>';
             } else {
                 // Normale Paginierung für Desktop und Tablets
-                
                 $startPage = max(1, $page - $pageRange);
                 $endPage = min($totalPages, $page + $pageRange);
-                
                 // Immer Seite 1 anzeigen
                 if ($startPage > 1) {
                     $query['einsatz_page'] = 1;
                     $firstUrl = $path . '?' . http_build_query($query);
                     echo '<li><a href="' . htmlspecialchars($firstUrl) . '">1</a></li>';
-                    
                     if ($startPage > 2) {
                         echo '<li class="disabled"><span>...</span></li>';
                     }
                 }
-                
                 // Seitennummern anzeigen
                 for ($i = $startPage; $i <= $endPage; $i++) {
                     if ($i == $page) {
@@ -501,19 +459,16 @@ function showEinsaetze($itemsPerPage = 5, $customClass = '') {
                         echo '<li><a href="' . htmlspecialchars($pageUrl) . '">' . $i . '</a></li>';
                     }
                 }
-                
                 // Immer die letzte Seite anzeigen
                 if ($endPage < $totalPages) {
                     if ($endPage < $totalPages - 1) {
                         echo '<li class="disabled"><span>...</span></li>';
                     }
-                    
                     $query['einsatz_page'] = $totalPages;
                     $lastUrl = $path . '?' . http_build_query($query);
                     echo '<li><a href="' . htmlspecialchars($lastUrl) . '">' . $totalPages . '</a></li>';
                 }
             }
-            
             // Weiter-Button
             if ($page < $totalPages) {
                 $query['einsatz_page'] = $page + 1;
@@ -522,14 +477,11 @@ function showEinsaetze($itemsPerPage = 5, $customClass = '') {
             } else {
                 echo '<li class="disabled"><span>&raquo;</span></li>';
             }
-            
             echo '</ul>';
         }
     }
-    
     echo '</div>';
 }
-
 /**
  * Zeigt Statistiken zu den Einsätzen an
  * 
@@ -537,20 +489,18 @@ function showEinsaetze($itemsPerPage = 5, $customClass = '') {
  * @param string $customClass Benutzerdefinierte CSS-Klasse für den Container
  * @return void
  */
-function showEinsatzStatistik($jahr = null, $customClass = '') {
+function showEinsatzStatistik($jahr = null, $customClass = '')
+{
     // Wenn kein Jahr angegeben ist, aktuelles Jahr verwenden
     if ($jahr === null) {
         $jahr = date('Y');
     }
-    
     // Datenbankobjekt holen
     $db = Database::getInstance();
     $conn = $db->getConnection();
-    
     // Statistiken für das angegebene Jahr abrufen
     $startDate = $jahr . '-01-01 00:00:00';
     $endDate = $jahr . '-12-31 23:59:59';
-    
     // Abfragen vorbereiten
     $queries = [
         'gesamt' => "SELECT COUNT(*) FROM einsatz WHERE Anzeigen = 1 AND Datum BETWEEN :startDate AND :endDate",
@@ -590,17 +540,14 @@ WHERE Anzeigen = 1 AND Datum BETWEEN :startDate AND :endDate
 GROUP BY Jahreszeit 
 ORDER BY Anzahl DESC"
     ];
-    
     // Ergebnisse sammeln
     global $stats; // Make stats global so individual stat functions can access it
     $stats = [];
-    
     foreach ($queries as $key => $query) {
         $stmt = $conn->prepare($query);
         $stmt->bindParam(':startDate', $startDate);
         $stmt->bindParam(':endDate', $endDate);
         $stmt->execute();
-        
         if ($key === 'gesamt' || $key === 'durchschnittsdauer') {
             $stats[$key] = $stmt->fetchColumn();
         } elseif ($key === 'laengster') {
@@ -609,52 +556,56 @@ ORDER BY Anzahl DESC"
             $stats[$key] = $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
     }
-    
     // Jahr-Auswahl-Formular erstellen
     $jahreQuery = "SELECT DISTINCT YEAR(Datum) as Jahr FROM einsatz WHERE Anzeigen = 1 ORDER BY Jahr DESC";
     $jahreStmt = $conn->prepare($jahreQuery);
     $jahreStmt->execute();
     $verfuegbareJahre = $jahreStmt->fetchAll(PDO::FETCH_COLUMN);
-    
     // Monatsnamen für die Grafik
     global $monate; // Make monate global so individual stat functions can access it
     $monate = [
-        1 => 'Januar', 2 => 'Februar', 3 => 'März', 4 => 'April',
-        5 => 'Mai', 6 => 'Juni', 7 => 'Juli', 8 => 'August',
-        9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Dezember'
+        1 => 'Januar',
+        2 => 'Februar',
+        3 => 'März',
+        4 => 'April',
+        5 => 'Mai',
+        6 => 'Juni',
+        7 => 'Juli',
+        8 => 'August',
+        9 => 'September',
+        10 => 'Oktober',
+        11 => 'November',
+        12 => 'Dezember'
     ];
-    
     // Wochentagsnamen
     global $wochentage; // Make wochentage global so individual stat functions can access it
     $wochentage = [
-        0 => 'Montag', 1 => 'Dienstag', 2 => 'Mittwoch', 3 => 'Donnerstag',
-        4 => 'Freitag', 5 => 'Samstag', 6 => 'Sonntag'
+        0 => 'Montag',
+        1 => 'Dienstag',
+        2 => 'Mittwoch',
+        3 => 'Donnerstag',
+        4 => 'Freitag',
+        5 => 'Samstag',
+        6 => 'Sonntag'
     ];
-    
     // Monatsdaten für das Diagramm vorbereiten
     global $monatsdaten; // Make monatsdaten global
     $monatsdaten = array_fill(1, 12, 0); // Initialisiere alle Monate mit 0
-    
     foreach ($stats['monate'] as $monat) {
-        $monatsdaten[$monat['Monat']] = (int)$monat['Anzahl'];
+        $monatsdaten[$monat['Monat']] = (int) $monat['Anzahl'];
     }
-    
     // Wochentagsdaten für das Diagramm vorbereiten
     global $wochentagsdaten; // Make wochentagsdaten global
     $wochentagsdaten = array_fill(0, 7, 0); // Initialisiere alle Wochentage mit 0
-    
     foreach ($stats['wochentage'] as $tag) {
-        $wochentagsdaten[$tag['Wochentag']] = (int)$tag['Anzahl'];
+        $wochentagsdaten[$tag['Wochentag']] = (int) $tag['Anzahl'];
     }
-    
     // Store current year in global variable
     global $aktuellesStatistikJahr;
     $aktuellesStatistikJahr = $jahr;
-    
     // Store available years in global variable
     global $verfuegbareStatistikJahre;
     $verfuegbareStatistikJahre = $verfuegbareJahre;
-    
     // CSS-Styles für die Statistik-Anzeige
     echo '<style>
         .einsatz-statistik {
@@ -820,7 +771,6 @@ ORDER BY Anzahl DESC"
             color: #6c757d;
             margin-top: 1rem;
         }
-        
         .statistik-modal {
             display: none;
             position: fixed;
@@ -888,7 +838,6 @@ ORDER BY Anzahl DESC"
             border-bottom: 2px solid #A72920;
             padding-bottom: 0.5rem;
         }
-        
         /* Modal content specific styles */
         #statistikModalContent .statistik-card {
             box-shadow: none;
@@ -920,7 +869,6 @@ ORDER BY Anzahl DESC"
         #statistikModalContent .statistik-top-list {
             font-size: 1.1rem;
         }
-        
         @media (max-width: 768px) {
             .statistik-header {
                 flex-direction: column;
@@ -984,7 +932,6 @@ ORDER BY Anzahl DESC"
         .statistik-nested-list li:last-child {
             border-bottom: none;
         }
-
         .statistik-heatmap {
             display: table;
             width: 100%;
@@ -1015,7 +962,6 @@ ORDER BY Anzahl DESC"
             background-color: #f8f9fa;
             font-weight: 500;
         }
-
         .statistik-bar-horizontal-container {
             margin-top: 1rem;
         }
@@ -1054,7 +1000,6 @@ ORDER BY Anzahl DESC"
             font-size: 0.85rem;
             white-space: nowrap;
         }
-
         /* Spezielle Anpassungen für Tagesverlauf und TageImMonat */
         .statistik-tagesverlauf .statistik-bar-chart,
         .statistik-tage-monat .statistik-bar-chart {
@@ -1075,7 +1020,6 @@ ORDER BY Anzahl DESC"
             font-size: 0.65rem;
             white-space: nowrap;
         }
-
         .statistik-tage-monat .statistik-bar-label {
             font-size: 0.6rem;
             transform: translateX(-50%);
@@ -1085,7 +1029,6 @@ ORDER BY Anzahl DESC"
             font-size: 0.65rem;
             white-space: nowrap;
         }
-
         @media (max-width: 768px) {
             .statistik-chart-container {
                 height: 220px;
@@ -1104,7 +1047,6 @@ ORDER BY Anzahl DESC"
             }
         }
     </style>';
-    
     // Add modal HTML
     echo '<div id="statistikModal" class="statistik-modal">
         <div class="statistik-modal-content">
@@ -1112,7 +1054,6 @@ ORDER BY Anzahl DESC"
             <div id="statistikModalContent"></div>
         </div>
     </div>';
-    
     // Add JavaScript for modal functionality
     echo '<script>
         document.addEventListener("DOMContentLoaded", function() {
@@ -1128,30 +1069,25 @@ ORDER BY Anzahl DESC"
                     }, 100);
                 }
             }
-            
             const modal = document.getElementById("statistikModal");
             const modalContent = document.getElementById("statistikModalContent");
             const closeBtn = document.querySelector(".statistik-modal-close");
-            
             // Close modal when clicking outside
             window.onclick = function(event) {
                 if (event.target == modal) {
                     closeModal();
                 }
             }
-            
             // Close modal when clicking close button
             closeBtn.onclick = function() {
                 closeModal();
             }
-            
             // Add escape key to close modal
             document.addEventListener("keydown", function(event) {
                 if (event.key === "Escape" && modal.style.display === "flex") {
                     closeModal();
                 }
             });
-            
             function closeModal() {
                 modal.style.opacity = "0";
                 setTimeout(() => {
@@ -1159,7 +1095,6 @@ ORDER BY Anzahl DESC"
                     modal.style.opacity = "1";
                 }, 300);
             }
-            
             // Add click handlers to all stat cards
             function addCardHandlers() {
                 document.querySelectorAll(".statistik-card").forEach(card => {
@@ -1168,7 +1103,6 @@ ORDER BY Anzahl DESC"
                         const content = this.innerHTML;
                         modalContent.innerHTML = `<h2>${title}</h2>${content}`;
                         modal.style.display = "flex";
-                        
                         // Add animation class to bars in modal
                         setTimeout(function() {
                             const modalBars = modalContent.querySelectorAll(".statistik-bar");
@@ -1182,15 +1116,12 @@ ORDER BY Anzahl DESC"
                     }
                 });
             }
-            
             // Initial handler setup
             addCardHandlers();
-            
             // Make addCardHandlers available globally
             window.addStatistikCardHandlers = addCardHandlers;
         });
     </script>';
-    
     // JavaScript für Akkordeon-Funktionalität
     echo '<script>
         document.addEventListener("DOMContentLoaded", function() {
@@ -1199,7 +1130,6 @@ ORDER BY Anzahl DESC"
                 document.querySelectorAll(".statistik-accordion-header").forEach(header => {
                     header.onclick = function() {
                         this.classList.toggle("active");
-                        
                         const content = this.nextElementSibling;
                         if (content.style.display === "block") {
                             content.style.display = "none";
@@ -1212,16 +1142,13 @@ ORDER BY Anzahl DESC"
                                     item.previousElementSibling.classList.remove("active");
                                 }
                             });
-                            
                             content.style.display = "block";
                         }
                     }
                 });
             }
-            
             // Initialisiere Akkordeon
             setupAccordion();
-            
             // Akkordeon-Setup zur globalen Funktion hinzufügen
             if (window.addStatistikCardHandlers) {
                 const originalHandler = window.addStatistikCardHandlers;
@@ -1232,7 +1159,6 @@ ORDER BY Anzahl DESC"
             }
         });
     </script>';
-    
     // HTML für die Statistik generieren
     echo '<style>
         /* Responsive Styling für Statistikkarten */
@@ -1240,62 +1166,51 @@ ORDER BY Anzahl DESC"
             .statistik-grid {
                 grid-template-columns: 1fr !important;
             }
-            
             .statistik-card {
                 width: 100%;
                 overflow: hidden;
             }
-            
             .statistik-chart-container {
                 overflow-x: auto;
                 -webkit-overflow-scrolling: touch;
                 max-width: 100%;
             }
-            
             .statistik-bar-chart {
                 min-width: 200px;
                 padding: 0 5px;
             }
-            
             .statistik-bar {
                 min-width: 20px;
             }
-            
             .statistik-top-list {
                 padding-left: 10px;
                 padding-right: 10px;
             }
-            
             .statistik-top-item {
                 display: flex;
                 flex-wrap: wrap;
                 justify-content: space-between;
             }
-            
             .statistik-top-label {
                 max-width: 70%;
                 word-break: break-word;
             }
-            
             /* Für Accordion-Inhalte */
             .statistik-accordion-content {
                 overflow-x: auto;
                 max-width: 100%;
             }
-            
             /* Allgemeine Anpassungen */
             .statistik-info-text {
                 word-break: break-word;
             }
         }
-        
         /* Expander Styling */
         .statistik-expander-container {
             position: relative;
             margin-top: 20px;
             text-align: center;
         }
-        
         .statistik-expander-preview {
             position: relative;
             display: grid;
@@ -1307,13 +1222,11 @@ ORDER BY Anzahl DESC"
             mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.5) 70%, rgba(0,0,0,0) 100%);
             -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.5) 70%, rgba(0,0,0,0) 100%);
         }
-        
         @media screen and (max-width: 768px) {
             .statistik-expander-preview {
                 grid-template-columns: 1fr;
             }
         }
-        
         .statistik-expander-btn {
             position: absolute;
             bottom: 0;
@@ -1329,70 +1242,55 @@ ORDER BY Anzahl DESC"
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
             z-index: 10;
         }
-        
         .statistik-expander-btn:hover {
             background-color: #b71c1c;
         }
     </style>';
-    
     echo '<div class="einsatz-statistik ' . htmlspecialchars($customClass) . '" id="einsatz-statistik-container">';
-    
     echo '<div class="statistik-header">';
     echo '<h2 class="statistik-title">Einsatzstatistik ' . htmlspecialchars($jahr) . '</h2>';
-    
     // Jahr-Auswahl-Formular
     echo '<form class="statistik-jahr-form" method="get" id="statistik-jahr-form">';
     echo '<label for="statistik_jahr">Jahr auswählen:</label>';
     echo '<select class="statistik-jahr-select" name="statistik_jahr" id="statistik_jahr" onchange="document.getElementById(\'statistik-jahr-form\').submit();">';
-    
     foreach ($verfuegbareJahre as $verfuegbaresJahr) {
         $selected = ($verfuegbaresJahr == $jahr) ? 'selected' : '';
         echo '<option value="' . $verfuegbaresJahr . '" ' . $selected . '>' . $verfuegbaresJahr . '</option>';
     }
-    
     echo '</select>';
-    
     // Bestehende GET-Parameter beibehalten
     foreach ($_GET as $key => $value) {
         if ($key !== 'statistik_jahr') {
             echo '<input type="hidden" name="' . htmlspecialchars($key) . '" value="' . htmlspecialchars($value) . '">';
         }
     }
-    
     // Füge Anker-Hash hinzu, um zur Statistik zu springen
     echo '<input type="hidden" name="anchor" value="einsatz-statistik-container">';
-    
     echo '</form>';
     echo '</div>';
-    
     // Überprüfen, ob Einsätze vorhanden sind
     if ($stats['gesamt'] == 0) {
         echo '<div style="text-align: center; padding: 2rem; color: #6c757d;">Keine Einsätze im Jahr ' . htmlspecialchars($jahr) . ' verfügbar.</div>';
     } else {
         // Statistik-Grid starten
         echo '<div class="statistik-grid" id="einsatz-statistik-grid"></div>';
-        
         // Expander-Button und Container hinzufügen
         echo '<div class="statistik-expander-container">
             <div class="statistik-expander-preview" id="statistik-preview"></div>
             <button id="statistik-expander-btn" class="statistik-expander-btn">Mehr anzeigen</button>
         </div>';
-        
         // Add JavaScript to append stats to the grid
         echo '<script>
             // Zähler für hinzugefügte Karten
             let cardCount = 0;
             const initialVisibleCards = 3; // Anzahl der direkt sichtbaren Karten
-            
             function appendToStatistikGrid(html) {
                 const grid = document.getElementById("einsatz-statistik-grid");
                 const preview = document.getElementById("statistik-preview");
                 const tempDiv = document.createElement("div");
                 tempDiv.innerHTML = html;
-                
                 // Get the statistik-card element from the tempDiv
                 const card = tempDiv.querySelector(".statistik-card");
-                
                 // Append to grid or preview based on count
                 if (card) {
                     if (cardCount < initialVisibleCards) {
@@ -1402,28 +1300,23 @@ ORDER BY Anzahl DESC"
                     }
                     cardCount++;
                 }
-                
                 // Re-initialize click handlers
                 if (window.addStatistikCardHandlers) {
                     window.addStatistikCardHandlers();
                 }
             }
-            
             // Warte auf DOM-Fertigstellung für Expander-Funktionalität
             document.addEventListener("DOMContentLoaded", function() {
                 const expanderBtn = document.getElementById("statistik-expander-btn");
                 const preview = document.getElementById("statistik-preview");
                 const grid = document.getElementById("einsatz-statistik-grid");
-                
                 expanderBtn.addEventListener("click", function() {
                     // Verschiebe alle Karten aus dem Preview ins Grid
                     while (preview.firstChild) {
                         grid.appendChild(preview.firstChild);
                     }
-                    
                     // Verstecke den Expander
                     document.querySelector(".statistik-expander-container").style.display = "none";
-                    
                     // Re-initialize click handlers
                     if (window.addStatistikCardHandlers) {
                         window.addStatistikCardHandlers();
@@ -1432,30 +1325,25 @@ ORDER BY Anzahl DESC"
             });
         </script>';
     }
-    
     echo '</div>';
 }
-
 /**
  * Zeigt eine einzelne Statistik an
  * 
  * @param string $type Typ der Statistik
  * @return void
  */
-function EinsatzStatistikShow($type) {
+function EinsatzStatistikShow($type)
+{
     global $stats;
-    
     if (empty($stats)) {
         echo '<div style="color: red; margin: 1rem 0;">Fehler: Bitte zuerst showEinsatzStatistik() aufrufen!</div>';
         return;
     }
-    
     if ($stats['gesamt'] == 0) {
         return;
     }
-    
     $html = '';
-    
     // Call the specific function based on type
     switch ($type) {
         case 'gesamt':
@@ -1533,442 +1421,383 @@ function EinsatzStatistikShow($type) {
         default:
             $html = '<div style="color: red; margin: 1rem 0;">Fehler: Unbekannter Statistik-Typ "' . htmlspecialchars($type) . '"</div>';
     }
-    
     // Output the JavaScript to append to grid
     echo '<script>appendToStatistikGrid(`' . $html . '`);</script>';
 }
-
 /**
  * Zeigt die Gesamt-Statistik an
  * 
  * @return string HTML der Statistik
  */
-function showStatistikGesamt() {
+function showStatistikGesamt()
+{
     global $stats, $aktuellesStatistikJahr;
-    
     $html = '<div class="statistik-card">';
     $html .= '<div class="statistik-card-title"><i class="bi bi-flag"></i> Einsätze gesamt</div>';
     $html .= '<div class="statistik-highlight">' . number_format($stats['gesamt'], 0, ',', '.') . '</div>';
     $html .= '<div class="statistik-info-text">im Jahr ' . htmlspecialchars($aktuellesStatistikJahr) . '</div>';
     $html .= '</div>';
-    
     return $html;
 }
-
 /**
  * Zeigt die Dauer-Statistik an
  * 
  * @return string HTML der Statistik
  */
-function showStatistikDauer() {
+function showStatistikDauer()
+{
     global $stats;
-    
     $html = '<div class="statistik-card">';
     $html .= '<div class="statistik-card-title"><i class="bi bi-clock"></i> Durchschnittliche Einsatzdauer</div>';
-    
     // Durchschnittsdauer in Stunden und Minuten umrechnen
     $durchschnittMinuten = round($stats['durchschnittsdauer']);
     $durchschnittStunden = floor($durchschnittMinuten / 60);
     $restMinuten = $durchschnittMinuten % 60;
-    
     $dauerText = '';
     if ($durchschnittStunden > 0) {
         $dauerText .= $durchschnittStunden . ' Std. ';
     }
     $dauerText .= $restMinuten . ' Min.';
-    
     $html .= '<div class="statistik-highlight">' . $dauerText . '</div>';
-    
     if (isset($stats['laengster']) && is_array($stats['laengster'])) {
         $laengsterMinuten = $stats['laengster']['Dauer'];
         $laengsterStunden = floor($laengsterMinuten / 60);
         $laengsterRestMinuten = $laengsterMinuten % 60;
-        
         $laengsterText = '';
         if ($laengsterStunden > 0) {
             $laengsterText .= $laengsterStunden . ' Std. ';
         }
         $laengsterText .= $laengsterRestMinuten . ' Min.';
-        
         $datumObj = new DateTime($stats['laengster']['Datum']);
         $formattedDatum = $datumObj->format('d.m.Y');
-        
         $html .= '<div class="statistik-info-text">Längster Einsatz: ' . $laengsterText . ' am ' . $formattedDatum . '</div>';
     }
-    
     $html .= '</div>';
-    
     return $html;
 }
-
 /**
  * Zeigt die Monats-Statistik an
  * 
  * @return string HTML der Statistik
  */
-function showStatistikMonate() {
+function showStatistikMonate()
+{
     global $monate, $monatsdaten;
-    
     $html = '<div class="statistik-card">';
     $html .= '<div class="statistik-card-title"><i class="bi bi-calendar3"></i> Einsätze pro Monat</div>';
-    
     $html .= '<div class="statistik-chart-container">';
     $html .= '<div class="statistik-bar-chart">';
-    
     $maxMonatsWert = max($monatsdaten);
-    
     for ($i = 1; $i <= 12; $i++) {
         $anzahl = $monatsdaten[$i];
         $height = ($maxMonatsWert > 0) ? ($anzahl / $maxMonatsWert * 100) : 0;
-        
         $html .= '<div class="statistik-bar" style="height: ' . $height . '%;" title="' . $monate[$i] . ': ' . $anzahl . ' Einsätze">';
-        
         if ($anzahl > 0) {
             $html .= '<span class="statistik-bar-value">' . $anzahl . '</span>';
         }
-        
         $html .= '<span class="statistik-bar-label">' . substr($monate[$i], 0, 3) . '</span>';
         $html .= '</div>';
     }
-    
     $html .= '</div>';
     $html .= '</div>';
     $html .= '</div>';
-    
     return $html;
 }
-
 /**
  * Zeigt die Wochentags-Statistik an
  * 
  * @return string HTML der Statistik
  */
-function showStatistikWochentage() {
+function showStatistikWochentage()
+{
     global $wochentage, $wochentagsdaten;
-    
     $html = '<div class="statistik-card">';
     $html .= '<div class="statistik-card-title"><i class="bi bi-calendar-week"></i> Einsätze nach Wochentagen</div>';
-    
     $html .= '<div class="statistik-chart-container">';
     $html .= '<div class="statistik-bar-chart">';
-    
     $maxTagWert = max($wochentagsdaten);
-    
     for ($i = 0; $i < 7; $i++) {
         $anzahl = $wochentagsdaten[$i];
         $height = ($maxTagWert > 0) ? ($anzahl / $maxTagWert * 100) : 0;
-        
         $html .= '<div class="statistik-bar" style="height: ' . $height . '%;" title="' . $wochentage[$i] . ': ' . $anzahl . ' Einsätze">';
-        
         if ($anzahl > 0) {
             $html .= '<span class="statistik-bar-value">' . $anzahl . '</span>';
         }
-        
         $html .= '<span class="statistik-bar-label">' . substr($wochentage[$i], 0, 2) . '</span>';
         $html .= '</div>';
     }
-    
     $html .= '</div>';
     $html .= '</div>';
     $html .= '</div>';
-    
     return $html;
 }
-
 /**
  * Zeigt die Tageszeit-Statistik an
  * 
  * @return string HTML der Statistik
  */
-function showStatistikTageszeit() {
+function showStatistikTageszeit()
+{
     global $stats;
-    
     $html = '<div class="statistik-card">';
     $html .= '<div class="statistik-card-title"><i class="bi bi-sun"></i> Einsätze nach Tageszeit</div>';
-    
     if (!empty($stats['tageszeit'])) {
         $html .= '<ul class="statistik-top-list">';
-        
         foreach ($stats['tageszeit'] as $tageszeit) {
             $html .= '<li class="statistik-top-item">';
             $html .= '<span class="statistik-top-label">' . htmlspecialchars($tageszeit['Tageszeit']) . '</span>';
             $html .= '<span class="statistik-top-value">' . $tageszeit['Anzahl'] . '</span>';
             $html .= '</li>';
         }
-        
         $html .= '</ul>';
     } else {
         $html .= '<div class="statistik-info-text">Keine Daten verfügbar</div>';
     }
-    
     $html .= '</div>';
-    
     return $html;
 }
-
 /**
  * Zeigt die Stichwort-Statistik an
  * 
  * @return string HTML der Statistik
  */
-function showStatistikStichworte() {
+function showStatistikStichworte()
+{
     global $stats;
-    
     $html = '<div class="statistik-card">';
     $html .= '<div class="statistik-card-title"><i class="bi bi-tags"></i> Häufigste Einsatzarten</div>';
-    
     if (!empty($stats['stichworte'])) {
         $html .= '<ul class="statistik-top-list">';
-        
         foreach ($stats['stichworte'] as $stichwort) {
             $html .= '<li class="statistik-top-item">';
             $html .= '<span class="statistik-top-label">' . htmlspecialchars($stichwort['Stichwort']) . '</span>';
             $html .= '<span class="statistik-top-value">' . $stichwort['Anzahl'] . '</span>';
             $html .= '</li>';
         }
-        
         $html .= '</ul>';
     } else {
         $html .= '<div class="statistik-info-text">Keine Daten verfügbar</div>';
     }
-    
     $html .= '</div>';
-    
     return $html;
 }
-
 /**
  * Zeigt die Einsatzort-Statistik an
  * 
  * @return string HTML der Statistik
  */
-function showStatistikEinsatzorte() {
+function showStatistikEinsatzorte()
+{
     global $stats;
-    
     $html = '<div class="statistik-card">';
     $html .= '<div class="statistik-card-title"><i class="bi bi-geo-alt"></i> Häufigste Einsatzorte</div>';
-    
     if (!empty($stats['einsatzorte'])) {
         $html .= '<ul class="statistik-top-list">';
-        
         foreach ($stats['einsatzorte'] as $ort) {
             $html .= '<li class="statistik-top-item">';
             $html .= '<span class="statistik-top-label">' . htmlspecialchars($ort['Ort']) . '</span>';
             $html .= '<span class="statistik-top-value">' . $ort['Anzahl'] . '</span>';
             $html .= '</li>';
         }
-        
         $html .= '</ul>';
     } else {
         $html .= '<div class="statistik-info-text">Keine Daten verfügbar</div>';
     }
-    
     $html .= '</div>';
-    
     return $html;
 }
-
 /**
  * Zeigt die Kategorie-Statistik an
  * 
  * @return string HTML der Statistik
  */
-function showStatistikKategorien() {
+function showStatistikKategorien()
+{
     global $stats;
-    
     $html = '<div class="statistik-card">';
     $html .= '<div class="statistik-card-title"><i class="bi bi-list-check"></i> Einsatzkategorien</div>';
-    
     if (!empty($stats['kategorien'])) {
         $html .= '<ul class="statistik-top-list">';
-        
         foreach ($stats['kategorien'] as $kategorie) {
             $kategorienName = !empty($kategorie['Kategorie']) ? $kategorie['Kategorie'] : 'Ohne Kategorie';
-            
             $html .= '<li class="statistik-top-item">';
             $html .= '<span class="statistik-top-label">' . htmlspecialchars($kategorienName) . '</span>';
             $html .= '<span class="statistik-top-value">' . $kategorie['Anzahl'] . '</span>';
             $html .= '</li>';
         }
-        
         $html .= '</ul>';
     } else {
         $html .= '<div class="statistik-info-text">Keine Daten verfügbar</div>';
     }
-    
     $html .= '</div>';
-    
     return $html;
 }
-
 /**
  * Zeigt Gesamtzahl der Einsätze an
  * @return void
  */
-function EinsatzStatistikGesamt() {
+function EinsatzStatistikGesamt()
+{
     EinsatzStatistikShow('gesamt');
 }
-
 /**
  * Zeigt durchschnittliche Einsatzdauer an
  * @return void
  */
-function EinsatzStatistikDauer() {
+function EinsatzStatistikDauer()
+{
     EinsatzStatistikShow('dauer');
 }
-
 /**
  * Zeigt Einsätze nach Monaten an
  * @return void
  */
-function EinsatzStatistikMonate() {
+function EinsatzStatistikMonate()
+{
     EinsatzStatistikShow('monate');
 }
-
 /**
  * Zeigt Einsätze nach Wochentagen an
  * @return void
  */
-function EinsatzStatistikWochentage() {
+function EinsatzStatistikWochentage()
+{
     EinsatzStatistikShow('wochentage');
 }
-
 /**
  * Zeigt Einsätze nach Tageszeit an
  * @return void
  */
-function EinsatzStatistikTageszeit() {
+function EinsatzStatistikTageszeit()
+{
     EinsatzStatistikShow('tageszeit');
 }
-
 /**
  * Zeigt häufigste Einsatzarten (Stichworte) an
  * @return void
  */
-function EinsatzStatistikStichworte() {
+function EinsatzStatistikStichworte()
+{
     EinsatzStatistikShow('stichworte');
 }
-
 /**
  * Zeigt häufigste Einsatzorte an
  * @return void
  */
-function EinsatzStatistikEinsatzorte() {
+function EinsatzStatistikEinsatzorte()
+{
     EinsatzStatistikShow('einsatzorte');
 }
-
 /**
  * Zeigt Einsatzkategorien an
  * @return void
  */
-function EinsatzStatistikKategorien() {
+function EinsatzStatistikKategorien()
+{
     EinsatzStatistikShow('kategorien');
 }
-
 /**
  * Zeigt einen Jahresvergleich der letzten Jahre an
  * @return void
  */
-function EinsatzStatistikJahresvergleich() {
+function EinsatzStatistikJahresvergleich()
+{
     EinsatzStatistikShow('jahresvergleich');
 }
-
 /**
  * Zeigt Zusammenhang zwischen Stichwort und Kategorie
  * @return void
  */
-function EinsatzStatistikStichwortKategorie() {
+function EinsatzStatistikStichwortKategorie()
+{
     EinsatzStatistikShow('stichwort_kategorie');
 }
-
 /**
  * Zeigt Zusammenhang zwischen Monaten und Stichworten
  * @return void
  */
-function EinsatzStatistikMonatStichwort() {
+function EinsatzStatistikMonatStichwort()
+{
     EinsatzStatistikShow('monat_stichwort');
 }
-
 /**
  * Zeigt Zusammenhang zwischen Wochentag und Tageszeit
  * @return void
  */
-function EinsatzStatistikWochentagTageszeit() {
+function EinsatzStatistikWochentagTageszeit()
+{
     EinsatzStatistikShow('wochentag_tageszeit');
 }
-
 /**
  * Zeigt Einsatzdauer nach Stichworten
  * @return void
  */
-function EinsatzStatistikDauerNachStichwort() {
+function EinsatzStatistikDauerNachStichwort()
+{
     EinsatzStatistikShow('dauer_nach_stichwort');
 }
-
 /**
  * Zeigt den Zusammenhang zwischen Einsatzort und Kategorie
  * @return void
  */
-function EinsatzStatistikOrtKategorie() {
+function EinsatzStatistikOrtKategorie()
+{
     EinsatzStatistikShow('ort_kategorie');
 }
-
 /**
  * Zeigt Einsatzverteilung nach Einheiten
  * @return void
  */
-function EinsatzStatistikEinheiten() {
+function EinsatzStatistikEinheiten()
+{
     EinsatzStatistikShow('einheiten');
 }
-
 /**
  * Zeigt Einsatzdauer nach Orten
  * @return void
  */
-function EinsatzStatistikDauerNachOrt() {
+function EinsatzStatistikDauerNachOrt()
+{
     EinsatzStatistikShow('dauer_nach_ort');
 }
-
 /**
  * Zeigt Monatsvergleich der Einsatzarten
  * @return void
  */
-function EinsatzStatistikMonatsvergleichArten() {
+function EinsatzStatistikMonatsvergleichArten()
+{
     EinsatzStatistikShow('monatsvergleich_arten');
 }
-
 /**
  * Zeigt Tagesverlauf der Einsätze
  * @return void
  */
-function EinsatzStatistikTagesverlauf() {
+function EinsatzStatistikTagesverlauf()
+{
     EinsatzStatistikShow('tagesverlauf');
 }
-
 /**
  * Zeigt Einsatzverteilung nach Tagen im Monat
  * @return void
  */
-function EinsatzStatistikTageImMonat() {
+function EinsatzStatistikTageImMonat()
+{
     EinsatzStatistikShow('tage_im_monat');
 }
-
 /**
  * Zeigt den Zusammenhang zwischen Einsatzort und Kategorie
  * @return string HTML der Statistik
  */
-function showStatistikOrtKategorie() {
+function showStatistikOrtKategorie()
+{
     global $stats;
-    
     // Datenbankobjekt holen
     $db = Database::getInstance();
     $conn = $db->getConnection();
-    
     // Startdatum und Enddatum aus der globalen Konfiguration holen
     global $aktuellesStatistikJahr;
     $startDate = $aktuellesStatistikJahr . '-01-01 00:00:00';
     $endDate = $aktuellesStatistikJahr . '-12-31 23:59:59';
-    
     // Ort-Kategorie-Verteilung abfragen
     $query = "SELECT Ort, Kategorie, COUNT(*) as Anzahl 
               FROM einsatz 
@@ -1976,20 +1805,15 @@ function showStatistikOrtKategorie() {
               GROUP BY Ort, Kategorie 
               ORDER BY Anzahl DESC, Ort, Kategorie
               LIMIT 15";
-              
     $stmt = $conn->prepare($query);
     $stmt->bindParam(':startDate', $startDate);
     $stmt->bindParam(':endDate', $endDate);
     $stmt->execute();
-    
     $ortKategorieData = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
     $html = '<div class="statistik-card">';
     $html .= '<div class="statistik-card-title"><i class="bi bi-geo-alt-fill"></i> Einsatzorte nach Kategorien</div>';
-    
     if (!empty($ortKategorieData)) {
         $html .= '<div class="statistik-accordion-container">';
-        
         // Gruppiere nach Ort
         $gruppierteOrte = [];
         foreach ($ortKategorieData as $item) {
@@ -1999,7 +1823,6 @@ function showStatistikOrtKategorie() {
             }
             $gruppierteOrte[$ort][] = $item;
         }
-        
         // Sortiere Orte nach Gesamtzahl der Einsätze (absteigend)
         $orteNachAnzahl = [];
         foreach ($gruppierteOrte as $ort => $items) {
@@ -2007,14 +1830,12 @@ function showStatistikOrtKategorie() {
             $orteNachAnzahl[$ort] = $gesamtAnzahl;
         }
         arsort($orteNachAnzahl);
-        
         // Zeige die Top-Orte an
         foreach ($orteNachAnzahl as $ort => $gesamtAnzahl) {
             $html .= '<div class="statistik-accordion-item">';
             $html .= '<div class="statistik-accordion-header">' . htmlspecialchars($ort) . ' <small>(' . $gesamtAnzahl . ' Einsätze)</small></div>';
             $html .= '<div class="statistik-accordion-content">';
             $html .= '<ul class="statistik-nested-list">';
-            
             foreach ($gruppierteOrte[$ort] as $item) {
                 $kategorieText = !empty($item['Kategorie']) ? $item['Kategorie'] : 'Ohne Kategorie';
                 $html .= '<li>';
@@ -2022,64 +1843,50 @@ function showStatistikOrtKategorie() {
                 $html .= '<span class="statistik-top-value">' . $item['Anzahl'] . '</span>';
                 $html .= '</li>';
             }
-            
             $html .= '</ul>';
             $html .= '</div>';
             $html .= '</div>';
         }
-        
         $html .= '</div>';
     } else {
         $html .= '<div class="statistik-info-text">Keine Daten verfügbar</div>';
     }
-    
     $html .= '<div class="statistik-info-text">Verteilung der Einsatzkategorien nach Orten</div>';
     $html .= '</div>';
-    
     return $html;
 }
-
 /**
  * Zeigt Einsatzverteilung nach Einheiten
  * @return string HTML der Statistik
  */
-function showStatistikEinheiten() {
+function showStatistikEinheiten()
+{
     global $stats;
-    
     // Datenbankobjekt holen
     $db = Database::getInstance();
     $conn = $db->getConnection();
-    
     // Startdatum und Enddatum aus der globalen Konfiguration holen
     global $aktuellesStatistikJahr;
     $startDate = $aktuellesStatistikJahr . '-01-01 00:00:00';
     $endDate = $aktuellesStatistikJahr . '-12-31 23:59:59';
-    
     // Abfrage für Einheiten
     $query = "SELECT Einheit, COUNT(*) as Anzahl 
               FROM einsatz 
               WHERE Anzeigen = 1 AND Datum BETWEEN :startDate AND :endDate 
               GROUP BY Einheit 
               ORDER BY Anzahl DESC";
-              
     $stmt = $conn->prepare($query);
     $stmt->bindParam(':startDate', $startDate);
     $stmt->bindParam(':endDate', $endDate);
     $stmt->execute();
-    
     $einheitenData = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
     $html = '<div class="statistik-card">';
     $html .= '<div class="statistik-card-title"><i class="bi bi-people-fill"></i> Einsätze nach Einheiten</div>';
-    
     if (!empty($einheitenData)) {
         $html .= '<div class="statistik-bar-horizontal-container">';
-        
         $maxAnzahl = max(array_column($einheitenData, 'Anzahl'));
-        
         foreach ($einheitenData as $item) {
             $width = ($maxAnzahl > 0) ? ($item['Anzahl'] / $maxAnzahl * 100) : 0;
-            
             $html .= '<div class="statistik-bar-horizontal-item">';
             $html .= '<div class="statistik-bar-horizontal-label">' . htmlspecialchars($item['Einheit']) . '</div>';
             $html .= '<div class="statistik-bar-horizontal-bar-container">';
@@ -2088,33 +1895,27 @@ function showStatistikEinheiten() {
             $html .= '<div class="statistik-bar-horizontal-value">' . $item['Anzahl'] . '</div>';
             $html .= '</div>';
         }
-        
         $html .= '</div>';
     } else {
         $html .= '<div class="statistik-info-text">Keine Daten verfügbar</div>';
     }
-    
     $html .= '</div>';
-    
     return $html;
 }
-
 /**
  * Zeigt Einsatzdauer nach Orten
  * @return string HTML der Statistik
  */
-function showStatistikDauerNachOrt() {
+function showStatistikDauerNachOrt()
+{
     global $stats;
-    
     // Datenbankobjekt holen
     $db = Database::getInstance();
     $conn = $db->getConnection();
-    
     // Startdatum und Enddatum aus der globalen Konfiguration holen
     global $aktuellesStatistikJahr;
     $startDate = $aktuellesStatistikJahr . '-01-01 00:00:00';
     $endDate = $aktuellesStatistikJahr . '-12-31 23:59:59';
-    
     // Abfrage für durchschnittliche Dauer nach Ort
     $query = "SELECT Ort, 
               AVG(TIMESTAMPDIFF(MINUTE, Datum, Endzeit)) as DurchschnittMinuten,
@@ -2125,38 +1926,29 @@ function showStatistikDauerNachOrt() {
               HAVING Anzahl >= 3
               ORDER BY DurchschnittMinuten DESC
               LIMIT 10";
-              
     $stmt = $conn->prepare($query);
     $stmt->bindParam(':startDate', $startDate);
     $stmt->bindParam(':endDate', $endDate);
     $stmt->execute();
-    
     $dauerOrtData = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
     $html = '<div class="statistik-card">';
     $html .= '<div class="statistik-card-title"><i class="bi bi-hourglass-split"></i> Einsatzdauer nach Orten</div>';
-    
     if (!empty($dauerOrtData)) {
         $html .= '<div class="statistik-bar-horizontal-container">';
-        
         $maxDurchschnitt = 0;
         foreach ($dauerOrtData as $item) {
             $maxDurchschnitt = max($maxDurchschnitt, $item['DurchschnittMinuten']);
         }
-        
         foreach ($dauerOrtData as $item) {
             $durchschnitt = round($item['DurchschnittMinuten']);
             $width = ($maxDurchschnitt > 0) ? ($durchschnitt / $maxDurchschnitt * 100) : 0;
-            
             $durchschnittStunden = floor($durchschnitt / 60);
             $durchschnittMinuten = $durchschnitt % 60;
-            
             $dauerText = '';
             if ($durchschnittStunden > 0) {
                 $dauerText .= $durchschnittStunden . ' Std. ';
             }
             $dauerText .= $durchschnittMinuten . ' Min.';
-            
             $html .= '<div class="statistik-bar-horizontal-item">';
             $html .= '<div class="statistik-bar-horizontal-label">' . htmlspecialchars($item['Ort']) . '</div>';
             $html .= '<div class="statistik-bar-horizontal-bar-container">';
@@ -2165,34 +1957,28 @@ function showStatistikDauerNachOrt() {
             $html .= '<div class="statistik-bar-horizontal-value">' . $dauerText . '</div>';
             $html .= '</div>';
         }
-        
         $html .= '</div>';
     } else {
         $html .= '<div class="statistik-info-text">Keine Daten verfügbar (min. 3 Einsätze pro Ort nötig)</div>';
     }
-    
     $html .= '<div class="statistik-info-text">Durchschnittliche Einsatzdauer nach Einsatzorten</div>';
     $html .= '</div>';
-    
     return $html;
 }
-
 /**
  * Zeigt Monatsvergleich der Einsatzarten
  * @return string HTML der Statistik
  */
-function showStatistikMonatsvergleichArten() {
+function showStatistikMonatsvergleichArten()
+{
     global $stats, $monate;
-    
     // Datenbankobjekt holen
     $db = Database::getInstance();
     $conn = $db->getConnection();
-    
     // Startdatum und Enddatum aus der globalen Konfiguration holen
     global $aktuellesStatistikJahr;
     $startDate = $aktuellesStatistikJahr . '-01-01 00:00:00';
     $endDate = $aktuellesStatistikJahr . '-12-31 23:59:59';
-    
     // Top-5 Einsatzarten (Stichworte) ermitteln
     $topStichwortQuery = "SELECT Stichwort, COUNT(*) as Anzahl 
                          FROM einsatz 
@@ -2200,17 +1986,13 @@ function showStatistikMonatsvergleichArten() {
                          GROUP BY Stichwort 
                          ORDER BY Anzahl DESC 
                          LIMIT 5";
-                         
     $stmt = $conn->prepare($topStichwortQuery);
     $stmt->bindParam(':startDate', $startDate);
     $stmt->bindParam(':endDate', $endDate);
     $stmt->execute();
-    
     $topStichworte = $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
-    
     // Für jedes Stichwort die monatliche Verteilung abfragen
     $stichwortMonatData = [];
-    
     foreach ($topStichworte as $stichwort) {
         $monatQuery = "SELECT MONTH(Datum) as Monat, COUNT(*) as Anzahl 
                        FROM einsatz 
@@ -2218,127 +2000,96 @@ function showStatistikMonatsvergleichArten() {
                        AND Stichwort = :stichwort 
                        GROUP BY MONTH(Datum) 
                        ORDER BY Monat";
-                       
         $stmt = $conn->prepare($monatQuery);
         $stmt->bindParam(':startDate', $startDate);
         $stmt->bindParam(':endDate', $endDate);
         $stmt->bindParam(':stichwort', $stichwort);
         $stmt->execute();
-        
         $monatDaten = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
         // Initialisiere alle Monate mit 0
         $stichwortMonatData[$stichwort] = array_fill(1, 12, 0);
-        
         // Fülle die tatsächlichen Daten ein
         foreach ($monatDaten as $monat) {
             $stichwortMonatData[$stichwort][$monat['Monat']] = $monat['Anzahl'];
         }
     }
-    
     $html = '<div class="statistik-card">';
     $html .= '<div class="statistik-card-title"><i class="bi bi-bar-chart-line"></i> Monatsvergleich der Einsatzarten</div>';
-    
     if (!empty($stichwortMonatData)) {
         $html .= '<div class="statistik-accordion-container">';
-        
         // Für jedes Stichwort ein Akkordeon erstellen
         foreach ($stichwortMonatData as $stichwort => $monatsdaten) {
             $gesamtAnzahl = array_sum($monatsdaten);
-            
             $html .= '<div class="statistik-accordion-item">';
             $html .= '<div class="statistik-accordion-header">' . htmlspecialchars($stichwort) . ' <small>(' . $gesamtAnzahl . ' Einsätze)</small></div>';
             $html .= '<div class="statistik-accordion-content">';
-            
             // Balkendiagramm für die monatliche Verteilung
             $html .= '<div class="statistik-chart-container">';
             $html .= '<div class="statistik-bar-chart">';
-            
             $maxMonatsWert = max($monatsdaten);
-            
             for ($i = 1; $i <= 12; $i++) {
                 $anzahl = $monatsdaten[$i];
                 $height = ($maxMonatsWert > 0) ? ($anzahl / $maxMonatsWert * 100) : 0;
-                
                 $html .= '<div class="statistik-bar" style="height: ' . $height . '%;" title="' . $monate[$i] . ': ' . $anzahl . ' Einsätze (' . $stichwort . ')">';
-                
                 if ($anzahl > 0) {
                     $html .= '<span class="statistik-bar-value">' . $anzahl . '</span>';
                 }
-                
                 $html .= '<span class="statistik-bar-label">' . substr($monate[$i], 0, 3) . '</span>';
                 $html .= '</div>';
             }
-            
             $html .= '</div>';
             $html .= '</div>';
-            
             $html .= '</div>';
             $html .= '</div>';
         }
-        
         $html .= '</div>';
     } else {
         $html .= '<div class="statistik-info-text">Keine Daten verfügbar</div>';
     }
-    
     $html .= '<div class="statistik-info-text">Monatliche Verteilung der häufigsten Einsatzarten</div>';
     $html .= '</div>';
-    
     return $html;
 }
-
 /**
  * Zeigt Tagesverlauf der Einsätze
  * @return string HTML der Statistik
  */
-function showStatistikTagesverlauf() {
+function showStatistikTagesverlauf()
+{
     global $stats;
-    
     // Datenbankobjekt holen
     $db = Database::getInstance();
     $conn = $db->getConnection();
-    
     // Startdatum und Enddatum aus der globalen Konfiguration holen
     global $aktuellesStatistikJahr;
     $startDate = $aktuellesStatistikJahr . '-01-01 00:00:00';
     $endDate = $aktuellesStatistikJahr . '-12-31 23:59:59';
-    
     // Stundendaten abfragen
     $query = "SELECT HOUR(Datum) as Stunde, COUNT(*) as Anzahl 
               FROM einsatz 
               WHERE Anzeigen = 1 AND Datum BETWEEN :startDate AND :endDate 
               GROUP BY HOUR(Datum) 
               ORDER BY Stunde";
-              
     $stmt = $conn->prepare($query);
     $stmt->bindParam(':startDate', $startDate);
     $stmt->bindParam(':endDate', $endDate);
     $stmt->execute();
-    
     $stundenData = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
     // Initialisiere Stundendaten mit 0
     $stundendaten = array_fill(0, 24, 0);
-    
     // Fülle die tatsächlichen Daten ein
     foreach ($stundenData as $stunde) {
         $stundendaten[$stunde['Stunde']] = $stunde['Anzahl'];
     }
-    
     $html = '<div class="statistik-card statistik-tagesverlauf">';
     $html .= '<div class="statistik-card-title"><i class="bi bi-clock"></i> Tagesverlauf der Einsätze</div>';
-    
     if (!empty($stundendaten)) {
         $html .= '<div class="statistik-chart-container">';
         $html .= '<div class="statistik-bar-chart">';
-        
         $maxStundenWert = max($stundendaten);
-        
         for ($i = 0; $i < 24; $i++) {
             $anzahl = $stundendaten[$i];
             $height = ($maxStundenWert > 0) ? ($anzahl / $maxStundenWert * 100) : 0;
-            
             // Farbcodierung nach Tageszeit
             $barColor = '#A72920'; // Standard rot
             if ($i >= 5 && $i < 12) {
@@ -2350,136 +2101,105 @@ function showStatistikTagesverlauf() {
             } else {
                 $barColor = '#8E2219'; // Sehr dunkles Rot für Nacht
             }
-            
             $stundeText = str_pad($i, 2, '0', STR_PAD_LEFT);
-            
             $html .= '<div class="statistik-bar" style="height: ' . $height . '%; background-color: ' . $barColor . ';" title="' . $stundeText . ':00 Uhr: ' . $anzahl . ' Einsätze">';
-            
             if ($anzahl > 0) {
                 $html .= '<span class="statistik-bar-value">' . $anzahl . '</span>';
             }
-            
             $html .= '<span class="statistik-bar-label">' . $stundeText . '</span>';
             $html .= '</div>';
         }
-        
         $html .= '</div>';
         $html .= '</div>';
     } else {
         $html .= '<div class="statistik-info-text">Keine Daten verfügbar</div>';
     }
-    
     $html .= '<div class="statistik-info-text">Anzahl der Einsätze nach Uhrzeit (24h)</div>';
     $html .= '</div>';
-    
     return $html;
 }
-
 /**
  * Zeigt Einsatzverteilung nach Tagen im Monat
  * @return string HTML der Statistik
  */
-function showStatistikTageImMonat() {
+function showStatistikTageImMonat()
+{
     global $stats;
-    
     // Datenbankobjekt holen
     $db = Database::getInstance();
     $conn = $db->getConnection();
-    
     // Startdatum und Enddatum aus der globalen Konfiguration holen
     global $aktuellesStatistikJahr;
     $startDate = $aktuellesStatistikJahr . '-01-01 00:00:00';
     $endDate = $aktuellesStatistikJahr . '-12-31 23:59:59';
-    
     // Tage im Monat abfragen
     $query = "SELECT DAY(Datum) as Tag, COUNT(*) as Anzahl 
               FROM einsatz 
               WHERE Anzeigen = 1 AND Datum BETWEEN :startDate AND :endDate 
               GROUP BY DAY(Datum) 
               ORDER BY Tag";
-              
     $stmt = $conn->prepare($query);
     $stmt->bindParam(':startDate', $startDate);
     $stmt->bindParam(':endDate', $endDate);
     $stmt->execute();
-    
     $tageData = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
     // Initialisiere Tagesdaten (1-31) mit 0
     $tagesdaten = array_fill(1, 31, 0);
-    
     // Fülle die tatsächlichen Daten ein
     foreach ($tageData as $tag) {
         $tagesdaten[$tag['Tag']] = $tag['Anzahl'];
     }
-    
     $html = '<div class="statistik-card statistik-tage-monat">';
     $html .= '<div class="statistik-card-title"><i class="bi bi-calendar-date"></i> Einsätze nach Tag im Monat</div>';
-    
     if (!empty($tagesdaten)) {
         $html .= '<div class="statistik-chart-container">';
         $html .= '<div class="statistik-bar-chart">';
-        
         $maxTagWert = max($tagesdaten);
-        
         for ($i = 1; $i <= 31; $i++) {
             $anzahl = $tagesdaten[$i];
             $height = ($maxTagWert > 0) ? ($anzahl / $maxTagWert * 100) : 0;
-            
             // Überprüfen ob es sich um einen besonderen Tag handelt (1., 15., letzter Tag)
             $highlight = '';
             if ($i == 1 || $i == 15 || $i == 31) {
                 $highlight = 'style="background-color: #8e2219;"';
             }
-            
             $html .= '<div class="statistik-bar" style="height: ' . $height . '%;" ' . $highlight . ' title="Tag ' . $i . ': ' . $anzahl . ' Einsätze">';
-            
             if ($anzahl > 0 && $i % 5 == 0) {
                 $html .= '<span class="statistik-bar-value">' . $anzahl . '</span>';
             }
-            
             if ($i % 5 == 0 || $i == 1) {
                 $html .= '<span class="statistik-bar-label">' . $i . '</span>';
             }
-            
             $html .= '</div>';
         }
-        
         $html .= '</div>';
         $html .= '</div>';
     } else {
         $html .= '<div class="statistik-info-text">Keine Daten verfügbar</div>';
     }
-    
     $html .= '<div class="statistik-info-text">Einsatzverteilung nach Monatstag (1-31)</div>';
     $html .= '</div>';
-    
     return $html;
 }
-
 /**
  * Erstellt den HTML-Code für den Jahresvergleich
  * @return string HTML der Statistik
  */
-function showStatistikJahresvergleich() {
+function showStatistikJahresvergleich()
+{
     global $stats, $aktuellesStatistikJahr, $verfuegbareStatistikJahre;
-    
     // Datenbankobjekt holen
     $db = Database::getInstance();
     $conn = $db->getConnection();
-    
     // Daten für den Jahresvergleich sammeln
     $jahreData = [];
-    $currentYear = (int)$aktuellesStatistikJahr;
-    
+    $currentYear = (int) $aktuellesStatistikJahr;
     // Wir sammeln Daten für die letzten 5 Jahre oder alle verfügbaren Jahre
     $yearsToShow = [];
-    
     // Ermittle die letzten 5 Jahre oder alle verfügbaren Jahre
     if (count($verfuegbareStatistikJahre) > 0) {
         // Sortiere Jahre absteigend
         rsort($verfuegbareStatistikJahre);
-        
         // Nimm maximal 5 Jahre
         $yearsToShow = array_slice($verfuegbareStatistikJahre, 0, 5);
     } else {
@@ -2488,70 +2208,53 @@ function showStatistikJahresvergleich() {
             $yearsToShow[] = $currentYear - $i;
         }
     }
-    
     // Sortiere aufsteigend für die Anzeige
     sort($yearsToShow);
-    
     // Initialisiere das Array mit 0 für alle Jahre
     foreach ($yearsToShow as $jahr) {
         $jahreData[$jahr] = 0;
     }
-    
     // Hole die Anzahl der Einsätze für jedes Jahr aus der Datenbank
     foreach ($yearsToShow as $jahr) {
         $startDate = $jahr . '-01-01 00:00:00';
         $endDate = $jahr . '-12-31 23:59:59';
-        
         $query = "SELECT COUNT(*) as Anzahl FROM einsatz WHERE Anzeigen = 1 AND Datum BETWEEN :startDate AND :endDate";
         $stmt = $conn->prepare($query);
         $stmt->bindParam(':startDate', $startDate);
         $stmt->bindParam(':endDate', $endDate);
         $stmt->execute();
-        
-        $jahreData[$jahr] = (int)$stmt->fetchColumn();
+        $jahreData[$jahr] = (int) $stmt->fetchColumn();
     }
-    
     $html = '<div class="statistik-card">';
     $html .= '<div class="statistik-card-title"><i class="bi bi-graph-up"></i> Jahresvergleich</div>';
-    
     $html .= '<div class="statistik-chart-container">';
     $html .= '<div class="statistik-bar-chart">';
-    
     $maxWert = max($jahreData);
-    
     foreach ($jahreData as $jahr => $anzahl) {
         $height = ($maxWert > 0) ? ($anzahl / $maxWert * 100) : 0;
         $isCurrentYear = ($jahr == $currentYear) ? 'style="background-color: #8e2219; font-weight: bold;"' : '';
-        
         $html .= '<div class="statistik-bar" style="height: ' . $height . '%;" ' . $isCurrentYear . ' title="' . $jahr . ': ' . $anzahl . ' Einsätze">';
-        
         if ($anzahl > 0) {
             $html .= '<span class="statistik-bar-value">' . $anzahl . '</span>';
         }
-        
         $html .= '<span class="statistik-bar-label">' . $jahr . '</span>';
         $html .= '</div>';
     }
-    
     $html .= '</div>';
     $html .= '</div>';
-    
     $html .= '<div class="statistik-info-text">Anzahl der Einsätze im Jahresvergleich</div>';
     $html .= '</div>';
-    
     return $html;
 }
-
 /**
  * Erstellt den HTML-Code für Stichwort-Kategorie-Verteilung
  * @return string HTML der Statistik
  */
-function showStatistikStichwortKategorie() {
+function showStatistikStichwortKategorie()
+{
     global $stats;
-    
     // Daten für die Stichwort-Kategorie-Verteilung sammeln
     $stichwortKategorieData = [];
-    
     // Wir erstellen ein Array aus den Stichwort- und Kategorie-Daten
     if (isset($stats['stichworte']) && isset($stats['kategorien'])) {
         foreach ($stats['stichworte'] as $index => $stichwort) {
@@ -2563,49 +2266,39 @@ function showStatistikStichwortKategorie() {
             ];
         }
     }
-    
     $html = '<div class="statistik-card">';
     $html .= '<div class="statistik-card-title"><i class="bi bi-diagram-3"></i> Stichwort-Kategorie-Verteilung</div>';
-    
     if (!empty($stichwortKategorieData)) {
         $html .= '<ul class="statistik-top-list">';
-        
         foreach ($stichwortKategorieData as $item) {
             $kategorieText = !empty($item['Kategorie']) ? $item['Kategorie'] : 'Ohne Kategorie';
-            
             $html .= '<li class="statistik-top-item">';
             $html .= '<span class="statistik-top-label">' . htmlspecialchars($item['Stichwort']) . ' <small>(' . htmlspecialchars($kategorieText) . ')</small></span>';
             $html .= '<span class="statistik-top-value">' . $item['Anzahl'] . '</span>';
             $html .= '</li>';
         }
-        
         $html .= '</ul>';
     } else {
         $html .= '<div class="statistik-info-text">Keine Daten verfügbar</div>';
     }
-    
     $html .= '<div class="statistik-info-text">Verteilung der häufigsten Stichwort-Kategorie-Kombinationen</div>';
     $html .= '</div>';
-    
     return $html;
 }
-
 /**
  * Erstellt den HTML-Code für Monat-Stichwort-Analyse
  * @return string HTML der Statistik
  */
-function showStatistikMonatStichwort() {
+function showStatistikMonatStichwort()
+{
     global $stats, $monate;
-    
     // Daten für die Monat-Stichwort-Analyse sammeln
     $monatStichwortData = [];
-    
     // Wir erstellen ein Array aus den Monats- und Stichwort-Daten
     if (isset($stats['monate']) && isset($stats['stichworte'])) {
         foreach ($stats['monate'] as $monat) {
             $monatNr = $monat['Monat'];
             $monatStichwortData[$monatNr] = [];
-            
             // Jedem Monat weisen wir einige Stichworte zu (hier vereinfacht)
             foreach ($stats['stichworte'] as $index => $stichwort) {
                 if ($index < 3) { // Wir nehmen nur die Top 3 Stichworte
@@ -2617,55 +2310,45 @@ function showStatistikMonatStichwort() {
             }
         }
     }
-    
     $html = '<div class="statistik-card">';
     $html .= '<div class="statistik-card-title"><i class="bi bi-calendar4-week"></i> Saisonale Einsatzarten</div>';
-    
     if (!empty($monatStichwortData)) {
         $html .= '<div class="statistik-accordion-container">';
-        
         foreach ($monatStichwortData as $monat => $eintraege) {
             if (isset($monate[$monat])) {
                 $html .= '<div class="statistik-accordion-item">';
                 $html .= '<div class="statistik-accordion-header">' . $monate[$monat] . '</div>';
                 $html .= '<div class="statistik-accordion-content">';
                 $html .= '<ul class="statistik-nested-list">';
-                
                 foreach ($eintraege as $eintrag) {
                     $html .= '<li>';
                     $html .= '<span>' . htmlspecialchars($eintrag['Stichwort']) . '</span>';
                     $html .= '<span class="statistik-top-value">' . $eintrag['Anzahl'] . '</span>';
                     $html .= '</li>';
                 }
-                
                 $html .= '</ul>';
                 $html .= '</div>';
                 $html .= '</div>';
             }
         }
-        
         $html .= '</div>';
     } else {
         $html .= '<div class="statistik-info-text">Keine Daten verfügbar</div>';
     }
-    
     $html .= '<div class="statistik-info-text">Häufigste Einsatzarten nach Monaten (klicken zum Öffnen)</div>';
     $html .= '</div>';
-    
     return $html;
 }
-
 /**
  * Erstellt den HTML-Code für Wochentag-Tageszeit-Analyse
  * @return string HTML der Statistik
  */
-function showStatistikWochentagTageszeit() {
+function showStatistikWochentagTageszeit()
+{
     global $stats, $wochentage;
-    
     // Daten für die Wochentag-Tageszeit-Analyse erzeugen
     $wochentagTageszeitData = [];
     $tageszeitReihenfolge = ['Morgen', 'Nachmittag', 'Abend', 'Nacht'];
-    
     // Matrix initialisieren
     for ($tag = 0; $tag < 7; $tag++) {
         $wochentagTageszeitData[$tag] = [];
@@ -2673,22 +2356,16 @@ function showStatistikWochentagTageszeit() {
             $wochentagTageszeitData[$tag][$tageszeit] = rand(0, 10); // Zufallswerte für die Demo
         }
     }
-    
     $html = '<div class="statistik-card">';
     $html .= '<div class="statistik-card-title"><i class="bi bi-clock-history"></i> Einsatzverteilung nach Zeit</div>';
-    
     $html .= '<div class="statistik-heatmap">';
-    
     // Kopfzeile mit Tageszeiten
     $html .= '<div class="statistik-heatmap-row statistik-heatmap-header">';
     $html .= '<div class="statistik-heatmap-cell"></div>'; // Leere Ecke oben links
-    
     foreach ($tageszeitReihenfolge as $tageszeit) {
         $html .= '<div class="statistik-heatmap-cell">' . $tageszeit . '</div>';
     }
-    
     $html .= '</div>';
-    
     // Maximalwert für Farbcodierung finden
     $maxAnzahl = 0;
     foreach ($wochentagTageszeitData as $tag => $zeiten) {
@@ -2696,44 +2373,35 @@ function showStatistikWochentagTageszeit() {
             $maxAnzahl = max($maxAnzahl, $anzahl);
         }
     }
-    
     // Zeilen mit Wochentagen
     foreach ($wochentagTageszeitData as $tag => $zeiten) {
         $html .= '<div class="statistik-heatmap-row">';
         $html .= '<div class="statistik-heatmap-cell statistik-heatmap-label">' . substr($wochentage[$tag], 0, 2) . '</div>';
-        
         foreach ($tageszeitReihenfolge as $tageszeit) {
             $anzahl = $zeiten[$tageszeit];
             $intensity = ($maxAnzahl > 0) ? ($anzahl / $maxAnzahl) : 0;
             $backgroundColor = getHeatmapColor($intensity);
             $textColor = ($intensity > 0.7) ? '#fff' : '#333';
-            
             $html .= '<div class="statistik-heatmap-cell" style="background-color: ' . $backgroundColor . '; color: ' . $textColor . ';" title="' . $wochentage[$tag] . ' ' . $tageszeit . ': ' . $anzahl . ' Einsätze">';
             $html .= $anzahl;
             $html .= '</div>';
         }
-        
         $html .= '</div>';
     }
-    
     $html .= '</div>';
-    
     $html .= '<div class="statistik-info-text">Verteilung der Einsätze nach Wochentagen und Tageszeit</div>';
     $html .= '</div>';
-    
     return $html;
 }
-
 /**
  * Erstellt den HTML-Code für Einsatzdauer nach Stichworten
  * @return string HTML der Statistik
  */
-function showStatistikDauerNachStichwort() {
+function showStatistikDauerNachStichwort()
+{
     global $stats;
-    
     // Daten für die Einsatzdauer nach Stichworten erzeugen
     $dauerStichwortData = [];
-    
     // Erzeugt Demo-Daten basierend auf vorhandenen Stichworten
     if (isset($stats['stichworte'])) {
         foreach ($stats['stichworte'] as $stichwort) {
@@ -2744,31 +2412,24 @@ function showStatistikDauerNachStichwort() {
             ];
         }
     }
-    
     $html = '<div class="statistik-card">';
     $html .= '<div class="statistik-card-title"><i class="bi bi-hourglass-split"></i> Einsatzdauer nach Stichwort</div>';
-    
     if (!empty($dauerStichwortData)) {
         $html .= '<div class="statistik-bar-horizontal-container">';
-        
         $maxDurchschnitt = 0;
         foreach ($dauerStichwortData as $item) {
             $maxDurchschnitt = max($maxDurchschnitt, $item['DurchschnittMinuten']);
         }
-        
         foreach ($dauerStichwortData as $item) {
             $durchschnitt = round($item['DurchschnittMinuten']);
             $width = ($maxDurchschnitt > 0) ? ($durchschnitt / $maxDurchschnitt * 100) : 0;
-            
             $durchschnittStunden = floor($durchschnitt / 60);
             $durchschnittMinuten = $durchschnitt % 60;
-            
             $dauerText = '';
             if ($durchschnittStunden > 0) {
                 $dauerText .= $durchschnittStunden . ' Std. ';
             }
             $dauerText .= $durchschnittMinuten . ' Min.';
-            
             $html .= '<div class="statistik-bar-horizontal-item">';
             $html .= '<div class="statistik-bar-horizontal-label">' . htmlspecialchars($item['Stichwort']) . '</div>';
             $html .= '<div class="statistik-bar-horizontal-bar-container">';
@@ -2777,80 +2438,73 @@ function showStatistikDauerNachStichwort() {
             $html .= '<div class="statistik-bar-horizontal-value">' . $dauerText . '</div>';
             $html .= '</div>';
         }
-        
         $html .= '</div>';
     } else {
         $html .= '<div class="statistik-info-text">Keine Daten verfügbar</div>';
     }
-    
     $html .= '<div class="statistik-info-text">Durchschnittliche Einsatzdauer nach Stichworten</div>';
     $html .= '</div>';
-    
     return $html;
 }
-
 /**
  * Erzeugt eine Farbe für die Heatmap basierend auf der Intensität
  * @param float $intensity Intensität zwischen 0 und 1
  * @return string Farbe als CSS-Wert
  */
-function getHeatmapColor($intensity) {
+function getHeatmapColor($intensity)
+{
     // Farbverlauf von hellgrün über gelb, orange bis rot
-    $r = min(255, 120 + (int)(135 * $intensity));
-    $g = min(255, 230 - (int)(180 * $intensity));
-    $b = min(255, 120 - (int)(120 * $intensity));
-    
+    $r = min(255, 120 + (int) (135 * $intensity));
+    $g = min(255, 230 - (int) (180 * $intensity));
+    $b = min(255, 120 - (int) (120 * $intensity));
     return "rgb($r, $g, $b)";
 }
-
 /**
  * Zeigt Einsatzarten nach Jahreszeit
  * @return void
  */
-function EinsatzStatistikArtenNachJahreszeit() {
+function EinsatzStatistikArtenNachJahreszeit()
+{
     EinsatzStatistikShow('arten_nach_jahreszeit');
 }
-
 /**
  * Zeigt Einsatzdauer nach Kategorie
  * @return void
  */
-function EinsatzStatistikDauerNachKategorie() {
+function EinsatzStatistikDauerNachKategorie()
+{
     EinsatzStatistikShow('dauer_nach_kategorie');
 }
-
 /**
  * Zeigt Einsätze nach Uhrzeit und Kategorie
  * @return void
  */
-function EinsatzStatistikUhrzeitKategorie() {
+function EinsatzStatistikUhrzeitKategorie()
+{
     EinsatzStatistikShow('uhrzeit_kategorie');
 }
-
 /**
  * Zeigt Einsätze nach Dauergruppen
  * @return void
  */
-function EinsatzStatistikDauergruppen() {
+function EinsatzStatistikDauergruppen()
+{
     EinsatzStatistikShow('dauergruppen');
 }
-
 /**
  * Zeigt Einsatzarten nach Jahreszeit
  * @return string HTML der Statistik
  */
-function showStatistikArtenNachJahreszeit() {
+function showStatistikArtenNachJahreszeit()
+{
     global $stats;
-    
     // Datenbankobjekt holen
     $db = Database::getInstance();
     $conn = $db->getConnection();
-    
     // Startdatum und Enddatum aus der globalen Konfiguration holen
     global $aktuellesStatistikJahr;
     $startDate = $aktuellesStatistikJahr . '-01-01 00:00:00';
     $endDate = $aktuellesStatistikJahr . '-12-31 23:59:59';
-    
     // Abfrage für Einsatzarten nach Jahreszeit
     $query = "SELECT 
                 CASE 
@@ -2864,20 +2518,15 @@ function showStatistikArtenNachJahreszeit() {
               WHERE Anzeigen = 1 AND Datum BETWEEN :startDate AND :endDate 
               GROUP BY Jahreszeit, Stichwort 
               ORDER BY Jahreszeit, Anzahl DESC";
-              
     $stmt = $conn->prepare($query);
     $stmt->bindParam(':startDate', $startDate);
     $stmt->bindParam(':endDate', $endDate);
     $stmt->execute();
-    
     $artenJahreszeitData = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
     $html = '<div class="statistik-card">';
     $html .= '<div class="statistik-card-title"><i class="bi bi-calendar"></i> Einsatzarten nach Jahreszeit</div>';
-    
     if (!empty($artenJahreszeitData)) {
         $html .= '<div class="statistik-accordion-container">';
-        
         // Gruppiere nach Jahreszeit
         $gruppierteJahreszeiten = [];
         foreach ($artenJahreszeitData as $item) {
@@ -2887,53 +2536,44 @@ function showStatistikArtenNachJahreszeit() {
             }
             $gruppierteJahreszeiten[$jahreszeit][] = $item;
         }
-        
         // Zeige die Jahreszeiten an
         foreach ($gruppierteJahreszeiten as $jahreszeit => $items) {
             $html .= '<div class="statistik-accordion-item">';
             $html .= '<div class="statistik-accordion-header">' . htmlspecialchars($jahreszeit) . '</div>';
             $html .= '<div class="statistik-accordion-content">';
             $html .= '<ul class="statistik-nested-list">';
-            
             foreach ($items as $item) {
                 $html .= '<li>';
                 $html .= '<span>' . htmlspecialchars($item['Stichwort']) . '</span>';
                 $html .= '<span class="statistik-top-value">' . $item['Anzahl'] . '</span>';
                 $html .= '</li>';
             }
-            
             $html .= '</ul>';
             $html .= '</div>';
             $html .= '</div>';
         }
-        
         $html .= '</div>';
     } else {
         $html .= '<div class="statistik-info-text">Keine Daten verfügbar</div>';
     }
-    
     $html .= '<div class="statistik-info-text">Verteilung der Einsatzarten nach Jahreszeiten</div>';
     $html .= '</div>';
-    
     return $html;
 }
-
 /**
  * Zeigt Einsatzdauer nach Kategorie
  * @return string HTML der Statistik
  */
-function showStatistikDauerNachKategorie() {
+function showStatistikDauerNachKategorie()
+{
     global $stats;
-    
     // Datenbankobjekt holen
     $db = Database::getInstance();
     $conn = $db->getConnection();
-    
     // Startdatum und Enddatum aus der globalen Konfiguration holen
     global $aktuellesStatistikJahr;
     $startDate = $aktuellesStatistikJahr . '-01-01 00:00:00';
     $endDate = $aktuellesStatistikJahr . '-12-31 23:59:59';
-    
     // Abfrage für durchschnittliche Dauer nach Kategorie
     $query = "SELECT Kategorie, 
               AVG(TIMESTAMPDIFF(MINUTE, Datum, Endzeit)) as DurchschnittMinuten,
@@ -2942,38 +2582,29 @@ function showStatistikDauerNachKategorie() {
               WHERE Anzeigen = 1 AND Datum BETWEEN :startDate AND :endDate 
               GROUP BY Kategorie 
               ORDER BY DurchschnittMinuten DESC";
-              
     $stmt = $conn->prepare($query);
     $stmt->bindParam(':startDate', $startDate);
     $stmt->bindParam(':endDate', $endDate);
     $stmt->execute();
-    
     $dauerKategorieData = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
     $html = '<div class="statistik-card">';
     $html .= '<div class="statistik-card-title"><i class="bi bi-hourglass"></i> Einsatzdauer nach Kategorie</div>';
-    
     if (!empty($dauerKategorieData)) {
         $html .= '<div class="statistik-bar-horizontal-container">';
-        
         $maxDurchschnitt = 0;
         foreach ($dauerKategorieData as $item) {
             $maxDurchschnitt = max($maxDurchschnitt, $item['DurchschnittMinuten']);
         }
-        
         foreach ($dauerKategorieData as $item) {
             $durchschnitt = round($item['DurchschnittMinuten']);
             $width = ($maxDurchschnitt > 0) ? ($durchschnitt / $maxDurchschnitt * 100) : 0;
-            
             $durchschnittStunden = floor($durchschnitt / 60);
             $durchschnittMinuten = $durchschnitt % 60;
-            
             $dauerText = '';
             if ($durchschnittStunden > 0) {
                 $dauerText .= $durchschnittStunden . ' Std. ';
             }
             $dauerText .= $durchschnittMinuten . ' Min.';
-            
             $html .= '<div class="statistik-bar-horizontal-item">';
             $html .= '<div class="statistik-bar-horizontal-label">' . htmlspecialchars($item['Kategorie']) . '</div>';
             $html .= '<div class="statistik-bar-horizontal-bar-container">';
@@ -2982,34 +2613,28 @@ function showStatistikDauerNachKategorie() {
             $html .= '<div class="statistik-bar-horizontal-value">' . $dauerText . '</div>';
             $html .= '</div>';
         }
-        
         $html .= '</div>';
     } else {
         $html .= '<div class="statistik-info-text">Keine Daten verfügbar</div>';
     }
-    
     $html .= '<div class="statistik-info-text">Durchschnittliche Einsatzdauer nach Kategorien</div>';
     $html .= '</div>';
-    
     return $html;
 }
-
 /**
  * Zeigt Einsätze nach Uhrzeit und Kategorie
  * @return string HTML der Statistik
  */
-function showStatistikUhrzeitKategorie() {
+function showStatistikUhrzeitKategorie()
+{
     global $stats;
-    
     // Datenbankobjekt holen
     $db = Database::getInstance();
     $conn = $db->getConnection();
-    
     // Startdatum und Enddatum aus der globalen Konfiguration holen
     global $aktuellesStatistikJahr;
     $startDate = $aktuellesStatistikJahr . '-01-01 00:00:00';
     $endDate = $aktuellesStatistikJahr . '-12-31 23:59:59';
-    
     // Abfrage für Einsätze nach Uhrzeit und Kategorie
     $query = "SELECT 
                 CASE 
@@ -3023,20 +2648,15 @@ function showStatistikUhrzeitKategorie() {
               WHERE Anzeigen = 1 AND Datum BETWEEN :startDate AND :endDate 
               GROUP BY Tageszeit, Kategorie 
               ORDER BY Tageszeit, Anzahl DESC";
-              
     $stmt = $conn->prepare($query);
     $stmt->bindParam(':startDate', $startDate);
     $stmt->bindParam(':endDate', $endDate);
     $stmt->execute();
-    
     $uhrzeitKategorieData = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
     $html = '<div class="statistik-card">';
     $html .= '<div class="statistik-card-title"><i class="bi bi-clock"></i> Einsätze nach Uhrzeit und Kategorie</div>';
-    
     if (!empty($uhrzeitKategorieData)) {
         $html .= '<div class="statistik-accordion-container">';
-        
         // Gruppiere nach Tageszeit
         $gruppierteTageszeiten = [];
         foreach ($uhrzeitKategorieData as $item) {
@@ -3046,53 +2666,44 @@ function showStatistikUhrzeitKategorie() {
             }
             $gruppierteTageszeiten[$tageszeit][] = $item;
         }
-        
         // Zeige die Tageszeiten an
         foreach ($gruppierteTageszeiten as $tageszeit => $items) {
             $html .= '<div class="statistik-accordion-item">';
             $html .= '<div class="statistik-accordion-header">' . htmlspecialchars($tageszeit) . '</div>';
             $html .= '<div class="statistik-accordion-content">';
             $html .= '<ul class="statistik-nested-list">';
-            
             foreach ($items as $item) {
                 $html .= '<li>';
                 $html .= '<span>' . htmlspecialchars($item['Kategorie']) . '</span>';
                 $html .= '<span class="statistik-top-value">' . $item['Anzahl'] . '</span>';
                 $html .= '</li>';
             }
-            
             $html .= '</ul>';
             $html .= '</div>';
             $html .= '</div>';
         }
-        
         $html .= '</div>';
     } else {
         $html .= '<div class="statistik-info-text">Keine Daten verfügbar</div>';
     }
-    
     $html .= '<div class="statistik-info-text">Verteilung der Einsätze nach Uhrzeit und Kategorie</div>';
     $html .= '</div>';
-    
     return $html;
 }
-
 /**
  * Zeigt Einsätze nach Dauergruppen
  * @return string HTML der Statistik
  */
-function showStatistikDauergruppen() {
+function showStatistikDauergruppen()
+{
     global $stats;
-    
     // Datenbankobjekt holen
     $db = Database::getInstance();
     $conn = $db->getConnection();
-    
     // Startdatum und Enddatum aus der globalen Konfiguration holen
     global $aktuellesStatistikJahr;
     $startDate = $aktuellesStatistikJahr . '-01-01 00:00:00';
     $endDate = $aktuellesStatistikJahr . '-12-31 23:59:59';
-    
     // Abfrage für Einsätze nach Dauergruppen
     $query = "SELECT 
                 CASE 
@@ -3105,73 +2716,59 @@ function showStatistikDauergruppen() {
               WHERE Anzeigen = 1 AND Datum BETWEEN :startDate AND :endDate 
               GROUP BY Dauergruppe 
               ORDER BY Anzahl DESC";
-              
     $stmt = $conn->prepare($query);
     $stmt->bindParam(':startDate', $startDate);
     $stmt->bindParam(':endDate', $endDate);
     $stmt->execute();
-    
     $dauergruppenData = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
     $html = '<div class="statistik-card">';
     $html .= '<div class="statistik-card-title"><i class="bi bi-hourglass-split"></i> Einsätze nach Dauergruppen</div>';
-    
     if (!empty($dauergruppenData)) {
         $html .= '<ul class="statistik-top-list">';
-        
         foreach ($dauergruppenData as $item) {
             $html .= '<li class="statistik-top-item">';
             $html .= '<span class="statistik-top-label">' . htmlspecialchars($item['Dauergruppe']) . '</span>';
             $html .= '<span class="statistik-top-value">' . $item['Anzahl'] . '</span>';
             $html .= '</li>';
         }
-        
         $html .= '</ul>';
     } else {
         $html .= '<div class="statistik-info-text">Keine Daten verfügbar</div>';
     }
-    
     $html .= '<div class="statistik-info-text">Verteilung der Einsätze nach Dauergruppen</div>';
     $html .= '</div>';
-    
     return $html;
 }
-
 /**
  * Zeigt Einsätze pro Jahreszeit
  * @return string HTML der Statistik
  */
-function showStatistikEinsaetzeProJahreszeit() {
+function showStatistikEinsaetzeProJahreszeit()
+{
     global $stats;
-    
     $html = '<div class="statistik-card">';
     $html .= '<div class="statistik-card-title"><i class="bi bi-calendar"></i> Einsätze pro Jahreszeit</div>';
-    
     if (!empty($stats['jahreszeiten'])) {
         $html .= '<ul class="statistik-top-list">';
-        
         foreach ($stats['jahreszeiten'] as $jahreszeit) {
             $html .= '<li class="statistik-top-item">';
             $html .= '<span class="statistik-top-label">' . htmlspecialchars($jahreszeit['Jahreszeit']) . '</span>';
             $html .= '<span class="statistik-top-value">' . $jahreszeit['Anzahl'] . '</span>';
             $html .= '</li>';
         }
-        
         $html .= '</ul>';
     } else {
         $html .= '<div class="statistik-info-text">Keine Daten verfügbar</div>';
     }
-    
     $html .= '</div>';
-    
     return $html;
 }
-
 /**
  * Zeigt Einsätze pro Jahreszeit
  * @return void
  */
-function EinsatzStatistikEinsaetzeProJahreszeit() {
+function EinsatzStatistikEinsaetzeProJahreszeit()
+{
     EinsatzStatistikShow('jahreszeiten');
 }
-?> 
+?>

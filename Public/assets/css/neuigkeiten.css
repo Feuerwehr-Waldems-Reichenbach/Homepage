@@ -7,7 +7,6 @@
     margin: 2rem 0 !important;
     justify-content: center !important;
 }
-
 .neuigkeiten-container .karte,
 .neuigkeiten-container .neuigkeit-karte {
     display: flex !important;
@@ -20,7 +19,6 @@
     margin: 0 !important;
     flex: 0 0 auto !important;
 }
-
 .neuigkeiten-container .bildbereich,
 .neuigkeiten-container .neuigkeit-bildbereich {
     flex: 1 !important;
@@ -30,7 +28,6 @@
     border-top-left-radius: 15px !important;
     border-bottom-left-radius: 15px !important;
 }
-
 .neuigkeiten-container .bildbereich::after,
 .neuigkeiten-container .neuigkeit-bildbereich::after {
     content: "" !important;
@@ -45,7 +42,6 @@
     border-bottom-left-radius: 15px !important;
     z-index: 1 !important;
 }
-
 .neuigkeiten-container .bildbereich img,
 .neuigkeiten-container .neuigkeit-bildbereich img,
 .neuigkeiten-container .neuigkeit-bild {
@@ -61,7 +57,6 @@
     filter: none !important;
     background-color: #f8f8f8 !important;
 }
-
 .neuigkeiten-container .infobereich,
 .neuigkeiten-container .neuigkeit-infobereich {
     flex: 1 !important;
@@ -71,7 +66,6 @@
     border-top-right-radius: 15px !important;
     border-bottom-right-radius: 15px !important;
 }
-
 .neuigkeiten-container .infobereich h2,
 .neuigkeiten-container .neuigkeit-titel {
     margin: 0 0 10px !important;
@@ -82,7 +76,6 @@
     letter-spacing: normal !important;
     font-weight: bold !important;
 }
-
 .neuigkeiten-container .info-details,
 .neuigkeiten-container .neuigkeit-details {
     font-size: 0.9em !important;
@@ -93,7 +86,6 @@
     align-items: center !important;
     gap: 10px !important;
 }
-
 .neuigkeiten-container .kurzinfo,
 .neuigkeiten-container .neuigkeit-kurzinfo,
 .neuigkeiten-container .neuigkeit-volltext {
@@ -103,7 +95,6 @@
     line-height: 1.5 !important;
     font-size: 0.9rem !important;
 }
-
 .neuigkeiten-container .datum,
 .neuigkeiten-container .ort,
 .neuigkeiten-container .neuigkeit-datum,
@@ -111,7 +102,6 @@
     font-weight: bold !important;
     text-transform: none !important;
 }
-
 /* Neuigkeit Volltext und Footer */
 .neuigkeiten-container .neuigkeit-volltext {
     flex: 1 !important;
@@ -120,7 +110,6 @@
     line-height: 1.5 !important;
     font-size: 0.9rem !important;
 }
-
 .neuigkeiten-container .neuigkeit-footer {
     display: flex !important;
     flex-wrap: wrap !important;
@@ -128,7 +117,6 @@
     margin-top: 10px !important;
     gap: 5px !important;
 }
-
 /* Button Styling für Neuigkeiten */
 .neuigkeiten-container .btn-neuigkeit-aktion {
     display: inline-flex !important;
@@ -150,24 +138,19 @@
     text-align: center !important;
     white-space: nowrap !important;
 }
-
 /* Spezielles Styling für den Kalender-Button */
 .neuigkeiten-container .btn-neuigkeit-aktion.kalender-btn {
     background-color: #0066cc !important; /* Blau */
 }
-
 .neuigkeiten-container .btn-neuigkeit-aktion.kalender-btn:hover {
     background-color: #0052a3 !important;
 }
-
 .neuigkeiten-container .btn-neuigkeit-aktion:hover {
     background-color: #8A211A !important;
 }
-
 .neuigkeiten-container .btn-neuigkeit-aktion i {
     margin-right: 5px !important;
 }
-
 /* Kalender-Download-Button */
 .neuigkeiten-container .kalender-download-btn {
     background-color: #0066cc !important; /* Blau */
@@ -182,16 +165,13 @@
     transition: background-color 0.3s !important;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
 }
-
 .neuigkeiten-container .kalender-download-btn:hover {
     background-color: #004999 !important;
     text-decoration: none !important;
 }
-
 .neuigkeiten-container .kalender-download-btn i {
     font-size: 1em !important;
 }
-
 /* Flyer-Download-Button */
 .neuigkeiten-container .flyer-download-btn {
     background-color: #d32f2f !important; /* Rot */
@@ -206,16 +186,13 @@
     transition: background-color 0.3s !important;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
 }
-
 .neuigkeiten-container .flyer-download-btn:hover {
     background-color: #b71c1c !important;
     text-decoration: none !important;
 }
-
 .neuigkeiten-container .flyer-download-btn i {
     font-size: 1em !important;
 }
-
 /* Scrollbar styling */
 .neuigkeiten-container .kurzinfo::-webkit-scrollbar,
 .neuigkeiten-container .neuigkeit-kurzinfo::-webkit-scrollbar,
@@ -228,7 +205,6 @@
     background-color: #ccc !important;
     border-radius: 10px !important;
 }
-
 /* Pagination styling */
 .neuigkeiten-container + .pagination,
 .neuigkeiten-container .pagination {
@@ -237,7 +213,6 @@
     margin-top: 1.5rem !important;
     width: 100% !important;
 }
-
 .neuigkeiten-container .page-link {
     margin: 0 5px !important;
     padding: 8px 16px !important;
@@ -247,42 +222,35 @@
     text-decoration: none !important;
     box-shadow: 0 2px 5px rgba(0,0,0,0.05) !important;
 }
-
 .neuigkeiten-container .page-link.active {
     background-color: #A72920 !important;
     color: white !important;
 }
-
 .neuigkeiten-container .page-link:hover {
     background-color: #e9ecef !important;
 }
-
 /* Responsive styling */
 @media (max-width: 1200px) {
     .neuigkeiten-container {
         justify-content: center !important;
     }
-    
     .neuigkeiten-container .karte,
     .neuigkeiten-container .neuigkeit-karte {
         width: 450px !important;
         height: 300px !important;
     }
 }
-
 @media (max-width: 992px) {
     .neuigkeiten-container {
         flex-direction: column !important;
         align-items: center !important;
     }
-    
     .neuigkeiten-container .karte,
     .neuigkeiten-container .neuigkeit-karte {
         width: 100% !important;
         max-width: 550px !important;
     }
 }
-
 @media (max-width: 767px) {
     .neuigkeiten-container .karte,
     .neuigkeiten-container .neuigkeit-karte {
@@ -290,14 +258,12 @@
         height: auto !important;
         max-width: 450px !important;
     }
-    
     .neuigkeiten-container .bildbereich,
     .neuigkeiten-container .infobereich,
     .neuigkeiten-container .neuigkeit-bildbereich,
     .neuigkeiten-container .neuigkeit-infobereich {
         flex: none !important;
     }
-    
     .neuigkeiten-container .bildbereich,
     .neuigkeiten-container .neuigkeit-bildbereich {
         height: 250px !important;
@@ -305,7 +271,6 @@
         border-top-left-radius: 15px !important;
         border-top-right-radius: 15px !important;
     }
-    
     .neuigkeiten-container .bildbereich img,
     .neuigkeiten-container .neuigkeit-bildbereich img,
     .neuigkeiten-container .neuigkeit-bild {
@@ -315,7 +280,6 @@
         border-bottom-left-radius: 0 !important;
         border-bottom-right-radius: 0 !important;
     }
-    
     .neuigkeiten-container .bildbereich::after,
     .neuigkeiten-container .neuigkeit-bildbereich::after {
         border-radius: 0 !important;
@@ -324,24 +288,20 @@
         border-bottom-left-radius: 0 !important;
         border-bottom-right-radius: 0 !important;
     }
-    
     .neuigkeiten-container .infobereich,
     .neuigkeiten-container .neuigkeit-infobereich {
         border-radius: 0 !important;
         border-bottom-left-radius: 15px !important;
         border-bottom-right-radius: 15px !important;
     }
-
     .neuigkeiten-container .neuigkeit-details {
         flex-direction: column !important;
         align-items: flex-start !important;
         gap: 5px !important;
     }
-
     .neuigkeiten-container .neuigkeit-footer {
         justify-content: center !important;
     }
-    
     .neuigkeiten-container .btn-neuigkeit-aktion {
         min-width: 0 !important;
         margin: 3px !important;
@@ -349,7 +309,6 @@
         padding: 6px 10px !important;
     }
 }
-
 /* Neuigkeit detail view */
 .neuigkeit-detail .neuigkeit-volltext {
     margin-top: 0 !important;
@@ -358,7 +317,6 @@
     border-radius: 0 !important;
     line-height: 1.6 !important;
 }
-
 /* Neuigkeiten latest view */
 .neuigkeiten-latest {
     display: flex !important;
@@ -367,12 +325,10 @@
     margin: 2rem 0 !important;
     align-items: center !important;
 }
-
 .neuigkeiten-latest .karte,
 .neuigkeiten-latest .neuigkeit-karte {
     margin-bottom: 1rem !important;
 }
-
 /* Reset für alle möglichen Bild-Styles */
 .neuigkeiten-container img,
 .neuigkeiten-container .bildbereich img,

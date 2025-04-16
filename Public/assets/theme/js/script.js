@@ -476,7 +476,6 @@ $jscomp.polyfill(
     for (
       var c = [], b = this, g = void 0 !== a;
       null !== (b = b.parentElement);
-
     )
       b.nodeType === Node.ELEMENT_NODE && ((g && !b.matches(a)) || c.push(b));
     return c;
@@ -1750,4 +1749,3 @@ $jscomp.polyfill(
   else window.addEventListener("DOMContentLoaded", E);
 })();
 document.getElementsByTagName("body")[0].setAttribute("style", "z-index: 0");
-

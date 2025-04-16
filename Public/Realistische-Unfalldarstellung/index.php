@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <!-- FFR Seite -->
   <meta charset="UTF-8">
@@ -28,6 +29,7 @@
   <link rel="preload" as="style" href="../assets/mobirise/css/mbr-additional.css?v=acTmw9">
   <link rel="stylesheet" href="../assets/mobirise/css/mbr-additional.css?v=acTmw9" type="text/css">
 </head>
+
 <body>
   <?php include '../assets/includes/warningModal.php'; ?>
   <?php include '../assets/includes/navbar.php'; ?>
@@ -257,4 +259,5 @@
     });
   </script>
 </body>
+
 </html>

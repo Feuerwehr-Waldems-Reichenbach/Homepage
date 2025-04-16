@@ -1,24 +1,23 @@
 <!-- warning-modal.php -->
-
 <div id="pageContent" class="blur-wrapper">
 </div>
-
 <div id="warningModal" class="warningModal">
   <div class="warningModal-content">
     <h2>Warnung: Sensible Inhalte</h2>
-    <p>Diese Seite enthält realistische Darstellungen von simulierten Notfall- und Unfallszenarien. Zu Übungszwecken werden Verletzungsmuster und medizinische Notfälle nachgestellt (z.B. mit Kunstblut). Diese Inhalte sind nicht für Kinder oder sensible Personen geeignet und werden auf eigene Verantwortung betrachtet.</p>
+    <p>Diese Seite enthält realistische Darstellungen von simulierten Notfall- und Unfallszenarien. Zu Übungszwecken
+      werden Verletzungsmuster und medizinische Notfälle nachgestellt (z.B. mit Kunstblut). Diese Inhalte sind nicht für
+      Kinder oder sensible Personen geeignet und werden auf eigene Verantwortung betrachtet.</p>
     <div class="warningModal-actions">
       <button onclick="continueToPage()">Ich habe verstanden und möchte fortfahren</button>
       <button onclick="goToHome()">Zurück zur Startseite</button>
     </div>
   </div>
 </div>
-
 <style>
   body.modal-active {
     overflow: hidden;
   }
-  
+
   .blur-wrapper {
     position: fixed;
     top: 0;
@@ -28,7 +27,7 @@
     z-index: -1;
   }
 
-  body.modal-active > *:not(#warningModal) {
+  body.modal-active>*:not(#warningModal) {
     filter: blur(8px);
     transition: filter 0.5s ease;
   }
@@ -41,7 +40,7 @@
     top: 0;
     width: 100vw;
     height: 100vh;
-    background-color: rgba(0,0,0,0.7);
+    background-color: rgba(0, 0, 0, 0.7);
     align-items: center;
     justify-content: center;
     filter: none !important;
@@ -55,7 +54,7 @@
     width: 90%;
     max-width: 550px;
     text-align: center;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
     filter: none !important;
   }
 
@@ -66,7 +65,7 @@
     position: relative;
     padding-bottom: 0.5rem;
   }
-  
+
   .warningModal h2:after {
     content: '';
     position: absolute;
@@ -115,7 +114,7 @@
 
   .warningModal-actions button:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
 
   @media (min-width: 768px) {
@@ -131,18 +130,15 @@
     }
   }
 </style>
-
 <script>
-  window.onload = function() {
+  window.onload = function () {
     document.getElementById("warningModal").style.display = "flex";
     document.body.classList.add('modal-active');
   }
-
   function continueToPage() {
     document.getElementById("warningModal").style.display = "none";
     document.body.classList.remove('modal-active');
   }
-
   function goToHome() {
     window.location.href = "/";
   }

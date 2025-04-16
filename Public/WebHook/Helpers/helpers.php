@@ -4,7 +4,6 @@
  * 
  * Gemeinsame Funktionen für webhook.php und kategorie_updater.php
  */
-
 // Pfad zur Datenbank-Klasse
 $stepsBack = 3;
 $basePath = __DIR__;
@@ -13,7 +12,6 @@ for ($i = 0; $i < $stepsBack; $i++) {
 }
 define('BASE_PATH_DB', $basePath);
 require_once BASE_PATH_DB . '/Private/Database/Database.php';
-
 /**
  * Überprüft, ob ein Authentifizierungsschlüssel gültig ist
  * 
@@ -28,7 +26,6 @@ function isValidAuthKey($conn, $authKey)
     $stmt->execute([$authKey]);
     return $stmt->fetchColumn() > 0;
 }
-
 /**
  * Ermittelt den Ort basierend auf der Adresse
  * 
@@ -42,7 +39,6 @@ function ermittleOrt($adresse, $orte = [], $defaultOrt = "Hessen")
     if (empty($orte)) {
         $orte = ["Bermbach", "Esch", "Niederems", "Reichenbach", "Steinfischbach", "Wüstems", "Waldems"];
     }
-    
     $ort = $defaultOrt;
     foreach ($orte as $ortCheck) {
         if (strpos($adresse, $ortCheck) !== false) {
@@ -50,10 +46,8 @@ function ermittleOrt($adresse, $orte = [], $defaultOrt = "Hessen")
             break;
         }
     }
-    
     return $ort;
 }
-
 /**
  * Ermittelt die Kategorie basierend auf Sachverhalt und Stichwort
  * 
@@ -64,40 +58,120 @@ function ermittleOrt($adresse, $orte = [], $defaultOrt = "Hessen")
 function getKategorie($sachverhalt, $stichwort)
 {
     $text = strtolower($sachverhalt . ' ' . $stichwort);
-
     $kategorien = [
         'Medizinisch' => [
-            'notfall', 'person', 'rettung', 'erste hilfe', 'bewusstlos', 'herzinfarkt', 'schlaganfall',
-            'verletzt', 'sturz', 'tragehilfe', 'krankentransport', 'rettungsdienst', 'sanitäter', 'notarzt'
+            'notfall',
+            'person',
+            'rettung',
+            'erste hilfe',
+            'bewusstlos',
+            'herzinfarkt',
+            'schlaganfall',
+            'verletzt',
+            'sturz',
+            'tragehilfe',
+            'krankentransport',
+            'rettungsdienst',
+            'sanitäter',
+            'notarzt'
         ],
         'Feuer' => [
-            'brand', 'feuer', 'rauch', 'rauchentwicklung', 'brennt', 'qualm', 'flammen', 'brandgeruch',
-            'brandmelder', 'brandmeldeanlage', 'bma', 'rauchmelder', 'wohnungsbrand', 'zimmerbrand',
-            'gebäudebrand', 'flächenbrand', 'waldbrand', 'fahrzeugbrand', 'mülltonnenbrand'
+            'brand',
+            'feuer',
+            'rauch',
+            'rauchentwicklung',
+            'brennt',
+            'qualm',
+            'flammen',
+            'brandgeruch',
+            'brandmelder',
+            'brandmeldeanlage',
+            'bma',
+            'rauchmelder',
+            'wohnungsbrand',
+            'zimmerbrand',
+            'gebäudebrand',
+            'flächenbrand',
+            'waldbrand',
+            'fahrzeugbrand',
+            'mülltonnenbrand'
         ],
         'Technische Hilfeleistung' => [
-            'hilfeleistung', 'th', 'verkehrsunfall', 'vku', 'vu', 'öl', 'ölspur', 'wasser', 'tür öffnen',
-            'eingeklemmt', 'eingeschlossen', 'verkehrsunfall', 'pkw', 'fahrzeug auf seite', 'bergung',
-            'aufzug', 'fahrstuhl', 'person eingeschlossen', 'person eingeklemmt', 'Auslaufen', 'unwegsames Gelände'
+            'hilfeleistung',
+            'th',
+            'verkehrsunfall',
+            'vku',
+            'vu',
+            'öl',
+            'ölspur',
+            'wasser',
+            'tür öffnen',
+            'eingeklemmt',
+            'eingeschlossen',
+            'verkehrsunfall',
+            'pkw',
+            'fahrzeug auf seite',
+            'bergung',
+            'aufzug',
+            'fahrstuhl',
+            'person eingeschlossen',
+            'person eingeklemmt',
+            'Auslaufen',
+            'unwegsames Gelände'
         ],
         'Unwetter' => [
-            'sturm', 'unwetter', 'überflutung', 'regen', 'wasserschaden', 'ast', 'baum auf straße',
-            'sturmbruch', 'dach abgedeckt', 'umgestürzter baum', 'wasser im keller', 'schnee', 'eisregen', 'glätte'
+            'sturm',
+            'unwetter',
+            'überflutung',
+            'regen',
+            'wasserschaden',
+            'ast',
+            'baum auf straße',
+            'sturmbruch',
+            'dach abgedeckt',
+            'umgestürzter baum',
+            'wasser im keller',
+            'schnee',
+            'eisregen',
+            'glätte'
         ],
         'Tierrettung' => [
-            'tier', 'katze', 'hund', 'tierrettung', 'tier in not', 'tier auf baum', 'tier in fahrzeug',
-            'tier in gefahr', 'vogel', 'pferd', 'rind'
+            'tier',
+            'katze',
+            'hund',
+            'tierrettung',
+            'tier in not',
+            'tier auf baum',
+            'tier in fahrzeug',
+            'tier in gefahr',
+            'vogel',
+            'pferd',
+            'rind'
         ],
         'Gefahrgut' => [
-            'gefahrgut', 'gas', 'austritt', 'chemikalie', 'stoffaustritt', 'ammoniak', 'leckage',
-            'unbekannter geruch', 'gift', 'tanklastzug', 'chemieunfall'
+            'gefahrgut',
+            'gas',
+            'austritt',
+            'chemikalie',
+            'stoffaustritt',
+            'ammoniak',
+            'leckage',
+            'unbekannter geruch',
+            'gift',
+            'tanklastzug',
+            'chemieunfall'
         ],
         'Absicherung' => [
-            'absicherung', 'veranstaltung', 'umzug', 'sicherung', 'verkehrssicherung', 'martinszug', 'laufveranstaltung'
+            'absicherung',
+            'veranstaltung',
+            'umzug',
+            'sicherung',
+            'verkehrssicherung',
+            'martinszug',
+            'laufveranstaltung'
         ],
         'Sonstiges' => []
     ];
-
     foreach ($kategorien as $kategorie => $woerter) {
         foreach ($woerter as $wort) {
             if (strpos($text, strtolower($wort)) !== false) {
@@ -105,10 +179,8 @@ function getKategorie($sachverhalt, $stichwort)
             }
         }
     }
-
     return 'Sonstiges';
 }
-
 /**
  * Validiert die Webhook-Parameter
  * 
@@ -121,10 +193,8 @@ function validateWebhookParams($params)
     if (!isset($params['einsatzID']) || $params['einsatzID'] === 'Unbekannt') {
         return [false, "Fehler: EinsatzID fehlt oder ist ungültig."];
     }
-    
     return [true, ""];
 }
-
 /**
  * Prüft, ob ein Einsatz bereits in der Datenbank existiert
  * 
@@ -139,7 +209,6 @@ function einsatzExistiert($conn, $einsatzID)
     $stmtCheck->execute([$einsatzID]);
     return $stmtCheck->fetchColumn() > 0;
 }
-
 /**
  * Fügt einen neuen Einsatz in die Datenbank ein
  * 
@@ -152,22 +221,22 @@ function insertEinsatz($conn, $params)
     $sqlInsert = "INSERT INTO `Einsatz` (`ID`, `Datum`, `Sachverhalt`, `Stichwort`, `Ort`, `Einheit`, `EinsatzID`, `Kategorie`) 
                   VALUES (NULL, ?, ?, ?, ?, ?, ?, ?)";
     $stmtInsert = $conn->prepare($sqlInsert);
-    
-    if ($stmtInsert->execute([
-        $params['datum'],
-        $params['sachverhalt'],
-        $params['stichwort'],
-        $params['ort'],
-        $params['einheit'],
-        $params['einsatzID'],
-        $params['kategorie']
-    ])) {
+    if (
+        $stmtInsert->execute([
+            $params['datum'],
+            $params['sachverhalt'],
+            $params['stichwort'],
+            $params['ort'],
+            $params['einheit'],
+            $params['einsatzID'],
+            $params['kategorie']
+        ])
+    ) {
         return [true, "Einsatz erfolgreich eingetragen."];
     } else {
         return [false, "Fehler beim Einfügen des Einsatzes. Bitte kontaktieren Sie den Administrator."];
     }
 }
-
 /**
  * Aktualisiert einen bestehenden Einsatz in der Datenbank
  * 
@@ -181,7 +250,6 @@ function updateEinsatz($conn, $params)
     if ($params['beendet'] == 1) {
         $sqlUpdate = "UPDATE `Einsatz` SET `Anzeigen` = true, `Endzeit` = ? WHERE `EinsatzID` = ?";
         $stmtUpdate = $conn->prepare($sqlUpdate);
-        
         if ($stmtUpdate->execute([$params['datum'], $params['einsatzID']])) {
             return [true, "Einsatz erfolgreich aktualisiert."];
         } else {
@@ -191,7 +259,6 @@ function updateEinsatz($conn, $params)
         // Wenn nicht beendet, aktualisiere nur die Kategorie, falls nötig
         $sqlUpdate = "UPDATE `Einsatz` SET `Kategorie` = ? WHERE `EinsatzID` = ? AND (`Kategorie` IS NULL OR `Kategorie` = '')";
         $stmtUpdate = $conn->prepare($sqlUpdate);
-        
         if ($stmtUpdate->execute([$params['kategorie'], $params['einsatzID']])) {
             return [true, "Einsatz existiert bereits und ist noch nicht beendet."];
         } else {
@@ -199,7 +266,6 @@ function updateEinsatz($conn, $params)
         }
     }
 }
-
 /**
  * Aktualisiert die Kategorien aller Einsätze in der Datenbank
  * 
@@ -213,19 +279,14 @@ function updateAllKategorien($conn, $nurNullWerte = true)
     $whereClause = $nurNullWerte ? "WHERE `Kategorie` IS NULL OR `Kategorie` = ''" : "";
     $sqlSelect = "SELECT `EinsatzID`, `Sachverhalt`, `Stichwort` FROM `Einsatz` $whereClause";
     $stmt = $conn->query($sqlSelect);
-    
     $updatedCount = 0;
-    
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $kategorie = getKategorie($row['Sachverhalt'], $row['Stichwort']);
-        
         $sqlUpdate = "UPDATE `Einsatz` SET `Kategorie` = ? WHERE `EinsatzID` = ?";
         $stmtUpdate = $conn->prepare($sqlUpdate);
-        
         if ($stmtUpdate->execute([$kategorie, $row['EinsatzID']])) {
             $updatedCount++;
         }
     }
-    
     return [$updatedCount, "Kategorien für $updatedCount Einsätze aktualisiert."];
-} 
+}
