@@ -7,7 +7,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
   <link rel="shortcut icon" href="../assets/images/gravatar-logo-dunkel.jpg" type="image/x-icon">
   <meta name="description" content="Downloads der Freiwilligen Feuerwehr Reichenbach - Wichtige Dokumente und Links für Mitglieder und Interessierte.">
-  
   <title>Downloads</title>
   <link rel="stylesheet" href="../assets/web/assets/mobirise-icons2/mobirise2.css">
   <link rel="stylesheet" href="../assets/bootstrap/css/bootstrap.min.css">
@@ -21,12 +20,9 @@
   <link rel="preload" href="https://fonts.googleapis.com/css?family=Inter+Tight:100,200,300,400,500,600,700,800,900,100i,200i,300i,400i,500i,600i,700i,800i,900i&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter+Tight:100,200,300,400,500,600,700,800,900,100i,200i,300i,400i,500i,600i,700i,800i,900i&display=swap"></noscript>
   <link rel="preload" as="style" href="../assets/mobirise/css/mbr-additional.css?v=acTmw9"><link rel="stylesheet" href="../assets/mobirise/css/mbr-additional.css?v=acTmw9" type="text/css">
-
 </head>
 <body>
-  
 <?php include '../assets/includes/navbar.php'; ?>
-
 <!-- Downloads Header -->
 <section data-bs-version="5.1" class="content4 cid-download-header" id="content4-n">
     <div class="container" style="margin-top: 12rem;">
@@ -42,7 +38,6 @@
         </div>
     </div>
 </section>
-
 <!-- Dokumente Bereich -->
 <section data-bs-version="5.1" class="content5 cid-download-documents-section" id="content5-m">
     <div class="container">
@@ -51,7 +46,6 @@
                 <h4 class="mbr-section-title mbr-fonts-style mb-4 display-5">
                     <strong>Dokumente</strong>
                 </h4>
-                
                 <!-- Dokumente Liste -->
                 <div class="card p-3">
                     <div class="card-body">
@@ -132,7 +126,6 @@
         </div>
     </div>
 </section>
-
 <!-- Weitere Seiten Bereich -->
 <section data-bs-version="5.1" class="content5 cid-download-other-pages-section" id="content5-n">
     <div class="container">
@@ -141,7 +134,6 @@
                 <h4 class="mbr-section-title mbr-fonts-style mb-4 display-5">
                     <strong>Weitere Seiten</strong>
                 </h4>
-                
                 <!-- Weitere Seiten Liste -->
                 <div class="card p-3">
                     <div class="card-body">
@@ -208,9 +200,7 @@
         </div>
     </div>
 </section>
-
 <?php include '../assets/includes/socialFooter.php'; ?>
 <?php include '../assets/includes/footer.php'; ?>
- 
 </body>
 </html>

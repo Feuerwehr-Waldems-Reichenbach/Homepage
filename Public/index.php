@@ -7,8 +7,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
   <link rel="shortcut icon" href="assets/images/gravatar-logo-dunkel.jpg" type="image/x-icon">
   <meta name="description" content="Willkommen bei der Freiwilligen Feuerwehr Reichenbach! Erfahre mehr über unsere Einsätze, unser Engagement und wie du uns unterstützen kannst.">
-  
-  
   <title>Startseite</title>
   <link rel="stylesheet" href="assets/web/assets/mobirise-icons2/mobirise2.css">
   <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
@@ -22,39 +20,26 @@
   <link rel="preload" href="https://fonts.googleapis.com/css?family=Inter+Tight:100,200,300,400,500,600,700,800,900,100i,200i,300i,400i,500i,600i,700i,800i,900i&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter+Tight:100,200,300,400,500,600,700,800,900,100i,200i,300i,400i,500i,600i,700i,800i,900i&display=swap"></noscript>
   <link rel="preload" as="style" href="assets/mobirise/css/mbr-additional.css?v=M1cYSM"><link rel="stylesheet" href="assets/mobirise/css/mbr-additional.css?v=M1cYSM" type="text/css">
-
-  
-  
-  
 </head>
 <body>
-  
   <?php include 'assets/includes/navbar.php'; ?>
-
   <?php
     require_once $_SERVER['DOCUMENT_ROOT'] . '/assets/includes/neuigkeiten.php';
     ShowPotentialPopup();
   ?>
-
   <section data-bs-version="5.1" class="header16 cid-u8DlI77rJo mbr-fullscreen jarallax" id="header17-e" data-jarallax-speed="0.8">
-  
   <div class="mbr-overlay" style="opacity: 0.2; background-color: rgb(0, 0, 0);"></div>
   <div class="container-fluid">
     <div class="row">
       <div class="content-wrap col-12 col-md-12">
         <h1 class="mbr-section-title mbr-fonts-style mbr-white mb-4 display-1"><strong>Feuerwehr Reichenbach</strong></h1>
-        
         <p class="mbr-fonts-style mbr-text mbr-white mb-4 display-7">Im Glanz der Flammen, im Herzen des Dorfes.</p>
         <div class="mbr-section-btn"><a class="btn btn-secondary display-7" href="#image08-h">Erfahre mehr</a></div>
       </div>
     </div>
   </div>
 </section>
-
 <section data-bs-version="5.1" class="image08 cid-u8DwU6WLje" id="image08-h">
-  
-  
-  
   <div class="container">
     <div class="row justify-content-center">
       <div class="col-lg-4">
@@ -73,11 +58,7 @@
     </div>
   </div>
 </section>
-
 <section data-bs-version="5.1" class="image08 cid-u8Te4FldCg" id="image08-2f">
-  
-  
-  
   <div class="container">
     <div class="row justify-content-center">
       <div class="col-lg-4">
@@ -96,12 +77,7 @@
     </div>
   </div>
 </section>
-
 <section data-bs-version="5.1" class="header14 cid-u8DE7DBCnr mbr-parallax-background" id="header14-o">
-	
-
-	
-	
 	<div class="container">
 		<div class="row justify-content-center">
 			<div class="card col-12 col-md-12 col-lg-9">
@@ -110,7 +86,6 @@
 						<h1 class="card-title mbr-fonts-style mb-4 display-2">
 							<strong>Bereit für den Einsatz deines Lebens?</strong>
 						</h1>
-						
 						<div class="mbr-section-btn mt-4"><a class="btn btn-primary display-7" href="/Mitmachen">Jetzt mitmachen</a></div>
 					</div>
 				</div>
@@ -118,11 +93,7 @@
 		</div>
 	</div>
 </section>
-
 <section data-bs-version="5.1" class="image08 cid-u8Dxu2alFC" id="image08-i">
-  
-  
-  
   <div class="container">
     <div class="row justify-content-center">
       <div class="col-lg-4">
@@ -140,14 +111,10 @@
     </div>
   </div>
 </section>
-
 <section data-bs-version="5.1" class="gallery07 cid-u8DC2aFSso" id="gallery07-k">
-  
-  
   <div class="container-fluid gallery-wrapper">
     <div class="row justify-content-center">
       <div class="col-12 content-head">
-        
       </div>
     </div>
     <div class="grid-container">
@@ -168,11 +135,7 @@
     </div>
   </div>
 </section>
-
 <section data-bs-version="5.1" class="image08 cid-u8TfeceLWe" id="image08-2h">
-  
-  
-  
   <div class="container">
     <div class="row justify-content-center">
       <div class="col-lg-4">
@@ -191,11 +154,7 @@
     </div>
   </div>
 </section>
-
 <section data-bs-version="5.1" class="image08 cid-u8Tft7TrpG" id="image08-2i">
-  
-  
-  
   <div class="container">
     <div class="row justify-content-center">
       <div class="col-lg-4">
@@ -214,10 +173,7 @@
     </div>
   </div>
 </section>
-
 <section data-bs-version="5.1" class="list1 cid-u8J6dF66TX" id="list01-q">	
-    
-	
 	<div class="container">
 		<div class="row justify-content-center">
 			<div class="col-12 col-md-12 col-lg-10 m-auto">
@@ -326,10 +282,8 @@
 		</div>
 	</div>
 </section>
-
 <?php include 'assets/includes/socialFooter.php'; ?>
 <?php include 'assets/includes/footer.php'; ?>
- 
   <!-- Parallax Scripts -->
   <script src="assets/bootstrap/js/bootstrap.bundle.min.js"></script>
   <script src="assets/smoothscroll/smooth-scroll.js"></script>

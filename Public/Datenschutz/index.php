@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 <head>
   <!-- FFR Seite -->
   <meta charset="UTF-8">
@@ -9,8 +8,6 @@
   <link rel="shortcut icon" href="../assets/images/gravatar-logo-dunkel.jpg" type="image/x-icon">
   <meta name="description"
     content="Unsere Datenschutzerklärung informiert dich über den Umgang mit deinen persönlichen Daten bei der Freiwilligen Feuerwehr Reichenbach. Erfahre mehr über deine Rechte und unsere Maßnahmen zum Datenschutz.">
-
-
   <title>Datenschutzerklärung</title>
   <link rel="stylesheet" href="../assets/web/assets/mobirise-icons2/mobirise2.css">
   <link rel="stylesheet" href="../assets/bootstrap/css/bootstrap.min.css">
@@ -28,18 +25,10 @@
   </noscript>
   <link rel="preload" as="style" href="../assets/mobirise/css/mbr-additional.css?v=VoxXpG">
   <link rel="stylesheet" href="../assets/mobirise/css/mbr-additional.css?v=VoxXpG" type="text/css">
-
-
-
-
 </head>
-
 <body>
-
-<?php include '../assets/includes/navbar.php'; ?>
-
+  <?php include '../assets/includes/navbar.php'; ?>
   <section data-bs-version="5.1" class="article07 cid-dataprotection-card" id="article07-1y">
-
     <div class="container">
       <div class="row justify-content-center">
         <div class="card col-md-12 col-lg-10">
@@ -48,9 +37,6 @@
               <strong>Datenschutzerklärung</strong>
             </h3>
             <div class="row card-box align-left">
-
-
-
               <div class="item features-without-image col-12 active">
                 <div class="item-wrapper">
                   <h4 class="mbr-section-subtitle mbr-fonts-style mb-3 display-2"><strong>1. Verantwortlicher und
@@ -72,7 +58,6 @@
                   </p>
                 </div>
               </div>
-
               <div class="item features-without-image col-12">
                 <div class="item-wrapper">
                   <h4 class="mbr-section-subtitle mbr-fonts-style mb-3 display-2"><strong>2. Grundlegende
@@ -93,7 +78,6 @@
                       Wahrung berechtigter Interessen unsererseits oder eines Dritten erforderlich, sofern nicht Ihre
                       Interessen oder Grundrechte und Grundfreiheiten überwiegen.</li>
                   </ul>
-
                   <h5 class="mbr-fonts-style display-5"><strong>2.2 Speicherdauer</strong></h5>
                   <p class="mbr-text mbr-fonts-style display-7">Wir speichern Ihre personenbezogenen Daten nur solange,
                     wie es für die Erfüllung der Zwecke, für die sie erhoben wurden, erforderlich ist oder dies
@@ -114,7 +98,6 @@
                   </p>
                 </div>
               </div>
-
               <div class="item features-without-image col-12">
                 <div class="item-wrapper">
                   <h4 class="mbr-section-subtitle mbr-fonts-style mb-3 display-5"><strong>3. Erhobene Daten und
@@ -135,7 +118,6 @@
                     Authentifizierung und Bereitstellung der Reservierungsfunktionen.</p>
                   <p class="mbr-text mbr-fonts-style display-7"><strong>Rechtsgrundlage:</strong> Erfüllung des
                     Nutzungsvertrags (Art. 6 Abs. 1 lit. b DSGVO).</p>
-
                   <h5 class="mbr-fonts-style display-5"><strong>3.2 Reservierungsdaten</strong></h5>
                   <p class="mbr-text mbr-fonts-style display-7">Bei der Durchführung einer Reservierung werden folgende
                     Daten verarbeitet:</p>
@@ -150,7 +132,6 @@
                     Ihrer Reservierung, Überprüfung der Verfügbarkeit, Abrechnung.</p>
                   <p class="mbr-text mbr-fonts-style display-7"><strong>Rechtsgrundlage:</strong> Erfüllung des
                     Reservierungsvertrags (Art. 6 Abs. 1 lit. b DSGVO).</p>
-
                   <h5 class="mbr-fonts-style display-5"><strong>3.3 Kommunikationsdaten</strong></h5>
                   <p class="mbr-text mbr-fonts-style display-7">Bei der Kommunikation mit uns (z.B. per E-Mail oder über
                     das Kontaktformular) werden folgende Daten verarbeitet:</p>
@@ -165,7 +146,6 @@
                     an der Beantwortung von Anfragen (Art. 6 Abs. 1 lit. f DSGVO) oder Vertragserfüllung (Art. 6 Abs. 1
                     lit. b DSGVO), wenn die Kommunikation im Zusammenhang mit einem bestehenden Vertragsverhältnis
                     steht.</p>
-
                   <h5 class="mbr-fonts-style display-5"><strong>3.4 E-Mail-Benachrichtigungen</strong></h5>
                   <p class="mbr-text mbr-fonts-style display-7">Wir senden Ihnen E-Mail-Benachrichtigungen zu folgenden
                     Anlässen:</p>
@@ -180,7 +160,6 @@
                     Vorgänge im Zusammenhang mit Ihrem Benutzerkonto oder Ihrer Reservierung.</p>
                   <p class="mbr-text mbr-fonts-style display-7"><strong>Rechtsgrundlage:</strong> Erfüllung des
                     Nutzungs- bzw. Reservierungsvertrags (Art. 6 Abs. 1 lit. b DSGVO).</p>
-
                   <h5 class="mbr-fonts-style display-5"><strong>3.5 Protokolldaten (Server-Logs)</strong></h5>
                   <p class="mbr-text mbr-fonts-style display-7">Bei der Nutzung unserer Website werden automatisch
                     technische Zugriffsdaten erhoben:</p>
@@ -199,7 +178,6 @@
                     an der sicheren und funktionalen Bereitstellung der Website (Art. 6 Abs. 1 lit. f DSGVO).</p>
                   <p class="mbr-text mbr-fonts-style display-7">Diese Daten werden nach spätestens 7 Tagen anonymisiert
                     oder gelöscht, sofern keine längere Speicherung aus Sicherheitsgründen erforderlich ist.</p>
-
                   <h5 class="mbr-fonts-style display-5"><strong>3.6 Cookies</strong></h5>
                   <p class="mbr-text mbr-fonts-style display-7">Unsere Website verwendet ausschließlich technisch
                     notwendige Cookies, die für den Betrieb der Website erforderlich sind:</p>
@@ -221,7 +199,6 @@
                     dem Speichern eines Cookies eine ausdrückliche Zustimmung erforderlich ist. Die vollständige
                     Deaktivierung von Cookies kann jedoch dazu führen, dass Sie nicht alle Funktionen unserer Website
                     nutzen können.</p>
-
                   <h5 class="mbr-fonts-style display-5"><strong>3.7 Mitgliedschaftsdaten im Förderverein</strong></h5>
                   <p class="mbr-text mbr-fonts-style display-7">Für die Bearbeitung von Mitgliedschaften im Förderverein
                     der Freiwilligen Feuerwehr Waldems-Reichenbach e.V. erheben wir persönliche Daten digital und auf
@@ -241,7 +218,6 @@
                   </p>
                 </div>
               </div>
-
               <div class="item features-without-image col-12">
                 <div class="item-wrapper">
                   <h4 class="mbr-section-subtitle mbr-fonts-style mb-3 display-5"><strong>4. Sicherheit der
@@ -262,7 +238,6 @@
                     achten, indem Sie beispielsweise sichere Passwörter verwenden und diese regelmäßig ändern.</p>
                 </div>
               </div>
-
               <div class="item features-without-image col-12">
                 <div class="item-wrapper">
                   <h4 class="mbr-section-subtitle mbr-fonts-style mb-3 display-5"><strong>5. Datenempfänger und
@@ -272,7 +247,6 @@
                   <p class="mbr-text mbr-fonts-style display-7">Innerhalb unserer Organisation haben nur diejenigen
                     Personen Zugriff auf Ihre Daten, die diese zur Erfüllung ihrer Aufgaben benötigen
                     (Verwaltungspersonal, IT-Administratoren).</p>
-
                   <h5 class="mbr-fonts-style display-5"><strong>5.2 Externe Dienstleister (Auftragsverarbeiter)</strong>
                   </h5>
                   <p class="mbr-text mbr-fonts-style display-7">Wir setzen für bestimmte Verarbeitungstätigkeiten
@@ -284,7 +258,6 @@
                   <p class="mbr-text mbr-fonts-style display-7">Mit diesen Dienstleistern haben wir entsprechende
                     Auftragsverarbeitungsverträge gemäß Art. 28 DSGVO abgeschlossen, die sicherstellen, dass Ihre Daten
                     entsprechend den gesetzlichen Vorgaben verarbeitet werden.</p>
-
                   <h5 class="mbr-fonts-style display-5"><strong>5.3 Datenübermittlung</strong></h5>
                   <p class="mbr-text mbr-fonts-style display-7">Eine Weitergabe Ihrer personenbezogenen Daten erfolgt
                     ausschließlich:</p>
@@ -296,7 +269,6 @@
                   </ul>
                   <p class="mbr-text mbr-fonts-style display-7">Eine Weitergabe Ihrer Daten zu Werbe- oder
                     Marketingzwecken findet nicht statt.</p>
-
                   <h5 class="mbr-fonts-style display-5"><strong>3.8 Google Maps</strong></h5>
                   <p class="mbr-text mbr-fonts-style display-7">Auf unserer Website ist eine Karte von Google Maps
                     eingebunden, um Ihnen unseren Standort anzuzeigen. Bei der Nutzung von Google Maps können Daten über
@@ -311,23 +283,19 @@
                   </p>
                 </div>
               </div>
-
               <div class="item features-without-image col-12">
                 <div class="item-wrapper">
                   <h4 class="mbr-section-subtitle mbr-fonts-style mb-3 display-5"><strong>6. Ihre Rechte</strong></h4>
                   <p class="mbr-text mbr-fonts-style display-7">Nach der Datenschutz-Grundverordnung stehen Ihnen
                     folgende Rechte zu:</p>
-
                   <h5 class="mbr-fonts-style display-5"><strong>6.1 Auskunftsrecht (Art. 15 DSGVO)</strong></h5>
                   <p class="mbr-text mbr-fonts-style display-7">Sie haben das Recht, von uns eine Bestätigung darüber zu
                     verlangen, ob wir Sie betreffende personenbezogene Daten verarbeiten. Ist dies der Fall, haben Sie
                     ein Recht auf Auskunft über diese Daten und weitere Informationen wie die Verarbeitungszwecke, die
                     Kategorien der Daten, die Empfänger der Daten und die geplante Speicherdauer.</p>
-
                   <h5 class="mbr-fonts-style display-5"><strong>6.2 Recht auf Berichtigung (Art. 16 DSGVO)</strong></h5>
                   <p class="mbr-text mbr-fonts-style display-7">Sie haben das Recht, die Berichtigung unrichtiger und
                     die Vervollständigung unvollständiger Sie betreffender personenbezogener Daten zu verlangen.</p>
-
                   <h5 class="mbr-fonts-style display-5"><strong>6.3 Recht auf Löschung (Art. 17 DSGVO)</strong></h5>
                   <p class="mbr-text mbr-fonts-style display-7">Sie haben das Recht, die Löschung Ihrer
                     personenbezogenen Daten zu verlangen, wenn einer der folgenden Gründe zutrifft:</p>
@@ -347,7 +315,6 @@
                     Beendigung der Mitgliedschaft werden Ihre Daten entsprechend der gesetzlichen Aufbewahrungspflichten
                     gespeichert und danach automatisch gelöscht. Sie können jederzeit Ihr Recht auf Löschung geltend
                     machen, wobei die gesetzlichen Aufbewahrungspflichten berücksichtigt werden müssen.</p>
-
                   <h5 class="mbr-fonts-style display-5"><strong>6.4 Recht auf Einschränkung der Verarbeitung (Art. 18
                       DSGVO)</strong></h5>
                   <p class="mbr-text mbr-fonts-style display-7">Sie haben das Recht, die Einschränkung der Verarbeitung
@@ -360,7 +327,6 @@
                     <li>Sie haben Widerspruch gegen die Verarbeitung eingelegt, und es steht noch nicht fest, ob unsere
                       berechtigten Gründe Ihre überwiegen.</li>
                   </ul>
-
                   <h5 class="mbr-fonts-style display-5"><strong>6.5 Recht auf Datenübertragbarkeit (Art. 20
                       DSGVO)</strong></h5>
                   <p class="mbr-text mbr-fonts-style display-7">Sie haben das Recht, die Sie betreffenden
@@ -368,7 +334,6 @@
                     maschinenlesbaren Format zu erhalten, und Sie haben das Recht, diese Daten einem anderen
                     Verantwortlichen zu übermitteln, wenn die Verarbeitung auf einer Einwilligung oder einem Vertrag
                     beruht und mit automatisierten Mitteln erfolgt.</p>
-
                   <h5 class="mbr-fonts-style display-5"><strong>6.6 Widerspruchsrecht (Art. 21 DSGVO)</strong></h5>
                   <p class="mbr-text mbr-fonts-style display-7">Sie haben das Recht, aus Gründen, die sich aus Ihrer
                     besonderen Situation ergeben, jederzeit gegen die Verarbeitung Sie betreffender personenbezogener
@@ -376,13 +341,11 @@
                     Daten dann nicht mehr, es sei denn, wir können zwingende schutzwürdige Gründe für die Verarbeitung
                     nachweisen, die Ihre Interessen, Rechte und Freiheiten überwiegen, oder die Verarbeitung dient der
                     Geltendmachung, Ausübung oder Verteidigung von Rechtsansprüchen.</p>
-
                   <h5 class="mbr-fonts-style display-5"><strong>6.7 Recht auf Widerruf einer Einwilligung (Art. 7 Abs. 3
                       DSGVO)</strong></h5>
                   <p class="mbr-text mbr-fonts-style display-7">Sie haben das Recht, eine erteilte Einwilligung
                     jederzeit mit Wirkung für die Zukunft zu widerrufen, ohne dass die Rechtmäßigkeit der aufgrund der
                     Einwilligung bis zum Widerruf erfolgten Verarbeitung berührt wird.</p>
-
                   <h5 class="mbr-fonts-style display-5"><strong>6.8 Beschwerderecht bei einer Aufsichtsbehörde (Art. 77
                       DSGVO)</strong></h5>
                   <p class="mbr-text mbr-fonts-style display-7">Sie haben das Recht auf Beschwerde bei einer
@@ -398,7 +361,6 @@
                   </p>
                 </div>
               </div>
-
               <div class="item features-without-image col-12">
                 <div class="item-wrapper">
                   <h4 class="mbr-section-subtitle mbr-fonts-style mb-3 display-5">
@@ -418,9 +380,8 @@
                     viele Ihrer Daten selbst einzusehen und zu bearbeiten sowie Ihr Konto zu löschen.</p>
                 </div>
               </div>
-
               <div class="item features-without-image col-12">
-              <div class="item-wrapper">
+                <div class="item-wrapper">
                   <h4 class="mbr-section-subtitle mbr-fonts-style mb-3 display-5">
                     <div><strong>8. Aktualität und Änderung dieser Datenschutzerklärung</strong></div>
                   </h4>
@@ -429,23 +390,23 @@
                     <?php echo date('d.m.Y'); ?>.
                   </p>
                   <p class="mbr-text mbr-fonts-style display-7">
-                    Wir behalten uns vor, diese Datenschutzerklärung anzupassen, um sie an geänderte Rechtslagen oder bei Änderungen unserer Leistungen sowie der Datenverarbeitung anzupassen. Die jeweils aktuelle Version ist stets auf unserer Website verfügbar und gilt ab dem Zeitpunkt ihrer Veröffentlichung.
+                    Wir behalten uns vor, diese Datenschutzerklärung anzupassen, um sie an geänderte Rechtslagen oder
+                    bei Änderungen unserer Leistungen sowie der Datenverarbeitung anzupassen. Die jeweils aktuelle
+                    Version ist stets auf unserer Website verfügbar und gilt ab dem Zeitpunkt ihrer Veröffentlichung.
                   </p>
                   <p class="mbr-text mbr-fonts-style display-7">
-                    Wir empfehlen Ihnen, diese Datenschutzerklärung regelmäßig zu überprüfen, um über den Schutz Ihrer Daten auf dem Laufenden zu bleiben.
+                    Wir empfehlen Ihnen, diese Datenschutzerklärung regelmäßig zu überprüfen, um über den Schutz Ihrer
+                    Daten auf dem Laufenden zu bleiben.
                   </p>
                 </div>
               </div>
             </div>
-
           </div>
         </div>
       </div>
     </div>
   </section>
-
   <?php include '../assets/includes/socialFooter.php'; ?>
   <?php include '../assets/includes/footer.php'; ?>
 </body>
-
 </html>
