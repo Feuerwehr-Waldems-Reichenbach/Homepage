@@ -15,7 +15,7 @@ $menu = [
         'submenu' => [
             'Einsatzabteilung' => [
                 'submenu' => [
-                    'Übersicht' => '/Einsatzabteilung',
+                    'Einsatzabteilung' => '/Einsatzabteilung',
                     'Fahrzeuge' => '/Fahrzeuge', 
                     'Feuerwehrhaus' => '/Feuerwehrhaus'
                 ]
