@@ -28,7 +28,7 @@
 <?php include '../assets/includes/navbar.php'; ?>
 
 <!-- Downloads Header -->
-<section data-bs-version="5.1" class="content4 cid-tOx9yJmCw8" id="content4-n">
+<section data-bs-version="5.1" class="content4 cid-download-header" id="content4-n">
     <div class="container" style="margin-top: 12rem;">
         <div class="row justify-content-center">
             <div class="title col-md-12 col-lg-10">
@@ -44,7 +44,7 @@
 </section>
 
 <!-- Dokumente Bereich -->
-<section data-bs-version="5.1" class="content5 cid-tOx9yEghkG" id="content5-m">
+<section data-bs-version="5.1" class="content5 cid-download-documents-section" id="content5-m">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-12 col-lg-10">
@@ -134,7 +134,7 @@
 </section>
 
 <!-- Weitere Seiten Bereich -->
-<section data-bs-version="5.1" class="content5 cid-tOx9yEghkG" id="content5-n">
+<section data-bs-version="5.1" class="content5 cid-download-other-pages-section" id="content5-n">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-12 col-lg-10">

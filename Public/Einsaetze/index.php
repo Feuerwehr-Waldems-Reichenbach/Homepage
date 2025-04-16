@@ -32,7 +32,7 @@
 
 <?php include '../assets/includes/navbar.php'; ?>
 
-<section data-bs-version="5.1" class="header16 cid-u8ZqdT74F6 mbr-fullscreen jarallax" id="header17-2w" data-jarallax-speed="0.8">
+<section data-bs-version="5.1" class="header16 cid-einsatz-header mbr-fullscreen jarallax" id="header17-2w" data-jarallax-speed="0.8">
   
   <div class="mbr-overlay" style="opacity: 0.5; background-color: rgb(0, 0, 0);"></div>
   <div class="container-fluid">
@@ -47,7 +47,7 @@
   </div>
 </section>
 
-<section data-bs-version="5.1" class="article11 cid-ukzz9Maa6f" id="article11-4p">  
+<section data-bs-version="5.1" class="article11 cid-einsatz-card" id="article11-4p">  
     <div class="container">
         <?php include_once "../assets/includes/einsaetze.php";
         
@@ -89,7 +89,7 @@
     </div>
 </section>
 
-<section data-bs-version="5.1" class="gallery1 mbr-gallery cid-u8Zqvxr6si" id="gallery02-41">   
+<section data-bs-version="5.1" class="gallery1 mbr-gallery cid-einsatz-gallery" id="gallery02-41">   
     
     
 

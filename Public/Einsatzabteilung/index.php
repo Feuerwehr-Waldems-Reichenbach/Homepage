@@ -32,7 +32,7 @@
   
 <?php include '../assets/includes/navbar.php'; ?>
 
-<section data-bs-version="5.1" class="header16 cid-u8MWnMVRSd mbr-fullscreen jarallax" id="header17-2w" data-jarallax-speed="0.8">
+<section data-bs-version="5.1" class="header16 cid-einsatzabteilung-header mbr-fullscreen jarallax" id="header17-2w" data-jarallax-speed="0.8">
   
   <div class="mbr-overlay" style="opacity: 0.5; background-color: rgb(0, 0, 0);"></div>
   <div class="container-fluid">
@@ -47,7 +47,7 @@
   </div>
 </section>
 
-<section data-bs-version="5.1" class="image08 cid-u8TkTixFtF" id="image08-2k">
+<section data-bs-version="5.1" class="image08 cid-einsatzabteilung-image-card-right" id="image08-2k">
   
   
   
@@ -69,7 +69,7 @@
   </div>
 </section>
 
-<section data-bs-version="5.1" class="image08 cid-u8Tl5Fj21j" id="image08-2l">
+<section data-bs-version="5.1" class="image08 cid-einsatzabteilung-image-card-left" id="image08-2l">
   
   
   
@@ -91,7 +91,7 @@
   </div>
 </section>
 
-<section data-bs-version="5.1" class="header14 cid-unSrkRGHc1 mbr-parallax-background" id="header14-51">
+<section data-bs-version="5.1" class="header14 cid-einsatzabteilung-call-to-action-card mbr-parallax-background" id="header14-51">
 	
 
 	
@@ -113,7 +113,7 @@
 	</div>
 </section>
 
-<section data-bs-version="5.1" class="image08 cid-unSrK9p4Yv" id="image08-52">
+<section data-bs-version="5.1" class="image08 cid-einsatzabteilung-image-card-right" id="image08-52">
   
   
   
@@ -135,7 +135,7 @@
   </div>
 </section>
 
-<section data-bs-version="5.1" class="image08 cid-unSrj607fX" id="image08-50">
+<section data-bs-version="5.1" class="image08 cid-einsatzabteilung-image-card-left" id="image08-50">
   
   
   
@@ -157,7 +157,7 @@
   </div>
 </section>
 
-<section data-bs-version="5.1" class="image08 cid-unSrVEdzFY" id="image08-53">
+<section data-bs-version="5.1" class="image08 cid-einsatzabteilung-image-card-right" id="image08-53">
   
   
   
@@ -179,7 +179,7 @@
   </div>
 </section>
 
-<section data-bs-version="5.1" class="gallery1 mbr-gallery cid-u8TmWnJ8N9" id="gallery02-2o">   
+<section data-bs-version="5.1" class="gallery1 mbr-gallery cid-einsatzabteilung-gallery-card" id="gallery02-2o">   
     
     
 
