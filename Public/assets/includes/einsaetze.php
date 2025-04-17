@@ -34,6 +34,13 @@ function showEinsaetze($itemsPerPage = 5, $customClass = '')
     // Datenbankobjekt holen
     $db = Database::getInstance();
     $conn = $db->getConnection();
+
+    // Fetch all emergency operations that have details
+    $detailsSql = "SELECT einsatz_id FROM einsatz_Details";
+    $detailsStmt = $conn->prepare($detailsSql);
+    $detailsStmt->execute();
+    $einsaetzeWithDetails = $detailsStmt->fetchAll(PDO::FETCH_COLUMN, 0);
+
     // Gesamtzahl der Einsätze abrufen (nur die, die angezeigt werden sollen)
     $countSql = "SELECT COUNT(*) as total FROM einsatz WHERE Anzeigen = 1";
     $countStmt = $conn->prepare($countSql);
@@ -81,6 +88,8 @@ function showEinsaetze($itemsPerPage = 5, $customClass = '')
             border-radius: 4px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.08);
             transition: transform 0.2s ease;
+            position: relative;
+            overflow: hidden;
         }
         .einsatz-item:hover {
             transform: translateY(-2px);
@@ -146,6 +155,48 @@ function showEinsaetze($itemsPerPage = 5, $customClass = '')
             color: #6c757d;
             margin-top: 0.5rem;
             text-align: right;
+        }
+        .einsatz-details-button {
+            margin-top: 1.2rem;
+            text-align: center;
+            width: 100%;
+            margin-bottom: -1rem;
+            margin-left: -1rem;
+            margin-right: -1rem;
+        }
+        .einsatz-details-link {
+            display: block;
+            width: calc(100% + 2rem);
+            background-color: #A72920;
+            color: white;
+            padding: 0.8rem 1rem;
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.25s ease;
+            text-align: center;
+            box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
+            border-radius: 0 0 4px 0;
+        }
+        .einsatz-details-link:hover {
+            background-color: #8e2219;
+            color: white;
+            text-decoration: none;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        .einsatz-details-link:hover i {
+            animation-duration: 0.8s;
+        }
+        .einsatz-details-link i {
+            margin-left: 0.5rem;
+            font-size: 0.9rem;
+            animation: bounce 1.5s infinite ease-in-out;
+        }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(4px); }
+            60% { transform: translateY(2px); }
         }
         .pagination {
             display: flex;
@@ -347,6 +398,14 @@ function showEinsaetze($itemsPerPage = 5, $customClass = '')
             echo '<div class="einsatz-einheit"><i class="bi bi-people"></i> ' . htmlspecialchars($einsatz['Einheit']) . '</div>';
             echo '</div>';
             echo '<div class="einsatz-duration">Einsatzdauer: ' . $dauerText . '</div>';
+            
+            // Check if details are available for this emergency operation
+            if (in_array($einsatz['ID'], $einsaetzeWithDetails)) {
+                echo '<div class="einsatz-details-button">';
+                echo '<a href="../Einsaetze/Details/?id=' . $einsatz['ID'] . '" class="einsatz-details-link"><i class="bi bi-arrow-right"></i> Hier klicken um mehr zu erfahren <i class="bi bi-arrow-left"></i></a>';
+                echo '</div>';
+            }
+            
             echo '</div>';
         }
         // Paginierung anzeigen, wenn mehr als eine Seite vorhanden ist
