@@ -39,7 +39,7 @@
       <div class="row">
         <div class="content-wrap col-12 col-md-12">
           <h1 class="mbr-section-title mbr-fonts-style mbr-white mb-4 display-1"><strong>Feuerwehrhaus</strong></h1>
-          <div class="mbr-section-btn"><a class="btn btn-white-outline display-7" href="#slider03-39">Erfahre mehr!</a>
+          <div class="mbr-section-btn"><a class="btn btn-white-outline display-7" href="#article12-59">Erfahre mehr!</a>
           </div>
         </div>
       </div>
@@ -64,45 +64,61 @@
       </div>
     </div>
   </section>
-  <section data-bs-version="5.1" class="slider3 cid-u8ZiUC7zbP" id="slider03-39">
-    <div class="carousel slide" id="uH1uEnXvXN" data-interval="5000" data-bs-interval="5000">
-      <ol class="carousel-indicators">
-        <li data-slide-to="0" data-bs-slide-to="0" class="active" data-target="#uH1uEnXvXN"
-          data-bs-target="#uH1uEnXvXN"></li>
-        <li data-slide-to="1" data-bs-slide-to="1" class="" data-target="#uH1uEnXvXN" data-bs-target="#uH1uEnXvXN"></li>
-        <li data-slide-to="2" data-bs-slide-to="2" class="" data-target="#uH1uEnXvXN" data-bs-target="#uH1uEnXvXN"></li>
-      </ol>
-      <div class="carousel-inner">
-        <div class="carousel-item slider-image item active">
-          <div class="item-wrapper">
-            <img class="d-block w-100" src="../assets/images/lowpoly.webp" alt="Mobirise Website Builder">
+  <section data-bs-version="5.1" class="image08 cid-einsatzabteilung-image-card-right" id="image08-2k1">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-4">
+          <div class="col-12 col-md-12">
+            <h5 class="mbr-section-title mbr-fonts-style mt-0 mb-4 display-2"><strong>Unsere Umkleideräume</strong></h5>
+            <h6 class="mbr-section-subtitle mbr-fonts-style mt-0 mb-4 display-7">Die Umkleideräume sind ein zentraler Bestandteil unseres Feuerwehrhauses. Hier bereiten sich unsere Einsatzkräfte auf ihre Einsätze vor und legen ihre persönliche Schutzausrüstung an. Jedes Mitglied hat seinen eigenen Spind, in dem die komplette Ausrüstung griffbereit verstaut ist.<br><br>
+            </h6>
           </div>
         </div>
-        <div class="carousel-item slider-image item">
-          <div class="item-wrapper">
-            <img class="d-block w-100" src="../assets/images/lowpoly.webp" alt="Mobirise Website Builder"
-              data-slide-to="1" data-bs-slide-to="2">
-          </div>
-        </div>
-        <div class="carousel-item slider-image item">
-          <div class="item-wrapper">
-            <img class="d-block w-100" src="../assets/images/lowpoly.webp" alt="Mobirise Website Builder"
-              data-slide-to="2" data-bs-slide-to="3">
+        <div class="col-lg-8 side-features">
+          <div class="image-wrapper mb-4">
+            <img class="w-100" src="../assets/images/5i0r9-zlsem.webp" alt="Umkleideräume und Spinde">
           </div>
         </div>
       </div>
-      <a class="carousel-control carousel-control-prev" role="button" data-slide="prev" data-bs-slide="prev"
-        href="#uH1uEnXvXN">
-        <span class="mobi-mbri mobi-mbri-arrow-prev" aria-hidden="true"></span>
-        <span class="sr-only visually-hidden">Previous</span>
-      </a>
-      <a class="carousel-control carousel-control-next" role="button" data-slide="next" data-bs-slide="next"
-        href="#uH1uEnXvXN">
-        <span class="mobi-mbri mobi-mbri-arrow-next" aria-hidden="true"></span>
-        <span class="sr-only visually-hidden">Next</span>
-      </a>
     </div>
   </section>
+  <section data-bs-version="5.1" class="image08 cid-einsatzabteilung-image-card-left" id="image08-2l2">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-4">
+          <div class="col-12 col-md-12">
+            <h5 class="mbr-section-title mbr-fonts-style mt-0 mb-4 display-2"><strong>Unser Schulungsraum</strong></h5>
+            <h6 class="mbr-section-subtitle mbr-fonts-style mt-0 mb-4 display-7">In unserem Schulungsraum finden theoretische Einheiten und wichtige Schulungen wie Erste-Hilfe-Kurse statt. Der Raum wurde von den Mitgliedern selbst umgebaut und bietet die ideale Umgebung für Aus- und Weiterbildungen. Zudem verfügt er über eine kleine Küche, die die Nutzung des Raumes für längere Veranstaltungen erleichtert. Hier können wir uns optimal auf verschiedene Einsatzszenarien vorbereiten.<br><br>
+            </h6>
+          </div>
+        </div>
+        <div class="col-lg-8 side-features">
+          <div class="image-wrapper mb-4">
+            <img class="w-100" src="../assets/images/yszsn-llw6i.webp" alt="Schulungsraum mit kleiner Küche">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section data-bs-version="5.1" class="image08 cid-einsatzabteilung-image-card-right" id="image08-2k3">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-4">
+          <div class="col-12 col-md-12">
+            <h5 class="mbr-section-title mbr-fonts-style mt-0 mb-4 display-2"><strong>Unser Gemeinschaftsraum</strong></h5>
+            <h6 class="mbr-section-subtitle mbr-fonts-style mt-0 mb-4 display-7">Unser Gemeinschaftsraum wurde in Handarbeit von den Feuerwehrmitgliedern gebaut. Dahinter stecken unzählige Stunden freiwilliger Arbeit und großes Engagement. Er dient als wichtiger Treffpunkt für gemeinsame Veranstaltungen und stärkt den Zusammenhalt in unserer Feuerwehrfamilie.<br><br>
+            </h6>
+          </div>
+        </div>
+        <div class="col-lg-8 side-features">
+          <div class="image-wrapper mb-4">
+            <img class="w-100" src="../assets/images/234ae-8w1gl.webp" alt="Aufenthaltsraum">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <?php include '../assets/includes/socialFooter.php'; ?>
   <?php include '../assets/includes/footer.php'; ?>
   <!-- Parallax Scripts -->
@@ -114,7 +130,7 @@
   <script src="../assets/parallax/jarallax.js"></script>
   <script>
     // Initialisiere Jarallax nach dem Laden der Seite
-    document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function() {
       jarallax(document.querySelectorAll('.jarallax'), {
         speed: 0.6,
         imgPosition: '50% 50%',
