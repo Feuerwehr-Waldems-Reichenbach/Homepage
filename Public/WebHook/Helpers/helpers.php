@@ -73,7 +73,13 @@ function getKategorie($sachverhalt, $stichwort)
             'krankentransport',
             'rettungsdienst',
             'sanitäter',
-            'notarzt'
+            'notarzt',
+            'Coronarsyndrom',
+            'Akutes Coronarsyndrom',
+            'Herz-Kreislauf-Stillstand',
+            'Apoplex',
+            'Apoplex Symptombegin <6 Std.',
+            '(R 1) Voraushelfer'
         ],
         'Feuer' => [
             'brand',
@@ -106,6 +112,7 @@ function getKategorie($sachverhalt, $stichwort)
             'ölspur',
             'wasser',
             'tür öffnen',
+            'Türöffnung',
             'eingeklemmt',
             'eingeschlossen',
             'verkehrsunfall',
@@ -133,7 +140,8 @@ function getKategorie($sachverhalt, $stichwort)
             'wasser im keller',
             'schnee',
             'eisregen',
-            'glätte'
+            'glätte',
+            ''
         ],
         'Tierrettung' => [
             'tier',
