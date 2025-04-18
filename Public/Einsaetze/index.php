@@ -41,13 +41,13 @@
                 <div class="content-wrap col-12 col-md-12">
                     <h1 class="mbr-section-title mbr-fonts-style mbr-white mb-4 display-1"><strong>Einsätze</strong>
                     </h1>
-                    <div class="mbr-section-btn"><a class="btn btn-white-outline display-7" href="#article11-4p">Alle
+                    <div class="mbr-section-btn"><a class="btn btn-white-outline display-7" href="#Einsatzliste">Alle
                             Einsätze</a></div>
                 </div>
             </div>
         </div>
     </section>
-    <section data-bs-version="5.1" class="article11 cid-einsatz-card" id="article11-4p">
+    <section data-bs-version="5.1" class="article11 cid-einsatz-card" id="Einsatzliste">
         <div class="container">
             <?php include_once "../assets/includes/einsaetze.php";
             $jahr = isset($_GET['statistik_jahr']) ? (int) $_GET['statistik_jahr'] : date('Y');
