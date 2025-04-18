@@ -204,7 +204,7 @@ function validateWebhookParams($params)
  */
 function einsatzExistiert($conn, $einsatzID)
 {
-    $sqlCheck = "SELECT COUNT(*) FROM `Einsatz` WHERE `EinsatzID` = ?";
+    $sqlCheck = "SELECT COUNT(*) FROM `einsatz` WHERE `EinsatzID` = ?";
     $stmtCheck = $conn->prepare($sqlCheck);
     $stmtCheck->execute([$einsatzID]);
     return $stmtCheck->fetchColumn() > 0;
@@ -218,7 +218,7 @@ function einsatzExistiert($conn, $einsatzID)
  */
 function insertEinsatz($conn, $params)
 {
-    $sqlInsert = "INSERT INTO `Einsatz` (`ID`, `Datum`, `Sachverhalt`, `Stichwort`, `Ort`, `Einheit`, `EinsatzID`, `Kategorie`) 
+    $sqlInsert = "INSERT INTO `einsatz` (`ID`, `Datum`, `Sachverhalt`, `Stichwort`, `Ort`, `Einheit`, `EinsatzID`, `Kategorie`) 
                   VALUES (NULL, ?, ?, ?, ?, ?, ?, ?)";
     $stmtInsert = $conn->prepare($sqlInsert);
     if (
@@ -248,7 +248,7 @@ function updateEinsatz($conn, $params)
 {
     // Wenn beendet=1, setze Endzeit
     if ($params['beendet'] == 1) {
-        $sqlUpdate = "UPDATE `Einsatz` SET `Anzeigen` = true, `Endzeit` = ? WHERE `EinsatzID` = ?";
+        $sqlUpdate = "UPDATE `einsatz` SET `Anzeigen` = true, `Endzeit` = ? WHERE `EinsatzID` = ?";
         $stmtUpdate = $conn->prepare($sqlUpdate);
         if ($stmtUpdate->execute([$params['datum'], $params['einsatzID']])) {
             return [true, "Einsatz erfolgreich aktualisiert."];
@@ -257,7 +257,7 @@ function updateEinsatz($conn, $params)
         }
     } else {
         // Wenn nicht beendet, aktualisiere nur die Kategorie, falls nötig
-        $sqlUpdate = "UPDATE `Einsatz` SET `Kategorie` = ? WHERE `EinsatzID` = ? AND (`Kategorie` IS NULL OR `Kategorie` = '')";
+        $sqlUpdate = "UPDATE `einsatz` SET `Kategorie` = ? WHERE `EinsatzID` = ? AND (`Kategorie` IS NULL OR `Kategorie` = '')";
         $stmtUpdate = $conn->prepare($sqlUpdate);
         if ($stmtUpdate->execute([$params['kategorie'], $params['einsatzID']])) {
             return [true, "Einsatz existiert bereits und ist noch nicht beendet."];
@@ -277,12 +277,12 @@ function updateAllKategorien($conn, $nurNullWerte = true)
 {
     // SQL-Abfrage, um alle Einsätze zu holen
     $whereClause = $nurNullWerte ? "WHERE `Kategorie` IS NULL OR `Kategorie` = ''" : "";
-    $sqlSelect = "SELECT `EinsatzID`, `Sachverhalt`, `Stichwort` FROM `Einsatz` $whereClause";
+    $sqlSelect = "SELECT `EinsatzID`, `Sachverhalt`, `Stichwort` FROM `einsatz` $whereClause";
     $stmt = $conn->query($sqlSelect);
     $updatedCount = 0;
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $kategorie = getKategorie($row['Sachverhalt'], $row['Stichwort']);
-        $sqlUpdate = "UPDATE `Einsatz` SET `Kategorie` = ? WHERE `EinsatzID` = ?";
+        $sqlUpdate = "UPDATE `einsatz` SET `Kategorie` = ? WHERE `EinsatzID` = ?";
         $stmtUpdate = $conn->prepare($sqlUpdate);
         if ($stmtUpdate->execute([$kategorie, $row['EinsatzID']])) {
             $updatedCount++;

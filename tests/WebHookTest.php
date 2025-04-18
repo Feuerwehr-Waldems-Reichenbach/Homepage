@@ -72,7 +72,7 @@ class WebHookTest extends TestCase
         $this->InsertCorrectWebhook();
         $db = Database::getInstance();
         $conn = $db->getConnection();
-        $stmt = $conn->prepare("SELECT COUNT(*) FROM `Einsatz` WHERE `EinsatzID` = ?");
+        $stmt = $conn->prepare("SELECT COUNT(*) FROM `einsatz` WHERE `EinsatzID` = ?");
         $stmt->execute([$this->einsatzID]);
         $count = $stmt->fetchColumn();
         $this->assertEquals(1, $count, "\n❌ Fehler: Eintrag wurde nicht in die Datenbank eingefügt!");
@@ -84,7 +84,7 @@ class WebHookTest extends TestCase
         $this->UpdateCorrectWebhook();
         $db = Database::getInstance();
         $conn = $db->getConnection();
-        $stmt = $conn->prepare("SELECT Endzeit FROM `Einsatz` WHERE `EinsatzID` = ?");
+        $stmt = $conn->prepare("SELECT Endzeit FROM `einsatz` WHERE `EinsatzID` = ?");
         $stmt->execute([$this->einsatzID]);
         $endzeit = $stmt->fetchColumn();
         $this->assertNotNull($endzeit, "\n❌ Fehler: Der Einsatz wurde nicht als beendet markiert!");
@@ -96,7 +96,7 @@ class WebHookTest extends TestCase
         $this->cleanupDatabase();
         $db = Database::getInstance();
         $conn = $db->getConnection();
-        $stmt = $conn->prepare("SELECT COUNT(*) FROM `Einsatz` WHERE `EinsatzID` = ?");
+        $stmt = $conn->prepare("SELECT COUNT(*) FROM `einsatz` WHERE `EinsatzID` = ?");
         $stmt->execute([$this->einsatzID]);
         $count = $stmt->fetchColumn();
         $this->assertEquals(0, $count, "\n❌ Fehler: Eintrag wurde nicht gelöscht!");
@@ -138,7 +138,7 @@ class WebHookTest extends TestCase
         // Der Webhook sollte den Einsatz nicht als beendet markieren
         $db = Database::getInstance();
         $conn = $db->getConnection();
-        $stmt = $conn->prepare("SELECT Endzeit FROM `Einsatz` WHERE `EinsatzID` = ?");
+        $stmt = $conn->prepare("SELECT Endzeit FROM `einsatz` WHERE `EinsatzID` = ?");
         $stmt->execute([$this->einsatzID]);
         $endzeit = $stmt->fetchColumn();
         // Akzeptiere entweder NULL oder '0000-00-00 00:00:00' als "nicht beendet"
@@ -158,7 +158,7 @@ class WebHookTest extends TestCase
         // Prüfen, ob die Kategorie korrekt gesetzt wurde
         $db = Database::getInstance();
         $conn = $db->getConnection();
-        $stmt = $conn->prepare("SELECT Kategorie FROM `Einsatz` WHERE `EinsatzID` = ?");
+        $stmt = $conn->prepare("SELECT Kategorie FROM `einsatz` WHERE `EinsatzID` = ?");
         $stmt->execute([$this->einsatzID]);
         $kategorie = $stmt->fetchColumn();
         $this->assertEquals('Feuer', $kategorie, "\n❌ Fehler: Die Kategorie wurde nicht korrekt als 'Feuer' erkannt!");
@@ -174,7 +174,7 @@ class WebHookTest extends TestCase
         // Prüfen, ob die Kategorie korrekt gesetzt wurde
         $db = Database::getInstance();
         $conn = $db->getConnection();
-        $stmt = $conn->prepare("SELECT Kategorie FROM `Einsatz` WHERE `EinsatzID` = ?");
+        $stmt = $conn->prepare("SELECT Kategorie FROM `einsatz` WHERE `EinsatzID` = ?");
         $stmt->execute([$this->einsatzID]);
         $kategorie = $stmt->fetchColumn();
         $this->assertEquals('Technische Hilfeleistung', $kategorie, "\n❌ Fehler: Die Kategorie wurde nicht korrekt als 'Technische Hilfeleistung' erkannt!");
@@ -190,7 +190,7 @@ class WebHookTest extends TestCase
         // Prüfen, ob die Kategorie korrekt gesetzt wurde
         $db = Database::getInstance();
         $conn = $db->getConnection();
-        $stmt = $conn->prepare("SELECT Kategorie FROM `Einsatz` WHERE `EinsatzID` = ?");
+        $stmt = $conn->prepare("SELECT Kategorie FROM `einsatz` WHERE `EinsatzID` = ?");
         $stmt->execute([$this->einsatzID]);
         $kategorie = $stmt->fetchColumn();
         $this->assertEquals('Medizinisch', $kategorie, "\n❌ Fehler: Die Kategorie wurde nicht korrekt als 'Medizinisch' erkannt!");
@@ -431,7 +431,7 @@ class WebHookTest extends TestCase
         $db = Database::getInstance();
         $conn = $db->getConnection();
         // Eintrag löschen
-        $stmtDelete = $conn->prepare("DELETE FROM `Einsatz` WHERE `EinsatzID` = ?");
+        $stmtDelete = $conn->prepare("DELETE FROM `einsatz` WHERE `EinsatzID` = ?");
         $stmtDelete->execute([$this->einsatzID]);
     }
 }
