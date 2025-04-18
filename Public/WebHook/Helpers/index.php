@@ -8,15 +8,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header('Content-Type: text/html; charset=utf-8');
     try {
         // Eingabe prüfen
-        $overwriteExisting = isset($_POST['overwriteExisting']) && $_POST['overwriteExisting'] === '1';
-        // Datenbankverbindung abrufen
-        $db = Database::getInstance();
-        $conn = $db->getConnection();
-        // Kategorien aktualisieren
-        [$updatedCount, $message] = updateAllKategorien($conn, !$overwriteExisting);
-        echo "<h3>Aktualisierung abgeschlossen</h3>";
-        echo "<p>{$message}</p>";
-        exit;
+        if (isset($_POST['action']) && $_POST['action'] === 'reset') {
+            // Kategorien zurücksetzen
+            $db = Database::getInstance();
+            $conn = $db->getConnection();
+            $resetCount = resetAllKategorien($conn);
+            echo "<h3>Zurücksetzen abgeschlossen</h3>";
+            echo "<p>Kategorien für {$resetCount} Einsätze wurden zurückgesetzt.</p>";
+            exit;
+        } else {
+            // Normales Update
+            $overwriteExisting = isset($_POST['overwriteExisting']) && $_POST['overwriteExisting'] === '1';
+            // Datenbankverbindung abrufen
+            $db = Database::getInstance();
+            $conn = $db->getConnection();
+            // Kategorien aktualisieren
+            [$updatedCount, $message] = updateAllKategorien($conn, !$overwriteExisting);
+            echo "<h3>Aktualisierung abgeschlossen</h3>";
+            echo "<p>{$message}</p>";
+            exit;
+        }
     } catch (Exception $e) {
         echo "<h3>Fehler</h3>";
         echo "<p>Ein technischer Fehler ist aufgetreten. Bitte versuchen Sie es später erneut oder kontaktieren Sie den Administrator.</p>";
@@ -106,6 +117,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
                 <button type="submit" class="btn">Aktualisierung starten</button>
             </form>
+            <hr style="margin: 20px 0;">
+            <form id="resetForm">
+                <p><strong>Achtung:</strong> Diese Aktion setzt alle Kategorien zurück (auf NULL).</p>
+                <button type="submit" class="btn" style="background-color: #ff5722;">Alle Kategorien zurücksetzen</button>
+            </form>
         </div>
         <div class="loading" id="loading">
             <p>Aktualisierung läuft, bitte warten...</p>
@@ -144,6 +160,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     resultElement.style.display = 'block';
                     resultElement.style.backgroundColor = '#ffebee';
                 });
+        });
+
+        document.getElementById('resetForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            if (confirm('Sind Sie sicher, dass Sie alle Kategorien zurücksetzen möchten? Dies kann nicht rückgängig gemacht werden.')) {
+                document.getElementById('loading').style.display = 'block';
+                document.getElementById('result').style.display = 'none';
+                fetch('', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: 'action=reset'
+                })
+                    .then(response => response.text())
+                    .then(data => {
+                        document.getElementById('loading').style.display = 'none';
+                        const resultElement = document.getElementById('result');
+                        resultElement.innerHTML = data;
+                        resultElement.style.display = 'block';
+                        resultElement.style.backgroundColor = '#fff3e0';
+                    })
+                    .catch(error => {
+                        document.getElementById('loading').style.display = 'none';
+                        const resultElement = document.getElementById('result');
+                        resultElement.innerHTML = 'Fehler beim Zurücksetzen: ' + error;
+                        resultElement.style.display = 'block';
+                        resultElement.style.backgroundColor = '#ffebee';
+                    });
+            }
         });
     </script>
 </body>

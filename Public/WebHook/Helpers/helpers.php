@@ -298,3 +298,19 @@ function updateAllKategorien($conn, $nurNullWerte = true)
     }
     return [$updatedCount, "Kategorien für $updatedCount Einsätze aktualisiert."];
 }
+/**
+ * Setzt alle Kategorien der Einsätze in der Datenbank zurück
+ * 
+ * @param PDO $conn Die Datenbankverbindung
+ * @return int Anzahl der zurückgesetzten Einsätze
+ */
+function resetAllKategorien($conn)
+{
+    // SQL zum Zurücksetzen aller Kategorien auf NULL
+    $sqlReset = "UPDATE `einsatz` SET `Kategorie` = NULL";
+    $stmt = $conn->prepare($sqlReset);
+    $stmt->execute();
+    
+    // Anzahl betroffene Zeilen zurückgeben
+    return $stmt->rowCount();
+}
