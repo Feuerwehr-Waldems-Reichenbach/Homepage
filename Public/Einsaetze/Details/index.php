@@ -30,53 +30,59 @@
   <link rel="stylesheet" href="../../assets/mobirise/css/mbr-additional.css?v=acTmw9" type="text/css">
 
   <style>
-   
-    .mbr-section-title, 
+    .mbr-section-title,
     .mbr-section-subtitle,
     .footer-text,
     .footer-head {
-      color:rgb(0, 0, 0) !important;
+      color: rgb(0, 0, 0) !important;
     }
+
     .einsatz-details-container {
       padding: 4rem 0;
       min-height: calc(100vh - 250px);
       background-color: #414141;
     }
+
     .einsatz-details-header {
-      background-color:rgb(255, 255, 255);
-      border-radius: 8px;
+      background-color: rgb(255, 255, 255);
+      border-radius: 30px;
       padding: 2rem;
       margin-bottom: 2rem;
-      margin-top: 4rem;
     }
+
     .einsatz-details-title {
-      color:rgb(0, 0, 0);
+      color: rgb(0, 0, 0);
       margin-bottom: 1.5rem;
       font-weight: bold;
       font-size: 2.2rem;
     }
+
     .einsatz-details-meta {
       display: flex;
       flex-wrap: wrap;
       gap: 1.2rem;
       margin-bottom: 1.5rem;
       font-size: 0.95rem;
-      color:rgb(0, 0, 0);
+      color: rgb(0, 0, 0);
     }
+
     .einsatz-details-meta div {
       display: flex;
       align-items: center;
     }
+
     .einsatz-details-meta i {
       margin-right: 0.5rem;
       opacity: 0.8;
     }
+
     .einsatz-details-badges {
       display: flex;
       flex-wrap: wrap;
       gap: 0.8rem;
       margin-bottom: 1.5rem;
     }
+
     .einsatz-details-stichwort {
       background-color: #A72920;
       color: white;
@@ -84,6 +90,7 @@
       border-radius: 4px;
       font-size: 0.9rem;
     }
+
     .einsatz-details-kategorie {
       background-color: #585858;
       color: white;
@@ -91,16 +98,19 @@
       border-radius: 4px;
       font-size: 0.9rem;
     }
+
     .einsatz-details-content-wrapper {
       display: flex;
       flex-wrap: wrap;
       gap: 2rem;
       margin-bottom: 2rem;
     }
+
     .einsatz-details-text-container {
       flex: 1;
       min-width: 300px;
     }
+
     .einsatz-details-image {
       flex: 1;
       min-width: 300px;
@@ -109,6 +119,7 @@
       overflow: hidden;
       height: fit-content;
     }
+
     .einsatz-details-image img {
       width: 100%;
       height: auto;
@@ -116,73 +127,87 @@
     }
 
     .einsatz-details-content {
-      background-color:rgb(255, 255, 255);
-      border-radius: 8px;
+      background-color: rgb(255, 255, 255);
+      border-radius: 30px;
       padding: 2rem;
 
     }
+
     .einsatz-details-text {
       font-size: 1.2rem;
       line-height: 1.8;
-      color:rgb(0, 0, 0);
+      color: rgb(0, 0, 0);
     }
+
     .einsatz-details-text p:last-child {
       margin-bottom: 0;
     }
+
     .einsatz-details-back {
       margin-top: 2rem;
       display: inline-block;
       background-color: #A72920;
       color: white;
-      padding: 0.7rem 1.5rem;
-      border-radius: 4px;
+      padding: 0.9rem 1.5rem;
+      border-radius: 30px;
       text-decoration: none;
       transition: all 0.2s ease;
       font-weight: 500;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     }
+
     .einsatz-details-back:hover {
       background-color: #8e2219;
       color: white;
       text-decoration: none;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    }
+      transform: translateY(+2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      }
+
     .einsatz-not-found {
       text-align: center;
       padding: 4rem 2rem;
-      background-color:rgb(255, 255, 255);
+      background-color: rgb(255, 255, 255);
       border-radius: 8px;
       margin: 4rem 0;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     }
+
     .einsatz-not-found h3 {
-      color:rgb(0, 0, 0);
+      color: rgb(0, 0, 0);
       margin-bottom: 1.5rem;
       font-size: 1.8rem;
     }
+
     .einsatz-sachverhalt {
       font-size: 1.2rem;
       line-height: 1.6;
       margin-bottom: 1.5rem;
-      color:rgb(0, 0, 0);
+      color: rgb(0, 0, 0);
     }
+
     @media (max-width: 992px) {
       .einsatz-details-content-wrapper {
         flex-direction: column-reverse;
       }
+
       .einsatz-details-image {
         max-width: 100%;
         margin-bottom: 1.5rem;
       }
     }
+
     @media (max-width: 768px) {
       .einsatz-details-container {
         padding: 3rem 0;
       }
+
       .einsatz-details-meta {
         flex-direction: column;
         gap: 0.7rem;
       }
+
       .einsatz-details-title {
         font-size: 1.8rem;
       }
@@ -203,71 +228,77 @@
       // Check if an ID is provided
       if (isset($_GET['id']) && is_numeric($_GET['id'])) {
         $einsatzID = (int)$_GET['id'];
-        
+
         // Get database connection
         $db = Database::getInstance();
         $conn = $db->getConnection();
-        
+
         // Query to fetch einsatz data
         $einsatzSql = "SELECT * FROM einsatz WHERE ID = :einsatzID AND Anzeigen = 1";
         $einsatzStmt = $conn->prepare($einsatzSql);
         $einsatzStmt->bindParam(':einsatzID', $einsatzID, PDO::PARAM_INT);
         $einsatzStmt->execute();
         $einsatz = $einsatzStmt->fetch(PDO::FETCH_ASSOC);
-        
+
         // Query to fetch details data
         $detailsSql = "SELECT * FROM einsatz_Details WHERE einsatz_id = :einsatzID";
         $detailsStmt = $conn->prepare($detailsSql);
         $detailsStmt->bindParam(':einsatzID', $einsatzID, PDO::PARAM_INT);
         $detailsStmt->execute();
         $details = $detailsStmt->fetch(PDO::FETCH_ASSOC);
-        
+
         // Check if both records exist
         if ($einsatz && $details) {
           // Format date and time
           $datumObj = new DateTime($einsatz['Datum']);
           $endZeitObj = new DateTime($einsatz['Endzeit']);
           $formattedDatum = $datumObj->format('d.m.Y - H:i');
-          
+
           // Calculate duration
           $dauer = $datumObj->diff($endZeitObj);
           $dauerText = '';
           if ($dauer->d > 0) {
-              $dauerText .= $dauer->d . ' Tag' . ($dauer->d > 1 ? 'e' : '') . ', ';
+            $dauerText .= $dauer->d . ' Tag' . ($dauer->d > 1 ? 'e' : '') . ', ';
           }
           if ($dauer->h > 0) {
-              $dauerText .= $dauer->h . ' Stunde' . ($dauer->h > 1 ? 'n' : '') . ', ';
+            $dauerText .= $dauer->h . ' Stunde' . ($dauer->h > 1 ? 'n' : '') . ', ';
           }
           if ($dauer->i > 0) {
-              $dauerText .= $dauer->i . ' Minute' . ($dauer->i > 1 ? 'n' : '');
+            $dauerText .= $dauer->i . ' Minute' . ($dauer->i > 1 ? 'n' : '');
           }
           if (empty($dauerText)) {
-              $dauerText = 'Weniger als eine Minute';
+            $dauerText = 'Weniger als eine Minute';
           } else if (substr($dauerText, -2) == ', ') {
-              $dauerText = substr($dauerText, 0, -2);
+            $dauerText = substr($dauerText, 0, -2);
           }
       ?>
+
+          <!-- Back Button -->
+          <a href="../#Einsatzliste" class="einsatz-details-back">
+            <i class="bi bi-arrow-left"></i> Zurück zur Einsatzübersicht
+          </a>
+
           <!-- Einsatz Header -->
           <div class="einsatz-details-header">
             <h1 class="einsatz-details-title"><?php echo htmlspecialchars($details['einsatz_headline']); ?></h1>
-            
+
             <div class="einsatz-details-badges">
               <span class="einsatz-details-stichwort"><?php echo htmlspecialchars($einsatz['Stichwort']); ?></span>
               <?php if (!empty($einsatz['Kategorie'])): ?>
                 <span class="einsatz-details-kategorie"><?php echo htmlspecialchars($einsatz['Kategorie']); ?></span>
               <?php endif; ?>
             </div>
-            
+
             <div class="einsatz-details-meta">
               <div><i class="bi bi-calendar-event"></i> <?php echo $formattedDatum; ?> Uhr</div>
               <div><i class="bi bi-clock"></i> Einsatzdauer: <?php echo $dauerText; ?></div>
               <div><i class="bi bi-geo-alt"></i> <?php echo htmlspecialchars($einsatz['Ort']); ?></div>
               <div><i class="bi bi-people"></i> <?php echo htmlspecialchars($einsatz['Einheit']); ?></div>
             </div>
-            
+
             <div class="einsatz-sachverhalt"><strong><?php echo htmlspecialchars($einsatz['Sachverhalt']); ?></strong></div>
           </div>
-          
+
           <!-- Einsatz Content with Image -->
           <div class="einsatz-details-content-wrapper">
             <!-- Text Content -->
@@ -278,10 +309,23 @@
                 </div>
               </div>
             </div>
-            
-            <?php 
-            // Define the default image path
-            $defaultImagePath = '/assets/images/einsatzbild.webp';
+
+            <?php
+            // Define category-based default images
+            $categoryImages = [
+              'Absicherung' => '/assets/images/Feuerwehr sichert ab.webp',
+              'Unwetter' => '/assets/images/Feuerwehr bei Sturm und Überschwemmung.webp',
+              'Feuer' => '/assets/images/Feuerwehr im Einsatz gegen Flammen.webp',
+              'Technische Hilfeleistung' => '/assets/images/Feuerwehr im Einsatz nach Unfall.webp',
+              'Sonstiges' => '/assets/images/Feuerwehr im Einsatzbereit-Modus.webp',
+              'Tierrettung' => '/assets/images/Feuerwehr rettet Katze vom Baum.webp',
+              'Gefahrgut' => '/assets/images/Hazmat-Arbeiter bei gefährlichem Leck.webp',
+              'Medizinisch' => '/assets/images/Medizinische Notfallversorgung im Teal-Stil.webp'
+            ];
+
+            // Get category and select appropriate default image
+            $kategorie = !empty($einsatz['Kategorie']) ? $einsatz['Kategorie'] : 'Sonstiges';
+            $defaultImagePath = isset($categoryImages[$kategorie]) ? $categoryImages[$kategorie] : '/assets/images/Feuerwehr im Einsatzbereit-Modus.webp';
             ?>
             <!-- Image if available -->
             <div class="einsatz-details-image">
@@ -290,32 +334,27 @@
               </a>
             </div>
           </div>
-          
-          <!-- Back Button -->
-          <a href="../" class="einsatz-details-back">
-            <i class="bi bi-arrow-left"></i> Zurück zur Einsatzübersicht
-          </a>
-          
-      <?php
+
+        <?php
         } else {
           // Display error message if einsatz not found or not visible
-      ?>
+        ?>
           <div class="einsatz-not-found">
             <h3>Einsatz nicht gefunden</h3>
             <p>Der gesuchte Einsatz konnte nicht gefunden werden oder ist nicht zur Anzeige freigegeben.</p>
-            <a href="../" class="einsatz-details-back">
+            <a href="../#Einsatzliste" class="einsatz-details-back">
               <i class="bi bi-arrow-left"></i> Zurück zur Einsatzübersicht
             </a>
           </div>
-      <?php
+        <?php
         }
       } else {
         // Display error message if no ID is provided
-      ?>
+        ?>
         <div class="einsatz-not-found">
           <h3>Ungültige Anfrage</h3>
           <p>Es wurde keine gültige Einsatz-ID angegeben.</p>
-          <a href="../" class="einsatz-details-back">
+          <a href="../#Einsatzliste" class="einsatz-details-back">
             <i class="bi bi-arrow-left"></i> Zurück zur Einsatzübersicht
           </a>
         </div>
@@ -327,7 +366,7 @@
 
   <?php include '../../assets/includes/socialFooter.php'; ?>
   <?php include '../../assets/includes/footer.php'; ?>
-  
+
   <!-- Parallax Scripts -->
   <script src="../../assets/bootstrap/js/bootstrap.bundle.min.js"></script>
   <script src="../../assets/smoothscroll/smooth-scroll.js"></script>
@@ -337,7 +376,7 @@
   <script src="../../assets/parallax/jarallax.js"></script>
   <script>
     // Initialize Jarallax after page load
-    document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function() {
       jarallax(document.querySelectorAll('.jarallax'), {
         speed: 0.6,
         imgPosition: '50% 50%',
