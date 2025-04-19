@@ -77,7 +77,7 @@ function ermittleOrt(string $adresse, array $orte = [], string $defaultOrt = 'He
  *   1) Einsatz‑Codes (F1, F2 … R1 …) werden sofort ausgewertet.
  *   2) Danach Keyword‑Suche mit Wortgrenzen (\b) – Reihenfolge bestimmt Priorität.
  */
-function getKategorie(string $sachverhalt, string $stichwort, int $einsatzID): string
+function getKategorie(string $sachverhalt, string $stichwort): string
 {
     $text = mb_strtolower($sachverhalt . ' ' . $stichwort, 'UTF-8');
 
