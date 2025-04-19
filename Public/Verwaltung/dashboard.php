@@ -145,7 +145,7 @@ include __DIR__ . '/templates/header.php';
         <div class="card shadow mb-4">
             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 font-weight-bold text-primary">Neueste Einsätze</h6>
-                <a href="<?php echo BASE_URL; ?>/einsatz/list.php" class="btn btn-sm btn-primary">Alle anzeigen</a>
+                <a href="<?php echo $ADMIN_ROOT; ?>/einsatz/list.php" class="btn btn-sm btn-primary">Alle anzeigen</a>
             </div>
             <div class="card-body">
                 <?php if (!empty($recentEinsaetze)): ?>
@@ -167,9 +167,9 @@ include __DIR__ . '/templates/header.php';
                                         <td><?php echo date('d.m.Y H:i', strtotime($einsatz['Datum'])); ?></td>
                                         <td><?php echo $einsatz['Sachverhalt']; ?></td>
                                         <td><?php echo $einsatz['Stichwort']; ?></td>
-                                        <td>
-                                            <a href="<?php echo BASE_URL; ?>/einsatz/edit.php?id=<?php echo $einsatz['ID']; ?>" class="btn btn-sm btn-primary">
-                                                <i class="fas fa-edit"></i>
+                                        <td class="actions-column">
+                                            <a href="<?php echo $ADMIN_ROOT; ?>/einsatz/edit.php?id=<?php echo $einsatz['ID']; ?>" class="btn btn-primary btn-sm">
+                                                <i class="fas fa-edit"></i> <span>Bearbeiten</span>
                                             </a>
                                         </td>
                                     </tr>
@@ -188,7 +188,7 @@ include __DIR__ . '/templates/header.php';
         <div class="card shadow mb-4">
             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 font-weight-bold text-primary">Neueste Neuigkeiten</h6>
-                <a href="<?php echo BASE_URL; ?>/neuigkeiten/list.php" class="btn btn-sm btn-primary">Alle anzeigen</a>
+                <a href="<?php echo $ADMIN_ROOT; ?>/neuigkeiten/list.php" class="btn btn-sm btn-primary">Alle anzeigen</a>
             </div>
             <div class="card-body">
                 <?php if (!empty($recentNeuigkeiten)): ?>
@@ -208,9 +208,9 @@ include __DIR__ . '/templates/header.php';
                                         <td><?php echo $neuigkeit['ID']; ?></td>
                                         <td><?php echo date('d.m.Y H:i', strtotime($neuigkeit['Datum'])); ?></td>
                                         <td><?php echo $neuigkeit['Ueberschrift']; ?></td>
-                                        <td>
-                                            <a href="<?php echo BASE_URL; ?>/neuigkeiten/edit.php?id=<?php echo $neuigkeit['ID']; ?>" class="btn btn-sm btn-primary">
-                                                <i class="fas fa-edit"></i>
+                                        <td class="actions-column">
+                                            <a href="<?php echo $ADMIN_ROOT; ?>/neuigkeiten/edit.php?id=<?php echo $neuigkeit['ID']; ?>" class="btn btn-primary btn-sm">
+                                                <i class="fas fa-edit"></i> <span>Bearbeiten</span>
                                             </a>
                                         </td>
                                     </tr>

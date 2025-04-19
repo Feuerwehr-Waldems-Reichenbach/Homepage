@@ -134,26 +134,26 @@ include dirname(__DIR__) . '/templates/header.php';
                             </td>
                             <td class="actions-column">
                                 <div class="btn-group" role="group">
-                                    <a href="<?php echo BASE_URL; ?>/neuigkeiten/edit.php?id=<?php echo $item['ID']; ?>" class="btn btn-primary btn-sm">
-                                        <i class="fas fa-edit"></i>
+                                    <a href="<?php echo $ADMIN_ROOT; ?>/neuigkeiten/edit.php?id=<?php echo $item['ID']; ?>" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-edit"></i> <span>Bearbeiten</span>
                                     </a>
                                     
                                     <?php if ($item['aktiv']): ?>
-                                        <a href="<?php echo BASE_URL; ?>/neuigkeiten/list.php?action=deactivate&id=<?php echo $item['ID']; ?>&csrf_token=<?php echo $_SESSION['csrf_token']; ?>" class="btn btn-warning btn-sm">
-                                            <i class="fas fa-ban"></i>
+                                        <a href="<?php echo $ADMIN_ROOT; ?>/neuigkeiten/list.php?action=deactivate&id=<?php echo $item['ID']; ?>&csrf_token=<?php echo $_SESSION['csrf_token']; ?>" class="btn btn-warning btn-sm">
+                                            <i class="fas fa-ban"></i> <span>Deaktivieren</span>
                                         </a>
                                     <?php else: ?>
-                                        <a href="<?php echo BASE_URL; ?>/neuigkeiten/list.php?action=activate&id=<?php echo $item['ID']; ?>&csrf_token=<?php echo $_SESSION['csrf_token']; ?>" class="btn btn-success btn-sm">
-                                            <i class="fas fa-check"></i>
+                                        <a href="<?php echo $ADMIN_ROOT; ?>/neuigkeiten/list.php?action=activate&id=<?php echo $item['ID']; ?>&csrf_token=<?php echo $_SESSION['csrf_token']; ?>" class="btn btn-success btn-sm">
+                                            <i class="fas fa-check"></i> <span>Aktivieren</span>
                                         </a>
                                     <?php endif; ?>
                                     
-                                    <form method="get" action="<?php echo BASE_URL; ?>/neuigkeiten/list.php" class="d-inline">
+                                    <form method="get" action="<?php echo $ADMIN_ROOT; ?>/neuigkeiten/list.php" class="d-inline">
                                         <input type="hidden" name="action" value="delete">
                                         <input type="hidden" name="id" value="<?php echo $item['ID']; ?>">
                                         <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
                                         <button type="submit" class="btn btn-danger btn-sm delete-confirm">
-                                            <i class="fas fa-trash"></i>
+                                            <i class="fas fa-trash"></i> <span>Löschen</span>
                                         </button>
                                     </form>
                                 </div>

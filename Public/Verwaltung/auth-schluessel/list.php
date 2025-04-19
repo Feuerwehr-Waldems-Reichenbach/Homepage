@@ -104,26 +104,26 @@ include dirname(__DIR__) . '/templates/header.php';
                             </td>
                             <td class="actions-column">
                                 <div class="btn-group" role="group">
-                                    <a href="<?php echo BASE_URL; ?>/auth-schluessel/edit.php?id=<?php echo $key['id']; ?>" class="btn btn-primary btn-sm">
-                                        <i class="fas fa-edit"></i>
+                                    <a href="<?php echo $ADMIN_ROOT; ?>/auth-schluessel/edit.php?id=<?php echo $key['id']; ?>" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-edit"></i> <span>Bearbeiten</span>
                                     </a>
                                     
                                     <?php if ($key['active']): ?>
-                                        <a href="<?php echo BASE_URL; ?>/auth-schluessel/list.php?action=deactivate&id=<?php echo $key['id']; ?>&csrf_token=<?php echo $_SESSION['csrf_token']; ?>" class="btn btn-warning btn-sm">
-                                            <i class="fas fa-ban"></i>
+                                        <a href="<?php echo $ADMIN_ROOT; ?>/auth-schluessel/list.php?action=deactivate&id=<?php echo $key['id']; ?>&csrf_token=<?php echo $_SESSION['csrf_token']; ?>" class="btn btn-warning btn-sm">
+                                            <i class="fas fa-ban"></i> <span>Deaktivieren</span>
                                         </a>
                                     <?php else: ?>
-                                        <a href="<?php echo BASE_URL; ?>/auth-schluessel/list.php?action=activate&id=<?php echo $key['id']; ?>&csrf_token=<?php echo $_SESSION['csrf_token']; ?>" class="btn btn-success btn-sm">
-                                            <i class="fas fa-check"></i>
+                                        <a href="<?php echo $ADMIN_ROOT; ?>/auth-schluessel/list.php?action=activate&id=<?php echo $key['id']; ?>&csrf_token=<?php echo $_SESSION['csrf_token']; ?>" class="btn btn-success btn-sm">
+                                            <i class="fas fa-check"></i> <span>Aktivieren</span>
                                         </a>
                                     <?php endif; ?>
                                     
-                                    <form method="get" action="<?php echo BASE_URL; ?>/auth-schluessel/list.php" class="d-inline" onsubmit="return confirm('Sind Sie sicher, dass Sie diesen Schlüssel löschen möchten?');">
+                                    <form method="get" action="<?php echo $ADMIN_ROOT; ?>/auth-schluessel/list.php" class="d-inline" onsubmit="return confirm('Sind Sie sicher, dass Sie diesen Schlüssel löschen möchten?');">
                                         <input type="hidden" name="action" value="delete">
                                         <input type="hidden" name="id" value="<?php echo $key['id']; ?>">
                                         <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
                                         <button type="submit" class="btn btn-danger btn-sm">
-                                            <i class="fas fa-trash"></i>
+                                            <i class="fas fa-trash"></i> <span>Löschen</span>
                                         </button>
                                     </form>
                                 </div>

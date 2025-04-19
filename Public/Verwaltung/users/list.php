@@ -168,37 +168,37 @@ include dirname(__DIR__) . '/templates/header.php';
                             <td><?php echo date('d.m.Y', strtotime($user['created_at'])); ?></td>
                             <td class="actions-column">
                                 <div class="btn-group" role="group">
-                                    <a href="<?php echo BASE_URL; ?>/users/edit.php?id=<?php echo $user['id']; ?>" class="btn btn-primary btn-sm">
-                                        <i class="fas fa-edit"></i>
+                                    <a href="<?php echo $ADMIN_ROOT; ?>/users/edit.php?id=<?php echo $user['id']; ?>" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-edit"></i> <span>Bearbeiten</span>
                                     </a>
                                     
                                     <?php if ($user['id'] != $_SESSION['user_id']): ?>
                                         <?php if ($user['is_admin']): ?>
-                                            <a href="<?php echo BASE_URL; ?>/users/list.php?action=toggleAdmin&id=<?php echo $user['id']; ?>&csrf_token=<?php echo $_SESSION['csrf_token']; ?>" class="btn btn-warning btn-sm" title="Admin-Rechte entziehen">
-                                                <i class="fas fa-user-shield"></i>
+                                            <a href="<?php echo $ADMIN_ROOT; ?>/users/list.php?action=toggleAdmin&id=<?php echo $user['id']; ?>&csrf_token=<?php echo $_SESSION['csrf_token']; ?>" class="btn btn-warning btn-sm" title="Admin-Rechte entziehen">
+                                                <i class="fas fa-user-shield"></i> <span>Admin entfernen</span>
                                             </a>
                                         <?php else: ?>
-                                            <a href="<?php echo BASE_URL; ?>/users/list.php?action=toggleAdmin&id=<?php echo $user['id']; ?>&csrf_token=<?php echo $_SESSION['csrf_token']; ?>" class="btn btn-success btn-sm" title="Zum Admin machen">
-                                                <i class="fas fa-user-shield"></i>
+                                            <a href="<?php echo $ADMIN_ROOT; ?>/users/list.php?action=toggleAdmin&id=<?php echo $user['id']; ?>&csrf_token=<?php echo $_SESSION['csrf_token']; ?>" class="btn btn-success btn-sm" title="Zum Admin machen">
+                                                <i class="fas fa-user-shield"></i> <span>Zum Admin</span>
                                             </a>
                                         <?php endif; ?>
                                         
                                         <?php if ($user['is_verified']): ?>
-                                            <a href="<?php echo BASE_URL; ?>/users/list.php?action=toggleVerified&id=<?php echo $user['id']; ?>&csrf_token=<?php echo $_SESSION['csrf_token']; ?>" class="btn btn-warning btn-sm" title="Verifizierung aufheben">
-                                                <i class="fas fa-user-check"></i>
+                                            <a href="<?php echo $ADMIN_ROOT; ?>/users/list.php?action=toggleVerified&id=<?php echo $user['id']; ?>&csrf_token=<?php echo $_SESSION['csrf_token']; ?>" class="btn btn-warning btn-sm" title="Verifizierung aufheben">
+                                                <i class="fas fa-user-check"></i> <span>Verifizierung entfernen</span>
                                             </a>
                                         <?php else: ?>
-                                            <a href="<?php echo BASE_URL; ?>/users/list.php?action=toggleVerified&id=<?php echo $user['id']; ?>&csrf_token=<?php echo $_SESSION['csrf_token']; ?>" class="btn btn-success btn-sm" title="Benutzer verifizieren">
-                                                <i class="fas fa-user-check"></i>
+                                            <a href="<?php echo $ADMIN_ROOT; ?>/users/list.php?action=toggleVerified&id=<?php echo $user['id']; ?>&csrf_token=<?php echo $_SESSION['csrf_token']; ?>" class="btn btn-success btn-sm" title="Benutzer verifizieren">
+                                                <i class="fas fa-user-check"></i> <span>Verifizieren</span>
                                             </a>
                                         <?php endif; ?>
                                         
-                                        <form method="get" action="<?php echo BASE_URL; ?>/users/list.php" class="d-inline">
+                                        <form method="get" action="<?php echo $ADMIN_ROOT; ?>/users/list.php" class="d-inline">
                                             <input type="hidden" name="action" value="delete">
                                             <input type="hidden" name="id" value="<?php echo $user['id']; ?>">
                                             <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
                                             <button type="submit" class="btn btn-danger btn-sm delete-confirm">
-                                                <i class="fas fa-trash"></i>
+                                                <i class="fas fa-trash"></i> <span>Löschen</span>
                                             </button>
                                         </form>
                                     <?php endif; ?>
