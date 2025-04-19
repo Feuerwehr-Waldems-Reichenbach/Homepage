@@ -35,23 +35,7 @@ try {
     $stmt = $db->query("SELECT ID, Ueberschrift, Datum FROM neuigkeiten ORDER BY Datum DESC LIMIT 5");
     $recentNeuigkeiten = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
-    // Get recent login attempts
-    $stmt = $db->query("
-        SELECT email, ip, attempt_time 
-        FROM fw_login_attempts 
-        ORDER BY attempt_time DESC 
-        LIMIT 10
-    ");
-    $recentLoginAttempts = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
-    // Get recent security events
-    $stmt = $db->query("
-        SELECT email, action_type, status, timestamp 
-        FROM fw_security_log 
-        ORDER BY timestamp DESC 
-        LIMIT 10
-    ");
-    $recentSecurityEvents = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
     error_log('Dashboard error: ' . $e->getMessage());
     $_SESSION['error'] = 'Ein Fehler ist aufgetreten beim Laden des Dashboards.';
@@ -59,7 +43,7 @@ try {
     // Initialize variables to prevent errors
     $einsatzCount = $publicEinsatzCount = $neuigkeitenCount = $activeNeuigkeitenCount = 0;
     $authSchluesselCount = $activeAuthSchluesselCount = $userCount = $adminCount = 0;
-    $recentEinsaetze = $recentNeuigkeiten = $recentLoginAttempts = $recentSecurityEvents = [];
+    $recentEinsaetze = $recentNeuigkeiten = [];
 }
 
 // Include header
@@ -220,97 +204,6 @@ include __DIR__ . '/templates/header.php';
                     </div>
                 <?php else: ?>
                     <p class="text-center">Keine Neuigkeiten vorhanden.</p>
-                <?php endif; ?>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-md-6 mb-4">
-        <div class="card shadow mb-4">
-            <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Neueste Anmeldeversuche</h6>
-            </div>
-            <div class="card-body">
-                <?php if (!empty($recentLoginAttempts)): ?>
-                    <div class="table-responsive">
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>E-Mail</th>
-                                    <th>IP-Adresse</th>
-                                    <th>Zeitpunkt</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($recentLoginAttempts as $attempt): ?>
-                                    <tr>
-                                        <td><?php echo $attempt['email']; ?></td>
-                                        <td><?php echo $attempt['ip']; ?></td>
-                                        <td><?php echo date('d.m.Y H:i:s', strtotime($attempt['attempt_time'])); ?></td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    </div>
-                <?php else: ?>
-                    <p class="text-center">Keine Anmeldeversuche vorhanden.</p>
-                <?php endif; ?>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-6 mb-4">
-        <div class="card shadow mb-4">
-            <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Neueste Sicherheitsereignisse</h6>
-            </div>
-            <div class="card-body">
-                <?php if (!empty($recentSecurityEvents)): ?>
-                    <div class="table-responsive">
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>E-Mail</th>
-                                    <th>Aktion</th>
-                                    <th>Status</th>
-                                    <th>Zeitpunkt</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($recentSecurityEvents as $event): ?>
-                                    <tr>
-                                        <td><?php echo $event['email']; ?></td>
-                                        <td><?php echo $event['action_type']; ?></td>
-                                        <td>
-                                            <?php 
-                                                $statusClass = '';
-                                                switch ($event['status']) {
-                                                    case 'success':
-                                                        $statusClass = 'text-success';
-                                                        break;
-                                                    case 'failure':
-                                                        $statusClass = 'text-danger';
-                                                        break;
-                                                    case 'warning':
-                                                        $statusClass = 'text-warning';
-                                                        break;
-                                                    case 'critical':
-                                                        $statusClass = 'text-danger fw-bold';
-                                                        break;
-                                                }
-                                                echo '<span class="' . $statusClass . '">' . $event['status'] . '</span>';
-                                            ?>
-                                        </td>
-                                        <td><?php echo date('d.m.Y H:i:s', strtotime($event['timestamp'])); ?></td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    </div>
-                <?php else: ?>
-                    <p class="text-center">Keine Sicherheitsereignisse vorhanden.</p>
                 <?php endif; ?>
             </div>
         </div>
