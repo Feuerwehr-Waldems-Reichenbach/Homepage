@@ -27,9 +27,9 @@ function sendLLMRequest(string $input): string
         "messages" => [
             ["role" => "user", "content" => $input]
         ],
-        "model" => "llama-3.3-70b-versatile",
+        "model" => "deepseek-r1-distill-llama-70b",
         "temperature" => 0.85,
-        "max_completion_tokens" => 1024,
+        "max_completion_tokens" => 2024,
         "top_p" => 1,
         "stream" => false, // Obwohl konfig angegeben ist mit true – in PHP blockierend einfacher
         "stop" => null
