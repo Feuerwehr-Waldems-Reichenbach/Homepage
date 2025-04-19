@@ -61,8 +61,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $password = $_POST['password'] ?? '';
         $confirmPassword = $_POST['confirm_password'] ?? '';
         $isAdmin = isset($_POST['is_admin']) ? 1 : 0;
-        $isAktivesMitglied = isset($_POST['is_AktivesMitglied']) ? 1 : 0;
-        $isFeuerwehr = isset($_POST['is_Feuerwehr']) ? 1 : 0;
         $isVerified = isset($_POST['is_verified']) ? 1 : 0;
         
         // Validate input
@@ -121,12 +119,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['error'] = 'Sie können nicht Ihre eigenen Administratorrechte entfernen.';
             header('Location: ' . BASE_URL . '/users/edit.php?id=' . $id);
             exit;
-        }
-        
-        // Add role flags only if not editing yourself, or if you're an admin
-        if ($id != $_SESSION['user_id'] || $_SESSION['is_admin']) {
-            $data['is_AktivesMitglied'] = $isAktivesMitglied;
-            $data['is_Feuerwehr'] = $isFeuerwehr;
         }
         
         // Add password if provided
@@ -234,16 +226,6 @@ include dirname(__DIR__) . '/templates/header.php';
                     <?php if ($id == $_SESSION['user_id']): ?>
                         <input type="hidden" name="is_admin" value="1">
                     <?php endif; ?>
-                </div>
-                
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="checkbox" id="is_AktivesMitglied" name="is_AktivesMitglied" <?php echo $user['is_AktivesMitglied'] ? 'checked' : ''; ?>>
-                    <label class="form-check-label" for="is_AktivesMitglied">Aktives Mitglied</label>
-                </div>
-                
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="checkbox" id="is_Feuerwehr" name="is_Feuerwehr" <?php echo $user['is_Feuerwehr'] ? 'checked' : ''; ?>>
-                    <label class="form-check-label" for="is_Feuerwehr">Feuerwehr</label>
                 </div>
                 
                 <div class="form-check form-check-inline">

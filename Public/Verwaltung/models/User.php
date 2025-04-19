@@ -18,7 +18,7 @@ class User extends Model
         $primaryKey = 'id';
         $fillable = [
             'email', 'password', 'first_name', 'last_name', 'phone',
-            'is_verified', 'verification_token', 'is_admin', 'is_AktivesMitglied', 'is_Feuerwehr'
+            'is_verified', 'verification_token', 'is_admin', 'position', 'department'
         ];
         
         parent::__construct($table, $primaryKey, $fillable);
@@ -66,8 +66,6 @@ class User extends Model
         
         // Convert checkbox values to boolean
         $data['is_admin'] = isset($data['is_admin']) && $data['is_admin'] ? 1 : 0;
-        $data['is_AktivesMitglied'] = isset($data['is_AktivesMitglied']) && $data['is_AktivesMitglied'] ? 1 : 0;
-        $data['is_Feuerwehr'] = isset($data['is_Feuerwehr']) && $data['is_Feuerwehr'] ? 1 : 0;
         
         return $this->create($data);
     }
@@ -104,14 +102,6 @@ class User extends Model
         // Convert checkbox values to boolean
         if (isset($data['is_admin'])) {
             $data['is_admin'] = $data['is_admin'] ? 1 : 0;
-        }
-        
-        if (isset($data['is_AktivesMitglied'])) {
-            $data['is_AktivesMitglied'] = $data['is_AktivesMitglied'] ? 1 : 0;
-        }
-        
-        if (isset($data['is_Feuerwehr'])) {
-            $data['is_Feuerwehr'] = $data['is_Feuerwehr'] ? 1 : 0;
         }
         
         if (isset($data['is_verified'])) {

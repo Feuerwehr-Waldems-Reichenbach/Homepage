@@ -43,8 +43,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $password = $_POST['password'] ?? '';
         $confirmPassword = $_POST['confirm_password'] ?? '';
         $isAdmin = isset($_POST['is_admin']) ? 1 : 0;
-        $isAktivesMitglied = isset($_POST['is_AktivesMitglied']) ? 1 : 0;
-        $isFeuerwehr = isset($_POST['is_Feuerwehr']) ? 1 : 0;
         $isVerified = isset($_POST['is_verified']) ? 1 : 0;
         
         // Validate input
@@ -90,8 +88,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'last_name' => $lastName,
             'phone' => $phone,
             'is_admin' => $isAdmin,
-            'is_AktivesMitglied' => $isAktivesMitglied,
-            'is_Feuerwehr' => $isFeuerwehr,
             'is_verified' => $isVerified
         ];
         
@@ -184,16 +180,6 @@ include dirname(__DIR__) . '/templates/header.php';
                 <div class="form-check form-check-inline">
                     <input class="form-check-input" type="checkbox" id="is_admin" name="is_admin">
                     <label class="form-check-label" for="is_admin">Administrator</label>
-                </div>
-                
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="checkbox" id="is_AktivesMitglied" name="is_AktivesMitglied">
-                    <label class="form-check-label" for="is_AktivesMitglied">Aktives Mitglied</label>
-                </div>
-                
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="checkbox" id="is_Feuerwehr" name="is_Feuerwehr">
-                    <label class="form-check-label" for="is_Feuerwehr">Feuerwehr</label>
                 </div>
                 
                 <div class="form-check form-check-inline">
