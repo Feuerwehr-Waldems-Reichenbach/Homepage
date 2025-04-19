@@ -13,87 +13,104 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+// Enable error reporting for debugging
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
+// Generate CSRF token if not exists
+if (!isset($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = Security::getCSRFToken();
+}
+
 // Instantiate the model
 $userModel = new User();
 
 // Process form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // CSRF protection
-    if (!isset($_POST['csrf_token']) || !Security::validateCSRFToken($_POST['csrf_token'])) {
-        $_SESSION['error'] = 'Ungültige Anfrage. Bitte versuchen Sie es erneut.';
-        header('Location: ' . BASE_URL . '/users/create.php');
-        exit;
-    }
-    
-    // Sanitize input
-    $email = Security::sanitizeInput($_POST['email'] ?? '');
-    $firstName = Security::sanitizeInput($_POST['first_name'] ?? '');
-    $lastName = Security::sanitizeInput($_POST['last_name'] ?? '');
-    $phone = Security::sanitizeInput($_POST['phone'] ?? '');
-    $password = $_POST['password'] ?? '';
-    $confirmPassword = $_POST['confirm_password'] ?? '';
-    $isAdmin = isset($_POST['is_admin']) ? 1 : 0;
-    $isAktivesMitglied = isset($_POST['is_AktivesMitglied']) ? 1 : 0;
-    $isFeuerwehr = isset($_POST['is_Feuerwehr']) ? 1 : 0;
-    $isVerified = isset($_POST['is_verified']) ? 1 : 0;
-    
-    // Validate input
-    if (empty($email) || empty($firstName) || empty($lastName) || empty($password)) {
-        $_SESSION['error'] = 'Bitte füllen Sie alle Pflichtfelder aus.';
-        header('Location: ' . BASE_URL . '/users/create.php');
-        exit;
-    }
-    
-    // Validate email format
-    if (!Security::validateEmail($email)) {
-        $_SESSION['error'] = 'Bitte geben Sie eine gültige E-Mail-Adresse ein.';
-        header('Location: ' . BASE_URL . '/users/create.php');
-        exit;
-    }
-    
-    // Check if email already exists
-    if ($userModel->getByEmail($email)) {
-        $_SESSION['error'] = 'Diese E-Mail-Adresse ist bereits registriert.';
-        header('Location: ' . BASE_URL . '/users/create.php');
-        exit;
-    }
-    
-    // Validate password length
-    if (strlen($password) < PASSWORD_MIN_LENGTH) {
-        $_SESSION['error'] = 'Das Passwort muss mindestens ' . PASSWORD_MIN_LENGTH . ' Zeichen lang sein.';
-        header('Location: ' . BASE_URL . '/users/create.php');
-        exit;
-    }
-    
-    // Validate password confirmation
-    if ($password !== $confirmPassword) {
-        $_SESSION['error'] = 'Die Passwörter stimmen nicht überein.';
-        header('Location: ' . BASE_URL . '/users/create.php');
-        exit;
-    }
-    
-    // Prepare data
-    $data = [
-        'email' => $email,
-        'password' => $password,
-        'first_name' => $firstName,
-        'last_name' => $lastName,
-        'phone' => $phone,
-        'is_admin' => $isAdmin,
-        'is_AktivesMitglied' => $isAktivesMitglied,
-        'is_Feuerwehr' => $isFeuerwehr,
-        'is_verified' => $isVerified
-    ];
-    
-    // Create the user
-    $result = $userModel->createUser($data, !$isVerified);
-    
-    if ($result) {
-        $_SESSION['success'] = 'Benutzer wurde erfolgreich erstellt.';
-        header('Location: ' . BASE_URL . '/users/list.php');
-        exit;
-    } else {
-        $_SESSION['error'] = 'Fehler beim Erstellen des Benutzers.';
+    try {
+        // CSRF protection
+        if (!isset($_POST['csrf_token']) || !Security::validateCSRFToken($_POST['csrf_token'])) {
+            $_SESSION['error'] = 'Ungültige Anfrage. Bitte versuchen Sie es erneut.';
+            header('Location: ' . BASE_URL . '/users/create.php');
+            exit;
+        }
+        
+        // Sanitize input
+        $email = Security::sanitizeInput($_POST['email'] ?? '');
+        $firstName = Security::sanitizeInput($_POST['first_name'] ?? '');
+        $lastName = Security::sanitizeInput($_POST['last_name'] ?? '');
+        $phone = Security::sanitizeInput($_POST['phone'] ?? '');
+        $password = $_POST['password'] ?? '';
+        $confirmPassword = $_POST['confirm_password'] ?? '';
+        $isAdmin = isset($_POST['is_admin']) ? 1 : 0;
+        $isAktivesMitglied = isset($_POST['is_AktivesMitglied']) ? 1 : 0;
+        $isFeuerwehr = isset($_POST['is_Feuerwehr']) ? 1 : 0;
+        $isVerified = isset($_POST['is_verified']) ? 1 : 0;
+        
+        // Validate input
+        if (empty($email) || empty($firstName) || empty($lastName) || empty($password)) {
+            $_SESSION['error'] = 'Bitte füllen Sie alle Pflichtfelder aus.';
+            header('Location: ' . BASE_URL . '/users/create.php');
+            exit;
+        }
+        
+        // Validate email format
+        if (!Security::validateEmail($email)) {
+            $_SESSION['error'] = 'Bitte geben Sie eine gültige E-Mail-Adresse ein.';
+            header('Location: ' . BASE_URL . '/users/create.php');
+            exit;
+        }
+        
+        // Check if email already exists
+        if ($userModel->getByEmail($email)) {
+            $_SESSION['error'] = 'Diese E-Mail-Adresse ist bereits registriert.';
+            header('Location: ' . BASE_URL . '/users/create.php');
+            exit;
+        }
+        
+        // Validate password length
+        if (strlen($password) < PASSWORD_MIN_LENGTH) {
+            $_SESSION['error'] = 'Das Passwort muss mindestens ' . PASSWORD_MIN_LENGTH . ' Zeichen lang sein.';
+            header('Location: ' . BASE_URL . '/users/create.php');
+            exit;
+        }
+        
+        // Validate password confirmation
+        if ($password !== $confirmPassword) {
+            $_SESSION['error'] = 'Die Passwörter stimmen nicht überein.';
+            header('Location: ' . BASE_URL . '/users/create.php');
+            exit;
+        }
+        
+        // Prepare data
+        $data = [
+            'email' => $email,
+            'password' => $password,
+            'first_name' => $firstName,
+            'last_name' => $lastName,
+            'phone' => $phone,
+            'is_admin' => $isAdmin,
+            'is_AktivesMitglied' => $isAktivesMitglied,
+            'is_Feuerwehr' => $isFeuerwehr,
+            'is_verified' => $isVerified
+        ];
+        
+        // Create the user
+        $result = $userModel->createUser($data, !$isVerified);
+        
+        if ($result) {
+            $_SESSION['success'] = 'Benutzer wurde erfolgreich erstellt.';
+            header('Location: ' . BASE_URL . '/users/list.php');
+            exit;
+        } else {
+            $_SESSION['error'] = 'Fehler beim Erstellen des Benutzers.';
+            header('Location: ' . BASE_URL . '/users/create.php');
+            exit;
+        }
+    } catch (Exception $e) {
+        // Log the error
+        error_log('Error creating user: ' . $e->getMessage());
+        $_SESSION['error'] = 'Ein Fehler ist aufgetreten: ' . $e->getMessage();
         header('Location: ' . BASE_URL . '/users/create.php');
         exit;
     }

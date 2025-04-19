@@ -13,6 +13,15 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+// Enable error reporting for debugging
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
+// Generate CSRF token if not exists
+if (!isset($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = Security::getCSRFToken();
+}
+
 // Check if ID is provided
 if (!isset($_GET['id']) || empty($_GET['id'])) {
     $_SESSION['error'] = 'Keine Benutzer-ID angegeben.';
@@ -36,110 +45,118 @@ if (!$user) {
 
 // Process form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // CSRF protection
-    if (!isset($_POST['csrf_token']) || !Security::validateCSRFToken($_POST['csrf_token'])) {
-        $_SESSION['error'] = 'Ungültige Anfrage. Bitte versuchen Sie es erneut.';
-        header('Location: ' . BASE_URL . '/users/edit.php?id=' . $id);
-        exit;
-    }
-    
-    // Sanitize input
-    $email = Security::sanitizeInput($_POST['email'] ?? '');
-    $firstName = Security::sanitizeInput($_POST['first_name'] ?? '');
-    $lastName = Security::sanitizeInput($_POST['last_name'] ?? '');
-    $phone = Security::sanitizeInput($_POST['phone'] ?? '');
-    $password = $_POST['password'] ?? '';
-    $confirmPassword = $_POST['confirm_password'] ?? '';
-    $isAdmin = isset($_POST['is_admin']) ? 1 : 0;
-    $isAktivesMitglied = isset($_POST['is_AktivesMitglied']) ? 1 : 0;
-    $isFeuerwehr = isset($_POST['is_Feuerwehr']) ? 1 : 0;
-    $isVerified = isset($_POST['is_verified']) ? 1 : 0;
-    
-    // Validate input
-    if (empty($email) || empty($firstName) || empty($lastName)) {
-        $_SESSION['error'] = 'Bitte füllen Sie alle Pflichtfelder aus.';
-        header('Location: ' . BASE_URL . '/users/edit.php?id=' . $id);
-        exit;
-    }
-    
-    // Validate email format
-    if (!Security::validateEmail($email)) {
-        $_SESSION['error'] = 'Bitte geben Sie eine gültige E-Mail-Adresse ein.';
-        header('Location: ' . BASE_URL . '/users/edit.php?id=' . $id);
-        exit;
-    }
-    
-    // Check if email already exists (but not for this user)
-    $existingUser = $userModel->getByEmail($email);
-    if ($existingUser && $existingUser['id'] != $id) {
-        $_SESSION['error'] = 'Diese E-Mail-Adresse ist bereits registriert.';
-        header('Location: ' . BASE_URL . '/users/edit.php?id=' . $id);
-        exit;
-    }
-    
-    // Validate password if provided
-    if (!empty($password)) {
-        // Validate password length
-        if (strlen($password) < PASSWORD_MIN_LENGTH) {
-            $_SESSION['error'] = 'Das Passwort muss mindestens ' . PASSWORD_MIN_LENGTH . ' Zeichen lang sein.';
+    try {
+        // CSRF protection
+        if (!isset($_POST['csrf_token']) || !Security::validateCSRFToken($_POST['csrf_token'])) {
+            $_SESSION['error'] = 'Ungültige Anfrage. Bitte versuchen Sie es erneut.';
             header('Location: ' . BASE_URL . '/users/edit.php?id=' . $id);
             exit;
         }
         
-        // Validate password confirmation
-        if ($password !== $confirmPassword) {
-            $_SESSION['error'] = 'Die Passwörter stimmen nicht überein.';
+        // Sanitize input
+        $email = Security::sanitizeInput($_POST['email'] ?? '');
+        $firstName = Security::sanitizeInput($_POST['first_name'] ?? '');
+        $lastName = Security::sanitizeInput($_POST['last_name'] ?? '');
+        $phone = Security::sanitizeInput($_POST['phone'] ?? '');
+        $password = $_POST['password'] ?? '';
+        $confirmPassword = $_POST['confirm_password'] ?? '';
+        $isAdmin = isset($_POST['is_admin']) ? 1 : 0;
+        $isAktivesMitglied = isset($_POST['is_AktivesMitglied']) ? 1 : 0;
+        $isFeuerwehr = isset($_POST['is_Feuerwehr']) ? 1 : 0;
+        $isVerified = isset($_POST['is_verified']) ? 1 : 0;
+        
+        // Validate input
+        if (empty($email) || empty($firstName) || empty($lastName)) {
+            $_SESSION['error'] = 'Bitte füllen Sie alle Pflichtfelder aus.';
             header('Location: ' . BASE_URL . '/users/edit.php?id=' . $id);
             exit;
         }
-    }
-    
-    // Prepare data
-    $data = [
-        'email' => $email,
-        'first_name' => $firstName,
-        'last_name' => $lastName,
-        'phone' => $phone,
-        'is_verified' => $isVerified
-    ];
-    
-    // Special case for admin status when editing yourself
-    if ($id != $_SESSION['user_id']) {
-        $data['is_admin'] = $isAdmin;
-    } elseif (!$isAdmin && $user['is_admin']) {
-        // Don't allow admins to remove their own admin status
-        $_SESSION['error'] = 'Sie können nicht Ihre eigenen Administratorrechte entfernen.';
-        header('Location: ' . BASE_URL . '/users/edit.php?id=' . $id);
-        exit;
-    }
-    
-    // Add role flags only if not editing yourself, or if you're an admin
-    if ($id != $_SESSION['user_id'] || $_SESSION['is_admin']) {
-        $data['is_AktivesMitglied'] = $isAktivesMitglied;
-        $data['is_Feuerwehr'] = $isFeuerwehr;
-    }
-    
-    // Add password if provided
-    if (!empty($password)) {
-        $data['password'] = $password;
-    }
-    
-    // Update the user
-    $result = $userModel->updateUser($id, $data);
-    
-    if ($result) {
-        // Update session data if editing own profile
-        if ($id == $_SESSION['user_id']) {
-            $_SESSION['email'] = $email;
-            $_SESSION['first_name'] = $firstName;
-            $_SESSION['last_name'] = $lastName;
+        
+        // Validate email format
+        if (!Security::validateEmail($email)) {
+            $_SESSION['error'] = 'Bitte geben Sie eine gültige E-Mail-Adresse ein.';
+            header('Location: ' . BASE_URL . '/users/edit.php?id=' . $id);
+            exit;
         }
         
-        $_SESSION['success'] = 'Benutzer wurde erfolgreich aktualisiert.';
-        header('Location: ' . BASE_URL . '/users/list.php');
-        exit;
-    } else {
-        $_SESSION['error'] = 'Fehler beim Aktualisieren des Benutzers.';
+        // Check if email already exists (but not for this user)
+        $existingUser = $userModel->getByEmail($email);
+        if ($existingUser && $existingUser['id'] != $id) {
+            $_SESSION['error'] = 'Diese E-Mail-Adresse ist bereits registriert.';
+            header('Location: ' . BASE_URL . '/users/edit.php?id=' . $id);
+            exit;
+        }
+        
+        // Validate password if provided
+        if (!empty($password)) {
+            // Validate password length
+            if (strlen($password) < PASSWORD_MIN_LENGTH) {
+                $_SESSION['error'] = 'Das Passwort muss mindestens ' . PASSWORD_MIN_LENGTH . ' Zeichen lang sein.';
+                header('Location: ' . BASE_URL . '/users/edit.php?id=' . $id);
+                exit;
+            }
+            
+            // Validate password confirmation
+            if ($password !== $confirmPassword) {
+                $_SESSION['error'] = 'Die Passwörter stimmen nicht überein.';
+                header('Location: ' . BASE_URL . '/users/edit.php?id=' . $id);
+                exit;
+            }
+        }
+        
+        // Prepare data
+        $data = [
+            'email' => $email,
+            'first_name' => $firstName,
+            'last_name' => $lastName,
+            'phone' => $phone,
+            'is_verified' => $isVerified
+        ];
+        
+        // Special case for admin status when editing yourself
+        if ($id != $_SESSION['user_id']) {
+            $data['is_admin'] = $isAdmin;
+        } elseif (!$isAdmin && $user['is_admin']) {
+            // Don't allow admins to remove their own admin status
+            $_SESSION['error'] = 'Sie können nicht Ihre eigenen Administratorrechte entfernen.';
+            header('Location: ' . BASE_URL . '/users/edit.php?id=' . $id);
+            exit;
+        }
+        
+        // Add role flags only if not editing yourself, or if you're an admin
+        if ($id != $_SESSION['user_id'] || $_SESSION['is_admin']) {
+            $data['is_AktivesMitglied'] = $isAktivesMitglied;
+            $data['is_Feuerwehr'] = $isFeuerwehr;
+        }
+        
+        // Add password if provided
+        if (!empty($password)) {
+            $data['password'] = $password;
+        }
+        
+        // Update the user
+        $result = $userModel->updateUser($id, $data);
+        
+        if ($result) {
+            // Update session data if editing own profile
+            if ($id == $_SESSION['user_id']) {
+                $_SESSION['email'] = $email;
+                $_SESSION['first_name'] = $firstName;
+                $_SESSION['last_name'] = $lastName;
+            }
+            
+            $_SESSION['success'] = 'Benutzer wurde erfolgreich aktualisiert.';
+            header('Location: ' . BASE_URL . '/users/list.php');
+            exit;
+        } else {
+            $_SESSION['error'] = 'Fehler beim Aktualisieren des Benutzers.';
+            header('Location: ' . BASE_URL . '/users/edit.php?id=' . $id);
+            exit;
+        }
+    } catch (Exception $e) {
+        // Log the error
+        error_log('Error updating user: ' . $e->getMessage());
+        $_SESSION['error'] = 'Ein Fehler ist aufgetreten: ' . $e->getMessage();
         header('Location: ' . BASE_URL . '/users/edit.php?id=' . $id);
         exit;
     }
