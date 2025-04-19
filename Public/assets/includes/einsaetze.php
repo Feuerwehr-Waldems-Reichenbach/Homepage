@@ -36,7 +36,7 @@ function showEinsaetze($itemsPerPage = 5, $customClass = '')
     $conn = $db->getConnection();
 
     // Fetch all emergency operations that have details
-    $detailsSql = "SELECT einsatz_id FROM einsatz_Details";
+    $detailsSql = "SELECT einsatz_id FROM einsatz_Details WHERE is_public = 1";
     $detailsStmt = $conn->prepare($detailsSql);
     $detailsStmt->execute();
     $einsaetzeWithDetails = $detailsStmt->fetchAll(PDO::FETCH_COLUMN, 0);

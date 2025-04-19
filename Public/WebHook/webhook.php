@@ -109,6 +109,51 @@ try {
         list($success, $message) = insertEinsatz($conn, $params);
         echo $message;
     }
+
+    // Wenn der Einsatz beendet wurde (beendet=1), einen Einsatzbericht automatisch generieren
+    if ($params['beendet'] == 1 && $success) {
+        echo "\nEinsatz beendet. Generiere Einsatzbericht...\n";
+        
+        // Hole alle notwendigen Daten für den Einsatzbericht
+        try {
+            // Die interne ID des Einsatzes abrufen (nicht die EinsatzID)
+            $sql = "SELECT ID, Datum, Endzeit, Stichwort, Ort, Sachverhalt, Kategorie, Einheit FROM einsatz WHERE EinsatzID = :einsatzID";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':einsatzID', $params['einsatzID'], PDO::PARAM_STR);
+            $stmt->execute();
+            $einsatzData = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if ($einsatzData) {
+                // Fahrzeuge aus den Parametern extrahieren (falls vorhanden)
+                $fahrzeuge = isset($_GET['fahrzeuge']) ? $_GET['fahrzeuge'] : "";
+                
+                // Einsatzbericht generieren
+                require_once __DIR__ . '/../../Private/AI/generateEinsatzbericht.php';
+                
+                $bericht = generateEinsatzbericht(
+                    $einsatzData['ID'],
+                    $einsatzData['Datum'],
+                    $einsatzData['Endzeit'],
+                    $einsatzData['Stichwort'],
+                    $einsatzData['Ort'],
+                    $einsatzData['Sachverhalt'],
+                    $einsatzData['Kategorie'],
+                    $einsatzData['Einheit'],
+                    $fahrzeuge,
+                    true,  // In Datenbank speichern
+                    '',    // Standardüberschrift verwenden
+                    '',    // Kein Bild
+                    false  // Nicht öffentlich, muss zuerst überprüft werden
+                );
+                
+                echo "Einsatzbericht erfolgreich generiert.\n";
+            } else {
+                echo "Fehler: Einsatzdaten konnten nicht abgerufen werden.\n";
+            }
+        } catch (PDOException $e) {
+            echo "Fehler bei der Einsatzberichtsgenerierung: " . $e->getMessage() . "\n";
+        }
+    }
 } catch (PDOException $e) {
     echo "Ein technischer Fehler ist aufgetreten. Bitte kontaktieren Sie den Administrator." . $e->getMessage();
 }

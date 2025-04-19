@@ -241,7 +241,7 @@
         $einsatz = $einsatzStmt->fetch(PDO::FETCH_ASSOC);
 
         // Query to fetch details data
-        $detailsSql = "SELECT * FROM einsatz_Details WHERE einsatz_id = :einsatzID";
+        $detailsSql = "SELECT * FROM einsatz_Details WHERE einsatz_id = :einsatzID AND is_public = 1";
         $detailsStmt = $conn->prepare($detailsSql);
         $detailsStmt->bindParam(':einsatzID', $einsatzID, PDO::PARAM_INT);
         $detailsStmt->execute();
