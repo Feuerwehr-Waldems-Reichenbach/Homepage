@@ -45,32 +45,17 @@
       </div>
     </div>
   </section>
-  <section data-bs-version="5.1" class="article12 cid-uH12wkMkjG" id="article12-59">
-    <div class="container">
-      <div class="row justify-content-center">
-        <div class="col-md-12 col-lg-12">
-          <h3 class="mbr-section-title mbr-fonts-style mb-4 mt-0 display-2"><strong>Das Feuerwehrhaus</strong></h3>
-          <p class="mbr-text mbr-fonts-style display-7">Das Feuerwehrhaus der Freiwilligen Feuerwehr Reichenbach ist ein
-            wichtiger Ort. Es steht für Sicherheit, Zusammenhalt und Engagement der Bürgerinnen und Bürger. Als modern
-            ausgestatteter Standort bietet es optimale Voraussetzungen für die Einsatzbereitschaft unser ehrenamtlichen
-            Mitglieder.
-            <br>
-            <br>Die zwei Fahrzeughallen beherbergt unser TSF-W und MTF, daneben bietet unser Standort einen Schulungs-
-            und Mannschaftsraum für Ausbildungen und gemeinsames zusammenkommen. Darüber hinaus dient das Feuerwehrhaus
-            als Treffpunkt für Übungen, Versammlungen und gesellschaftliche Veranstaltungen, die den Zusammenhalt unter
-            den Mitgliedern und mit der Bevölkerung stärken.<br>
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
+
   <section data-bs-version="5.1" class="image08 cid-einsatzabteilung-image-card-right" id="image08-2k1">
     <div class="container">
       <div class="row justify-content-center">
         <div class="col-lg-4">
           <div class="col-12 col-md-12">
             <h5 class="mbr-section-title mbr-fonts-style mt-0 mb-4 display-2"><strong>Unsere Umkleideräume</strong></h5>
-            <h6 class="mbr-section-subtitle mbr-fonts-style mt-0 mb-4 display-7">Die Umkleideräume sind ein zentraler Bestandteil unseres Feuerwehrhauses. Hier bereiten sich unsere Einsatzkräfte auf ihre Einsätze vor und legen ihre persönliche Schutzausrüstung an. Jedes Mitglied hat seinen eigenen Spind, in dem die komplette Ausrüstung griffbereit verstaut ist.<br><br>
+            <h6 class="mbr-section-subtitle mbr-fonts-style mt-0 mb-4 display-7">
+            Die Umkleideräume sind ein zentraler Bestandteil unseres Feuerwehrhauses. Hier bereiten sich unsere Einsatzkräfte auf ihre Einsätze vor und legen ihre persönliche Schutzausrüstung an. <br><br>
+
+            Für jedes Mitglied steht ein eigener, klar gekennzeichneter Spind bereit, in dem Helm, Schutzkleidung und Zusatz­ausrüstung übersichtlich und jederzeit griffbereit verstaut sind.
             </h6>
           </div>
         </div>
@@ -88,7 +73,8 @@
         <div class="col-lg-4">
           <div class="col-12 col-md-12">
             <h5 class="mbr-section-title mbr-fonts-style mt-0 mb-4 display-2"><strong>Unser Schulungsraum</strong></h5>
-            <h6 class="mbr-section-subtitle mbr-fonts-style mt-0 mb-4 display-7">In unserem Schulungsraum finden theoretische Einheiten und wichtige Schulungen wie Erste-Hilfe-Kurse statt. Der Raum wurde von den Mitgliedern selbst umgebaut und bietet die ideale Umgebung für Aus- und Weiterbildungen. Zudem verfügt er über eine kleine Küche, die die Nutzung des Raumes für längere Veranstaltungen erleichtert. Hier können wir uns optimal auf verschiedene Einsatzszenarien vorbereiten.<br><br>
+            <h6 class="mbr-section-subtitle mbr-fonts-style mt-0 mb-4 display-7">
+              In unserem Schulungsraum werden Theoriephasen und Lehrgänge Wie zum Beispiel Erste‑Hilfe‑Kurse durchgeführt. <br><br>Die Räumlichkeit entstand in Eigenarbeit unserer Einsatzkräfte und bietet heute eine ruhige, gut ausgestattete Umgebung für Aus‑ und Weiterbildungen. Eine kleine Küche erleichtert den Ablauf längerer Veranstaltungen. <br><br>Dass wir den Raum in dieser Qualität nutzen können, verdanken wir der Unterstützung unseres Fördervereins und zahlreicher Spenderinnen und Spender.
             </h6>
           </div>
         </div>
@@ -106,8 +92,16 @@
         <div class="col-lg-4">
           <div class="col-12 col-md-12">
             <h5 class="mbr-section-title mbr-fonts-style mt-0 mb-4 display-2"><strong>Unser Gemeinschaftsraum</strong></h5>
-            <h6 class="mbr-section-subtitle mbr-fonts-style mt-0 mb-4 display-7">Unser Gemeinschaftsraum wurde in Handarbeit von den Feuerwehrmitgliedern gebaut. Dahinter stecken unzählige Stunden freiwilliger Arbeit und großes Engagement. Er dient als wichtiger Treffpunkt für gemeinsame Veranstaltungen und stärkt den Zusammenhalt in unserer Feuerwehrfamilie.<br><br>
-            </h6>
+            <h6 class="mbr-section-subtitle mbr-fonts-style mt-0 mb-4 display-7">
+            
+            Unser Aufenthaltsraum ist das Ergebnis vieler ehrenamtlich geleisteter Arbeitsstunden unserer Mitglieder. <br><br>
+
+            In sorgfältiger Handarbeit entstand ein rustikaler Raum mit sichtbarem Gebälk, Holzwänden und langen Tischen, deren rote Sitzpolster einen warmen Akzent setzen. Die aufgehängten Geräte erinnern dezent an unseren Einsatzalltag und verleihen der Stube ihren einzigartigen Charakter.<br><br>
+
+            Dieses Projekt wäre ohne unsere fleißigen Helfer und finanzielle Unterstützung nicht möglich gewesen. Heute bildet der Raum einen zentralen Treffpunkt für Besprechungen, kameradschaftliche Veranstaltungen und gemeinsame Stunden nach Einsätzen und Übungen.
+          
+          
+          </h6>
           </div>
         </div>
         <div class="col-lg-8 side-features">
