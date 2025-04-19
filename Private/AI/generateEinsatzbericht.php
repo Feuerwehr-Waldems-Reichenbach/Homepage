@@ -36,23 +36,62 @@ function generateEinsatzbericht(
     string $imagePath = '',
     bool $isPublic = false
 ): string {
+    $cleanedFahrzeuge = implode(', ', preg_match_all('/\b\d+(?:[\/-]\d+){1,2}\b/', $fahrzeuge, $m) ? $m[0] : []);
+    $cleanedEinsatzgruppe = str_replace('Alle Monitore', '', $einsatzgruppe);
+
     $prompt = <<<PROMPT
-Deine Aufgabe ist es einen Einsatzbericht zu schreiben. Das Ziel ist einen detaillierten Bericht zu schreiben, der Bericht soll menschlich klingen, keine falschen Aussagen machen, keine Dinge dazuerfinden.
+Deine Aufgabe ist es, einen Einsatzbericht für die Webseite der Freiwilligen Feuerwehr zu schreiben. Der Bericht soll informativ, ehrlich und nachvollziehbar sein – ohne Übertreibungen, ohne falsche Aussagen und ohne ausgedachte Inhalte.
 
-Die Texte sollen dazu dienen die Bevölkerung darüber zu informieren was wir die Freiwillige Feuerwehr Reichenbach in dem Feuerwehr Einsatz gemacht haben. Er soll informativ und natürlich klingen.
+Der Text richtet sich an die interessierte Öffentlichkeit, insbesondere Bürgerinnen und Bürger aus der Umgebung. Der Stil soll menschlich und leicht lesbar sein, so als hätte ein Mitglied der Feuerwehr den Bericht selbst verfasst – mit Charakter, aber trotzdem sachlich und in einem formal passenden Ton.
 
-Die Fahrzeuge werden durch Nummern zu den Ortsteilen identifiziert. Dazu haben die Autos Nummern: vor dem "/" ist die Ortnummer – die 1 gehören zu Bermbach, 2 zu Esch, die 3 zu Niederems, die 4 zu Reichenbach, die 5 zu Steinfischbach und die 6 zu Wüstems. Die Zahl danach gibt den Fahrzeugtyp an. Das bedeutet der "4/19" wäre das Mannschaftstransportfahrzeug aus Reichenbach oder der "1/48" wäre ein Tragkraftspritzenfahrzeug mit Wasser aus Bermbach. Es haben nur die Fahrzeuge am Einsatz teilgenommen, die mit nummer aufgeführt sind.
+Verzichte dabei auf:
+- Aussagen über den Erfolg oder Misserfolg des Einsatzes
+- Dankesworte oder Grußformeln
+- Wiederholungen der Formulierung „die Feuerwehr Reichenbach“ oder dass „wir ausgerückt sind“ – das ergibt sich bereits aus dem Kontext
+- das bloße Wiederholen der Einsatzdetails in gleicher Formulierung
 
-Der Einsatzbericht soll keine personenbezogenen Daten enthalten. Der Bericht soll menschlich klingen und Bemerkungen zu verschiedenen Informationen machen. Der Charakter und Charme einer kleinen Freiwilligen Feuerwehr kann im Text erkennbar sein, dabei soll er trotzdem formal und rechtlich korrekt bleiben.
+Nutze stattdessen:
+- eine umformulierte Darstellung des Einsatzablaufs
+- kurze Bemerkungen zur Lage, zum Ort oder zu den Gegebenheiten, wenn passend
+- wenn die voraushelfer im einsatz waren erwähne das explizit
+- bei Fahrzeugen: verwende anstelle der Funkkennung (z. B. 4/19) immer die **Ortsbezeichnung und Fahrzeugtyp**, z. B. „Mannschaftstransportfahrzeug aus Reichenbach“
 
-Hier sind die Einsatzdetails aus denen der Bericht erstellt werden soll, abstrahiere diesen text und formuliere ihn um: Wir waren heute am {$start} bis {$end} im Einsatz mit dem Einsatzstichwort "{$stichwort}" sind wir nach {$ort} gefahren, der bei der Alarmierung angegebene Sachverhalt lautete "{$sachverhalt}" was in die Kategorie "{$kategorie}" fällt. Ausgerückt sind die "{$einsatzgruppe}" mit den Fahrzeugen "{$fahrzeuge}".
+Die folgenden Einsatzdetails dienen dir als Grundlage. Verwende sie zur Einbettung der Informationen in einem gut lesbaren und interessanten Fließtext. Bitte abstrahiere und formuliere sie um – der Text darf niemals wie ein automatisch generierter Eintrag wirken:
+
+Datum/Zeit: {$start} bis {$end}  
+Einsatzstichwort: "{$stichwort}"  
+Einsatzort: {$ort}  
+Sachverhalt bei Alarmierung: "{$sachverhalt}"  
+Kategorie: "{$kategorie}"  
+Einsatzgruppe: "{$cleanedEinsatzgruppe}"  
+Fahrzeuge im Einsatz: {$cleanedFahrzeuge}
+
+Wenn du Fahrzeuge beschreibst, nutze diese Zuordnung zur besseren Lesbarkeit:
+- 1-xx = Bermbach
+- 2-xx = Esch
+- 3-xx = Niederems
+- 4-xx = Reichenbach
+- 5-xx = Steinfischbach
+- 6-xx = Wüstems
+
+Beispiel:
+„4-19“ ist ein Mannschaftstransportfahrzeug aus Reichenbach
+„4-48“ ist ein Tragkraftspritzenfahrzeug mit Wassertank aus Reichenbach
+„3-82-1“ ist ein Notarzt hier gibt es keinen Ort die zahl am anfang ist egal
+„16.83“ ist ein Retungswagen hier gibt es keinen Ort die zahl am anfang ist egal
+
+Der Bericht soll zum Schluss kommen, sobald alle relevanten Informationen vermittelt sind. Keine Floskeln, kein Fazit, kein Werturteil.
+Der Komplette Bericht soll in Deutsch geschrieben werden und keine andere Sprache verwenden.
 
 PROMPT;
 
     $generatedText = sendLLMRequest($prompt);
 
-    logEinsatzGeneration($einsatz_ID, $stichwort, $ort, $generatedText);
 
+    $cleanedText = preg_replace('/^\s*(<think>.*?<\/think>\s*)+/s', '', $generatedText);
+
+
+    logEinsatzGeneration($einsatz_ID, $stichwort, $ort, $generatedText, $cleanedText);
     
     // Wenn der Bericht in der Datenbank gespeichert werden soll
     if ($saveToDatabase) {
@@ -74,7 +113,7 @@ PROMPT;
             $stmt->bindParam(':einsatz_id', $einsatz_ID, PDO::PARAM_INT);
             $stmt->bindParam(':image_path', $imagePath, PDO::PARAM_STR);
             $stmt->bindParam(':einsatz_headline', $headline, PDO::PARAM_STR);
-            $stmt->bindParam(':einsatz_text', $generatedText, PDO::PARAM_STR);
+            $stmt->bindParam(':einsatz_text', $cleanedText, PDO::PARAM_STR);
             $stmt->bindParam(':is_public', $isPublic, PDO::PARAM_BOOL);
             $stmt->execute();
         } catch (PDOException $e) {
@@ -83,7 +122,7 @@ PROMPT;
         }
     }
     
-    return $generatedText;
+    return $cleanedText;
 }
 
 /**
@@ -95,11 +134,11 @@ PROMPT;
  * @param string $bericht
  * @return void
  */
-function logEinsatzGeneration(int $einsatzId, string $stichwort, string $ort, string $bericht): void
+function logEinsatzGeneration(int $einsatzId, string $stichwort, string $ort, string $bericht, string $cleanedText): void
 {
     $logPath = __DIR__ . '/einsatzbericht.log';
     $timestamp = date('Y-m-d H:i:s');
-    $entry = "[{$timestamp}] Bericht für Einsatz #{$einsatzId} ({$stichwort}, {$ort}) generiert.\n------------\n{$bericht}\n------------\n\n";
+    $entry = "[{$timestamp}] Bericht für Einsatz #{$einsatzId} ({$stichwort}, {$ort}) generiert.\n------v Original v------\n{$bericht}\n-------v Cleaned v------\n\n {$cleanedText} \n------------\n\n";
 
     file_put_contents($logPath, $entry, FILE_APPEND);
 }
