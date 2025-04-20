@@ -5,6 +5,7 @@ require_once dirname(__DIR__) . '/includes/config.php';
 require_once dirname(__DIR__) . '/models/Einsatz.php';
 require_once dirname(__DIR__) . '/includes/Security.php';
 require_once dirname(__DIR__) . '/includes/FileUpload.php';
+require_once dirname(__DIR__, 3) . '/Private/AI/generateEinsatzbericht.php';
 
 // Define title for the page
 $pageTitle = "Neuer Einsatz";
@@ -220,7 +221,10 @@ include dirname(__DIR__) . '/templates/header.php';
                 
                 <div class="mb-3">
                     <label for="einsatz_text" class="form-label">Beschreibung</label>
-                    <textarea class="form-control" id="einsatz_text" name="einsatz_text" rows="6"></textarea>
+                    <div class="input-group">
+                        <textarea class="form-control" id="einsatz_text" name="einsatz_text" rows="6"></textarea>
+                        <button type="button" id="generateReportBtn" class="btn btn-outline-secondary">Bericht mit Künstlicher Intelligenz generieren lassen</button>
+                    </div>
                 </div>
                 
                 <div class="mb-3">
@@ -248,8 +252,32 @@ include dirname(__DIR__) . '/templates/header.php';
 </div>
 
 <script>
-    // Initialize CKEditor
+    // Add custom styling to fix CKEditor sizing with input-group
     document.addEventListener('DOMContentLoaded', function() {
+        // Add custom CSS to fix CKEditor in input-group
+        const style = document.createElement('style');
+        style.textContent = `
+            .ck.ck-editor {
+                width: 100%;
+            }
+            .ck.ck-editor__main .ck-editor__editable {
+                min-height: 200px;
+            }
+            .input-group:has(.ck-editor) {
+                flex-wrap: wrap;
+            }
+            .input-group:has(.ck-editor) .ck-editor {
+                flex: 0 0 100%;
+                width: 100%;
+            }
+            .input-group:has(.ck-editor) .btn {
+                margin-top: 10px;
+            }
+        `;
+        document.head.appendChild(style);
+        
+        let editor;
+        
         ClassicEditor
             .create(document.getElementById('einsatz_text'), {
                 toolbar: ['heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote', 'insertTable', 'undo', 'redo'],
@@ -262,9 +290,83 @@ include dirname(__DIR__) . '/templates/header.php';
                     ]
                 }
             })
+            .then(editorInstance => {
+                editor = editorInstance;
+                
+                // Add event listener for the generate report button
+                document.getElementById('generateReportBtn').addEventListener('click', function() {
+                    generateEinsatzbericht(editor);
+                });
+            })
             .catch(error => {
                 console.error(error);
             });
+        
+        // Function to generate Einsatzbericht
+        function generateEinsatzbericht(editor) {
+            // Get form values
+            const sachverhalt = document.getElementById('sachverhalt').value;
+            const stichwort = document.getElementById('stichwort').value;
+            const kategorie = document.getElementById('kategorie').value;
+            const ort = document.getElementById('ort').value;
+            const einheit = document.getElementById('einheit').value;
+            const datum = document.getElementById('datum').value;
+            const endzeit = document.getElementById('endzeit').value || datum;
+            
+            // Validate required fields
+            if (!sachverhalt || !stichwort || !ort || !einheit || !datum) {
+                alert('Bitte füllen Sie alle Pflichtfelder aus, bevor Sie einen Bericht generieren.');
+                return;
+            }
+            
+            // Show loading state
+            const btn = document.getElementById('generateReportBtn');
+            const originalText = btn.textContent;
+            btn.disabled = true;
+            btn.textContent = 'Wird generiert...';
+            
+            // Make AJAX request
+            fetch('<?php echo BASE_URL; ?>/einsatz/generate-report.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    einsatz_id: 0, // New einsatz, no ID yet
+                    start: datum,
+                    end: endzeit,
+                    stichwort: stichwort,
+                    kategorie: kategorie,
+                    einsatzgruppe: einheit,
+                    sachverhalt: sachverhalt,
+                    ort: ort,
+                    csrf_token: '<?php echo $_SESSION['csrf_token']; ?>'
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Netzwerkfehler oder Serverfehler');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    // Set the generated text in the editor
+                    editor.setData(data.text);
+                } else {
+                    alert('Fehler: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Fehler beim Generieren des Berichts: ' + error.message);
+            })
+            .finally(() => {
+                // Restore button state
+                btn.disabled = false;
+                btn.textContent = originalText;
+            });
+        }
         
         // Image preview
         document.getElementById('image').addEventListener('change', function(e) {

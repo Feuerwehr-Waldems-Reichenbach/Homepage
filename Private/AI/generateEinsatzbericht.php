@@ -125,6 +125,61 @@ PROMPT;
     return $cleanedText;
 }
 
+function generateEinsatzbericht2(
+    int $einsatz_ID,
+    string $start,
+    string $end,
+    string $stichwort,
+    string $kategorie,
+    string $einsatzgruppe,
+    string $sachverhalt,
+    string $ort,
+) {
+    $prompt = <<<PROMPT
+    Deine Aufgabe ist es, einen Einsatzbericht für die Webseite der Freiwilligen Feuerwehr zu schreiben. Der Bericht soll informativ, ehrlich und nachvollziehbar sein – ohne Übertreibungen, ohne falsche Aussagen und ohne ausgedachte Inhalte.
+
+    WICHTIG: Es dürfen keine Annahmen getroffen werden. Wenn zu einem Aspekt keine konkrete Information vorliegt, darf er im Text nicht interpretiert, ergänzt oder ausgeschmückt werden. Erfinde niemals Situationen, Beobachtungen oder Abläufe.
+
+    Du darfst allgemeine, nichts-aussagende Formulierungen verwenden, um einen vollständigen Satz zu bilden, aber vermeide alles, was den Anschein einer genauen Aussage erwecken könnte, wenn die Datenlage das nicht hergibt.
+
+    Der Stil soll menschlich und leicht lesbar sein – so, als hätte ein Mitglied der Feuerwehr den Bericht selbst verfasst. Er soll natürlich wirken, aber trotzdem sachlich und formal korrekt sein.
+
+    Verzichte dabei auf:
+    - Aussagen über Erfolg oder Ergebnis des Einsatzes
+    - Dankesworte, Einschätzungen oder persönliche Meinungen
+    - Wiederholungen der Formulierung „die Feuerwehr Reichenbach“ oder dass „wir ausgerückt sind“
+    - Formulierungen wie „es stellte sich heraus“, „es wurde festgestellt“, „die Lage war“ – wenn diese Informationen nicht vorliegen
+    - jede Art von ausformuliertem Ablauf, der nicht konkret durch die Einsatzdaten gedeckt ist
+
+    Erlaube dir:
+    - kurze, zurückhaltende Formulierungen
+    - neutrale Umschreibungen wie „es erfolgte eine Erkundung“, „die Lage wurde überprüft“, „weitere Maßnahmen erfolgten je nach Erfordernis“
+    - wenn nur sehr wenige Informationen vorhanden sind, darf der Text entsprechend kurz und allgemein bleiben
+
+    Wenn die Voraushelfer beteiligt waren, erwähne das explizit.
+
+    Diese Einsatzdetails dienen dir als Grundlage. Verwende sie zur Einbettung in einen ruhigen, zurückhaltenden Fließtext. Der Bericht soll nicht wie automatisch generiert wirken, sondern wie von einem Mitglied geschrieben.
+
+    Datum/Zeit: {$start} bis {$end}  
+    Einsatzstichwort: "{$stichwort}"  
+    Einsatzort: {$ort}  
+    Sachverhalt bei Alarmierung: "{$sachverhalt}"  
+    Kategorie: "{$kategorie}"  
+    Einsatzgruppe: "{$einsatzgruppe}"
+
+    Der Bericht soll enden, sobald alle relevanten Informationen ausgedrückt wurden. Kein Fazit, keine Floskeln, keine Wertung. Der komplette Text soll ausschließlich auf Deutsch verfasst sein.
+
+PROMPT;
+
+    $generatedText = sendLLMRequest($prompt);
+
+    $cleanedText = preg_replace('/^\s*(<think>.*?<\/think>\s*)+/s', '', $generatedText);
+
+    logEinsatzGeneration($einsatz_ID, $stichwort, $ort, $generatedText, $cleanedText);
+
+    return $cleanedText;
+}
+
 /**
  * Schreibt einen Logeintrag in eine Datei im aktuellen Verzeichnis.
  *
