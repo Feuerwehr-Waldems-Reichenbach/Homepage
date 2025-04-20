@@ -148,7 +148,7 @@ include dirname(__DIR__) . '/templates/header.php';
             <div class="mb-3">
                 <label for="image" class="form-label">Bild</label>
                 <input type="file" class="form-control" id="image" name="image" accept="image/*">
-                <small class="form-text text-muted">Optional. Maximale Größe: 20 MB. Erlaubte Formate: JPG, JPEG, PNG, GIF, WEBP.</small>
+                <small class="form-text text-muted">Optional. Maximale Größe: 30 MB. Erlaubte Formate: JPG, JPEG, PNG, GIF, WEBP.</small>
                 <div class="mt-2">
                     <img id="imagePreview" src="#" alt="Vorschau" style="max-width: 200px; max-height: 200px; display: none;">
                 </div>
