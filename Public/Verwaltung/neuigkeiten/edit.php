@@ -35,11 +35,6 @@ if (!$news) {
     exit;
 }
 
-// Create upload directory if it doesn't exist
-$uploadDir = dirname(__DIR__, 3) . '/Public/Veranstaltungen/Flyer';
-if (!is_dir($uploadDir)) {
-    mkdir($uploadDir, 0755, true);
-}
 
 // Process form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -101,22 +96,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         $data['path_to_image'] = null;
     } elseif (isset($_FILES['image']) && $_FILES['image']['error'] != UPLOAD_ERR_NO_FILE) {
-        $fileUpload = new FileUpload($uploadDir, ['jpg', 'jpeg', 'png', 'gif', 'webp']);
-        $upload = $fileUpload->file($_FILES['image'])->generateUniqueName('news')->upload();
-        
+        $relativePath = '/Veranstaltungen/Flyer/';
+        $uploadDir = dirname(__DIR__, 3) . '/Public' . $relativePath;
+        $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+    
+        $fileInfo = pathinfo($_FILES['image']['name']);
+        $extension = strtolower($fileInfo['extension']);
+    
+        if (!in_array($extension, $allowedExtensions)) {
+            $_SESSION['error'] = 'Ungültiges Dateiformat.';
+            header('Location: ' . BASE_URL . '/neuigkeiten/edit.php?id=' . $id);
+            exit;
+        }
+    
+        // Neuen Dateinamen generieren
+        $cleanTitle = preg_replace('/[^a-z0-9\-]/i', '', str_replace(' ', '-', iconv('UTF-8', 'ASCII//TRANSLIT', $ueberschrift)));
+        $jahr = date('Y', strtotime($datum));
+        $customName = "Flyer-{$cleanTitle}-{$jahr}";
+    
+        // Upload mit deiner Klasse
+        $uploader = new FileUpload($uploadDir, $allowedExtensions);
+        $upload = $uploader
+            ->file($_FILES['image'])
+            ->setName($customName)
+            ->upload();
+    
         if ($upload) {
-            // Delete the old image if it exists
+            // Altes Bild löschen
             if (!empty($news['path_to_image']) && file_exists(ADMIN_PATH . $news['path_to_image'])) {
                 @unlink(ADMIN_PATH . $news['path_to_image']);
             }
-            
-            $data['path_to_image'] = str_replace(ADMIN_PATH, '', $upload);
+    
+            $data['path_to_image'] = $relativePath . $uploader->getFileName();
         } else {
-            $_SESSION['error'] = 'Fehler beim Hochladen des Bildes: ' . $fileUpload->getError();
+            $_SESSION['error'] = 'Fehler beim Hochladen des Bildes: ' . $uploader->getError();
             header('Location: ' . BASE_URL . '/neuigkeiten/edit.php?id=' . $id);
             exit;
         }
     }
+    
+    
     
     // Update the news item
     $result = $newsModel->updateNews($id, $data);
