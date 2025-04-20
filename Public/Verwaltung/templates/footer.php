@@ -30,7 +30,9 @@
                 language: {
                     url: '<?php echo $ADMIN_ROOT; ?>/assets/js/datatables-de.json'
                 },
-                responsive: true
+                responsive: true,
+                order: [],
+                ordering: true
             });
             
             // Confirm delete actions
