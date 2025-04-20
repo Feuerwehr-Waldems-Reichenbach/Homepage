@@ -37,7 +37,7 @@ if (!$einsatz) {
 }
 
 // Create upload directory if it doesn't exist
-$uploadDir = ADMIN_PATH . '/assets/uploads/einsatz/';
+$uploadDir = ADMIN_PATH . '/assets/images';
 if (!is_dir($uploadDir)) {
     mkdir($uploadDir, 0755, true);
 }

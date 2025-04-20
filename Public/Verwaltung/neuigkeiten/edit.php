@@ -36,7 +36,7 @@ if (!$news) {
 }
 
 // Create upload directory if it doesn't exist
-$uploadDir = ADMIN_PATH . '/assets/uploads/news/';
+$uploadDir = ADMIN_PATH . '\Veranstaltungen\Flyer';
 if (!is_dir($uploadDir)) {
     mkdir($uploadDir, 0755, true);
 }
