@@ -268,21 +268,17 @@ class Einsatz extends Model
         return ($result['max_id'] ?? 0) + 1;
     }
     
-    /**
-     * Get operations by year
-     * 
-     * @param int $year The year
-     * @return array The operations for the given year
-     */
     public function getByYear($year)
     {
         $startDate = "{$year}-01-01 00:00:00";
         $endDate = "{$year}-12-31 23:59:59";
         
         $sql = "
-            SELECT * FROM {$this->table}
-            WHERE Datum BETWEEN :start_date AND :end_date
-            ORDER BY Datum DESC
+            SELECT e.*, d.einsatz_headline, d.einsatz_text, d.image_path, d.is_public
+            FROM {$this->table} e
+            LEFT JOIN einsatz_Details d ON e.ID = d.einsatz_id
+            WHERE e.Datum BETWEEN :start_date AND :end_date
+            ORDER BY e.Datum DESC
         ";
         
         $stmt = $this->db->prepare($sql);
@@ -292,6 +288,7 @@ class Einsatz extends Model
         
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    
     
     /**
      * Get available years

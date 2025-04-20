@@ -1,8 +1,15 @@
 <?php
+
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+
 // Include required files
 require_once dirname(__DIR__, 3) . '/Private/Database/Database.php';
 require_once dirname(__DIR__) . '/includes/config.php';
 require_once dirname(__DIR__) . '/models/Einsatz.php';
+require_once dirname(__DIR__) . '/includes/Security.php';
 
 // Define title for the page
 $pageTitle = "Einsätze";
@@ -73,6 +80,8 @@ if ($year) {
 } else {
     $einsaetze = $einsatzModel->getAllWithDetails('Datum', 'DESC');
 }
+
+
 
 // Apply public filter if needed
 if ($showPublic) {
