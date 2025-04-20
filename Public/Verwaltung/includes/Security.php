@@ -68,16 +68,25 @@ class Security {
      * Sanitize input data to prevent XSS and other injection attacks
      * 
      * @param string $input The input to sanitize
+     * @param bool $allowHtml Whether to allow HTML tags (useful for rich text editors like CKEditor)
      * @return string The sanitized input
      */
-    public static function sanitizeInput($input) {
+    public static function sanitizeInput($input, $allowHtml = false) {
         // Remove whitespace from both ends
         $input = trim($input);
         
-        // Convert special characters to HTML entities
-        $input = htmlspecialchars($input, ENT_QUOTES, 'UTF-8');
-        
-        return $input;
+        if ($allowHtml) {
+            // Whitelist of allowed HTML tags
+            $allowedTags = '<p><br><strong><em><ul><ol><li><a><blockquote><h1><h2><h3><h4><h5><h6><img><table><tr><td><th><thead><tbody><caption><div><span><hr>';
+            
+            // Remove unwanted tags but keep allowed ones
+            return strip_tags($input, $allowedTags);
+        } else {
+            // Convert special characters to HTML entities
+            $input = htmlspecialchars($input, ENT_QUOTES, 'UTF-8');
+            
+            return $input;
+        }
     }
     
     /**

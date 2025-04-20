@@ -252,7 +252,7 @@ include dirname(__DIR__) . '/templates/header.php';
                 <div class="mb-3">
                     <label for="einsatz_text" class="form-label">Beschreibung</label>
                     <div class="input-group">
-                        <textarea class="form-control" id="einsatz_text" name="einsatz_text" rows="6"><?php echo htmlspecialchars($einsatz['einsatz_text'] ?? ''); ?></textarea>
+                        <textarea class="form-control" id="einsatz_text" name="einsatz_text" rows="6"><?php echo $einsatz['einsatz_text'] ?? ''; ?></textarea>
                         <button type="button" id="generateReportBtn" class="btn btn-outline-secondary">Bericht mit Künstlicher Intelligenz generieren lassen</button>
                     </div>
                 </div>

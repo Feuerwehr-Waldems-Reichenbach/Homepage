@@ -175,7 +175,7 @@ include dirname(__DIR__) . '/templates/header.php';
             
             <div class="mb-3">
                 <label for="information" class="form-label">Information</label>
-                <textarea class="form-control" id="information" name="information" rows="6" required><?php echo htmlspecialchars($news['Information']); ?></textarea>
+                <textarea class="form-control" id="information" name="information" rows="6" required><?php echo $news['Information']; ?></textarea>
                 <div class="invalid-feedback">
                     Bitte geben Sie Informationen ein.
                 </div>
