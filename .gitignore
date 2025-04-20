@@ -6,3 +6,5 @@ sampleSnipets
 /vendor
 *.sql
 /.VSCodeCounter
+*.doc
+*.log

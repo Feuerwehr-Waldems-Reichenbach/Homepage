@@ -1,27 +1,20 @@
 <?php
 require_once '../includes/config.php';
 require_once '../includes/Reservation.php';
-
 // Set response type to JSON
 header('Content-Type: application/json');
-
 try {
     // Initialize Reservation class to access the pricing method
     $reservation = new Reservation();
-    
     // Get user ID from session if logged in
     $userId = isset($_SESSION['user_id']) ? intval($_SESSION['user_id']) : null;
-    
     // Sicherheitsprüfung: Nur validierte user_id verwenden, keine Parameter von außen akzeptieren
     if ($userId !== null && $userId <= 0) {
         throw new Exception('Ungültige Benutzer-ID.');
     }
-    
     // Get pricing information for the current user
     $priceInfo = $reservation->getPriceInformation($userId);
-    
     // Preise werden jetzt komplett serverseitig berechnet, keine manuelle Anpassung mehr
-    
     // Return the data
     echo json_encode([
         'success' => true,
@@ -31,7 +24,6 @@ try {
         'rate_type' => $priceInfo['rate_type']
     ]);
 } catch (Exception $e) {
-    
     // Return error with default values
     http_response_code(400); // Bad request
     echo json_encode([
@@ -39,4 +31,4 @@ try {
         'message' => 'Ein Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.'
     ]);
 }
-?> 
+?>

@@ -1,0 +1,25 @@
+/* Custom Parallax Styles */
+/* Header-Sektion mit Parallax-Effekt */
+.cid-u8DlI77rJo {
+    position: relative;
+    z-index: 0;
+    background-attachment: fixed;
+}
+/* Verbesserte Parallax-Einstellungen für jarallax */
+.jarallax {
+    position: relative;
+    z-index: 0;
+}
+/* Erste Inhaltssektion über den Header schieben */
+.image08.cid-u8DwU6WLje {
+    position: relative;
+    z-index: 1;
+    border-radius: 10px 10px 0 0;
+    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.1);
+}
+/* Verbesserte mobile Anpassungen */
+@media (max-width: 767px) {
+    .image08.cid-u8DwU6WLje {
+        margin-top: -40px;
+    }
+} 

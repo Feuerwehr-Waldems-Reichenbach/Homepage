@@ -2,15 +2,13 @@
 <html>
 
 <head>
+  <!-- FFR Seite -->
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="generator" content="Mobirise v5.9.17, mobirise.com">
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
-  <link rel="shortcut icon" href="../assets/images/gravatar-logo-dunkel-1.jpg" type="image/x-icon">
+  <link rel="shortcut icon" href="../assets/images/gravatar-logo-dunkel.jpg" type="image/x-icon">
   <meta name="description"
     content="Unsere Datenschutzerklärung informiert dich über den Umgang mit deinen persönlichen Daten bei der Freiwilligen Feuerwehr Reichenbach. Erfahre mehr über deine Rechte und unsere Maßnahmen zum Datenschutz.">
-
-
   <title>Datenschutzerklärung</title>
   <link rel="stylesheet" href="../assets/web/assets/mobirise-icons2/mobirise2.css">
   <link rel="stylesheet" href="../assets/bootstrap/css/bootstrap.min.css">
@@ -28,98 +26,11 @@
   </noscript>
   <link rel="preload" as="style" href="../assets/mobirise/css/mbr-additional.css?v=VoxXpG">
   <link rel="stylesheet" href="../assets/mobirise/css/mbr-additional.css?v=VoxXpG" type="text/css">
-
-
-
-
 </head>
 
 <body>
-
-  <section data-bs-version="5.1" class="menu menu1 cid-u8CwqCiTr0" once="menu" id="menu1-a">
-
-
-    <nav class="navbar navbar-dropdown navbar-fixed-top navbar-expand-lg">
-      <div class="container-fluid">
-        <div class="navbar-brand">
-          <span class="navbar-logo">
-            <a href="/">
-              <img src="../assets/images/gravatar-logo-dunkel-1.webp" alt="Feuerwehr Reichenbach" style="height: 3rem;">
-            </a>
-          </span>
-          <span class="navbar-caption-wrap"><a class="navbar-caption text-white display-5" href="/">Feuerwehr
-              Reichenbach</a></span>
-        </div>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-bs-toggle="collapse"
-          data-target="#navbarSupportedContent" data-bs-target="#navbarSupportedContent"
-          aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-          <div class="hamburger">
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-          </div>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav nav-dropdown nav-right" data-app-modern-menu="true">
-            <li class="nav-item dropdown"><a class="nav-link link dropdown-toggle text-info display-4" href="/"
-                data-toggle="dropdown-submenu" data-bs-toggle="dropdown" data-bs-auto-close="outside"
-                aria-expanded="true">Das sind wir</a>
-              <div class="dropdown-menu" aria-labelledby="dropdown-813">
-                <div class="dropdown"><a class="dropdown-item dropdown-toggle text-info display-4"
-                    href="Einsatzabteilung.html" data-toggle="dropdown-submenu" data-bs-toggle="dropdown"
-                    data-bs-auto-close="outside" aria-expanded="false">Einsatzabteilung</a>
-                  <div class="dropdown-menu dropdown-submenu" aria-labelledby="dropdown-692"><a
-                      class="dropdown-item text-info display-4" href="/Einsatzabteilung">Einsatzabteilung</a><a
-                      class="dropdown-item text-info display-4" href="/Fahrzeuge">Fahrzeuge</a><a
-                      class="dropdown-item text-info display-4" href="/Feuerwehrhaus">Feuerwehrhaus</a></div>
-                </div><a class="dropdown-item text-info display-4" href="/Voraus-Helfer">Voraus-Helfer</a><a
-                  class="dropdown-item text-info display-4" href="/Realistische-Unfalldarstellung">Realistische
-                  Unfalldarstellung<br></a><a class="show dropdown-item text-info display-4"
-                  href="/Jugendfeuerwehr">Jugendfeuerwehr</a><a class="show dropdown-item text-info display-4"
-                  href="/Kinderfeuerwehr">Kinderfeuerwehr</a><a class="dropdown-item text-info display-4"
-                  href="/Foerderverein">Förderverein</a>
-              </div>
-            </li>
-            <li class="nav-item dropdown"><a class="nav-link link dropdown-toggle text-info display-4"
-                href="Mitmachen.html" data-toggle="dropdown-submenu" data-bs-toggle="dropdown"
-                data-bs-auto-close="outside" aria-expanded="false">Unterstützen</a>
-              <div class="dropdown-menu" aria-labelledby="dropdown-997"><a class="dropdown-item text-info display-4"
-                  href="/Mitmachen">Mitmachen</a><a class="dropdown-item text-info display-4"
-                  href="/Unterstuetzen">Unterstützen</a></div>
-            </li>
-            <li class="nav-item dropdown"><a class="nav-link link dropdown-toggle text-info display-4"
-                href="Mitmachen.html" data-toggle="dropdown-submenu" data-bs-toggle="dropdown"
-                data-bs-auto-close="outside" aria-expanded="false">Neuigkeiten</a>
-              <div class="dropdown-menu" aria-labelledby="dropdown-416"><a class="dropdown-item text-info display-4"
-                  href="/Veranstaltungen">Veranstaltungen</a><a class="show dropdown-item text-info display-4"
-                  href="/Einsaetze">Einsätze</a></div>
-            </li>
-            <li class="nav-item"><a class="nav-link link text-info display-4" href="/Grillhuette">Grillhütte</a></li>
-          </ul>
-          <div class="icons-menu">
-            <a class="iconfont-wrapper" href="https://www.facebook.com/groups/163127135137/" target="_blank">
-              <span class="p-2 mbr-iconfont socicon-facebook socicon"
-                style="color: rgb(255, 255, 255); fill: rgb(255, 255, 255);"></span>
-            </a>
-            <a class="iconfont-wrapper" href="https://www.instagram.com/feuerwehrreichenbach/" target="_blank">
-              <span class="p-2 mbr-iconfont socicon-instagram socicon"
-                style="color: rgb(255, 255, 255); fill: rgb(255, 255, 255);"></span>
-            </a>
-
-
-          </div>
-
-        </div>
-      </div>
-    </nav>
-  </section>
-
-  <section data-bs-version="5.1" class="article07 cid-u8NeWgWdln" id="article07-1y">
-
-
-
-
+  <?php include '../assets/includes/navbar.php'; ?>
+  <section data-bs-version="5.1" class="article07 cid-dataprotection-card" id="article07-1y">
     <div class="container">
       <div class="row justify-content-center">
         <div class="card col-md-12 col-lg-10">
@@ -128,9 +39,6 @@
               <strong>Datenschutzerklärung</strong>
             </h3>
             <div class="row card-box align-left">
-
-
-
               <div class="item features-without-image col-12 active">
                 <div class="item-wrapper">
                   <h4 class="mbr-section-subtitle mbr-fonts-style mb-3 display-2"><strong>1. Verantwortlicher und
@@ -152,7 +60,6 @@
                   </p>
                 </div>
               </div>
-
               <div class="item features-without-image col-12">
                 <div class="item-wrapper">
                   <h4 class="mbr-section-subtitle mbr-fonts-style mb-3 display-2"><strong>2. Grundlegende
@@ -173,7 +80,6 @@
                       Wahrung berechtigter Interessen unsererseits oder eines Dritten erforderlich, sofern nicht Ihre
                       Interessen oder Grundrechte und Grundfreiheiten überwiegen.</li>
                   </ul>
-
                   <h5 class="mbr-fonts-style display-5"><strong>2.2 Speicherdauer</strong></h5>
                   <p class="mbr-text mbr-fonts-style display-7">Wir speichern Ihre personenbezogenen Daten nur solange,
                     wie es für die Erfüllung der Zwecke, für die sie erhoben wurden, erforderlich ist oder dies
@@ -194,7 +100,6 @@
                   </p>
                 </div>
               </div>
-
               <div class="item features-without-image col-12">
                 <div class="item-wrapper">
                   <h4 class="mbr-section-subtitle mbr-fonts-style mb-3 display-5"><strong>3. Erhobene Daten und
@@ -215,7 +120,6 @@
                     Authentifizierung und Bereitstellung der Reservierungsfunktionen.</p>
                   <p class="mbr-text mbr-fonts-style display-7"><strong>Rechtsgrundlage:</strong> Erfüllung des
                     Nutzungsvertrags (Art. 6 Abs. 1 lit. b DSGVO).</p>
-
                   <h5 class="mbr-fonts-style display-5"><strong>3.2 Reservierungsdaten</strong></h5>
                   <p class="mbr-text mbr-fonts-style display-7">Bei der Durchführung einer Reservierung werden folgende
                     Daten verarbeitet:</p>
@@ -230,7 +134,6 @@
                     Ihrer Reservierung, Überprüfung der Verfügbarkeit, Abrechnung.</p>
                   <p class="mbr-text mbr-fonts-style display-7"><strong>Rechtsgrundlage:</strong> Erfüllung des
                     Reservierungsvertrags (Art. 6 Abs. 1 lit. b DSGVO).</p>
-
                   <h5 class="mbr-fonts-style display-5"><strong>3.3 Kommunikationsdaten</strong></h5>
                   <p class="mbr-text mbr-fonts-style display-7">Bei der Kommunikation mit uns (z.B. per E-Mail oder über
                     das Kontaktformular) werden folgende Daten verarbeitet:</p>
@@ -245,7 +148,6 @@
                     an der Beantwortung von Anfragen (Art. 6 Abs. 1 lit. f DSGVO) oder Vertragserfüllung (Art. 6 Abs. 1
                     lit. b DSGVO), wenn die Kommunikation im Zusammenhang mit einem bestehenden Vertragsverhältnis
                     steht.</p>
-
                   <h5 class="mbr-fonts-style display-5"><strong>3.4 E-Mail-Benachrichtigungen</strong></h5>
                   <p class="mbr-text mbr-fonts-style display-7">Wir senden Ihnen E-Mail-Benachrichtigungen zu folgenden
                     Anlässen:</p>
@@ -260,7 +162,6 @@
                     Vorgänge im Zusammenhang mit Ihrem Benutzerkonto oder Ihrer Reservierung.</p>
                   <p class="mbr-text mbr-fonts-style display-7"><strong>Rechtsgrundlage:</strong> Erfüllung des
                     Nutzungs- bzw. Reservierungsvertrags (Art. 6 Abs. 1 lit. b DSGVO).</p>
-
                   <h5 class="mbr-fonts-style display-5"><strong>3.5 Protokolldaten (Server-Logs)</strong></h5>
                   <p class="mbr-text mbr-fonts-style display-7">Bei der Nutzung unserer Website werden automatisch
                     technische Zugriffsdaten erhoben:</p>
@@ -279,7 +180,6 @@
                     an der sicheren und funktionalen Bereitstellung der Website (Art. 6 Abs. 1 lit. f DSGVO).</p>
                   <p class="mbr-text mbr-fonts-style display-7">Diese Daten werden nach spätestens 7 Tagen anonymisiert
                     oder gelöscht, sofern keine längere Speicherung aus Sicherheitsgründen erforderlich ist.</p>
-
                   <h5 class="mbr-fonts-style display-5"><strong>3.6 Cookies</strong></h5>
                   <p class="mbr-text mbr-fonts-style display-7">Unsere Website verwendet ausschließlich technisch
                     notwendige Cookies, die für den Betrieb der Website erforderlich sind:</p>
@@ -301,7 +201,6 @@
                     dem Speichern eines Cookies eine ausdrückliche Zustimmung erforderlich ist. Die vollständige
                     Deaktivierung von Cookies kann jedoch dazu führen, dass Sie nicht alle Funktionen unserer Website
                     nutzen können.</p>
-
                   <h5 class="mbr-fonts-style display-5"><strong>3.7 Mitgliedschaftsdaten im Förderverein</strong></h5>
                   <p class="mbr-text mbr-fonts-style display-7">Für die Bearbeitung von Mitgliedschaften im Förderverein
                     der Freiwilligen Feuerwehr Waldems-Reichenbach e.V. erheben wir persönliche Daten digital und auf
@@ -321,7 +220,6 @@
                   </p>
                 </div>
               </div>
-
               <div class="item features-without-image col-12">
                 <div class="item-wrapper">
                   <h4 class="mbr-section-subtitle mbr-fonts-style mb-3 display-5"><strong>4. Sicherheit der
@@ -342,7 +240,6 @@
                     achten, indem Sie beispielsweise sichere Passwörter verwenden und diese regelmäßig ändern.</p>
                 </div>
               </div>
-
               <div class="item features-without-image col-12">
                 <div class="item-wrapper">
                   <h4 class="mbr-section-subtitle mbr-fonts-style mb-3 display-5"><strong>5. Datenempfänger und
@@ -352,7 +249,6 @@
                   <p class="mbr-text mbr-fonts-style display-7">Innerhalb unserer Organisation haben nur diejenigen
                     Personen Zugriff auf Ihre Daten, die diese zur Erfüllung ihrer Aufgaben benötigen
                     (Verwaltungspersonal, IT-Administratoren).</p>
-
                   <h5 class="mbr-fonts-style display-5"><strong>5.2 Externe Dienstleister (Auftragsverarbeiter)</strong>
                   </h5>
                   <p class="mbr-text mbr-fonts-style display-7">Wir setzen für bestimmte Verarbeitungstätigkeiten
@@ -364,7 +260,6 @@
                   <p class="mbr-text mbr-fonts-style display-7">Mit diesen Dienstleistern haben wir entsprechende
                     Auftragsverarbeitungsverträge gemäß Art. 28 DSGVO abgeschlossen, die sicherstellen, dass Ihre Daten
                     entsprechend den gesetzlichen Vorgaben verarbeitet werden.</p>
-
                   <h5 class="mbr-fonts-style display-5"><strong>5.3 Datenübermittlung</strong></h5>
                   <p class="mbr-text mbr-fonts-style display-7">Eine Weitergabe Ihrer personenbezogenen Daten erfolgt
                     ausschließlich:</p>
@@ -376,7 +271,6 @@
                   </ul>
                   <p class="mbr-text mbr-fonts-style display-7">Eine Weitergabe Ihrer Daten zu Werbe- oder
                     Marketingzwecken findet nicht statt.</p>
-
                   <h5 class="mbr-fonts-style display-5"><strong>3.8 Google Maps</strong></h5>
                   <p class="mbr-text mbr-fonts-style display-7">Auf unserer Website ist eine Karte von Google Maps
                     eingebunden, um Ihnen unseren Standort anzuzeigen. Bei der Nutzung von Google Maps können Daten über
@@ -391,23 +285,19 @@
                   </p>
                 </div>
               </div>
-
               <div class="item features-without-image col-12">
                 <div class="item-wrapper">
                   <h4 class="mbr-section-subtitle mbr-fonts-style mb-3 display-5"><strong>6. Ihre Rechte</strong></h4>
                   <p class="mbr-text mbr-fonts-style display-7">Nach der Datenschutz-Grundverordnung stehen Ihnen
                     folgende Rechte zu:</p>
-
                   <h5 class="mbr-fonts-style display-5"><strong>6.1 Auskunftsrecht (Art. 15 DSGVO)</strong></h5>
                   <p class="mbr-text mbr-fonts-style display-7">Sie haben das Recht, von uns eine Bestätigung darüber zu
                     verlangen, ob wir Sie betreffende personenbezogene Daten verarbeiten. Ist dies der Fall, haben Sie
                     ein Recht auf Auskunft über diese Daten und weitere Informationen wie die Verarbeitungszwecke, die
                     Kategorien der Daten, die Empfänger der Daten und die geplante Speicherdauer.</p>
-
                   <h5 class="mbr-fonts-style display-5"><strong>6.2 Recht auf Berichtigung (Art. 16 DSGVO)</strong></h5>
                   <p class="mbr-text mbr-fonts-style display-7">Sie haben das Recht, die Berichtigung unrichtiger und
                     die Vervollständigung unvollständiger Sie betreffender personenbezogener Daten zu verlangen.</p>
-
                   <h5 class="mbr-fonts-style display-5"><strong>6.3 Recht auf Löschung (Art. 17 DSGVO)</strong></h5>
                   <p class="mbr-text mbr-fonts-style display-7">Sie haben das Recht, die Löschung Ihrer
                     personenbezogenen Daten zu verlangen, wenn einer der folgenden Gründe zutrifft:</p>
@@ -427,7 +317,6 @@
                     Beendigung der Mitgliedschaft werden Ihre Daten entsprechend der gesetzlichen Aufbewahrungspflichten
                     gespeichert und danach automatisch gelöscht. Sie können jederzeit Ihr Recht auf Löschung geltend
                     machen, wobei die gesetzlichen Aufbewahrungspflichten berücksichtigt werden müssen.</p>
-
                   <h5 class="mbr-fonts-style display-5"><strong>6.4 Recht auf Einschränkung der Verarbeitung (Art. 18
                       DSGVO)</strong></h5>
                   <p class="mbr-text mbr-fonts-style display-7">Sie haben das Recht, die Einschränkung der Verarbeitung
@@ -440,7 +329,6 @@
                     <li>Sie haben Widerspruch gegen die Verarbeitung eingelegt, und es steht noch nicht fest, ob unsere
                       berechtigten Gründe Ihre überwiegen.</li>
                   </ul>
-
                   <h5 class="mbr-fonts-style display-5"><strong>6.5 Recht auf Datenübertragbarkeit (Art. 20
                       DSGVO)</strong></h5>
                   <p class="mbr-text mbr-fonts-style display-7">Sie haben das Recht, die Sie betreffenden
@@ -448,7 +336,6 @@
                     maschinenlesbaren Format zu erhalten, und Sie haben das Recht, diese Daten einem anderen
                     Verantwortlichen zu übermitteln, wenn die Verarbeitung auf einer Einwilligung oder einem Vertrag
                     beruht und mit automatisierten Mitteln erfolgt.</p>
-
                   <h5 class="mbr-fonts-style display-5"><strong>6.6 Widerspruchsrecht (Art. 21 DSGVO)</strong></h5>
                   <p class="mbr-text mbr-fonts-style display-7">Sie haben das Recht, aus Gründen, die sich aus Ihrer
                     besonderen Situation ergeben, jederzeit gegen die Verarbeitung Sie betreffender personenbezogener
@@ -456,13 +343,11 @@
                     Daten dann nicht mehr, es sei denn, wir können zwingende schutzwürdige Gründe für die Verarbeitung
                     nachweisen, die Ihre Interessen, Rechte und Freiheiten überwiegen, oder die Verarbeitung dient der
                     Geltendmachung, Ausübung oder Verteidigung von Rechtsansprüchen.</p>
-
                   <h5 class="mbr-fonts-style display-5"><strong>6.7 Recht auf Widerruf einer Einwilligung (Art. 7 Abs. 3
                       DSGVO)</strong></h5>
                   <p class="mbr-text mbr-fonts-style display-7">Sie haben das Recht, eine erteilte Einwilligung
                     jederzeit mit Wirkung für die Zukunft zu widerrufen, ohne dass die Rechtmäßigkeit der aufgrund der
                     Einwilligung bis zum Widerruf erfolgten Verarbeitung berührt wird.</p>
-
                   <h5 class="mbr-fonts-style display-5"><strong>6.8 Beschwerderecht bei einer Aufsichtsbehörde (Art. 77
                       DSGVO)</strong></h5>
                   <p class="mbr-text mbr-fonts-style display-7">Sie haben das Recht auf Beschwerde bei einer
@@ -478,7 +363,6 @@
                   </p>
                 </div>
               </div>
-
               <div class="item features-without-image col-12">
                 <div class="item-wrapper">
                   <h4 class="mbr-section-subtitle mbr-fonts-style mb-3 display-5">
@@ -498,9 +382,8 @@
                     viele Ihrer Daten selbst einzusehen und zu bearbeiten sowie Ihr Konto zu löschen.</p>
                 </div>
               </div>
-
               <div class="item features-without-image col-12">
-              <div class="item-wrapper">
+                <div class="item-wrapper">
                   <h4 class="mbr-section-subtitle mbr-fonts-style mb-3 display-5">
                     <div><strong>8. Aktualität und Änderung dieser Datenschutzerklärung</strong></div>
                   </h4>
@@ -509,141 +392,24 @@
                     <?php echo date('d.m.Y'); ?>.
                   </p>
                   <p class="mbr-text mbr-fonts-style display-7">
-                    Wir behalten uns vor, diese Datenschutzerklärung anzupassen, um sie an geänderte Rechtslagen oder bei Änderungen unserer Leistungen sowie der Datenverarbeitung anzupassen. Die jeweils aktuelle Version ist stets auf unserer Website verfügbar und gilt ab dem Zeitpunkt ihrer Veröffentlichung.
+                    Wir behalten uns vor, diese Datenschutzerklärung anzupassen, um sie an geänderte Rechtslagen oder
+                    bei Änderungen unserer Leistungen sowie der Datenverarbeitung anzupassen. Die jeweils aktuelle
+                    Version ist stets auf unserer Website verfügbar und gilt ab dem Zeitpunkt ihrer Veröffentlichung.
                   </p>
                   <p class="mbr-text mbr-fonts-style display-7">
-                    Wir empfehlen Ihnen, diese Datenschutzerklärung regelmäßig zu überprüfen, um über den Schutz Ihrer Daten auf dem Laufenden zu bleiben.
+                    Wir empfehlen Ihnen, diese Datenschutzerklärung regelmäßig zu überprüfen, um über den Schutz Ihrer
+                    Daten auf dem Laufenden zu bleiben.
                   </p>
                 </div>
               </div>
             </div>
-
           </div>
         </div>
       </div>
     </div>
   </section>
-
-  <section data-bs-version="5.1" class="social02 cid-u8MJEG7lfh" id="social02-11">
-
-    <div class="container">
-      <div class="row justify-content-center">
-        <div class="col-12 content-head">
-          <div class="mb-5">
-            <h5 class="mbr-section-title mbr-fonts-style align-center mb-0 display-2"><strong>Vernetze dich mit
-                uns</strong></h5>
-
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="item features-without-image col-12 col-md-6 col-lg-4 active">
-          <div class="item-wrapper">
-            <a href="https://www.instagram.com/feuerwehrreichenbach/" target="_blank"><span
-                class="mbr-iconfont m-auto socicon-instagram socicon"></span></a>
-            <div class="card-box">
-              <h4 class="card-title mbr-fonts-style mb-1 display-7">
-                <strong>Instagram</strong>
-              </h4>
-              <h5 class="card-text mbr-fonts-style display-7">Sieh uns in Aktion und erlebe, wie wir für Sicherheit
-                sorgen – folge uns auf Instagram!</h5>
-            </div>
-          </div>
-        </div>
-        <div class="item features-without-image col-12 col-md-6 col-lg-4">
-          <div class="item-wrapper">
-            <a href="Startseite.html#social02-p"><span class="mbr-iconfont m-auto mobi-mbri-smile-face mobi-mbri"
-                style="color: rgb(167, 41, 32); fill: rgb(167, 41, 32);"></span></a>
-            <div class="card-box">
-              <h4 class="card-title mbr-fonts-style mb-1 display-7"><strong>&nbsp;</strong></h4>
-              <h5 class="card-text mbr-fonts-style display-7">&nbsp;</h5>
-            </div>
-          </div>
-        </div>
-        <div class="item features-without-image col-12 col-md-6 col-lg-4">
-          <div class="item-wrapper">
-            <a href="https://www.facebook.com/groups/163127135137/" target="_blank"><span
-                class="mbr-iconfont m-auto socicon-facebook socicon"></span></a>
-            <div class="card-box">
-              <h4 class="card-title mbr-fonts-style mb-1 display-7">
-                <strong>Facebook</strong>
-              </h4>
-              <h5 class="card-text mbr-fonts-style display-7">Bleib auf dem Laufenden und werde Teil unserer
-                Gemeinschaft – finde uns auf Facebook!</h5>
-            </div>
-          </div>
-        </div>
-
-
-
-
-
-      </div>
-    </div>
-  </section>
-
-  <section data-bs-version="5.1" class="footer6 cid-u8DcwC0mHb" once="footers" id="footer6-d">
-
-
-
-
-
-    <div class="container">
-      <div class="row content mbr-white">
-        <div class="col-12 col-md-3 mbr-fonts-style display-7">
-          <h5 class="mbr-section-subtitle mbr-fonts-style mb-2 display-7"><strong>Rechtliches</strong></h5>
-          <p class="mbr-text mbr-fonts-style display-7"><a href="/Impressum" class="text-white">Impressum</a><br><a
-              href="/Datenschutz" class="text-white">Datenschutz</a></p> <br>
-          <h5 class="mbr-section-subtitle mbr-fonts-style mb-2 mt-4 display-7"><a href="Kontakt.html"
-              class="text-white"><strong>Kontakt</strong></a></h5>
-          <p class="mbr-text mbr-fonts-style mb-4 display-7">Fragen? Melde Dich!&nbsp;<br><a
-              href="mailto:info@feuerwehr-waldems-reichenbach.de"
-              class="text-info">info@feuerwehr-waldems-reichenbach.de</a><br></p>
-        </div>
-        <div class="col-12 col-md-3 mbr-fonts-style display-7">
-          <h5 class="mbr-section-subtitle mbr-fonts-style mb-2 display-7"><strong>Adresse</strong></h5>
-          <ul class="list mbr-fonts-style mb-4 display-4">Am Dorfgemeinschaftshaus 1, 65529 Waldems</ul>
-          <h5 class="mbr-section-subtitle mbr-fonts-style mb-2 mt-5 display-7"></h5>
-          <p class="mbr-text mbr-fonts-style mb-4 display-7"></p>
-        </div>
-        <div class="col-12 col-md-6">
-          <div class="google-map"><iframe frameborder="0" style="border:0"
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2550.0765696607805!2d8.371063376928547!3d50.27182890020835!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47bdb1c0618ad845%3A0x8cb4e6795a859e93!2sFreiwillige%20Feuerwehr%20Waldems-Reichenbach!5e0!3m2!1sde!2sde!4v1711914944503!5m2!1sde!2sde"
-              allowfullscreen=""></iframe></div>
-        </div>
-        <div class="col-md-6">
-          <div class="social-list align-left">
-            <div class="soc-item">
-              <a href="https://www.instagram.com/feuerwehrreichenbach/" target="_blank">
-                <span class="mbr-iconfont mbr-iconfont-social socicon-instagram socicon"
-                  style="color: rgb(255, 255, 255); fill: rgb(255, 255, 255);"></span>
-              </a>
-            </div>
-            <div class="soc-item">
-              <a href="https://www.facebook.com/groups/163127135137/" target="_blank">
-                <span class="mbr-iconfont mbr-iconfont-social socicon-facebook socicon"></span>
-              </a>
-            </div>
-
-
-
-
-          </div>
-        </div>
-      </div>
-      <div class="footer-lower">
-        <div class="media-container-row">
-          <div class="col-sm-12">
-            <hr>
-          </div>
-        </div>
-        <div class="col-sm-12 copyright pl-0">
-          <p class="mbr-text mbr-fonts-style mbr-white display-7">
-            © Copyright 2024 Förderverein der Freiwilligen Feuerwehr Waldems-Reichenbach e.V. im Auftrag für die
-            Freiwillige Feuerwehr Waldems Reichenbach - Alle Rechte vorbehalten</p>
-        </div>
-      </div>
-    </div>
+  <?php include '../assets/includes/socialFooter.php'; ?>
+  <?php include '../assets/includes/footer.php'; ?>
 </body>
 
 </html>

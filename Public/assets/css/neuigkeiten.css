@@ -1,0 +1,345 @@
+/* Neuigkeiten Card Styling */
+.neuigkeiten-container {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    gap: 2rem !important;
+    margin: 2rem 0 !important;
+    justify-content: center !important;
+}
+.neuigkeiten-container .karte,
+.neuigkeiten-container .neuigkeit-karte {
+    display: flex !important;
+    width: 550px !important;
+    height: 350px !important;
+    overflow: hidden !important;
+    border-radius: 15px !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
+    background-color: #ffffff !important;
+    margin: 0 !important;
+    flex: 0 0 auto !important;
+}
+.neuigkeiten-container .bildbereich,
+.neuigkeiten-container .neuigkeit-bildbereich {
+    flex: 1 !important;
+    overflow: hidden !important;
+    position: relative !important;
+    border-radius: 0 !important;
+    border-top-left-radius: 15px !important;
+    border-bottom-left-radius: 15px !important;
+}
+.neuigkeiten-container .bildbereich::after,
+.neuigkeiten-container .neuigkeit-bildbereich::after {
+    content: "" !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    background: transparent !important;
+    pointer-events: none !important;
+    border-top-left-radius: 15px !important;
+    border-bottom-left-radius: 15px !important;
+    z-index: 1 !important;
+}
+.neuigkeiten-container .bildbereich img,
+.neuigkeiten-container .neuigkeit-bildbereich img,
+.neuigkeiten-container .neuigkeit-bild {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    border-radius: 0 !important;
+    border-top-left-radius: 15px !important;
+    border-bottom-left-radius: 15px !important;
+    display: block !important;
+    transform: none !important;
+    transition: none !important;
+    filter: none !important;
+    background-color: #f8f8f8 !important;
+}
+.neuigkeiten-container .infobereich,
+.neuigkeiten-container .neuigkeit-infobereich {
+    flex: 1 !important;
+    padding: 20px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    border-top-right-radius: 15px !important;
+    border-bottom-right-radius: 15px !important;
+}
+.neuigkeiten-container .infobereich h2,
+.neuigkeiten-container .neuigkeit-titel {
+    margin: 0 0 10px !important;
+    color: #A72920 !important;
+    font-size: 1.3rem !important;
+    line-height: 1.2 !important;
+    text-transform: none !important;
+    letter-spacing: normal !important;
+    font-weight: bold !important;
+}
+.neuigkeiten-container .info-details,
+.neuigkeiten-container .neuigkeit-details {
+    font-size: 0.9em !important;
+    color: #555 !important;
+    margin-bottom: 15px !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    gap: 10px !important;
+}
+.neuigkeiten-container .kurzinfo,
+.neuigkeiten-container .neuigkeit-kurzinfo,
+.neuigkeiten-container .neuigkeit-volltext {
+    flex: 1 !important;
+    overflow-y: auto !important;
+    margin-bottom: 15px !important;
+    line-height: 1.5 !important;
+    font-size: 0.9rem !important;
+}
+.neuigkeiten-container .datum,
+.neuigkeiten-container .ort,
+.neuigkeiten-container .neuigkeit-datum,
+.neuigkeiten-container .neuigkeit-ort {
+    font-weight: bold !important;
+    text-transform: none !important;
+}
+/* Neuigkeit Volltext und Footer */
+.neuigkeiten-container .neuigkeit-volltext {
+    flex: 1 !important;
+    overflow-y: auto !important;
+    margin-bottom: 10px !important;
+    line-height: 1.5 !important;
+    font-size: 0.9rem !important;
+}
+.neuigkeiten-container .neuigkeit-footer {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: flex-end !important;
+    margin-top: 10px !important;
+    gap: 5px !important;
+}
+/* Button Styling für Neuigkeiten */
+.neuigkeiten-container .btn-neuigkeit-aktion {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 8px 12px !important;
+    background-color: #A72920 !important;
+    color: white !important;
+    text-decoration: none !important;
+    border-radius: 4px !important;
+    font-size: 0.85rem !important;
+    transition: background-color 0.2s ease-in-out !important;
+    border: none !important;
+    cursor: pointer !important;
+    margin: 2px !important;
+    flex: 1 1 auto !important;
+    min-width: 100px !important;
+    max-width: 130px !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+}
+/* Spezielles Styling für den Kalender-Button */
+.neuigkeiten-container .btn-neuigkeit-aktion.kalender-btn {
+    background-color: #0066cc !important; /* Blau */
+}
+.neuigkeiten-container .btn-neuigkeit-aktion.kalender-btn:hover {
+    background-color: #0052a3 !important;
+}
+.neuigkeiten-container .btn-neuigkeit-aktion:hover {
+    background-color: #8A211A !important;
+}
+.neuigkeiten-container .btn-neuigkeit-aktion i {
+    margin-right: 5px !important;
+}
+/* Kalender-Download-Button */
+.neuigkeiten-container .kalender-download-btn {
+    background-color: #0066cc !important; /* Blau */
+    color: white !important;
+    border-radius: 4px !important;
+    padding: 6px 12px !important;
+    font-size: 0.85em !important;
+    text-decoration: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 5px !important;
+    transition: background-color 0.3s !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+}
+.neuigkeiten-container .kalender-download-btn:hover {
+    background-color: #004999 !important;
+    text-decoration: none !important;
+}
+.neuigkeiten-container .kalender-download-btn i {
+    font-size: 1em !important;
+}
+/* Flyer-Download-Button */
+.neuigkeiten-container .flyer-download-btn {
+    background-color: #d32f2f !important; /* Rot */
+    color: white !important;
+    border-radius: 4px !important;
+    padding: 6px 12px !important;
+    font-size: 0.85em !important;
+    text-decoration: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 5px !important;
+    transition: background-color 0.3s !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+}
+.neuigkeiten-container .flyer-download-btn:hover {
+    background-color: #b71c1c !important;
+    text-decoration: none !important;
+}
+.neuigkeiten-container .flyer-download-btn i {
+    font-size: 1em !important;
+}
+/* Scrollbar styling */
+.neuigkeiten-container .kurzinfo::-webkit-scrollbar,
+.neuigkeiten-container .neuigkeit-kurzinfo::-webkit-scrollbar,
+.neuigkeiten-container .neuigkeit-volltext::-webkit-scrollbar {
+    width: 5px !important;
+}
+.neuigkeiten-container .kurzinfo::-webkit-scrollbar-thumb,
+.neuigkeiten-container .neuigkeit-kurzinfo::-webkit-scrollbar-thumb,
+.neuigkeiten-container .neuigkeit-volltext::-webkit-scrollbar-thumb {
+    background-color: #ccc !important;
+    border-radius: 10px !important;
+}
+/* Pagination styling */
+.neuigkeiten-container + .pagination,
+.neuigkeiten-container .pagination {
+    display: flex !important;
+    justify-content: center !important;
+    margin-top: 1.5rem !important;
+    width: 100% !important;
+}
+.neuigkeiten-container .page-link {
+    margin: 0 5px !important;
+    padding: 8px 16px !important;
+    border-radius: 4px !important;
+    color: #A72920 !important;
+    background-color: #f8f9fa !important;
+    text-decoration: none !important;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05) !important;
+}
+.neuigkeiten-container .page-link.active {
+    background-color: #A72920 !important;
+    color: white !important;
+}
+.neuigkeiten-container .page-link:hover {
+    background-color: #e9ecef !important;
+}
+/* Responsive styling */
+@media (max-width: 1200px) {
+    .neuigkeiten-container {
+        justify-content: center !important;
+    }
+    .neuigkeiten-container .karte,
+    .neuigkeiten-container .neuigkeit-karte {
+        width: 450px !important;
+        height: 300px !important;
+    }
+}
+@media (max-width: 992px) {
+    .neuigkeiten-container {
+        flex-direction: column !important;
+        align-items: center !important;
+    }
+    .neuigkeiten-container .karte,
+    .neuigkeiten-container .neuigkeit-karte {
+        width: 100% !important;
+        max-width: 550px !important;
+    }
+}
+@media (max-width: 767px) {
+    .neuigkeiten-container .karte,
+    .neuigkeiten-container .neuigkeit-karte {
+        flex-direction: column !important;
+        height: auto !important;
+        max-width: 450px !important;
+    }
+    .neuigkeiten-container .bildbereich,
+    .neuigkeiten-container .infobereich,
+    .neuigkeiten-container .neuigkeit-bildbereich,
+    .neuigkeiten-container .neuigkeit-infobereich {
+        flex: none !important;
+    }
+    .neuigkeiten-container .bildbereich,
+    .neuigkeiten-container .neuigkeit-bildbereich {
+        height: 250px !important;
+        border-radius: 0 !important;
+        border-top-left-radius: 15px !important;
+        border-top-right-radius: 15px !important;
+    }
+    .neuigkeiten-container .bildbereich img,
+    .neuigkeiten-container .neuigkeit-bildbereich img,
+    .neuigkeiten-container .neuigkeit-bild {
+        border-radius: 0 !important;
+        border-top-left-radius: 15px !important;
+        border-top-right-radius: 15px !important;
+        border-bottom-left-radius: 0 !important;
+        border-bottom-right-radius: 0 !important;
+    }
+    .neuigkeiten-container .bildbereich::after,
+    .neuigkeiten-container .neuigkeit-bildbereich::after {
+        border-radius: 0 !important;
+        border-top-left-radius: 15px !important;
+        border-top-right-radius: 15px !important;
+        border-bottom-left-radius: 0 !important;
+        border-bottom-right-radius: 0 !important;
+    }
+    .neuigkeiten-container .infobereich,
+    .neuigkeiten-container .neuigkeit-infobereich {
+        border-radius: 0 !important;
+        border-bottom-left-radius: 15px !important;
+        border-bottom-right-radius: 15px !important;
+    }
+    .neuigkeiten-container .neuigkeit-details {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 5px !important;
+    }
+    .neuigkeiten-container .neuigkeit-footer {
+        justify-content: center !important;
+    }
+    .neuigkeiten-container .btn-neuigkeit-aktion {
+        min-width: 0 !important;
+        margin: 3px !important;
+        font-size: 0.8rem !important;
+        padding: 6px 10px !important;
+    }
+}
+/* Neuigkeit detail view */
+.neuigkeit-detail .neuigkeit-volltext {
+    margin-top: 0 !important;
+    padding: 0 !important;
+    background-color: transparent !important;
+    border-radius: 0 !important;
+    line-height: 1.6 !important;
+}
+/* Neuigkeiten latest view */
+.neuigkeiten-latest {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 2rem !important;
+    margin: 2rem 0 !important;
+    align-items: center !important;
+}
+.neuigkeiten-latest .karte,
+.neuigkeiten-latest .neuigkeit-karte {
+    margin-bottom: 1rem !important;
+}
+/* Reset für alle möglichen Bild-Styles */
+.neuigkeiten-container img,
+.neuigkeiten-container .bildbereich img,
+.neuigkeiten-container .neuigkeit-bildbereich img,
+.neuigkeiten-container .neuigkeit-bild {
+    border: none !important;
+    box-shadow: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+    transition: none !important;
+    max-width: none !important;
+    max-height: none !important;
+    margin: 0 !important;
+} 

@@ -1,5 +1,4 @@
 @charset "UTF-8";
-
 @font-face {
   font-family: 'Socicon';
   src:  url('../fonts/socicon.eot');
@@ -12,7 +11,6 @@
   font-style: normal;
   font-display: swap;
 }
-
 [data-icon]:before {
   font-family: "socicon" !important;
   content: attr(data-icon);
@@ -25,7 +23,6 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-
 [class^="socicon-"], [class*=" socicon-"] {
   /* use !important to prevent issues with browser extensions that change fonts */
   font-family: 'Socicon' !important;
@@ -35,12 +32,10 @@
   font-variant: normal;
   text-transform: none;
   line-height: 1;
-
   /* Better Font Rendering =========== */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-
 .socicon-eitaa:before {
   content: "\e97c";
 }
