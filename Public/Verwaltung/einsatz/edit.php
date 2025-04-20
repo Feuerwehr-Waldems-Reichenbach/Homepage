@@ -114,31 +114,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'image_path' => $einsatz['image_path'] ?? null
         ];
         
-        // Handle image upload or removal
-        if ($removeImage) {
-            // Delete the existing image if it exists
+    // Handle image upload or removal
+    if ($removeImage) {
+        // Delete the existing image if it exists
+        if (!empty($einsatz['image_path']) && file_exists(ADMIN_PATH . $einsatz['image_path'])) {
+            @unlink(ADMIN_PATH . $einsatz['image_path']);
+        }
+        $details['image_path'] = null;
+    } elseif (isset($_FILES['image']) && $_FILES['image']['error'] != UPLOAD_ERR_NO_FILE) {
+        $relativePath = '/assets/images/';
+        $uploadDir = dirname(__DIR__, 3) . '/Public' . $relativePath;
+
+        $fileUpload = new FileUpload($uploadDir, ['jpg', 'jpeg', 'png', 'gif', 'webp']);
+        $fileUpload->file($_FILES['image']);
+
+        // Dateiname auf Basis von Stichwort + vollem Datum
+        $cleanStichwort = preg_replace('/[^a-z0-9\-]/i', '', str_replace(' ', '-', iconv('UTF-8', 'ASCII//TRANSLIT', $stichwort ?: 'Einsatz')));
+        $timestamp = date('Y-m-d_H-i', strtotime($datum));
+        $filename = "{$cleanStichwort}-{$timestamp}";
+
+        $fileUpload->setName($filename);
+        $uploadPath = $fileUpload->upload();
+
+        if ($uploadPath) {
+            // Altes Bild löschen
             if (!empty($einsatz['image_path']) && file_exists(ADMIN_PATH . $einsatz['image_path'])) {
                 @unlink(ADMIN_PATH . $einsatz['image_path']);
             }
-            $details['image_path'] = null;
-        } elseif (isset($_FILES['image']) && $_FILES['image']['error'] != UPLOAD_ERR_NO_FILE) {
-            $fileUpload = new FileUpload($uploadDir, ['jpg', 'jpeg', 'png', 'gif', 'webp']);
-            $upload = $fileUpload->file($_FILES['image'])->generateUniqueName('einsatz')->upload();
-            
-            if ($upload) {
-                // Delete the old image if it exists
-                if (!empty($einsatz['image_path']) && file_exists(ADMIN_PATH . $einsatz['image_path'])) {
-                    @unlink(ADMIN_PATH . $einsatz['image_path']);
-                }
-                
-                $details['image_path'] = str_replace(ADMIN_PATH, '', $upload);
-            } else {
-                $_SESSION['error'] = 'Fehler beim Hochladen des Bildes: ' . $fileUpload->getError();
-                header('Location: ' . BASE_URL . '/einsatz/edit.php?id=' . $id);
-                exit;
-            }
+
+            // Relativen Pfad für DB setzen
+            $details['image_path'] = $relativePath . $fileUpload->getFileName();
+        } else {
+            $_SESSION['error'] = 'Fehler beim Hochladen des Bildes: ' . $fileUpload->getError();
+            header('Location: ' . BASE_URL . '/einsatz/edit.php?id=' . $id);
+            exit;
         }
     }
+
+
+}
     
     // Update the operation
     $result = $einsatzModel->updateWithDetails($id, $data, $details);

@@ -101,11 +101,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         // Handle image upload
         if (isset($_FILES['image']) && $_FILES['image']['error'] != UPLOAD_ERR_NO_FILE) {
-            $fileUpload = new FileUpload($uploadDir, ['jpg', 'jpeg', 'png', 'gif', 'webp']);
-            $upload = $fileUpload->file($_FILES['image'])->generateUniqueName('einsatz')->upload();
-            
+            $relativePath = '/assets/images/';
+            $uploadDir = dirname(__DIR__, 3) . '/Public' . $relativePath;
+            $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+        
+            $fileInfo = pathinfo($_FILES['image']['name']);
+            $extension = strtolower($fileInfo['extension']);
+        
+            if (!in_array($extension, $allowedExtensions)) {
+                $_SESSION['error'] = 'Ungültiges Dateiformat.';
+                header('Location: ' . BASE_URL . '/einsatz/create.php');
+                exit;
+            }
+        
+            // Generiere einen sicheren Dateinamen
+            $cleanTitle = !empty($einsatzHeadline)
+                ? preg_replace('/[^a-z0-9\-]/i', '', str_replace(' ', '-', iconv('UTF-8', 'ASCII//TRANSLIT', $einsatzHeadline)))
+                : 'Einsatz-' . $einsatzID;
+        
+            $datumFormatted = date('Y-m-d_H-i', strtotime($datum));
+            $customName = "{$cleanTitle}-{$datumFormatted}";
+                
+        
+            $fileUpload = new FileUpload($uploadDir, $allowedExtensions);
+            $upload = $fileUpload
+                ->file($_FILES['image'])
+                ->setName($customName)
+                ->upload();
+        
             if ($upload) {
-                $details['image_path'] = str_replace(ADMIN_PATH, '', $upload);
+                $details['image_path'] = $relativePath . $fileUpload->getFileName();
             } else {
                 $_SESSION['error'] = 'Fehler beim Hochladen des Bildes: ' . $fileUpload->getError();
                 header('Location: ' . BASE_URL . '/einsatz/create.php');
