@@ -76,12 +76,13 @@ class Security {
         $input = trim($input);
         
         if ($allowHtml) {
-            // Whitelist of allowed HTML tags
-            $allowedTags = '<p><br><strong><em><ul><ol><li><a><blockquote><h1><h2><h3><h4><h5><h6><img><table><tr><td><th><thead><tbody><caption><div><span><hr>';
-            
-            // Remove unwanted tags but keep allowed ones
+            // Remove <p>-Tags if they are not desired
+            $input = preg_replace('#</?p[^>]*>#', '', $input);
+        
+            $allowedTags = '<br><strong><em><ul><ol><li><a><blockquote><h1><h2><h3><h4><h5><h6><img><table><tr><td><th><thead><tbody><caption><div><span><hr>';
             return strip_tags($input, $allowedTags);
-        } else {
+        }
+        else {
             // Convert special characters to HTML entities
             $input = htmlspecialchars($input, ENT_QUOTES, 'UTF-8');
             
