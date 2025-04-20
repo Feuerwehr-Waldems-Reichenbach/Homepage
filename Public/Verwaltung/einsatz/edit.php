@@ -272,7 +272,7 @@ include dirname(__DIR__) . '/templates/header.php';
                     <?php endif; ?>
                     
                     <input type="file" class="form-control" id="image" name="image" accept="image/*">
-                    <div class="form-text">Optional. Maximale Größe: 5 MB. Erlaubte Formate: JPG, JPEG, PNG, GIF.</div>
+                    <div class="form-text">Optional. Maximale Größe: 20 MB. Erlaubte Formate: JPG, JPEG, PNG, GIF.</div>
                     <div class="mt-2">
                         <img id="imagePreview" src="#" alt="Vorschau" style="max-width: 200px; max-height: 200px; display: none;">
                     </div>

@@ -73,7 +73,7 @@ function renderNeuigkeitCard($neuigkeit)
     $html .= '<span class="datum neuigkeit-datum">' . $formatiertesDatum . '</span> | ';
     $html .= '<span class="ort neuigkeit-ort">' . htmlspecialchars($neuigkeit['Ort']) . '</span>';
     $html .= '</div>';
-    $html .= '<div class="neuigkeit-volltext">' . nl2br(htmlspecialchars($neuigkeit['Information'])) . '</div>';
+    $html .= '<div class="neuigkeit-volltext">' . $neuigkeit['Information'] . '</div>';
     // Footer mit Aktionsbuttons
     $html .= '<div class="neuigkeit-footer">';
     // Kalender-Download-Button (immer anzeigen)

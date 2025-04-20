@@ -18,7 +18,7 @@ if (session_status() === PHP_SESSION_NONE) {
 $newsModel = new News();
 
 // Create upload directory if it doesn't exist
-$uploadDir = ADMIN_PATH . '/assets/uploads/news/';
+$uploadDir = ADMIN_PATH . '\Veranstaltungen\Flyer';
 if (!is_dir($uploadDir)) {
     mkdir($uploadDir, 0755, true);
 }
@@ -148,7 +148,7 @@ include dirname(__DIR__) . '/templates/header.php';
             <div class="mb-3">
                 <label for="image" class="form-label">Bild</label>
                 <input type="file" class="form-control" id="image" name="image" accept="image/*">
-                <small class="form-text text-muted">Optional. Maximale Größe: 5 MB. Erlaubte Formate: JPG, JPEG, PNG, GIF.</small>
+                <small class="form-text text-muted">Optional. Maximale Größe: 20 MB. Erlaubte Formate: JPG, JPEG, PNG, GIF.</small>
                 <div class="mt-2">
                     <img id="imagePreview" src="#" alt="Vorschau" style="max-width: 200px; max-height: 200px; display: none;">
                 </div>
