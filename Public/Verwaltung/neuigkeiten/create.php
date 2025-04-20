@@ -18,7 +18,7 @@ if (session_status() === PHP_SESSION_NONE) {
 $newsModel = new News();
 
 // Create upload directory if it doesn't exist
-$uploadDir = ADMIN_PATH . '\Veranstaltungen\Flyer';
+$uploadDir = dirname(__DIR__, 3) . '/Public/Veranstaltungen/Flyer';
 if (!is_dir($uploadDir)) {
     mkdir($uploadDir, 0755, true);
 }

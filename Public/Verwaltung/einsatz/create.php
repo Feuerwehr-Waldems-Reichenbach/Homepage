@@ -19,7 +19,7 @@ if (session_status() === PHP_SESSION_NONE) {
 $einsatzModel = new Einsatz();
 
 // Create upload directory if it doesn't exist
-$uploadDir = ADMIN_PATH . '/assets/images';
+$uploadDir = dirname(__DIR__, 3) . '/Public/assets/images';
 if (!is_dir($uploadDir)) {
     mkdir($uploadDir, 0755, true);
 }
