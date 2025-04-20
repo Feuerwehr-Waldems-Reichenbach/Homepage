@@ -101,7 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         $data['path_to_image'] = null;
     } elseif (isset($_FILES['image']) && $_FILES['image']['error'] != UPLOAD_ERR_NO_FILE) {
-        $fileUpload = new FileUpload($uploadDir, ['jpg', 'jpeg', 'png', 'gif']);
+        $fileUpload = new FileUpload($uploadDir, ['jpg', 'jpeg', 'png', 'gif', 'webp']);
         $upload = $fileUpload->file($_FILES['image'])->generateUniqueName('news')->upload();
         
         if ($upload) {
@@ -194,7 +194,7 @@ include dirname(__DIR__) . '/templates/header.php';
                     </div>
                 <?php endif; ?>
                 <input type="file" class="form-control" id="image" name="image" accept="image/*">
-                <small class="form-text text-muted">Optional. Maximale Größe: 20 MB. Erlaubte Formate: JPG, JPEG, PNG, GIF.</small>
+                <small class="form-text text-muted">Optional. Maximale Größe: 20 MB. Erlaubte Formate: JPG, JPEG, PNG, GIF, WEBP.</small>
                 <div class="mt-2">
                     <img id="imagePreview" src="#" alt="Vorschau" style="max-width: 200px; max-height: 200px; display: none;">
                 </div>

@@ -32,7 +32,7 @@ define('LOGIN_LOCKOUT_TIME', 600); // 10 minutes in seconds
 
 // File upload settings
 define('MAX_UPLOAD_SIZE', 20 * 1024 * 1024); // 20 MB
-define('ALLOWED_FILE_TYPES', ['jpg', 'jpeg', 'png', 'gif']);
+define('ALLOWED_FILE_TYPES', ['jpg', 'jpeg', 'png', 'gif', 'webp']);
 define('UPLOAD_DIR', ADMIN_PATH . '/assets/images/');
 
 // Error reporting

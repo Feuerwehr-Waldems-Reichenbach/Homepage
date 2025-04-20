@@ -177,7 +177,7 @@ class FileUpload
         }
         
         // For images, verify that it's a valid image
-        if (in_array($this->fileType, ['jpg', 'jpeg', 'png', 'gif'])) {
+        if (in_array($this->fileType, ['jpg', 'jpeg', 'png', 'gif', 'webp'])) {
             $imageInfo = getimagesize($this->uploadPath);
             if ($imageInfo === false) {
                 // Not a valid image, delete it
