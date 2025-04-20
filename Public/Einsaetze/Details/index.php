@@ -305,7 +305,7 @@
             <div class="einsatz-details-text-container">
               <div class="einsatz-details-content">
                 <div class="einsatz-details-text">
-                  <?php echo nl2br(htmlspecialchars($details['einsatz_text'])); ?>
+                  <?php echo $details['einsatz_text']; ?>
                 </div>
               </div>
             </div>
