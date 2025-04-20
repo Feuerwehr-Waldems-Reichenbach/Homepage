@@ -28,7 +28,7 @@
         $(document).ready(function() {
             $('.datatable').DataTable({
                 language: {
-                    url: 'https://cdn.datatables.net/plug-ins/1.13.6/i18n/de-DE.json'
+                    url: '<?php echo $ADMIN_ROOT; ?>/assets/js/datatables-de.json'
                 },
                 responsive: true
             });
