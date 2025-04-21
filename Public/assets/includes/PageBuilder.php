@@ -109,7 +109,7 @@ class PageBuilder
         $cidClass = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
     
         return <<<HTML
-    <section data-bs-version="{$bsVersion}" class="header16 cid-Hero-Image mbr-fullscreen jarallax" id="{$id}" data-jarallax-speed="{$jarallaxSpeed}">
+    <section data-bs-version="{$bsVersion}" class="header16 {$cidClass} mbr-fullscreen jarallax" id="{$id}" data-jarallax-speed="{$jarallaxSpeed}">
         <div class="mbr-overlay" style="opacity: {$overlayOpacity}; background-color: {$overlayColor};"></div>
         <div class="container-fluid">
             <div class="row">
@@ -130,6 +130,7 @@ class PageBuilder
     HTML;
     }
     
+    
 
     /**
      * Liefert einen „Bild + Text“-Teaser‑Abschnitt (Mobirise‑Layout image08)
@@ -146,6 +147,7 @@ class PageBuilder
      */
     public function renderImageTeaser(
         string $id,
+        string $cidSuffix = '',
         string $title,
         string $subtitle,
         string $linkHref,
@@ -156,9 +158,10 @@ class PageBuilder
     ): string {
         // Bootstrap‑Version fix (Mobirise nutzt i. d. R. 5.1)
         $bsVersion = '5.1';
+        $cidClass = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
 
         return <<<HTML
-            <section data-bs-version="{$bsVersion}" class="image08 cid-{$id}" id="{$id}">
+            <section data-bs-version="{$bsVersion}" class="image08 {$cidClass}" id="{$id}">
                 <div class="container">
                     <div class="row justify-content-center">
                         <div class="col-lg-4">
@@ -484,9 +487,8 @@ class PageBuilder
               {$navbar}
 
               <!-- ░░░ Hauptinhalt ░░░ -->
-              <main>
-                {$content}
-              </main>
+              {$content}
+
 
               <!-- ░░░ Social Footer ░░░ -->
               {$social}
