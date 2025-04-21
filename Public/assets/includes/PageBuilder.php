@@ -397,7 +397,7 @@ class PageBuilder
     public function renderScriptBundle(
         array $extraScripts = [],
         bool $initJarallax = true,
-        bool $defer = true
+        bool $defer = false
     ): string {
         // Standard‑Bundle
         $scripts = [
