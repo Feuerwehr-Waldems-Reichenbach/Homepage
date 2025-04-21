@@ -467,6 +467,151 @@ class PageBuilder
         return '<!-- Popup konnte nicht geladen werden -->';
     }
 
+
+    public function renderGalleryWithLightbox(
+        string $id,
+        string $title,
+        array $images,
+        string $lightboxId = 'gallery-modal',
+        string $cidSuffix = '',
+        string $bsVersion = '5.1'
+    ): string
+    {
+        $cidClass = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
+        $lightboxId = htmlspecialchars($lightboxId);
+        $titleEscaped = htmlspecialchars($title);
+    
+        // Galerie-Grid
+        $gridHtml = '';
+        $modalItems = '';
+        $indicators = '';
+        $i = 0;
+    
+        foreach ($images as $img) {
+            $src = htmlspecialchars($img['src']);
+            $alt = htmlspecialchars($img['alt'] ?? '');
+            $slideTo = $i;
+    
+            // Galerie-Item
+            $gridHtml .= <<<HTML
+            <div class="col-12 col-md-6 col-lg-4 item gallery-image active">
+                <div class="item-wrapper" data-bs-toggle="modal" data-bs-target="#{$lightboxId}-modal">
+                    <img class="w-100" src="{$src}" alt="{$alt}"
+                         data-bs-slide-to="{$slideTo}" data-bs-target="#lb-{$lightboxId}">
+                    <div class="icon-wrapper">
+                        <span class="mobi-mbri mobi-mbri-search mbr-iconfont mbr-iconfont-btn"></span>
+                    </div>
+                </div>
+            </div>
+    HTML;
+    
+            // Modal-Item
+            $activeClass = $i === 0 ? ' active' : '';
+            $modalItems .= <<<HTML
+                <div class="carousel-item{$activeClass}">
+                    <img class="d-block w-100" src="{$src}" alt="{$alt}">
+                </div>
+    HTML;
+    
+            // Indicator
+            $indicatorActive = $i === 0 ? ' active' : '';
+            $indicators .= <<<HTML
+                <li data-bs-slide-to="{$slideTo}" data-bs-target="#lb-{$lightboxId}" class="{$indicatorActive}"></li>
+    HTML;
+    
+            $i++;
+        }
+    
+        // Full Gallery Section inkl. Modal
+        return <<<HTML
+    <section data-bs-version="{$bsVersion}" class="gallery1 mbr-gallery {$cidClass}" id="{$id}">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-12 content-head">
+                    <div class="mbr-section-head mb-5">
+                        <h3 class="mbr-section-title mbr-fonts-style align-center m-0 display-2">
+                            <strong>{$titleEscaped}</strong>
+                        </h3>
+                    </div>
+                </div>
+            </div>
+            <div class="row mbr-gallery mbr-masonry" data-masonry='{"percentPosition": true }'>
+    {$gridHtml}
+            </div>
+    
+            <!-- Lightbox Modal -->
+            <div class="modal mbr-slider" tabindex="-1" role="dialog" id="{$lightboxId}-modal">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <div class="carousel slide" id="lb-{$lightboxId}" data-bs-interval="5000">
+                                <div class="carousel-inner">
+    {$modalItems}
+                                </div>
+                                <ol class="carousel-indicators">
+    {$indicators}
+                                </ol>
+                                <a class="close" data-bs-dismiss="modal" aria-label="Close"></a>
+                                <a class="carousel-control-prev carousel-control" role="button" data-bs-slide="prev" href="#lb-{$lightboxId}">
+                                    <span class="mobi-mbri mobi-mbri-arrow-prev" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Previous</span>
+                                </a>
+                                <a class="carousel-control-next carousel-control" role="button" data-bs-slide="next" href="#lb-{$lightboxId}">
+                                    <span class="mobi-mbri mobi-mbri-arrow-next" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Next</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    HTML;
+    }
+    
+    public function renderImageInfoBlock(
+        string $id,
+        string $title,
+        string $subtitle,
+        string $imageSrc,
+        string $imageAlt = '',
+        string $cidSuffix = '',
+        string $bsVersion = '5.1'
+    ): string
+    {
+        $cidClass = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
+        $title    = htmlspecialchars($title);
+        $subtitle = htmlspecialchars($subtitle);
+        $imageSrc = htmlspecialchars($imageSrc);
+        $imageAlt = htmlspecialchars($imageAlt);
+    
+        return <<<HTML
+    <section data-bs-version="{$bsVersion}" class="image08 {$cidClass}" id="{$id}">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-4">
+                    <div class="col-12 col-md-12">
+                        <h5 class="mbr-section-title mbr-fonts-style mt-0 mb-4 display-2">
+                            <strong>{$title}</strong>
+                        </h5>
+                        <h6 class="mbr-section-subtitle mbr-fonts-style mt-0 mb-4 display-7">
+                            {$subtitle}
+                        </h6>
+                    </div>
+                </div>
+                <div class="col-lg-8 side-features">
+                    <div class="image-wrapper mb-4">
+                        <img class="w-100" src="{$imageSrc}" alt="{$imageAlt}">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    HTML;
+    }
+    
+
     public function renderFullPage(): string
     {
         $head = $this->renderHead();
