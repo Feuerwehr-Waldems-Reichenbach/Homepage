@@ -92,6 +92,45 @@ class PageBuilder
             HTML;
     }
 
+    public function renderFullscreenHero(
+        string $id,
+        string $title,
+        string $subtitle,
+        string $buttonText,
+        string $buttonHref,
+        string $cidSuffix = '',
+        float  $jarallaxSpeed = 0.8,
+        float  $overlayOpacity = 0.2,
+        string $overlayColor = 'rgb(0, 0, 0)',
+        string $btnClass = 'btn-secondary',
+        string $bsVersion = '5.1'
+    ): string
+    {
+        $cidClass = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
+    
+        return <<<HTML
+    <section data-bs-version="{$bsVersion}" class="header16 cid-Hero-Image mbr-fullscreen jarallax" id="{$id}" data-jarallax-speed="{$jarallaxSpeed}">
+        <div class="mbr-overlay" style="opacity: {$overlayOpacity}; background-color: {$overlayColor};"></div>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="content-wrap col-12 col-md-12">
+                    <h1 class="mbr-section-title mbr-fonts-style mbr-white mb-4 display-1">
+                        <strong>{$title}</strong>
+                    </h1>
+                    <p class="mbr-fonts-style mbr-text mbr-white mb-4 display-7">
+                        {$subtitle}
+                    </p>
+                    <div class="mbr-section-btn">
+                        <a class="btn {$btnClass} display-7" href="{$buttonHref}">{$buttonText}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    HTML;
+    }
+    
+
     /**
      * Liefert einen „Bild + Text“-Teaser‑Abschnitt (Mobirise‑Layout image08)
      *
