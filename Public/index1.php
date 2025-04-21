@@ -2,8 +2,8 @@
 require_once $_SERVER['DOCUMENT_ROOT'] . '/assets/includes/PageBuilder.php';
 
 $page = new PageBuilder(
-    title: 'Meine neue Seite',
-    description: 'Kurze Seitenbeschreibung'
+    title: 'Startseite',
+    description: 'Willkommen bei der Freiwilligen Feuerwehr Reichenbach! Erfahre mehr über unsere Einsätze, unser Engagement und wie du uns unterstützen kannst.'
 );
 
 $page->addContent($page->renderFullscreenHero(
