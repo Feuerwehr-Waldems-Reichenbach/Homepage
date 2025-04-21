@@ -1,0 +1,28 @@
+<?php
+require_once $_SERVER['DOCUMENT_ROOT'] . '/assets/includes/PageBuilder.php';
+
+$page = new PageBuilder(
+    title: 'Meine neue Seite',
+    description: 'Kurze Seitenbeschreibung'
+);
+
+// Inhalt hinzufügen (kann leer bleiben oder später ergänzt werden)
+$page->addContent('<h1 class="text-center">Willkommen</h1>');
+$page->addContent('<p class="text-center">Hier entsteht etwas Neues.</p>');
+$page->addContent($page->renderAccordionList(
+    id: 'list01-notfall',
+    title: 'Wissenswertes für den Notfall',
+    items: [
+        ['q' => "Flammen im Haus\u{00A0}– was tun?",
+            'a' => 'Sofort raus und die 112 rufen. Wir kümmern uns um den Rest. Deine Sicherheit zuerst.'],
+        ['q' => 'Feuerlöscher‑Einsatz: Was muss ich wissen?',
+            'a' => 'Merk dir das Kurzwort "PASS": Ziehe die Sicherung (Pull)...'],
+        ['q' => 'Fettbrand in der Küche: Wie reagiere ich richtig?',
+            'a' => 'Bloß kein Wasser! Deckel oder Löschdecke drauf...'],
+        // … beliebig viele weitere FAQs …
+    ],
+    cidSuffix: 'u8J6dF66TX'  // optional, falls Mobirise‑Klasse wichtig
+));
+
+// Seite vollständig ausgeben
+echo $page->renderFullPage();
