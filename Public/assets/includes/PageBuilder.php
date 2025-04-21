@@ -6,6 +6,7 @@ class PageBuilder
     private string $description;
     private array $styles = [];
     private array $scripts = [];
+    private array $contentBlocks = [];
     private string $favicon = 'assets/images/gravatar-logo-dunkel.jpg';
 
     // ────────── Konstruktor ──────────
@@ -39,6 +40,11 @@ class PageBuilder
     public function addScript(string $src): void
     {
         $this->scripts[] = $src;
+    }
+
+    public function addContent(string $html): void
+    {
+        $this->contentBlocks[] = $html;
     }
 
     public function setFavicon(string $href): void
@@ -417,6 +423,44 @@ class PageBuilder
         }
 
         return '<!-- Popup konnte nicht geladen werden -->';
+    }
+
+    public function renderFullPage(): string
+    {
+        $head = $this->renderHead();
+        $navbar = $this->renderInclude('assets/includes/navbar.php');
+        $social = $this->renderInclude('assets/includes/socialFooter.php');
+        $footer = $this->renderInclude('assets/includes/footer.php');
+        $scripts = $this->renderScriptBundle();
+
+        $content = implode("\n", $this->contentBlocks);
+
+        return <<<HTML
+            <!DOCTYPE html>
+            <html lang="de">
+            {$head}
+            <body>
+
+              <!-- ░░░ Navigation ░░░ -->
+              {$navbar}
+
+              <!-- ░░░ Hauptinhalt ░░░ -->
+              <main>
+                {$content}
+              </main>
+
+              <!-- ░░░ Social Footer ░░░ -->
+              {$social}
+
+              <!-- ░░░ Footer ░░░ -->
+              {$footer}
+
+              <!-- ░░░ JS-Bundle ░░░ -->
+              {$scripts}
+
+            </body>
+            </html>
+            HTML;
     }
 }
 ?>
