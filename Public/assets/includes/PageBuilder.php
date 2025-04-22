@@ -611,6 +611,646 @@ class PageBuilder
     HTML;
     }
     
+    public function renderFeatureCardsWithImages(
+        string $id,
+        string $title = '',
+        array $features = [],
+        string $cidSuffix = '',
+        string $bsVersion = '5.1'
+    ): string
+    {
+        $cidClass = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
+        $sectionTitle = $title !== '' 
+            ? "<div class=\"row justify-content-center\"><div class=\"col-12 content-head\"><h3 class=\"mbr-section-title mbr-fonts-style align-center mb-5 display-2\"><strong>" . htmlspecialchars($title) . "</strong></h3></div></div>" 
+            : '';
+    
+        $cardsHtml = '';
+        foreach ($features as $feature) {
+            $img = htmlspecialchars($feature['img'] ?? '');
+            $alt = htmlspecialchars($feature['alt'] ?? '');
+            $headline = htmlspecialchars($feature['title'] ?? '');
+            $text = htmlspecialchars($feature['text'] ?? '');
+    
+            $cardsHtml .= <<<HTML
+            <div class="item features-without-image col-12 col-lg-4 item-mb">
+                <div class="item-wrapper">
+                    <div class="card-box align-left">
+                        <div class="img-wrapper mb-3">
+                            <img src="{$img}" alt="{$alt}">
+                        </div>
+                        <h5 class="card-title mbr-fonts-style display-5">
+                            <strong>{$headline}</strong>
+                        </h5>
+                        <p class="card-text mbr-fonts-style display-7">
+                            {$text}
+                        </p>
+                    </div>
+                </div>
+            </div>
+    HTML;
+        }
+    
+        return <<<HTML
+    <section data-bs-version="{$bsVersion}" class="features19 {$cidClass}" id="{$id}">
+        <div class="container">
+            {$sectionTitle}
+            <div class="row">
+                {$cardsHtml}
+            </div>
+        </div>
+    </section>
+    HTML;
+    }
+    
+    public function renderTextArticle(
+        string $id,
+        string $title,
+        string $text,
+        string $cidSuffix = '',
+        string $bsVersion = '5.1'
+    ): string
+    {
+        $cidClass = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
+        $title    = htmlspecialchars($title);
+        $text     = htmlspecialchars($text);
+    
+        return <<<HTML
+    <section data-bs-version="{$bsVersion}" class="article13 {$cidClass}" id="{$id}">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="card col-md-12 col-lg-12">
+                    <div class="card-wrapper">
+                        <div class="card-box align-left">
+                            <h4 class="card-title mbr-fonts-style display-2">
+                                <strong>{$title}</strong>
+                            </h4>
+                            <p class="mbr-text mbr-fonts-style mt-4 display-7">
+                                {$text}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    HTML;
+    }
+
+    public function renderImageSection(
+        string $id,
+        string $imageSrc,
+        string $imageAlt = '',
+        string $cidSuffix = '',
+        string $bsVersion = '5.1'
+    ): string
+    {
+        $cidClass  = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
+        $imageSrc  = htmlspecialchars($imageSrc);
+        $imageAlt  = htmlspecialchars($imageAlt);
+    
+        return <<<HTML
+    <section data-bs-version="{$bsVersion}" class="image03 {$cidClass}" id="{$id}">
+        <div class="image-block m-auto">
+            <img src="{$imageSrc}" alt="{$imageAlt}">
+        </div>
+    </section>
+    HTML;
+    }
+
+    public function renderDownloadHeaderWithButtons(
+        string $id,
+        string $title,
+        array $buttons, // Format: [['label' => 'Text', 'href' => 'link', 'class' => 'btn-primary'], ...]
+        string $cidSuffix = '',
+        string $bsVersion = '5.1'
+    ): string
+    {
+        $cidClass = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
+        $title    = htmlspecialchars($title);
+    
+        $buttonHtml = '';
+        foreach ($buttons as $btn) {
+            $label = htmlspecialchars($btn['label'] ?? 'Button');
+            $href  = htmlspecialchars($btn['href'] ?? '#');
+            $class = htmlspecialchars($btn['class'] ?? 'btn-primary');
+            $buttonHtml .= <<<HTML
+            <a class="btn {$class} display-7" href="{$href}">{$label}</a>
+    HTML;
+        }
+    
+        return <<<HTML
+    <section data-bs-version="{$bsVersion}" class="header14 {$cidClass}" id="{$id}">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="card col-12 col-md-12 col-lg-12">
+                    <div class="card-wrapper">
+                        <div class="card-box align-center">
+                            <h1 class="card-title mbr-fonts-style mb-4 display-2">
+                                <strong>{$title}</strong>
+                            </h1>
+                            <div class="mbr-section-btn mt-4">
+                                {$buttonHtml}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    HTML;
+    }
+
+public function renderDownloadHeaderAndTextBanner(
+    string $id,
+    string $title,
+    string $text,
+    string $buttonLabel,
+    string $buttonHref,
+    string $buttonClass = 'btn-primary',
+    string $cidSuffix = '',
+    string $bsVersion = '5.1'
+): string
+{
+    $cidClass   = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
+    $title      = htmlspecialchars($title);
+    $text       = htmlspecialchars($text);
+    $buttonLabel = htmlspecialchars($buttonLabel);
+    $buttonHref  = htmlspecialchars($buttonHref);
+    $buttonClass = htmlspecialchars($buttonClass);
+
+    return <<<HTML
+<section data-bs-version="{$bsVersion}" class="header14 {$cidClass}" id="{$id}">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="card col-12 col-md-12 col-lg-12">
+                <div class="card-wrapper">
+                    <div class="card-box align-center">
+                        <h1 class="card-title mbr-fonts-style mb-4 display-2">
+                            <strong>{$title}</strong>
+                        </h1>
+                        <p class="mbr-text mbr-fonts-style mb-4 display-7 text-white">
+                            {$text}
+                        </p>
+                        <div class="mbr-section-btn mt-4">
+                            <a class="btn {$buttonClass} display-7" href="{$buttonHref}">
+                                {$buttonLabel}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+HTML;
+}
+
+
+    public function renderFeatureCardsWithButtons(
+        string $id,
+        array $features,
+        string $cidSuffix = '',
+        string $bsVersion = '5.1'
+    ): string
+    {
+        $cidClass = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
+        $cardsHtml = '';
+    
+        foreach ($features as $feature) {
+            $title = htmlspecialchars($feature['title'] ?? '');
+            $text  = htmlspecialchars($feature['text'] ?? '');
+            $btnLabel = htmlspecialchars($feature['button']['label'] ?? '');
+            $btnHref  = htmlspecialchars($feature['button']['href'] ?? '#');
+            $btnClass = htmlspecialchars($feature['button']['class'] ?? 'btn-secondary');
+    
+            $cardsHtml .= <<<HTML
+            <div class="item features-without-image col-12 col-md-6 col-lg-4 item-mb">
+                <div class="item-wrapper">
+                    <div class="card-box align-left">
+                        <h5 class="card-title mbr-fonts-style display-5">
+                            <strong>{$title}</strong>
+                        </h5>
+                        <p class="card-text mbr-fonts-style display-7">
+                            {$text}
+                        </p>
+                        <div class="mbr-section-btn item-footer">
+                            <a href="{$btnHref}" class="btn item-btn {$btnClass} display-7">{$btnLabel}</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    HTML;
+        }
+    
+        return <<<HTML
+    <section data-bs-version="{$bsVersion}" class="features5 {$cidClass}" id="{$id}">
+        <div class="container">
+            <div class="row">
+                {$cardsHtml}
+            </div>
+        </div>
+    </section>
+    HTML;
+    }
+    
+    public function renderFeatureSection(
+        string $id,
+        array $features,
+        string $title = '',
+        string $cidSuffix = '',
+        string $bsVersion = '5.1'
+    ): string
+    {
+        $cidClass = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
+        $sectionTitle = $title !== ''
+            ? '<div class="row justify-content-center"><div class="col-12 mb-5 content-head"><h3 class="mbr-section-title mbr-fonts-style align-center mb-0 display-2"><strong>' . htmlspecialchars($title) . '</strong></h3></div></div>'
+            : '';
+    
+        $cardsHtml = '';
+        foreach ($features as $feature) {
+            $headline = htmlspecialchars($feature['title'] ?? '');
+            $text     = htmlspecialchars($feature['text'] ?? '');
+    
+            $cardsHtml .= <<<HTML
+            <div class="item features-without-image col-12 col-lg-4 item-mb">
+                <div class="item-wrapper">
+                    <div class="card-box align-left">
+                        <h5 class="card-title mbr-fonts-style display-5">
+                            <strong>{$headline}</strong>
+                        </h5>
+                        <p class="card-text mbr-fonts-style display-7">
+                            {$text}
+                        </p>
+                    </div>
+                </div>
+            </div>
+    HTML;
+        }
+    
+        return <<<HTML
+    <section data-bs-version="{$bsVersion}" class="features19 {$cidClass}" id="{$id}">
+        <div class="container">
+            {$sectionTitle}
+            <div class="row">
+                {$cardsHtml}
+            </div>
+        </div>
+    </section>
+    HTML;
+    }
+    
+    public function renderGoogleMap(
+        string $id,
+        string $iframeSrc,
+        string $cidSuffix = '',
+        string $bsVersion = '5.1'
+    ): string
+    {
+        $cidClass  = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
+        $iframeSrc = htmlspecialchars($iframeSrc);
+    
+        return <<<HTML
+    <section data-bs-version="{$bsVersion}" class="map1 {$cidClass}" id="{$id}">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-12 content-head"></div>
+            </div>
+            <div class="google-map">
+                <iframe frameborder="0" style="border:0" src="{$iframeSrc}" allowfullscreen></iframe>
+            </div>
+        </div>
+    </section>
+    HTML;
+    }
+    
+
+    public function renderLegalSection(
+        string $id,
+        string $mainTitle,
+        array $sections,
+        string $cidSuffix = '',
+        string $bsVersion = '5.1'
+    ): string
+    {
+        $cidClass   = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
+        $mainTitle  = htmlspecialchars($mainTitle);
+    
+        $contentHtml = '';
+        foreach ($sections as $section) {
+            $subtitle = htmlspecialchars($section['subtitle'] ?? '');
+            $text     = $section['text'] ?? ''; // HTML erlaubt, daher nicht escapen
+    
+            $contentHtml .= <<<HTML
+            <div class="item features-without-image col-12">
+                <div class="item-wrapper">
+                    <h4 class="mbr-section-subtitle mbr-fonts-style mb-3 display-5">
+                        <strong>{$subtitle}</strong>
+                    </h4>
+                    <p class="mbr-text mbr-fonts-style display-7">{$text}</p>
+                </div>
+            </div>
+    HTML;
+        }
+    
+        return <<<HTML
+    <section data-bs-version="{$bsVersion}" class="article07 {$cidClass}" id="{$id}">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="card col-md-12 col-lg-10">
+                    <div class="card-wrapper">
+                        <h3 class="card-title mbr-fonts-style mbr-white mt-3 mb-4 display-2">
+                            <strong>{$mainTitle}</strong>
+                        </h3>
+                        <div class="row card-box align-left">
+                            {$contentHtml}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    HTML;
+    }
+    
+
+    public function renderDocumentDownloadCards(
+        string $id,
+        string $title,
+        string $description,
+        array $documents,
+        string $cidSuffix = '',
+        string $bsVersion = '5.1',
+        string $textColorClass = 'text-white'
+    ): string
+    {
+        $cidClass = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
+        $title     = htmlspecialchars($title);
+        $description = htmlspecialchars($description);
+    
+        $cardsHtml = '';
+        foreach ($documents as $doc) {
+            $docTitle = htmlspecialchars($doc['title'] ?? '');
+            $docDesc  = htmlspecialchars($doc['description'] ?? '');
+            $docLink  = htmlspecialchars($doc['href'] ?? '#');
+            $btnLabel = htmlspecialchars($doc['button'] ?? 'Herunterladen');
+    
+            $cardsHtml .= <<<HTML
+            <div class="col-md-6 mb-4">
+                <div class="card-wrapper">
+                    <div class="card-box align-left">
+                        <h4 class="card-title mbr-fonts-style mb-3 display-5"><strong>{$docTitle}</strong></h4>
+                        <p class="mbr-text mbr-fonts-style mb-3 display-7">{$docDesc}</p>
+                        <div class="mbr-section-btn mt-3">
+                            <a class="btn btn-primary display-4" href="{$docLink}" target="_blank">{$btnLabel}</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    HTML;
+        }
+    
+        return <<<HTML
+    <section data-bs-version="{$bsVersion}" class="mbr-section content5 {$cidClass}" id="{$id}">
+        <div class="container" style="margin-top: 6rem;">
+            <div class="row justify-content-center">
+                <div class="col-md-12 text-center">
+                    <h2 class="mbr-section-title mbr-fonts-style mb-4 display-2 {$textColorClass}">
+                        <strong>{$title}</strong>
+                    </h2>
+                    <p class="mbr-text mbr-fonts-style display-7 text-center {$textColorClass}">
+                        {$description}
+                    </p>
+                </div>
+            </div>
+            <div class="row mt-4">
+                {$cardsHtml}
+            </div>
+        </div>
+    </section>
+    HTML;
+    }
+    
+    public function renderSectionHeader(
+        string $id,
+        string $title,
+        string $subtitle = '',
+        string $cidSuffix = '',
+        string $bsVersion = '5.1',
+        string $containerStyle = 'margin-top: 12rem;',
+        string $titleTag = 'h3',
+        string $subtitleTag = 'h4'
+    ): string
+    {
+        $cidClass  = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
+        $title     = htmlspecialchars($title);
+        $subtitle  = htmlspecialchars($subtitle);
+    
+        $subtitleHtml = $subtitle !== ''
+            ? "<{$subtitleTag} class=\"mbr-section-subtitle align-center mbr-fonts-style mb-4 display-7\">{$subtitle}</{$subtitleTag}>"
+            : '';
+    
+        return <<<HTML
+    <section data-bs-version="{$bsVersion}" class="content4 {$cidClass}" id="{$id}">
+        <div class="container" style="{$containerStyle}">
+            <div class="row justify-content-center">
+                <div class="title col-md-12 col-lg-10">
+                    <{$titleTag} class="mbr-section-title mbr-fonts-style align-center mb-4 display-2">
+                        <strong>{$title}</strong>
+                    </{$titleTag}>
+                    {$subtitleHtml}
+                </div>
+            </div>
+        </div>
+    </section>
+    HTML;
+    }
+    
+    public function renderDownloadList(
+        string $id,
+        string $title,
+        array $downloads,
+        string $cidSuffix = '',
+        string $bsVersion = '5.1'
+    ): string
+    {
+        $cidClass  = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
+        $title     = htmlspecialchars($title);
+    
+        $itemsHtml = '';
+        foreach ($downloads as $download) {
+            $docTitle = htmlspecialchars($download['title'] ?? '');
+            $docDesc  = htmlspecialchars($download['description'] ?? '');
+            $docLink  = htmlspecialchars($download['href'] ?? '#');
+    
+            $itemsHtml .= <<<HTML
+            <div class="row mb-3">
+                <div class="col-12 col-md-8">
+                    <h5 class="mbr-fonts-style display-7"><strong>{$docTitle}</strong></h5>
+                    <p class="mbr-text mbr-fonts-style display-7">{$docDesc}</p>
+                </div>
+                <div class="col-12 col-md-4 text-center text-md-end mt-3 mt-md-0">
+                    <a href="{$docLink}" class="btn btn-primary display-7" target="_blank">
+                        <span class="mobi-mbri mobi-mbri-download mbr-iconfont mbr-iconfont-btn"></span>Herunterladen
+                    </a>
+                </div>
+            </div>
+            <hr>
+    HTML;
+        }
+    
+        return <<<HTML
+    <section data-bs-version="{$bsVersion}" class="content5 {$cidClass}" id="{$id}">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-12 col-lg-10">
+                    <h4 class="mbr-section-title mbr-fonts-style mb-4 display-5"><strong>{$title}</strong></h4>
+                    <div class="card p-3">
+                        <div class="card-body">
+                            {$itemsHtml}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    HTML;
+    }
+
+    public function renderLinkCardGrid(
+        string $id,
+        string $title,
+        array $pages,
+        string $cidSuffix = '',
+        string $bsVersion = '5.1'
+    ): string
+    {
+        $cidClass = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
+        $title    = htmlspecialchars($title);
+    
+        $cardsHtml = '';
+        foreach ($pages as $page) {
+            $pageTitle = htmlspecialchars($page['title'] ?? '');
+            $desc      = htmlspecialchars($page['description'] ?? '');
+            $href      = htmlspecialchars($page['href'] ?? '#');
+            $button    = htmlspecialchars($page['button'] ?? 'Zur Seite');
+    
+            $cardsHtml .= <<<HTML
+            <div class="col mb-4">
+                <div class="p-3 border rounded h-100 d-flex flex-column">
+                    <h5 class="mbr-fonts-style display-7"><strong>{$pageTitle}</strong></h5>
+                    <p class="mbr-text mbr-fonts-style display-7 mb-3">{$desc}</p>
+                    <div class="text-end mt-auto">
+                        <a href="{$href}" class="btn btn-secondary display-7">
+                            <span class="mobi-mbri mobi-mbri-right mbr-iconfont mbr-iconfont-btn"></span>{$button}
+                        </a>
+                    </div>
+                </div>
+            </div>
+    HTML;
+        }
+    
+        return <<<HTML
+    <section data-bs-version="{$bsVersion}" class="content5 {$cidClass}" id="{$id}">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-12 col-lg-10">
+                    <h4 class="mbr-section-title mbr-fonts-style mb-4 display-5">
+                        <strong>{$title}</strong>
+                    </h4>
+                    <div class="card p-3">
+                        <div class="card-body">
+                            <div class="row row-cols-1 row-cols-md-2">
+                                {$cardsHtml}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    HTML;
+    }
+    
+    public function renderAnimatedGallery(
+        string $id,
+        array $rows,
+        string $cidSuffix = '',
+        string $bsVersion = '5.1'
+    ): string
+    {
+        $cidClass = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
+    
+        $galleryHtml = '';
+        foreach ($rows as $index => $images) {
+            $rowClass = "grid-container-" . ($index + 1);
+            $style = $index === 0 ? 'transform: translate3d(-200px, 0px, 0px);' : 'transform: translate3d(-70px, 0px, 0px);';
+    
+            $imgHtml = '';
+            foreach ($images as $img) {
+                $src = htmlspecialchars($img['src']);
+                $alt = htmlspecialchars($img['alt'] ?? '');
+                $imgHtml .= <<<HTML
+                <div class="grid-item">
+                    <img src="{$src}" alt="{$alt}">
+                </div>
+    HTML;
+            }
+    
+            $galleryHtml .= <<<HTML
+            <div class="{$rowClass}" style="{$style}">
+                {$imgHtml}
+            </div>
+    HTML;
+        }
+    
+        return <<<HTML
+    <section data-bs-version="{$bsVersion}" class="gallery4 {$cidClass}" id="{$id}">
+        <div class="container-fluid gallery-wrapper">
+            <div class="row justify-content-center">
+                <div class="col-12 content-head"></div>
+            </div>
+            <div class="grid-container">
+                {$galleryHtml}
+            </div>
+        </div>
+    </section>
+    HTML;
+    }
+    
+    public function renderCenteredCTA(
+        string $id,
+        string $title,
+        string $buttonLabel,
+        string $buttonHref,
+        string $cidSuffix = '',
+        string $bsVersion = '5.1'
+    ): string
+    {
+        $cidClass     = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
+        $title        = htmlspecialchars($title);
+        $buttonLabel  = htmlspecialchars($buttonLabel);
+        $buttonHref   = htmlspecialchars($buttonHref);
+    
+        return <<<HTML
+    <section data-bs-version="{$bsVersion}" class="header14 {$cidClass}" id="{$id}">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="card col-12 col-md-12 col-lg-10">
+                    <div class="card-wrapper">
+                        <div class="card-box align-center">
+                            <h1 class="card-title mbr-fonts-style mb-4 display-2"><strong>{$title}</strong></h1>
+                            <div class="mbr-section-btn mt-4">
+                                <a class="btn btn-primary display-7" href="{$buttonHref}">{$buttonLabel}</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    HTML;
+    }
+    
 
     public function renderFullPage(): string
     {
