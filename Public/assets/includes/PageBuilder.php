@@ -7,10 +7,22 @@ class PageBuilder
     private array $styles = [];
     private array $scripts = [];
     private array $contentBlocks = [];
-    private string $favicon = 'assets/images/gravatar-logo-dunkel.jpg';
     private string $keywords;
     private string $author;
     private ?string $canonicalUrl;
+    private string $favicon = 'assets/images/gravatar-logo-dunkel.jpg';
+    private string $ogImage = 'assets/images/gravatar-logo-dunkel.jpg';
+    private string $twitterCardType = 'summary_large_image';
+    private array $schemaOrgData = [];
+    private string $metaRobots = 'index, follow';
+    private array $alternateLanguages = [];
+    private string $siteLanguage = 'de-DE';
+    private string $locale = 'de_DE';
+    private string $organizationName = 'Freiwillige Feuerwehr Waldems Reichenbach';
+    private string $organizationLogo = 'assets/images/gravatar-logo-dunkel.jpg';
+    private string $location = 'Waldems, Hessen, DE';
+    private string $contactEmail = 'info@feuerwehr-waldems-reichenbach.de';
+    private string $contactType = 'info';
 
 
 
@@ -19,14 +31,37 @@ class PageBuilder
         string $title = 'Meine Seite',
         string $description = '',
         string $keywords = '',
+        ?string $canonicalUrl = null,
         string $author = 'Freiwillige Feuerwehr Waldems Reichenbach',
-        ?string $canonicalUrl = null
+        string $ogImage = 'assets/images/gravatar-logo-dunkel.jpg',
+        string $twitterCardType = 'summary_large_image',
+        string $metaRobots = 'index, follow',
+        string $siteLanguage = 'de-DE',
+        string $locale = 'de_DE',
+        string $organizationName = 'Freiwillige Feuerwehr Waldems Reichenbach',
+        string $organizationLogo = 'assets/images/gravatar-logo-dunkel.jpg',
+        string $location = 'Am Dorfgemeinschaftshaus 1, 65529 Waldems, Hessen, DE',
+        string $contactEmail = 'info@feuerwehr-waldems-reichenbach.de',
+        string $contactType = 'info'
     ) {
         $this->title = $title;
         $this->description = $description;
         $this->keywords = $keywords;
         $this->author = $author;
         $this->canonicalUrl = $canonicalUrl ?? "https://{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
+        $this->ogImage = $ogImage;
+        $this->twitterCardType = $twitterCardType;
+        $this->metaRobots = $metaRobots;
+        $this->siteLanguage = $siteLanguage;
+        $this->locale = $locale;
+        $this->organizationName = $organizationName;
+        $this->organizationLogo = $organizationLogo ?: $this->favicon;
+        $this->location = $location;
+        $this->contactEmail = $contactEmail;
+        $this->contactType = $contactType;
+        
+        // Schema.org-Daten automatisch generieren
+        $this->buildDefaultSchemaOrgData();
 
         $this->styles = [
             'assets/web/assets/mobirise-icons2/mobirise2.css',
@@ -39,6 +74,49 @@ class PageBuilder
             'assets/theme/css/style.css',
             'assets/css/custom-parallax.css',
             'assets/mobirise/css/mbr-additional.css?v=M1cYSM',
+        ];
+    }
+
+    // Neue Methode zum Erstellen der Standarddaten für Schema.org
+    private function buildDefaultSchemaOrgData(): void
+    {
+        // Aufteilen des Standorts in seine Komponenten
+        $locationParts = explode(', ', $this->location);
+        $addressLocality = $locationParts[0] ?? '';
+        $addressRegion = $locationParts[1] ?? '';
+        $addressCountry = $locationParts[2] ?? 'DE';
+        
+        // URL der aktuellen Seite
+        $currentUrl = "https://{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
+        
+        // Organization Schema
+        $this->schemaOrgData[] = [
+            '@context' => 'https://schema.org',
+            '@type' => 'Organization',
+            'name' => $this->organizationName,
+            'url' => $currentUrl,
+            'logo' => "https://{$_SERVER['HTTP_HOST']}/" . ltrim($this->organizationLogo, '/'),
+            'description' => $this->description,
+            'address' => [
+                '@type' => 'PostalAddress',
+                'addressLocality' => $addressLocality,
+                'addressRegion' => $addressRegion,
+                'addressCountry' => $addressCountry
+            ],
+            'contactPoint' => [
+                '@type' => 'ContactPoint',
+                'email' => $this->contactEmail,
+                'contactType' => $this->contactType
+            ]
+        ];
+        
+        // WebPage Schema
+        $this->schemaOrgData[] = [
+            '@context' => 'https://schema.org',
+            '@type' => 'WebPage',
+            'name' => $this->title,
+            'description' => $this->description,
+            'url' => $currentUrl
         ];
     }
 
@@ -64,6 +142,50 @@ class PageBuilder
         $this->favicon = $href;
     }
 
+    // Neue SEO-Methoden
+    public function setOgImage(string $src): void
+    {
+        $this->ogImage = $src;
+    }
+
+    public function setTwitterCardType(string $type): void
+    {
+        $this->twitterCardType = $type;
+    }
+
+    public function setMetaRobots(string $content): void
+    {
+        $this->metaRobots = $content;
+    }
+
+    public function setSiteLanguage(string $language): void
+    {
+        $this->siteLanguage = $language;
+    }
+
+    public function setLocale(string $locale): void
+    {
+        $this->locale = $locale;
+    }
+
+    public function addAlternateLanguage(string $hreflang, string $url): void
+    {
+        $this->alternateLanguages[$hreflang] = $url;
+    }
+
+    public function addSchemaOrgData(array $data): void
+    {
+        // Wenn es ein mehrdimensionales Array ist, füge jedes Element hinzu
+        if (isset($data[0]) && is_array($data[0])) {
+            foreach ($data as $schema) {
+                $this->schemaOrgData[] = $schema;
+            }
+        } else {
+            // Sonst füge das einzelne Schema-Objekt hinzu
+            $this->schemaOrgData[] = $data;
+        }
+    }
+
     // ────────── Head generieren ──────────
     public function renderHead(): string
     {
@@ -80,6 +202,21 @@ class PageBuilder
         $ogTitle = htmlspecialchars($this->title);
         $ogDescription = htmlspecialchars($this->description);
         $canonicalUrl = htmlspecialchars($this->canonicalUrl);
+        $ogImage = htmlspecialchars("https://{$_SERVER['HTTP_HOST']}/" . ltrim($this->ogImage, '/'));
+        
+        // Alternate Language Tags
+        $alternateTags = '';
+        foreach ($this->alternateLanguages as $hreflang => $url) {
+            $alternateTags .= "<link rel=\"alternate\" hreflang=\"{$hreflang}\" href=\"{$url}\">\n        ";
+        }
+        
+        // Schema.org JSON-LD
+        $schemaOrgScript = '';
+        if (!empty($this->schemaOrgData)) {
+            $schemaOrgScript = "\n        <script type=\"application/ld+json\">\n        " . 
+                              json_encode($this->schemaOrgData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . 
+                              "\n        </script>";
+        }
 
         return <<<HTML
     <head>
@@ -89,20 +226,32 @@ class PageBuilder
         <meta name="description" content="{$this->description}">
         <meta name="keywords" content="{$this->keywords}">
         <meta name="author" content="{$this->author}">
+        <meta name="robots" content="{$this->metaRobots}">
+        <meta name="language" content="{$this->siteLanguage}">
 
-        <!-- Open Graph -->
+        <!-- Open Graph / Facebook -->
         <meta property="og:title" content="{$ogTitle}">
         <meta property="og:description" content="{$ogDescription}">
         <meta property="og:type" content="website">
         <meta property="og:url" content="{$canonicalUrl}">
-        <meta property="og:image" content="https://deine-seite.de/assets/images/dein-og-bild.jpg">
+        <meta property="og:image" content="{$ogImage}">
+        <meta property="og:locale" content="{$this->locale}">
+        <meta property="og:site_name" content="Freiwillige Feuerwehr Waldems Reichenbach">
 
+        <!-- Twitter -->
+        <meta name="twitter:card" content="{$this->twitterCardType}">
+        <meta name="twitter:title" content="{$ogTitle}">
+        <meta name="twitter:description" content="{$ogDescription}">
+        <meta name="twitter:image" content="{$ogImage}">
+
+        {$alternateTags}
         <link rel="canonical" href="{$canonicalUrl}">
         <link rel="shortcut icon" href="{$this->favicon}" type="image/x-icon">
         <title>{$this->title}</title>
 
         {$styleTags}
         {$scriptTags}
+        {$schemaOrgScript}
 
         <link rel="preload"
               href="https://fonts.googleapis.com/css?family=Inter+Tight:100,200,300,400,500,600,700,800,900&display=swap"
@@ -157,17 +306,17 @@ class PageBuilder
 
 
     /**
-     * Liefert einen „Bild + Text“-Teaser‑Abschnitt (Mobirise‑Layout image08)
+     * Liefert einen "Bild + Text" Teaser-Abschnitt (Mobirise-Layout image08)
      *
-     * @param string $id          HTML‑ID des Abschnitts (z. B. "image08-h")
-     * @param string $title       Hauptüberschrift (h5 → display‑2)
-     * @param string $subtitle    Unterüberschrift (h6 → display‑7)
+     * @param string $id          HTML-ID des Abschnitts (z. B. "image08-h")
+     * @param string $title       Hauptüberschrift (h5 → display-2)
+     * @param string $subtitle    Unterüberschrift (h6 → display-7)
      * @param string $linkHref    URL des Buttons
      * @param string $linkText    Beschriftung des Buttons
      * @param string $imageSrc    Bildquelle
-     * @param string $imageAlt    Alt‑Attribut des Bildes
-     * @param string $btnClass    optionale zusätzliche Button‑Klasse (z. B. "btn-primary")
-     * @return string             Fertiger HTML‑Code
+     * @param string $imageAlt    Alt-Attribut des Bildes
+     * @param string $btnClass    optionale zusätzliche Button-Klasse (z. B. "btn-primary")
+     * @return string             Fertiger HTML-Code
      */
     public function renderImageTeaser(
         string $id,
@@ -180,7 +329,7 @@ class PageBuilder
         string $imageAlt = '',
         string $btnClass = 'btn-secondary'
     ): string {
-        // Bootstrap‑Version fix (Mobirise nutzt i. d. R. 5.1)
+        // Bootstrap-Version fix (Mobirise nutzt i. d. R. 5.1)
         $bsVersion = '5.1';
         $cidClass = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
 
@@ -215,16 +364,16 @@ class PageBuilder
     }
 
     /**
-     * Erzeugt einen Parallax‑Header‑Banner („header14“)
+     * Erzeugt einen Parallax-Header-Banner ("header14")
      *
-     * @param string $id           Wert des id‑Attributs z. B. "header14-o"
+     * @param string $id           Wert des id-Attributs z. B. "header14-o"
      * @param string $title        Überschrift (h1)
-     * @param string $buttonHref   Ziel‑URL des Call‑to‑Action‑Buttons
-     * @param string $buttonText   Button‑Beschriftung
-     * @param string $cidSuffix    Teil hinter „cid‑“ für Mobirise‑Klasse (leer = kein cid‑Teil)
-     * @param string $btnClass     Bootstrap‑Klasse des Buttons (Default: "btn-primary")
-     * @param string $bsVersion    data‑bs‑version (Default: "5.1")
-     * @return string              Fertiger HTML‑Code
+     * @param string $buttonHref   Ziel-URL des Call-to-Action-Buttons
+     * @param string $buttonText   Button-Beschriftung
+     * @param string $cidSuffix    Teil hinter "cid-" für Mobirise-Klasse (leer = kein cid-Teil)
+     * @param string $btnClass     Bootstrap-Klasse des Buttons (Default: "btn-primary")
+     * @param string $bsVersion    data-bs-version (Default: "5.1")
+     * @return string              Fertiger HTML-Code
      */
     public function renderCallToActionBanner(
         string $id,
@@ -235,7 +384,7 @@ class PageBuilder
         string $btnClass = 'btn-primary',
         string $bsVersion = '5.1'
     ): string {
-        // „cid‑…“ nur anhängen, wenn gewünscht
+        // "cid-..." nur anhängen, wenn gewünscht
         $cidClass = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
 
         return <<<HTML
@@ -263,20 +412,20 @@ class PageBuilder
     }
 
     /**
-     * Rendert einen horizontal scrollenden Galerie‑Streifen („gallery07“)
+     * Rendert einen horizontal scrollenden Galerie-Streifen ("gallery07")
      *
-     * @param string      $id            Abschnitt‑ID, z. B. "gallery07-k"
+     * @param string      $id            Abschnitt-ID, z. B. "gallery07-k"
      * @param array       $images        Liste der Bilder:
      *                                   [
-     *                                      ['src' => 'assets/img1.webp', 'alt' => 'Alt‑Text'],
+     *                                      ['src' => 'assets/img1.webp', 'alt' => 'Alt-Text'],
      *                                      …
      *                                   ]
-     * @param string      $cidSuffix     Mobirise‑CID‑Suffix (leer, wenn egal)
-     * @param string      $gridClass     CSS‑Klasse der Grid‑Spalte (z. B. "grid-container-3")
-     * @param string      $movementClass Animations‑Klasse (z. B. "moving-left")
-     * @param int         $translateX    Startversatz in px (für Inline‑Style)
-     * @param string      $bsVersion     data‑bs‑version (Default: "5.1")
-     * @return string                    HTML‑Code der Galerie
+     * @param string      $cidSuffix     Mobirise-CID-Suffix (leer, wenn egal)
+     * @param string      $gridClass     CSS-Klasse der Grid-Spalte (z. B. "grid-container-3")
+     * @param string      $movementClass Animations-Klasse (z. B. "moving-left")
+     * @param int         $translateX    Startversatz in px (für Inline-Style)
+     * @param string      $bsVersion     data-bs-version (Default: "5.1")
+     * @return string                    HTML-Code der Galerie
      */
     public function renderGalleryGrid(
         string $id,
@@ -289,7 +438,7 @@ class PageBuilder
     ): string {
         $cidClass = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
 
-        // Grid‑Items zusammensetzen
+        // Grid-Items zusammensetzen
         $itemsHtml = '';
         foreach ($images as $img) {
             $src = $img['src'] ?? '';
@@ -318,20 +467,20 @@ class PageBuilder
     }
 
     /**
-     * Rendert eine Accordion‑Liste (Mobirise list1)
+     * Rendert eine Accordion-Liste (Mobirise list1)
      *
-     * @param string $id           Abschnitt‑ID, z. B. "list01-q"
+     * @param string $id           Abschnitt-ID, z. B. "list01-q"
      * @param string $title        Überschrift über dem Accordion
-     * @param array  $items        FAQ‑Einträge:
+     * @param array  $items        FAQ-Einträge:
      *                             [
-     *                               ['q' => 'Frage 1', 'a' => 'Antwort 1'],
+     *                               ['q' => 'Frage 1', 'a' => 'Antwort 1'],
      *                               …
      *                             ]
-     * @param string $cidSuffix    Mobirise‑CID‑Suffix (leer lassen, wenn egal)
-     * @param string $accordionId  HTML‑ID des Accordion‑Wrappers
-     *                             (leer = automatisch "accordion‑{$id}")
-     * @param string $bsVersion    Bootstrap‑Version im data‑Attribut
-     * @return string              Fertiger HTML‑Block
+     * @param string $cidSuffix    Mobirise-CID-Suffix (leer lassen, wenn egal)
+     * @param string $accordionId  HTML-ID des Accordion-Wrappers
+     *                             (leer = automatisch "accordion-{$id}")
+     * @param string $bsVersion    Bootstrap-Version im data-Attribut
+     * @return string              Fertiger HTML-Block
      */
     public function renderAccordionList(
         string $id,
@@ -410,20 +559,20 @@ class PageBuilder
     }
 
     /**
-     * Liefert alle Standard‑Scripts (Bootstrap‑Bundle, SmoothScroll, Jarallax …)
-     * plus – optional – das Inline‑Snippet zur Jarallax‑Initialisierung.
+     * Liefert alle Standard-Scripts (Bootstrap-Bundle, SmoothScroll, Jarallax …)
+     * plus – optional – das Inline-Snippet zur Jarallax-Initialisierung.
      *
-     * @param array $extraScripts    Zusätzliche Skript‑URLs, die ebenfalls eingebunden werden sollen
-     * @param bool  $initJarallax    true = Inline‑Init‑Snippet anhängen (Default)
-     * @param bool  $defer           true = "defer"‑Attribut setzen, false = weglassen
-     * @return string                Zusammenhängender <script>‑Block
+     * @param array $extraScripts    Zusätzliche Skript-URLs, die ebenfalls eingebunden werden sollen
+     * @param bool  $initJarallax    true = Inline-Init-Snippet anhängen (Default)
+     * @param bool  $defer           true = "defer"Attribut setzen, false = weglassen
+     * @return string                Zusammenhängender <script>Block
      */
     public function renderScriptBundle(
         array $extraScripts = [],
         bool $initJarallax = true,
         bool $defer = false
     ): string {
-        // Standard‑Bundle
+        // Standard-Bundle
         $scripts = [
             'assets/bootstrap/js/bootstrap.bundle.min.js',
             'assets/smoothscroll/smooth-scroll.js',
@@ -437,13 +586,13 @@ class PageBuilder
         // Zusätzliche Pfade anfügen (falls übergeben)
         $scripts = array_merge($scripts, $extraScripts);
 
-        // Script‑Tags bauen
+        // Script-Tags bauen
         $tags = '';
         foreach ($scripts as $src) {
             $tags .= '<script src="' . $src . '"' . ($defer ? ' defer' : '') . "></script>\n";
         }
 
-        // Jarallax‑Initialisierung anhängen?
+        // Jarallax-Initialisierung anhängen?
         if ($initJarallax) {
             $tags .= <<<JS
                 <script>
@@ -532,7 +681,7 @@ class PageBuilder
             $activeClass = $i === 0 ? ' active' : '';
             $modalItems .= <<<HTML
                 <div class="carousel-item{$activeClass}">
-                    <img class="d-block w-100" src="{$src}" alt="{$alt}" loading="lazy"	>
+                    <img class="d-block w-100" src="{$src}" alt="{$alt}" loading="lazy">
                 </div>
     HTML;
 
@@ -1268,6 +1417,19 @@ HTML;
         $scripts = $this->renderScriptBundle();
 
         $content = implode("\n", $this->contentBlocks);
+        
+        // Automatisches Schema.org Organization Markup, falls noch nicht gesetzt
+        if (empty($this->schemaOrgData)) {
+            $this->addSchemaOrgData([
+                '@context' => 'https://schema.org',
+                '@type' => 'Organization',
+                'name' => 'Freiwillige Feuerwehr Waldems Reichenbach',
+                'url' => $this->canonicalUrl,
+                'logo' => "https://{$_SERVER['HTTP_HOST']}/" . ltrim($this->favicon, '/'),
+                'description' => $this->description
+            ]);
+            $head = $this->renderHead(); // Head neu rendern mit Schema.org Daten
+        }
 
         return <<<HTML
             <!DOCTYPE html>

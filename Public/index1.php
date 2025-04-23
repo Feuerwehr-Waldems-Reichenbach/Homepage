@@ -2,11 +2,10 @@
 require_once $_SERVER['DOCUMENT_ROOT'] . '/assets/includes/PageBuilder.php';
 
 $page = new PageBuilder(
-    title: 'Startseite',
+    title: 'Freiwillige Feuerwehr Reichenbach – Ehrenamt. Einsatz. Engagement.',
     description: 'Willkommen bei der Freiwilligen Feuerwehr Reichenbach! Erfahre mehr über unsere Einsätze, unser Engagement und wie du uns unterstützen kannst.',
-    keywords: 'Feuerwehr Reichenbach, Einsätze, Engagement, Unterstützung',
-    author: 'Freiwillige Feuerwehr Waldems Reichenbach',
-    canonicalUrl: $_SERVER['REQUEST_URI']
+    keywords: 'Freiwillige Feuerwehr Reichenbach, Feuerwehr Waldems, Feuerwehr Ehrenamt, Jugendfeuerwehr Reichenbach, Einsätze, Erste Hilfe Tipps, Feuerwehr Hessen, mitmachen Feuerwehr, Kinderfeuerwehr Hessen',
+    canonicalUrl: $_SERVER['REQUEST_URI'],
 );
 
 $page->addContent($page->renderFullscreenHero(
