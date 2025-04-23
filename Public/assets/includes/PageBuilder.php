@@ -1087,7 +1087,7 @@ HTML;
     }
 
 
-    public function renderLegalSection(
+    public function renderTextSection(
         string $id,
         string $mainTitle,
         array $sections,
