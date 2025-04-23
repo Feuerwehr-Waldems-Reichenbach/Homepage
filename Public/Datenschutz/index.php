@@ -1,36 +1,16 @@
-<!DOCTYPE html>
-<html>
+<?php
+require_once $_SERVER['DOCUMENT_ROOT'] . '/assets/includes/PageBuilder.php';
 
-<head>
-  <!-- FFR Seite -->
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
-  <link rel="shortcut icon" href="../assets/images/gravatar-logo-dunkel.jpg" type="image/x-icon">
-  <meta name="description"
-    content="Unsere Datenschutzerklärung informiert dich über den Umgang mit deinen persönlichen Daten bei der Freiwilligen Feuerwehr Reichenbach. Erfahre mehr über deine Rechte und unsere Maßnahmen zum Datenschutz.">
-  <title>Datenschutzerklärung</title>
-  <link rel="stylesheet" href="../assets/web/assets/mobirise-icons2/mobirise2.css">
-  <link rel="stylesheet" href="../assets/bootstrap/css/bootstrap.min.css">
-  <link rel="stylesheet" href="../assets/bootstrap/css/bootstrap-grid.min.css">
-  <link rel="stylesheet" href="../assets/bootstrap/css/bootstrap-reboot.min.css">
-  <link rel="stylesheet" href="../assets/dropdown/css/style.css">
-  <link rel="stylesheet" href="../assets/socicon/css/styles.css">
-  <link rel="stylesheet" href="../assets/theme/css/style.css">
-  <link rel="preload"
-    href="https://fonts.googleapis.com/css?family=Inter+Tight:100,200,300,400,500,600,700,800,900,100i,200i,300i,400i,500i,600i,700i,800i,900i&display=swap"
-    as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript>
-    <link rel="stylesheet"
-      href="https://fonts.googleapis.com/css?family=Inter+Tight:100,200,300,400,500,600,700,800,900,100i,200i,300i,400i,500i,600i,700i,800i,900i&display=swap">
-  </noscript>
-  <link rel="preload" as="style" href="../assets/mobirise/css/mbr-additional.css?v=VoxXpG">
-  <link rel="stylesheet" href="../assets/mobirise/css/mbr-additional.css?v=VoxXpG" type="text/css">
-</head>
+$page = new PageBuilder(
+    title: 'Datenschutzerklärung',
+    description: 'Unsere Datenschutzerklärung informiert dich über den Umgang mit deinen persönlichen Daten bei der Freiwilligen Feuerwehr Reichenbach. Erfahre mehr über deine Rechte und unsere Maßnahmen zum Datenschutz.',
+    keywords: 'Datenschutzerklärung, Freiwillige Feuerwehr Reichenbach, Datenschutz, Privatsphäre, Informationen',
+    canonicalUrl: 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
+);
 
-<body>
-  <?php include '../assets/includes/navbar.php'; ?>
-  <section data-bs-version="5.1" class="article07 cid-dataprotection-card" id="article07-1y">
+$page->addContent(
+    '
+ <section data-bs-version="5.1" class="article07 cid-dataprotection-card" id="article07-1y">
     <div class="container">
       <div class="row justify-content-center">
         <div class="card col-md-12 col-lg-10">
@@ -388,8 +368,7 @@
                     <div><strong>8. Aktualität und Änderung dieser Datenschutzerklärung</strong></div>
                   </h4>
                   <p class="mbr-text mbr-fonts-style display-7">
-                    Diese Datenschutzerklärung ist aktuell gültig und hat den Stand
-                    <?php echo date('d.m.Y'); ?>.
+                    Diese Datenschutzerklärung ist aktuell gültig und hat den Stand ' . date('d.m.Y') . '.
                   </p>
                   <p class="mbr-text mbr-fonts-style display-7">
                     Wir behalten uns vor, diese Datenschutzerklärung anzupassen, um sie an geänderte Rechtslagen oder
@@ -408,8 +387,7 @@
       </div>
     </div>
   </section>
-  <?php include '../assets/includes/socialFooter.php'; ?>
-  <?php include '../assets/includes/footer.php'; ?>
-</body>
+');
 
-</html>
+echo $page->renderFullPage();
+
