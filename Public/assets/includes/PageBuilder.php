@@ -10,8 +10,8 @@ class PageBuilder
     private string $keywords;
     private string $author;
     private ?string $canonicalUrl;
-    private string $favicon = 'assets/images/gravatar-logo-dunkel.jpg';
-    private string $ogImage = 'assets/images/gravatar-logo-dunkel.jpg';
+    private string $favicon = '/assets/images/gravatar-logo-dunkel.jpg';
+    private string $ogImage = '/assets/images/gravatar-logo-dunkel.jpg';
     private string $twitterCardType = 'summary_large_image';
     private array $schemaOrgData = [];
     private string $metaRobots = 'index, follow';
@@ -19,7 +19,7 @@ class PageBuilder
     private string $siteLanguage = 'de-DE';
     private string $locale = 'de_DE';
     private string $organizationName = 'Freiwillige Feuerwehr Waldems Reichenbach';
-    private string $organizationLogo = 'assets/images/gravatar-logo-dunkel.jpg';
+    private string $organizationLogo = '/assets/images/gravatar-logo-dunkel.jpg';
     private string $location = 'Waldems, Hessen, DE';
     private string $contactEmail = 'info@feuerwehr-waldems-reichenbach.de';
     private string $contactType = 'info';
@@ -33,13 +33,13 @@ class PageBuilder
         string $keywords = '',
         ?string $canonicalUrl = null,
         string $author = 'Freiwillige Feuerwehr Waldems Reichenbach',
-        string $ogImage = 'assets/images/gravatar-logo-dunkel.jpg',
+        string $ogImage = '/assets/images/gravatar-logo-dunkel.jpg',
         string $twitterCardType = 'summary_large_image',
         string $metaRobots = 'index, follow',
         string $siteLanguage = 'de-DE',
         string $locale = 'de_DE',
         string $organizationName = 'Freiwillige Feuerwehr Waldems Reichenbach',
-        string $organizationLogo = 'assets/images/gravatar-logo-dunkel.jpg',
+        string $organizationLogo = '/assets/images/gravatar-logo-dunkel.jpg',
         string $location = 'Am Dorfgemeinschaftshaus 1, 65529 Waldems, Hessen, DE',
         string $contactEmail = 'info@feuerwehr-waldems-reichenbach.de',
         string $contactType = 'info'
@@ -64,16 +64,16 @@ class PageBuilder
         $this->buildDefaultSchemaOrgData();
 
         $this->styles = [
-            'assets/web/assets/mobirise-icons2/mobirise2.css',
-            'assets/bootstrap/css/bootstrap.min.css',
-            'assets/bootstrap/css/bootstrap-grid.min.css',
-            'assets/bootstrap/css/bootstrap-reboot.min.css',
-            'assets/parallax/jarallax.css',
-            'assets/dropdown/css/style.css',
-            'assets/socicon/css/styles.css',
-            'assets/theme/css/style.css',
-            'assets/css/custom-parallax.css',
-            'assets/mobirise/css/mbr-additional.css?v=M1cYSM',
+            '/assets/web/assets/mobirise-icons2/mobirise2.css',
+            '/assets/bootstrap/css/bootstrap.min.css',
+            '/assets/bootstrap/css/bootstrap-grid.min.css',
+            '/assets/bootstrap/css/bootstrap-reboot.min.css',
+            '/assets/parallax/jarallax.css',
+            '/assets/dropdown/css/style.css',
+            '/assets/socicon/css/styles.css',
+            '/assets/theme/css/style.css',
+            '/assets/css/custom-parallax.css',
+            '/assets/mobirise/css/mbr-additional.css?v=M1cYSM',
         ];
     }
 
@@ -124,11 +124,15 @@ class PageBuilder
     // ────────── Öffentliche Helfer ──────────
     public function addStyle(string $href): void
     {
+        // Ensure path starts with a slash for absolute paths from the site root
+        $href = '/' . ltrim($href, '/');
         $this->styles[] = $href;
     }
 
     public function addScript(string $src): void
     {
+        // Ensure path starts with a slash for absolute paths from the site root
+        $src = '/' . ltrim($src, '/');
         $this->scripts[] = $src;
     }
 
@@ -139,13 +143,15 @@ class PageBuilder
 
     public function setFavicon(string $href): void
     {
-        $this->favicon = $href;
+        // Ensure path starts with a slash for absolute paths from the site root
+        $this->favicon = '/' . ltrim($href, '/');
     }
 
     // Neue SEO-Methoden
     public function setOgImage(string $src): void
     {
-        $this->ogImage = $src;
+        // Ensure path starts with a slash for absolute paths from the site root
+        $this->ogImage = '/' . ltrim($src, '/');
     }
 
     public function setTwitterCardType(string $type): void
@@ -574,13 +580,13 @@ class PageBuilder
     ): string {
         // Standard-Bundle
         $scripts = [
-            'assets/bootstrap/js/bootstrap.bundle.min.js',
-            'assets/smoothscroll/smooth-scroll.js',
-            'assets/ytplayer/index.js',
-            'assets/dropdown/js/navbar-dropdown.js',
-            'assets/theme/js/script.js',
-            'assets/parallax/jarallax.js',
-            'assets/scrollgallery/scroll-gallery.js',
+            '/assets/bootstrap/js/bootstrap.bundle.min.js',
+            '/assets/smoothscroll/smooth-scroll.js',
+            '/assets/ytplayer/index.js',
+            '/assets/dropdown/js/navbar-dropdown.js',
+            '/assets/theme/js/script.js',
+            '/assets/parallax/jarallax.js',
+            '/assets/scrollgallery/scroll-gallery.js',
         ];
 
         // Zusätzliche Pfade anfügen (falls übergeben)
