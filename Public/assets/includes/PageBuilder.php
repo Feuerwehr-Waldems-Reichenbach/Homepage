@@ -758,8 +758,6 @@ class PageBuilder
         string $bsVersion = '5.1'
     ): string {
         $cidClass = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
-        $title    = htmlspecialchars($title);
-        $subtitle = htmlspecialchars($subtitle);
         $imageSrc = htmlspecialchars($imageSrc);
         $imageAlt = htmlspecialchars($imageAlt);
 
@@ -804,8 +802,8 @@ class PageBuilder
         foreach ($features as $feature) {
             $img = htmlspecialchars($feature['img'] ?? '');
             $alt = htmlspecialchars($feature['alt'] ?? '');
-            $headline = htmlspecialchars($feature['title'] ?? '');
-            $text = htmlspecialchars($feature['text'] ?? '');
+            $headline = $feature['title'] ?? '';
+            $text = $feature['text'] ?? '';
 
             $cardsHtml .= <<<HTML
             <div class="item features-without-image col-12 col-lg-4 item-mb">
@@ -846,8 +844,7 @@ class PageBuilder
         string $bsVersion = '5.1'
     ): string {
         $cidClass = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
-        $title    = htmlspecialchars($title);
-        $text     = htmlspecialchars($text);
+
 
         return <<<HTML
     <section data-bs-version="{$bsVersion}" class="article13 {$cidClass}" id="{$id}">
@@ -899,7 +896,6 @@ class PageBuilder
         string $bsVersion = '5.1'
     ): string {
         $cidClass = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
-        $title    = htmlspecialchars($title);
 
         $buttonHtml = '';
         foreach ($buttons as $btn) {
@@ -944,8 +940,6 @@ class PageBuilder
         string $bsVersion = '5.1'
     ): string {
         $cidClass   = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
-        $title      = htmlspecialchars($title);
-        $text       = htmlspecialchars($text);
         $buttonLabel = htmlspecialchars($buttonLabel);
         $buttonHref  = htmlspecialchars($buttonHref);
         $buttonClass = htmlspecialchars($buttonClass);
@@ -988,8 +982,8 @@ HTML;
         $cardsHtml = '';
 
         foreach ($features as $feature) {
-            $title = htmlspecialchars($feature['title'] ?? '');
-            $text  = htmlspecialchars($feature['text'] ?? '');
+            $title = $feature['title'] ?? '';
+            $text  = $feature['text'] ?? '';
             $btnLabel = htmlspecialchars($feature['button']['label'] ?? '');
             $btnHref  = htmlspecialchars($feature['button']['href'] ?? '#');
             $btnClass = htmlspecialchars($feature['button']['class'] ?? 'btn-secondary');
@@ -1033,13 +1027,13 @@ HTML;
     ): string {
         $cidClass = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
         $sectionTitle = $title !== ''
-            ? '<div class="row justify-content-center"><div class="col-12 mb-5 content-head"><h3 class="mbr-section-title mbr-fonts-style align-center mb-0 display-2"><strong>' . htmlspecialchars($title) . '</strong></h3></div></div>'
+            ? '<div class="row justify-content-center"><div class="col-12 mb-5 content-head"><h3 class="mbr-section-title mbr-fonts-style align-center mb-0 display-2"><strong>' . $title . '</strong></h3></div></div>'
             : '';
 
         $cardsHtml = '';
         foreach ($features as $feature) {
-            $headline = htmlspecialchars($feature['title'] ?? '');
-            $text     = htmlspecialchars($feature['text'] ?? '');
+            $headline = $feature['title'] ?? '';
+            $text     = $feature['text'] ?? '';
 
             $cardsHtml .= <<<HTML
             <div class="item features-without-image col-12 col-lg-4 item-mb">
@@ -1101,11 +1095,11 @@ HTML;
         string $bsVersion = '5.1'
     ): string {
         $cidClass   = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
-        $mainTitle  = htmlspecialchars($mainTitle);
+
 
         $contentHtml = '';
         foreach ($sections as $section) {
-            $subtitle = htmlspecialchars($section['subtitle'] ?? '');
+            $subtitle = $section['subtitle'] ?? '';
             $text     = $section['text'] ?? ''; // HTML erlaubt, daher nicht escapen
 
             $contentHtml .= <<<HTML
@@ -1151,8 +1145,7 @@ HTML;
         string $textColorClass = 'text-white'
     ): string {
         $cidClass = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
-        $title     = htmlspecialchars($title);
-        $description = htmlspecialchars($description);
+
 
         $cardsHtml = '';
         foreach ($documents as $doc) {
@@ -1208,8 +1201,6 @@ HTML;
         string $subtitleTag = 'h4'
     ): string {
         $cidClass  = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
-        $title     = htmlspecialchars($title);
-        $subtitle  = htmlspecialchars($subtitle);
 
         $subtitleHtml = $subtitle !== ''
             ? "<{$subtitleTag} class=\"mbr-section-subtitle align-center mbr-fonts-style mb-4 display-7\">{$subtitle}</{$subtitleTag}>"
@@ -1239,7 +1230,6 @@ HTML;
         string $bsVersion = '5.1'
     ): string {
         $cidClass  = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
-        $title     = htmlspecialchars($title);
 
         $itemsHtml = '';
         foreach ($downloads as $download) {
@@ -1289,7 +1279,6 @@ HTML;
         string $bsVersion = '5.1'
     ): string {
         $cidClass = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
-        $title    = htmlspecialchars($title);
 
         $cardsHtml = '';
         foreach ($pages as $page) {
@@ -1389,7 +1378,6 @@ HTML;
         string $bsVersion = '5.1'
     ): string {
         $cidClass     = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
-        $title        = htmlspecialchars($title);
         $buttonLabel  = htmlspecialchars($buttonLabel);
         $buttonHref   = htmlspecialchars($buttonHref);
 
