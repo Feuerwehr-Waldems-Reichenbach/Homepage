@@ -3,7 +3,10 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/assets/includes/PageBuilder.php';
 
 $page = new PageBuilder(
     title: 'Startseite',
-    description: 'Willkommen bei der Freiwilligen Feuerwehr Reichenbach! Erfahre mehr über unsere Einsätze, unser Engagement und wie du uns unterstützen kannst.'
+    description: 'Willkommen bei der Freiwilligen Feuerwehr Reichenbach! Erfahre mehr über unsere Einsätze, unser Engagement und wie du uns unterstützen kannst.',
+    keywords: 'Feuerwehr Reichenbach, Einsätze, Engagement, Unterstützung',
+    author: 'Freiwillige Feuerwehr Waldems Reichenbach',
+    canonicalUrl: $_SERVER['REQUEST_URI']
 );
 
 $page->addContent($page->renderFullscreenHero(

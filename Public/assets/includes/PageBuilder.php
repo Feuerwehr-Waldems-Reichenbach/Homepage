@@ -8,15 +8,26 @@ class PageBuilder
     private array $scripts = [];
     private array $contentBlocks = [];
     private string $favicon = 'assets/images/gravatar-logo-dunkel.jpg';
+    private string $keywords;
+    private string $author;
+    private ?string $canonicalUrl;
+
+
 
     // ────────── Konstruktor ──────────
     public function __construct(
         string $title = 'Meine Seite',
-        string $description = ''
+        string $description = '',
+        string $keywords = '',
+        string $author = 'Freiwillige Feuerwehr Waldems Reichenbach',
+        ?string $canonicalUrl = null
     ) {
         $this->title = $title;
         $this->description = $description;
-        // Standard‑Styles gleich hinzufügen
+        $this->keywords = $keywords;
+        $this->author = $author;
+        $this->canonicalUrl = $canonicalUrl ?? "https://{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
+
         $this->styles = [
             'assets/web/assets/mobirise-icons2/mobirise2.css',
             'assets/bootstrap/css/bootstrap.min.css',
@@ -30,6 +41,7 @@ class PageBuilder
             'assets/mobirise/css/mbr-additional.css?v=M1cYSM',
         ];
     }
+
 
     // ────────── Öffentliche Helfer ──────────
     public function addStyle(string $href): void
@@ -55,42 +67,55 @@ class PageBuilder
     // ────────── Head generieren ──────────
     public function renderHead(): string
     {
-        // Styles zusammenbauen
         $styleTags = '';
         foreach ($this->styles as $css) {
             $styleTags .= "<link rel=\"stylesheet\" href=\"{$css}\">\n        ";
         }
 
-        // Scripts schon im Head? meistens nicht nötig, aber Option da:
         $scriptTags = '';
         foreach ($this->scripts as $js) {
             $scriptTags .= "<script src=\"{$js}\" defer></script>\n        ";
         }
 
+        $ogTitle = htmlspecialchars($this->title);
+        $ogDescription = htmlspecialchars($this->description);
+        $canonicalUrl = htmlspecialchars($this->canonicalUrl);
+
         return <<<HTML
-            <head>
-                <meta charset="UTF-8">
-                <meta http-equiv="X-UA-Compatible" content="IE=edge">
-                <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
-                <link rel="shortcut icon" href="{$this->favicon}" type="image/x-icon">
-                <meta name="description" content="{$this->description}">
-                <title>{$this->title}</title>
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="{$this->description}">
+        <meta name="keywords" content="{$this->keywords}">
+        <meta name="author" content="{$this->author}">
 
-                {$styleTags}
-                {$scriptTags}
+        <!-- Open Graph -->
+        <meta property="og:title" content="{$ogTitle}">
+        <meta property="og:description" content="{$ogDescription}">
+        <meta property="og:type" content="website">
+        <meta property="og:url" content="{$canonicalUrl}">
+        <meta property="og:image" content="https://deine-seite.de/assets/images/dein-og-bild.jpg">
 
-                <!-- Google‑Fonts Lazy‑Load -->
-                <link rel="preload"
-                      href="https://fonts.googleapis.com/css?family=Inter+Tight:100,200,300,400,500,600,700,800,900&display=swap"
-                      as="style"
-                      onload="this.onload=null;this.rel='stylesheet'">
-                <noscript>
-                    <link rel="stylesheet"
-                          href="https://fonts.googleapis.com/css?family=Inter+Tight:100,200,300,400,500,600,700,800,900&display=swap">
-                </noscript>
-            </head>
-            HTML;
+        <link rel="canonical" href="{$canonicalUrl}">
+        <link rel="shortcut icon" href="{$this->favicon}" type="image/x-icon">
+        <title>{$this->title}</title>
+
+        {$styleTags}
+        {$scriptTags}
+
+        <link rel="preload"
+              href="https://fonts.googleapis.com/css?family=Inter+Tight:100,200,300,400,500,600,700,800,900&display=swap"
+              as="style"
+              onload="this.onload=null;this.rel='stylesheet'">
+        <noscript>
+            <link rel="stylesheet"
+                  href="https://fonts.googleapis.com/css?family=Inter+Tight:100,200,300,400,500,600,700,800,900&display=swap">
+        </noscript>
+    </head>
+    HTML;
     }
+
 
     public function renderFullscreenHero(
         string $id,
@@ -104,10 +129,9 @@ class PageBuilder
         string $overlayColor = 'rgb(0, 0, 0)',
         string $btnClass = 'btn-secondary',
         string $bsVersion = '5.1'
-    ): string
-    {
+    ): string {
         $cidClass = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
-    
+
         return <<<HTML
     <section data-bs-version="{$bsVersion}" class="header16 {$cidClass} mbr-fullscreen jarallax" id="{$id}" data-jarallax-speed="{$jarallaxSpeed}">
         <div class="mbr-overlay" style="opacity: {$overlayOpacity}; background-color: {$overlayColor};"></div>
@@ -129,8 +153,8 @@ class PageBuilder
     </section>
     HTML;
     }
-    
-    
+
+
 
     /**
      * Liefert einen „Bild + Text“-Teaser‑Abschnitt (Mobirise‑Layout image08)
@@ -181,7 +205,7 @@ class PageBuilder
                         </div>
                         <div class="col-lg-8 side-features">
                             <div class="image-wrapper mb-4">
-                                <img class="w-100" src="{$imageSrc}" alt="{$imageAlt}">
+                                <img class="w-100" src="{$imageSrc}" alt="{$imageAlt}" loading="lazy">
                             </div>
                         </div>
                     </div>
@@ -272,7 +296,7 @@ class PageBuilder
             $alt = $img['alt'] ?? '';
             $itemsHtml .= <<<HTML
                             <div class="grid-item">
-                                <img src="{$src}" alt="{$alt}">
+                                <img src="{$src}" alt="{$alt}" loading="lazy">
                             </div>
 
                 HTML;
@@ -475,53 +499,52 @@ class PageBuilder
         string $lightboxId = 'gallery-modal',
         string $cidSuffix = '',
         string $bsVersion = '5.1'
-    ): string
-    {
+    ): string {
         $cidClass = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
         $lightboxId = htmlspecialchars($lightboxId);
         $titleEscaped = htmlspecialchars($title);
-    
+
         // Galerie-Grid
         $gridHtml = '';
         $modalItems = '';
         $indicators = '';
         $i = 0;
-    
+
         foreach ($images as $img) {
             $src = htmlspecialchars($img['src']);
             $alt = htmlspecialchars($img['alt'] ?? '');
             $slideTo = $i;
-    
+
             // Galerie-Item
             $gridHtml .= <<<HTML
             <div class="col-12 col-md-6 col-lg-4 item gallery-image active">
                 <div class="item-wrapper" data-bs-toggle="modal" data-bs-target="#{$lightboxId}-modal">
                     <img class="w-100" src="{$src}" alt="{$alt}"
-                         data-bs-slide-to="{$slideTo}" data-bs-target="#lb-{$lightboxId}">
+                         data-bs-slide-to="{$slideTo}" data-bs-target="#lb-{$lightboxId}" loading="lazy">
                     <div class="icon-wrapper">
                         <span class="mobi-mbri mobi-mbri-search mbr-iconfont mbr-iconfont-btn"></span>
                     </div>
                 </div>
             </div>
     HTML;
-    
+
             // Modal-Item
             $activeClass = $i === 0 ? ' active' : '';
             $modalItems .= <<<HTML
                 <div class="carousel-item{$activeClass}">
-                    <img class="d-block w-100" src="{$src}" alt="{$alt}">
+                    <img class="d-block w-100" src="{$src}" alt="{$alt}" loading="lazy"	>
                 </div>
     HTML;
-    
+
             // Indicator
             $indicatorActive = $i === 0 ? ' active' : '';
             $indicators .= <<<HTML
                 <li data-bs-slide-to="{$slideTo}" data-bs-target="#lb-{$lightboxId}" class="{$indicatorActive}"></li>
     HTML;
-    
+
             $i++;
         }
-    
+
         // Full Gallery Section inkl. Modal
         return <<<HTML
     <section data-bs-version="{$bsVersion}" class="gallery1 mbr-gallery {$cidClass}" id="{$id}">
@@ -569,7 +592,7 @@ class PageBuilder
     </section>
     HTML;
     }
-    
+
     public function renderImageInfoBlock(
         string $id,
         string $title,
@@ -578,14 +601,13 @@ class PageBuilder
         string $imageAlt = '',
         string $cidSuffix = '',
         string $bsVersion = '5.1'
-    ): string
-    {
+    ): string {
         $cidClass = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
         $title    = htmlspecialchars($title);
         $subtitle = htmlspecialchars($subtitle);
         $imageSrc = htmlspecialchars($imageSrc);
         $imageAlt = htmlspecialchars($imageAlt);
-    
+
         return <<<HTML
     <section data-bs-version="{$bsVersion}" class="image08 {$cidClass}" id="{$id}">
         <div class="container">
@@ -602,7 +624,7 @@ class PageBuilder
                 </div>
                 <div class="col-lg-8 side-features">
                     <div class="image-wrapper mb-4">
-                        <img class="w-100" src="{$imageSrc}" alt="{$imageAlt}">
+                        <img class="w-100" src="{$imageSrc}" alt="{$imageAlt}" loading="lazy">
                     </div>
                 </div>
             </div>
@@ -610,33 +632,32 @@ class PageBuilder
     </section>
     HTML;
     }
-    
+
     public function renderFeatureCardsWithImages(
         string $id,
         string $title = '',
         array $features = [],
         string $cidSuffix = '',
         string $bsVersion = '5.1'
-    ): string
-    {
+    ): string {
         $cidClass = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
-        $sectionTitle = $title !== '' 
-            ? "<div class=\"row justify-content-center\"><div class=\"col-12 content-head\"><h3 class=\"mbr-section-title mbr-fonts-style align-center mb-5 display-2\"><strong>" . htmlspecialchars($title) . "</strong></h3></div></div>" 
+        $sectionTitle = $title !== ''
+            ? "<div class=\"row justify-content-center\"><div class=\"col-12 content-head\"><h3 class=\"mbr-section-title mbr-fonts-style align-center mb-5 display-2\"><strong>" . htmlspecialchars($title) . "</strong></h3></div></div>"
             : '';
-    
+
         $cardsHtml = '';
         foreach ($features as $feature) {
             $img = htmlspecialchars($feature['img'] ?? '');
             $alt = htmlspecialchars($feature['alt'] ?? '');
             $headline = htmlspecialchars($feature['title'] ?? '');
             $text = htmlspecialchars($feature['text'] ?? '');
-    
+
             $cardsHtml .= <<<HTML
             <div class="item features-without-image col-12 col-lg-4 item-mb">
                 <div class="item-wrapper">
                     <div class="card-box align-left">
                         <div class="img-wrapper mb-3">
-                            <img src="{$img}" alt="{$alt}">
+                            <img src="{$img}" alt="{$alt}" loading="lazy">
                         </div>
                         <h5 class="card-title mbr-fonts-style display-5">
                             <strong>{$headline}</strong>
@@ -649,7 +670,7 @@ class PageBuilder
             </div>
     HTML;
         }
-    
+
         return <<<HTML
     <section data-bs-version="{$bsVersion}" class="features19 {$cidClass}" id="{$id}">
         <div class="container">
@@ -661,19 +682,18 @@ class PageBuilder
     </section>
     HTML;
     }
-    
+
     public function renderTextArticle(
         string $id,
         string $title,
         string $text,
         string $cidSuffix = '',
         string $bsVersion = '5.1'
-    ): string
-    {
+    ): string {
         $cidClass = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
         $title    = htmlspecialchars($title);
         $text     = htmlspecialchars($text);
-    
+
         return <<<HTML
     <section data-bs-version="{$bsVersion}" class="article13 {$cidClass}" id="{$id}">
         <div class="container">
@@ -702,16 +722,15 @@ class PageBuilder
         string $imageAlt = '',
         string $cidSuffix = '',
         string $bsVersion = '5.1'
-    ): string
-    {
+    ): string {
         $cidClass  = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
         $imageSrc  = htmlspecialchars($imageSrc);
         $imageAlt  = htmlspecialchars($imageAlt);
-    
+
         return <<<HTML
     <section data-bs-version="{$bsVersion}" class="image03 {$cidClass}" id="{$id}">
         <div class="image-block m-auto">
-            <img src="{$imageSrc}" alt="{$imageAlt}">
+            <img src="{$imageSrc}" alt="{$imageAlt}" loading="lazy">
         </div>
     </section>
     HTML;
@@ -723,11 +742,10 @@ class PageBuilder
         array $buttons, // Format: [['label' => 'Text', 'href' => 'link', 'class' => 'btn-primary'], ...]
         string $cidSuffix = '',
         string $bsVersion = '5.1'
-    ): string
-    {
+    ): string {
         $cidClass = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
         $title    = htmlspecialchars($title);
-    
+
         $buttonHtml = '';
         foreach ($buttons as $btn) {
             $label = htmlspecialchars($btn['label'] ?? 'Button');
@@ -737,7 +755,7 @@ class PageBuilder
             <a class="btn {$class} display-7" href="{$href}">{$label}</a>
     HTML;
         }
-    
+
         return <<<HTML
     <section data-bs-version="{$bsVersion}" class="header14 {$cidClass}" id="{$id}">
         <div class="container">
@@ -760,25 +778,24 @@ class PageBuilder
     HTML;
     }
 
-public function renderDownloadHeaderAndTextBanner(
-    string $id,
-    string $title,
-    string $text,
-    string $buttonLabel,
-    string $buttonHref,
-    string $buttonClass = 'btn-primary',
-    string $cidSuffix = '',
-    string $bsVersion = '5.1'
-): string
-{
-    $cidClass   = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
-    $title      = htmlspecialchars($title);
-    $text       = htmlspecialchars($text);
-    $buttonLabel = htmlspecialchars($buttonLabel);
-    $buttonHref  = htmlspecialchars($buttonHref);
-    $buttonClass = htmlspecialchars($buttonClass);
+    public function renderDownloadHeaderAndTextBanner(
+        string $id,
+        string $title,
+        string $text,
+        string $buttonLabel,
+        string $buttonHref,
+        string $buttonClass = 'btn-primary',
+        string $cidSuffix = '',
+        string $bsVersion = '5.1'
+    ): string {
+        $cidClass   = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
+        $title      = htmlspecialchars($title);
+        $text       = htmlspecialchars($text);
+        $buttonLabel = htmlspecialchars($buttonLabel);
+        $buttonHref  = htmlspecialchars($buttonHref);
+        $buttonClass = htmlspecialchars($buttonClass);
 
-    return <<<HTML
+        return <<<HTML
 <section data-bs-version="{$bsVersion}" class="header14 {$cidClass}" id="{$id}">
     <div class="container">
         <div class="row justify-content-center">
@@ -803,7 +820,7 @@ public function renderDownloadHeaderAndTextBanner(
     </div>
 </section>
 HTML;
-}
+    }
 
 
     public function renderFeatureCardsWithButtons(
@@ -811,18 +828,17 @@ HTML;
         array $features,
         string $cidSuffix = '',
         string $bsVersion = '5.1'
-    ): string
-    {
+    ): string {
         $cidClass = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
         $cardsHtml = '';
-    
+
         foreach ($features as $feature) {
             $title = htmlspecialchars($feature['title'] ?? '');
             $text  = htmlspecialchars($feature['text'] ?? '');
             $btnLabel = htmlspecialchars($feature['button']['label'] ?? '');
             $btnHref  = htmlspecialchars($feature['button']['href'] ?? '#');
             $btnClass = htmlspecialchars($feature['button']['class'] ?? 'btn-secondary');
-    
+
             $cardsHtml .= <<<HTML
             <div class="item features-without-image col-12 col-md-6 col-lg-4 item-mb">
                 <div class="item-wrapper">
@@ -841,7 +857,7 @@ HTML;
             </div>
     HTML;
         }
-    
+
         return <<<HTML
     <section data-bs-version="{$bsVersion}" class="features5 {$cidClass}" id="{$id}">
         <div class="container">
@@ -852,25 +868,24 @@ HTML;
     </section>
     HTML;
     }
-    
+
     public function renderFeatureSection(
         string $id,
         array $features,
         string $title = '',
         string $cidSuffix = '',
         string $bsVersion = '5.1'
-    ): string
-    {
+    ): string {
         $cidClass = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
         $sectionTitle = $title !== ''
             ? '<div class="row justify-content-center"><div class="col-12 mb-5 content-head"><h3 class="mbr-section-title mbr-fonts-style align-center mb-0 display-2"><strong>' . htmlspecialchars($title) . '</strong></h3></div></div>'
             : '';
-    
+
         $cardsHtml = '';
         foreach ($features as $feature) {
             $headline = htmlspecialchars($feature['title'] ?? '');
             $text     = htmlspecialchars($feature['text'] ?? '');
-    
+
             $cardsHtml .= <<<HTML
             <div class="item features-without-image col-12 col-lg-4 item-mb">
                 <div class="item-wrapper">
@@ -886,7 +901,7 @@ HTML;
             </div>
     HTML;
         }
-    
+
         return <<<HTML
     <section data-bs-version="{$bsVersion}" class="features19 {$cidClass}" id="{$id}">
         <div class="container">
@@ -898,17 +913,16 @@ HTML;
     </section>
     HTML;
     }
-    
+
     public function renderGoogleMap(
         string $id,
         string $iframeSrc,
         string $cidSuffix = '',
         string $bsVersion = '5.1'
-    ): string
-    {
+    ): string {
         $cidClass  = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
         $iframeSrc = htmlspecialchars($iframeSrc);
-    
+
         return <<<HTML
     <section data-bs-version="{$bsVersion}" class="map1 {$cidClass}" id="{$id}">
         <div class="container">
@@ -922,7 +936,7 @@ HTML;
     </section>
     HTML;
     }
-    
+
 
     public function renderLegalSection(
         string $id,
@@ -930,16 +944,15 @@ HTML;
         array $sections,
         string $cidSuffix = '',
         string $bsVersion = '5.1'
-    ): string
-    {
+    ): string {
         $cidClass   = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
         $mainTitle  = htmlspecialchars($mainTitle);
-    
+
         $contentHtml = '';
         foreach ($sections as $section) {
             $subtitle = htmlspecialchars($section['subtitle'] ?? '');
             $text     = $section['text'] ?? ''; // HTML erlaubt, daher nicht escapen
-    
+
             $contentHtml .= <<<HTML
             <div class="item features-without-image col-12">
                 <div class="item-wrapper">
@@ -951,7 +964,7 @@ HTML;
             </div>
     HTML;
         }
-    
+
         return <<<HTML
     <section data-bs-version="{$bsVersion}" class="article07 {$cidClass}" id="{$id}">
         <div class="container">
@@ -971,7 +984,7 @@ HTML;
     </section>
     HTML;
     }
-    
+
 
     public function renderDocumentDownloadCards(
         string $id,
@@ -981,19 +994,18 @@ HTML;
         string $cidSuffix = '',
         string $bsVersion = '5.1',
         string $textColorClass = 'text-white'
-    ): string
-    {
+    ): string {
         $cidClass = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
         $title     = htmlspecialchars($title);
         $description = htmlspecialchars($description);
-    
+
         $cardsHtml = '';
         foreach ($documents as $doc) {
             $docTitle = htmlspecialchars($doc['title'] ?? '');
             $docDesc  = htmlspecialchars($doc['description'] ?? '');
             $docLink  = htmlspecialchars($doc['href'] ?? '#');
             $btnLabel = htmlspecialchars($doc['button'] ?? 'Herunterladen');
-    
+
             $cardsHtml .= <<<HTML
             <div class="col-md-6 mb-4">
                 <div class="card-wrapper">
@@ -1008,7 +1020,7 @@ HTML;
             </div>
     HTML;
         }
-    
+
         return <<<HTML
     <section data-bs-version="{$bsVersion}" class="mbr-section content5 {$cidClass}" id="{$id}">
         <div class="container" style="margin-top: 6rem;">
@@ -1029,7 +1041,7 @@ HTML;
     </section>
     HTML;
     }
-    
+
     public function renderSectionHeader(
         string $id,
         string $title,
@@ -1039,16 +1051,15 @@ HTML;
         string $containerStyle = 'margin-top: 12rem;',
         string $titleTag = 'h3',
         string $subtitleTag = 'h4'
-    ): string
-    {
+    ): string {
         $cidClass  = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
         $title     = htmlspecialchars($title);
         $subtitle  = htmlspecialchars($subtitle);
-    
+
         $subtitleHtml = $subtitle !== ''
             ? "<{$subtitleTag} class=\"mbr-section-subtitle align-center mbr-fonts-style mb-4 display-7\">{$subtitle}</{$subtitleTag}>"
             : '';
-    
+
         return <<<HTML
     <section data-bs-version="{$bsVersion}" class="content4 {$cidClass}" id="{$id}">
         <div class="container" style="{$containerStyle}">
@@ -1064,24 +1075,23 @@ HTML;
     </section>
     HTML;
     }
-    
+
     public function renderDownloadList(
         string $id,
         string $title,
         array $downloads,
         string $cidSuffix = '',
         string $bsVersion = '5.1'
-    ): string
-    {
+    ): string {
         $cidClass  = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
         $title     = htmlspecialchars($title);
-    
+
         $itemsHtml = '';
         foreach ($downloads as $download) {
             $docTitle = htmlspecialchars($download['title'] ?? '');
             $docDesc  = htmlspecialchars($download['description'] ?? '');
             $docLink  = htmlspecialchars($download['href'] ?? '#');
-    
+
             $itemsHtml .= <<<HTML
             <div class="row mb-3">
                 <div class="col-12 col-md-8">
@@ -1097,7 +1107,7 @@ HTML;
             <hr>
     HTML;
         }
-    
+
         return <<<HTML
     <section data-bs-version="{$bsVersion}" class="content5 {$cidClass}" id="{$id}">
         <div class="container">
@@ -1122,18 +1132,17 @@ HTML;
         array $pages,
         string $cidSuffix = '',
         string $bsVersion = '5.1'
-    ): string
-    {
+    ): string {
         $cidClass = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
         $title    = htmlspecialchars($title);
-    
+
         $cardsHtml = '';
         foreach ($pages as $page) {
             $pageTitle = htmlspecialchars($page['title'] ?? '');
             $desc      = htmlspecialchars($page['description'] ?? '');
             $href      = htmlspecialchars($page['href'] ?? '#');
             $button    = htmlspecialchars($page['button'] ?? 'Zur Seite');
-    
+
             $cardsHtml .= <<<HTML
             <div class="col mb-4">
                 <div class="p-3 border rounded h-100 d-flex flex-column">
@@ -1148,7 +1157,7 @@ HTML;
             </div>
     HTML;
         }
-    
+
         return <<<HTML
     <section data-bs-version="{$bsVersion}" class="content5 {$cidClass}" id="{$id}">
         <div class="container">
@@ -1170,39 +1179,38 @@ HTML;
     </section>
     HTML;
     }
-    
+
     public function renderAnimatedGallery(
         string $id,
         array $rows,
         string $cidSuffix = '',
         string $bsVersion = '5.1'
-    ): string
-    {
+    ): string {
         $cidClass = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
-    
+
         $galleryHtml = '';
         foreach ($rows as $index => $images) {
             $rowClass = "grid-container-" . ($index + 1);
             $style = $index === 0 ? 'transform: translate3d(-200px, 0px, 0px);' : 'transform: translate3d(-70px, 0px, 0px);';
-    
+
             $imgHtml = '';
             foreach ($images as $img) {
                 $src = htmlspecialchars($img['src']);
                 $alt = htmlspecialchars($img['alt'] ?? '');
                 $imgHtml .= <<<HTML
                 <div class="grid-item">
-                    <img src="{$src}" alt="{$alt}">
+                    <img src="{$src}" alt="{$alt}" loading="lazy">
                 </div>
     HTML;
             }
-    
+
             $galleryHtml .= <<<HTML
             <div class="{$rowClass}" style="{$style}">
                 {$imgHtml}
             </div>
     HTML;
         }
-    
+
         return <<<HTML
     <section data-bs-version="{$bsVersion}" class="gallery4 {$cidClass}" id="{$id}">
         <div class="container-fluid gallery-wrapper">
@@ -1216,7 +1224,7 @@ HTML;
     </section>
     HTML;
     }
-    
+
     public function renderCenteredCTA(
         string $id,
         string $title,
@@ -1224,13 +1232,12 @@ HTML;
         string $buttonHref,
         string $cidSuffix = '',
         string $bsVersion = '5.1'
-    ): string
-    {
+    ): string {
         $cidClass     = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
         $title        = htmlspecialchars($title);
         $buttonLabel  = htmlspecialchars($buttonLabel);
         $buttonHref   = htmlspecialchars($buttonHref);
-    
+
         return <<<HTML
     <section data-bs-version="{$bsVersion}" class="header14 {$cidClass}" id="{$id}">
         <div class="container">
@@ -1250,7 +1257,7 @@ HTML;
     </section>
     HTML;
     }
-    
+
 
     public function renderFullPage(): string
     {
@@ -1289,4 +1296,3 @@ HTML;
             HTML;
     }
 }
-?>
