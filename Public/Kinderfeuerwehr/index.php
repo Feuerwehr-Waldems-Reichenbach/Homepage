@@ -11,7 +11,7 @@ $page = new PageBuilder(
 // Füge den Fullscreen Hero Abschnitt hinzu
 $page->addContent($page->renderFullscreenHero(
     id: 'header17-3i',
-    cidSuffix: 'u8ZkdG7dw2',
+    cidSuffix: 'Hero-Kinderfeuerwehr',
     title: 'Kinderfeuerwehr',
     subtitle: '', // Kein Untertitel im ursprünglichen Header
     buttonText: 'Erfahre mehr!',

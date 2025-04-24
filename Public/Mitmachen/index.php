@@ -11,7 +11,7 @@ $page = new PageBuilder(
 // Füge den Fullscreen Hero Abschnitt hinzu
 $page->addContent($page->renderFullscreenHero(
     id: 'header17-1i',
-    cidSuffix: 'u8N1tzsnVL',
+    cidSuffix: 'Hero-Mitmachen',
     title: 'Mach mit!',
     subtitle: '', // Kein Untertitel im ursprünglichen Header
     buttonText: 'Erfahre mehr!',

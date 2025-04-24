@@ -95,7 +95,7 @@ function showEinsaetze($itemsPerPage = 5, $customClass = '')
             transform: translateY(-2px);
             box-shadow: 0 3px 6px rgba(0,0,0,0.12);
         }
-        .einsatz-header {
+        .Header-einsaetze {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
@@ -282,7 +282,7 @@ function showEinsaetze($itemsPerPage = 5, $customClass = '')
             .einsatz-item {
                 padding: 0.8rem;
             }
-            .einsatz-header {
+            .Header-einsaetze {
                 flex-direction: column;
                 align-items: flex-start;
             }
@@ -383,7 +383,7 @@ function showEinsaetze($itemsPerPage = 5, $customClass = '')
                 $dauerText = substr($dauerText, 0, -2);
             }
             echo '<div class="einsatz-item">';
-            echo '<div class="einsatz-header">';
+            echo '<div class="Header-einsaetze">';
             echo '<div class="einsatz-date">' . $formattedDatum . ' Uhr</div>';
             echo '<div class="einsatz-badges">';
             echo '<span class="einsatz-stichwort">' . htmlspecialchars($einsatz['Stichwort']) . '</span>';

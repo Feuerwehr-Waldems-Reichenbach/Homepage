@@ -14,7 +14,7 @@ $page->addContent($page->renderFullscreenHero(
     'Im Glanz der Flammen, im Herzen des Dorfes.',
     'Erfahre mehr',
     '#image08-h',
-    'Hero-Image'
+    'Hero-Homepage'
 ));
 
 $page->addContent($page->renderImageTeaser(

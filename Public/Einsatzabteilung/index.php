@@ -20,7 +20,7 @@ $page->addContent($page->renderFullscreenHero(
     '', // Subtitle (leer)
     'Erfahre mehr!', // Button Text
     '#image08-2k', // Button Link (Anker zur nächsten Sektion)
-    'einsatzabteilung-header', // CID Suffix
+    'Hero-Einsatzabteilung', // CID Suffix
     0.8, // Jarallax Speed
     0.5, // Overlay Opacity
     'rgb(0, 0, 0)', // Overlay Color

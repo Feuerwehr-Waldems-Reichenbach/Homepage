@@ -13,7 +13,7 @@ $page = new PageBuilder(
 // Füge den Fullscreen Hero Abschnitt hinzu
 $page->addContent($page->renderFullscreenHero(
     id: 'header17-3a',
-    cidSuffix: 'u8ZjnL00u3',
+    cidSuffix: 'Hero-RUD',
     title: 'Realistische Unfalldarstellung',
     subtitle: '', // Kein Untertitel im ursprünglichen Header
     buttonText: 'Erfahre mehr!',

@@ -11,7 +11,7 @@ $page = new PageBuilder(
 // Füge den Fullscreen Hero Abschnitt hinzu
 $page->addContent($page->renderFullscreenHero(
     id: 'header17-2w',
-    cidSuffix: 'u8Na1RT7BN',
+    cidSuffix: 'Hero-Grillhuette',
     title: 'Grillhütte',
     subtitle: '', // Kein Untertitel im ursprünglichen Header
     buttonText: 'Erfahre mehr!',

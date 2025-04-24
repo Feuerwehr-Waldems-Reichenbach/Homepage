@@ -20,7 +20,7 @@ $page->addContent($page->renderFullscreenHero(
     '', // Subtitle (leer in diesem Fall)
     'Alle Einsätze', // Button Text
     '#Einsatzliste', // Button Link
-    'einsatz-header', // CID Suffix (optional, entspricht 'cid-einsatz-header')
+    'Hero-Einsaetze', // CID Suffix (optional, entspricht 'cid-Hero-Einsaetze')
     0.8, // Jarallax Speed
     0.5, // Overlay Opacity
     'rgb(0, 0, 0)', // Overlay Color
