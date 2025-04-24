@@ -945,7 +945,7 @@ class PageBuilder
         $buttonClass = htmlspecialchars($buttonClass);
 
         return <<<HTML
-<section data-bs-version="{$bsVersion}" class="header14 {$cidClass}" id="{$id}">
+<section data-bs-version="{$bsVersion}" class="header14 {$cidClass} mbr-parallax-background" id="{$id}">
     <div class="container">
         <div class="row justify-content-center">
             <div class="card col-12 col-md-12 col-lg-12">

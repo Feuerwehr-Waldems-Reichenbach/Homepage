@@ -1,36 +1,16 @@
-<!DOCTYPE html>
-<html>
+<?php
+require_once $_SERVER['DOCUMENT_ROOT'] . '/assets/includes/PageBuilder.php';
 
-<head>
-  <!-- FFR Seite -->
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
-  <link rel="shortcut icon" href="../assets/images/gravatar-logo-dunkel.jpg" type="image/x-icon">
-  <meta name="description"
-    content="Impressum der Freiwilligen Feuerwehr Reichenbach. Rechtliche Informationen und Kontaktdaten.">
-  <title>Impressum</title>
-  <link rel="stylesheet" href="../assets/web/assets/mobirise-icons2/mobirise2.css">
-  <link rel="stylesheet" href="../assets/bootstrap/css/bootstrap.min.css">
-  <link rel="stylesheet" href="../assets/bootstrap/css/bootstrap-grid.min.css">
-  <link rel="stylesheet" href="../assets/bootstrap/css/bootstrap-reboot.min.css">
-  <link rel="stylesheet" href="../assets/dropdown/css/style.css">
-  <link rel="stylesheet" href="../assets/socicon/css/styles.css">
-  <link rel="stylesheet" href="../assets/theme/css/style.css">
-  <link rel="preload"
-    href="https://fonts.googleapis.com/css?family=Inter+Tight:100,200,300,400,500,600,700,800,900,100i,200i,300i,400i,500i,600i,700i,800i,900i&display=swap"
-    as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript>
-    <link rel="stylesheet"
-      href="https://fonts.googleapis.com/css?family=Inter+Tight:100,200,300,400,500,600,700,800,900,100i,200i,300i,400i,500i,600i,700i,800i,900i&display=swap">
-  </noscript>
-  <link rel="preload" as="style" href="../assets/mobirise/css/mbr-additional.css?v=utNEgj">
-  <link rel="stylesheet" href="../assets/mobirise/css/mbr-additional.css?v=utNEgj" type="text/css">
-</head>
+$page = new PageBuilder(
+    title: 'Datenschutzerklärung',
+    description: 'Unsere Datenschutzerklärung informiert dich über den Umgang mit deinen persönlichen Daten bei der Freiwilligen Feuerwehr Reichenbach. Erfahre mehr über deine Rechte und unsere Maßnahmen zum Datenschutz.',
+    keywords: 'Datenschutzerklärung, Freiwillige Feuerwehr Reichenbach, Datenschutz, Privatsphäre, Informationen',
+    canonicalUrl: 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
+);
 
-<body>
-  <?php include '../assets/includes/navbar.php'; ?>
-  <section data-bs-version="5.1" class="article07 cid-u8NdAjmIcn" id="article07-1x">
+$page->addContent(
+    '
+<section data-bs-version="5.1" class="article07 cid-u8NdAjmIcn" id="article07-1x">
     <div class="container">
       <div class="row justify-content-center">
         <div class="card col-md-12 col-lg-10">
@@ -51,7 +31,7 @@
                 <div class="item-wrapper">
                   <h4 class="mbr-section-subtitle mbr-fonts-style mb-3 display-5"><strong>Vertreten durch:</strong></h4>
                   <p class="mbr-text mbr-fonts-style display-7">Herr Sascha Eder, 1. Vorsitzender, </script>Telefon:
-                    <script>document.write('+4<!--|-->9-1<!--|-->51-548<!--|--><!--|--><!--|-->4<!--|--><!--|-->63<!--|-->7<!--|-->5');</script>
+                    <script>document.write("+4<!--|-->9-1<!--|-->51-548<!--|--><!--|--><!--|-->4<!--|--><!--|-->63<!--|-->7<!--|-->5");</script>
                     <br>Herr Stephan Debus, 2. Vorsitzender
                   </p>
                   <p class="mbr-text mbr-fonts-style display-7"> <strong>Vertretungsberechtigt gemäß § 26
@@ -65,7 +45,7 @@
                     <strong>Kontakt:</strong>
                   </h4>
                   <p class="mbr-text mbr-fonts-style display-7">E-Mail:
-                    <script>document.write('i<!--|--><!--|-->nfo<!--|-->' + '@<!--|-->' + 'fe<!--|-->u<!--|-->erweh<!--|-->r-wald<!--|-->em<!--|-->s-rei<!--|-->che<!--|-->n<!--|-->ba<!--|-->ch.<!--|-->de');</script>
+                    <script>document.write("i<!--|--><!--|-->nfo<!--|-->@<!--|-->fe<!--|-->u<!--|-->erweh<!--|-->r-wald<!--|-->em<!--|-->s-rei<!--|-->che<!--|-->n<!--|-->ba<!--|-->ch.<!--|-->de");</script>
                   </p>
                 </div>
               </div>
@@ -130,7 +110,7 @@
                     </h4>
                     <p class="mbr-text mbr-fonts-style display-7">Die Datenschutzerklärung ist in vollem Umfang auf
                       unserer Webseite verfügbar und kann unter folgendem Link eingesehen werden: <a href="/Datenschutz"
-                        class="text-secondary"><?php echo $_SERVER['HTTP_HOST'] ?>/Datenschutz</a>.</p>
+                        class="text-secondary">' . $_SERVER['HTTP_HOST'].'/Datenschutz</a>.</p>
                   </div>
                 </div>
                 <div class="item-wrapper">
@@ -149,8 +129,7 @@
       </div>
     </div>
   </section>
-  <?php include '../assets/includes/socialFooter.php'; ?>
-  <?php include '../assets/includes/footer.php'; ?>
-</body>
+');
 
-</html>
+echo $page->renderFullPage();
+
