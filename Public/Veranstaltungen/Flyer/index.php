@@ -26,8 +26,8 @@
     <link rel="stylesheet"
       href="https://fonts.googleapis.com/css?family=Inter+Tight:100,200,300,400,500,600,700,800,900,100i,200i,300i,400i,500i,600i,700i,800i,900i&display=swap">
   </noscript>
-  <link rel="preload" as="style" href="../../assets/mobirise/css/mbr-additional.css?v=acTmw9">
-  <link rel="stylesheet" href="../../assets/mobirise/css/mbr-additional.css?v=acTmw9" type="text/css">
+  <link rel="preload" as="style" href="../../assets/ffr/css/ffr-additional.css?v=acTmw9">
+  <link rel="stylesheet" href="../../assets/ffr/css/ffr-additional.css?v=acTmw9" type="text/css">
   <style>
     .flyer-gallery {
       padding: 30px 0;

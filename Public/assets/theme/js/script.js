@@ -772,7 +772,7 @@ $jscomp.polyfill(
                 )[_0x420bd3(0x108, "x0!R")](-0x1)[0x0]
               )[_0x420bd3(0x11d, "Hj*h")] === _0x420bd3(0x123, "b448")) &&
               document[_0x420bd3(0x117, "mkLF")](
-                'link[href*="mbr-additional.css"]'
+                'link[href*="ffr-additional.css"]'
               )[_0x420bd3(0x105, "ZRsA")](function (_0x52ab05) {
                 _0x52ab05["remove"]();
               });

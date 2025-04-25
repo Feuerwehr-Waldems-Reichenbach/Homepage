@@ -64,7 +64,6 @@ class PageBuilder
         $this->buildDefaultSchemaOrgData();
 
         $this->styles = [
-            '/assets/web/assets/mobirise-icons2/mobirise2.css',
             '/assets/bootstrap/css/bootstrap.min.css',
             '/assets/bootstrap/css/bootstrap-grid.min.css',
             '/assets/bootstrap/css/bootstrap-reboot.min.css',
@@ -73,7 +72,7 @@ class PageBuilder
             '/assets/socicon/css/styles.css',
             '/assets/theme/css/style.css',
             '/assets/css/custom-parallax.css',
-            '/assets/mobirise/css/mbr-additional.css?v=M1cYSM',
+            '/assets/ffr/css/ffr-additional.css?v=M1cYSM',
         ];
     }
 
@@ -527,8 +526,7 @@ class PageBuilder
         $scripts = [
             '/assets/bootstrap/js/bootstrap.bundle.min.js',
             '/assets/smoothscroll/smooth-scroll.js',
-            '/assets/ytplayer/index.js',
-            '/assets/dropdown/js/navbar-dropdown.js',
+
             '/assets/theme/js/script.js',
             '/assets/parallax/jarallax.js',
             '/assets/scrollgallery/scroll-gallery.js',
