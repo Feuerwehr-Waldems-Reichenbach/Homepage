@@ -93,7 +93,7 @@ function renderMenu($items, $level = 0)
         <ul class="navbar-nav nav-dropdown ms-auto">
             <?php renderMenu($menu); ?>
         </ul>
-        <div class="navbar-buttons mbr-section-btn">
+        <div class="navbar-buttons ffr-section-btn">
             <a class="btn btn-sm" href="https://www.facebook.com/groups/163127135137/" target="_blank">
                 <span class="socicon-facebook socicon"></span>
             </a>
@@ -204,7 +204,7 @@ function renderMenu($items, $level = 0)
         transform: translateY(-50%) translateX(3px);
     }
 
-    .navbar-buttons.mbr-section-btn .btn {
+    .navbar-buttons.ffr-section-btn .btn {
         background-color: transparent;
         border: none;
         color: white;
@@ -212,12 +212,12 @@ function renderMenu($items, $level = 0)
         transition: transform 0.3s ease, opacity 0.3s ease;
     }
 
-    .navbar-buttons.mbr-section-btn .btn:hover {
+    .navbar-buttons.ffr-section-btn .btn:hover {
         transform: translateY(-2px);
         opacity: 0.8;
     }
 
-    .navbar-buttons.mbr-section-btn .socicon {
+    .navbar-buttons.ffr-section-btn .socicon {
         font-size: 1.5rem;
     }
 
@@ -326,7 +326,7 @@ function renderMenu($items, $level = 0)
             transform: translateX(10px);
         }
 
-        .navbar-buttons.mbr-section-btn {
+        .navbar-buttons.ffr-section-btn {
             margin-top: 1rem;
             justify-content: center;
             display: flex;

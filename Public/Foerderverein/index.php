@@ -25,7 +25,7 @@ $page->addContent($page->renderFullscreenHero(
 // Füge den Textabschnitt "Förderverein" hinzu
 $page->addContent($page->renderTextSection(
     id: 'article07-57',
-    cidSuffix: 'uqOITArEvj',
+    cidSuffix: 'Text-Section-Foerderverein',
     mainTitle: 'Förderverein',
     sections: [
         [
@@ -38,7 +38,7 @@ $page->addContent($page->renderTextSection(
 // Füge den Call-to-Action Banner hinzu
 $page->addContent($page->renderCenteredCTA(
     id: 'header14-3o',
-    cidSuffix: 'u8ZkIxhC5z',
+    cidSuffix: 'CTA-Foerderverein',
     title: 'Du möchtest uns unterstützen?',
     buttonLabel: 'Erfahre mehr',
     buttonHref: '/Unterstuetzen' // Link zum Unterstützen

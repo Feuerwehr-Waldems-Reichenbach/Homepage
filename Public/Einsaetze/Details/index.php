@@ -30,8 +30,8 @@
   <link rel="stylesheet" href="../../assets/mobirise/css/mbr-additional.css?v=acTmw9" type="text/css">
 
   <style>
-    .mbr-section-title,
-    .mbr-section-subtitle,
+    .ffr-section-title,
+    .ffr-section-subtitle,
     .footer-text,
     .footer-head {
       color: rgb(0, 0, 0) !important;

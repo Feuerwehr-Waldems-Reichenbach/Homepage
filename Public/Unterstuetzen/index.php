@@ -25,7 +25,7 @@ $page->addContent($page->renderFullscreenHero(
 // Füge den Features Abschnitt (Unterstützungsmöglichkeiten) hinzu
 $page->addContent($page->renderFeatureCardsWithButtons(
     id: 'features05-1q',
-    cidSuffix: 'u8N7rEygIP',
+    cidSuffix: 'Feature-Cards',
     features: [
         [
             'title' => 'Aktives Mitglied werden',
@@ -58,9 +58,9 @@ $page->addContent($page->renderFeatureCardsWithButtons(
 ));
 
 // Füge den Download Header und Text Banner hinzu
-$page->addContent($page->renderDownloadHeaderAndTextBanner(
+$page->addContent($page->renderCTAHeaderTextButtonBanner(
     id: 'header14-1r',
-    cidSuffix: 'u8N93x5o9S',
+    cidSuffix: 'CTA-Unterstuetzen',
     title: 'Lade dir den Aufnahmeantrag herunter',
     text: 'Als passives Mitglied unterstützt du die Feuerwehr mit einem jährlichen Beitrag. Diese Mittel helfen uns dabei, wichtige Ausrüstung anzuschaffen und unsere Einsatzbereitschaft aufrechtzuerhalten.',
     buttonLabel: 'Jetzt herunterladen',

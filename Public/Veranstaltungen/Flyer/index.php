@@ -93,11 +93,11 @@
   include_once($assetsPath . 'includes/navbar.php');
   ?>
   <!-- Flyer auswahl Seite-->
-  <section class="mbr-section content5 cid-u8NdAjmIcn flyer-gallery" id="content5-1">
+  <section class="ffr-section content5 cid-Download-Cards flyer-gallery" id="content5-1">
     <div class="container">
       <div class="row justify-content-center">
         <div class="col-12">
-          <h2 class="mbr-section-title mbr-fonts-style mb-5 text-center display-2">Flyer Übersicht</h2>
+          <h2 class="ffr-section-title ffr-fonts-style mb-5 text-center display-2">Flyer Übersicht</h2>
         </div>
       </div>
       <?php

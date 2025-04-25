@@ -27,7 +27,7 @@ $page->addContent($page->renderFullscreenHero(
 // Füge den Abschnitt "R(ealistische)U(nfall)D(arstellung)" (Bild rechts, Text links) hinzu
 $page->addContent($page->renderImageInfoBlock(
     id: 'image08-3b',
-    cidSuffix: 'u8ZjuKvE8f',
+    cidSuffix: 'Image-Info-Image-Right',
     title: 'R(ealistische)U(nfall)D(arstellung)',
     subtitle: 'Um für Einsätze gewappnet zu sein, üben unsere Einsatzkräfte selbstverständlich regelmäßig. Damit dies möglichst realitätsnah ist, haben wir vor einigen Jahren unsere R(ealistische)U(nfall)D(arstellungs)-Gruppe gegründet.',
     imageSrc: '../assets/images/img20240706082638-1.webp',
@@ -35,9 +35,9 @@ $page->addContent($page->renderImageInfoBlock(
 ));
 
 // Füge den Call-to-Action Banner (Parallax) mit Untertitel hinzu
-$page->addContent($page->renderDownloadHeaderAndTextBanner(
+$page->addContent($page->renderCTAHeaderTextButtonBanner(
     id: 'header14-56',
-    cidSuffix: 'uqDhRWcJbH',
+    cidSuffix: 'CTA-RUD',
     title: 'Bereit für realistische Einsätze?',
     text: 'Unsere RUD-Gruppe bietet Ihnen die Möglichkeit, realistische Trainingsszenarien zu erleben, die Ihre Einsatzkräfte optimal vorbereiten.', // Verwende den Textparameter für den Untertitel
     buttonLabel: 'Jetzt Kontakt aufnehmen',
@@ -49,7 +49,7 @@ $page->addContent($page->renderDownloadHeaderAndTextBanner(
 // Füge den Abschnitt "Für authentisches Training" (Bild rechts, Text links) hinzu
 $page->addContent($page->renderImageInfoBlock(
     id: 'image08-3c',
-    cidSuffix: 'u8Zjvd54Wk',
+    cidSuffix: 'Image-Info-Image-Left',
     title: 'Für authentisches Training',
     subtitle: 'Die RUD-Gruppe schminkt unterschiedliche Arten von Wunden und mimt Betroffene, sodass die Einsatzkräfte unter fast realen Einsatzbedingungen lernen richtig zu reagieren.<div><br></div>', // Behalte die Zeilenumbrüche bei
     imageSrc: '../assets/images/img-20231117-wa0015.webp',
@@ -59,7 +59,7 @@ $page->addContent($page->renderImageInfoBlock(
 // Füge den Abschnitt "Einsatzbereitschaft über Reichenbach hinaus" (Bild rechts, Text links) hinzu
 $page->addContent($page->renderImageInfoBlock(
     id: 'image08-3d',
-    cidSuffix: 'u8Zjyzi0Q3',
+    cidSuffix: 'Image-Info-Image-Right',
     title: 'Einsatzbereitschaft über Reichenbach hinaus',
     subtitle: '<div>Mittlerweile ist unser Team nicht nur für die Fw Reichenbach im Einsatz, sondern ist überall bei unterschiedlichen Hilfsorganisationen oder auch für den RTK im Einsatz.</div>', // Behalte die div-Struktur bei
     imageSrc: '../assets/images/img20240706125716.webp',
@@ -69,7 +69,7 @@ $page->addContent($page->renderImageInfoBlock(
 // Füge den Abschnitt "Wir unterstützen Ihre Übungen" (Bild rechts, Text links) mit E-Mail-Link hinzu
 $page->addContent($page->renderImageInfoBlock(
     id: 'image08-55',
-    cidSuffix: 'uqCga1hIYy',
+    cidSuffix: 'Image-Info-Image-Left',
     title: 'Wir unterstützen Ihre Übungen',
     subtitle: '<div><span style="font-size: 1.4rem;">Solltet ihr Interesse daran haben, eine Übung realistisch zu planen und durchzuführen, könnt ihr euch gerne&nbsp;an&nbsp;uns&nbsp;wenden.</span></div><br><div><span style="font-size: 1.4rem;"><em><a href="mailto:rud@feuerwehr-waldems-reichenbach.de" class="text-info">rud@feuerwehr-waldems-reichenbach.de</a></em><br></span><br></div>', // Behalte die HTML-Struktur bei
     imageSrc: '../assets/images/img20240825115127.webp',
@@ -79,7 +79,7 @@ $page->addContent($page->renderImageInfoBlock(
 // Füge die Galerie mit Lightbox anstelle des Sliders hinzu
 $page->addContent($page->renderGalleryWithLightbox(
     id: 'gallery01-5b', // Verwende eine passende ID für die Galerie mit Lightbox
-    cidSuffix: 'einsatzabteilung-gallery-card', // Behalte das ursprüngliche CID-Suffix bei
+    cidSuffix: 'Image-Gallery-Grid-With-Modal', // Behalte das ursprüngliche CID-Suffix bei
     title: 'Bildergalerie RUD', // Füge einen Titel für die Galerie hinzu
     images: [
         ['src' => '../assets/images/img20240706082638-1.webp', 'alt' => 'RUD Demonstration Bild 1'],

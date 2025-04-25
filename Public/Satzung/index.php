@@ -15,7 +15,7 @@ $page = new PageBuilder(
 // Füge den Abschnitt für die Satzungen (Titel, Beschreibung, Download-Karten) hinzu
 $page->addContent($page->renderDocumentDownloadCards(
     id: 'content5-1',
-    cidSuffix: 'u8NdAjmIcn',
+    cidSuffix: 'Download-Cards',
     title: 'Satzungen',
     description: 'Hier finden Sie die aktuellen Satzungen zum Download:',
     documents: [

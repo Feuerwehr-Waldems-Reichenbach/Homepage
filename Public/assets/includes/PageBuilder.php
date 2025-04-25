@@ -288,18 +288,18 @@ class PageBuilder
         $cidClass = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
 
         return <<<HTML
-    <section data-bs-version="{$bsVersion}" class="header16 {$cidClass} mbr-fullscreen jarallax" id="{$id}" data-jarallax-speed="{$jarallaxSpeed}">
-        <div class="mbr-overlay" style="opacity: {$overlayOpacity}; background-color: {$overlayColor};"></div>
+    <section data-bs-version="{$bsVersion}" class="header16 {$cidClass} ffr-fullscreen jarallax" id="{$id}" data-jarallax-speed="{$jarallaxSpeed}">
+        <div class="ffr-overlay" style="opacity: {$overlayOpacity}; background-color: {$overlayColor};"></div>
         <div class="container-fluid">
             <div class="row">
                 <div class="content-wrap col-12 col-md-12">
-                    <h1 class="mbr-section-title mbr-fonts-style mbr-white mb-4 display-1">
+                    <h1 class="ffr-section-title ffr-fonts-style ffr-white mb-4 display-1">
                         <strong>{$title}</strong>
                     </h1>
-                    <p class="mbr-fonts-style mbr-text mbr-white mb-4 display-7">
+                    <p class="ffr-fonts-style ffr-text ffr-white mb-4 display-7">
                         {$subtitle}
                     </p>
-                    <div class="mbr-section-btn">
+                    <div class="ffr-section-btn">
                         <a class="btn {$btnClass} display-7" href="{$buttonHref}">{$buttonText}</a>
                     </div>
                 </div>
@@ -345,13 +345,13 @@ class PageBuilder
                     <div class="row justify-content-center">
                         <div class="col-lg-4">
                             <div class="col-12 col-md-12">
-                                <h5 class="mbr-section-title mbr-fonts-style mt-0 mb-4 display-2">
+                                <h5 class="ffr-section-title ffr-fonts-style mt-0 mb-4 display-2">
                                     <strong>{$title}</strong>
                                 </h5>
-                                <h6 class="mbr-section-subtitle mbr-fonts-style mt-0 mb-4 display-7">
+                                <h6 class="ffr-section-subtitle ffr-fonts-style mt-0 mb-4 display-7">
                                     {$subtitle}
                                 </h6>
-                                <div class="mbr-section-btn item-footer mt-3 main-button">
+                                <div class="ffr-section-btn item-footer mt-3 main-button">
                                     <a href="{$linkHref}" class="btn item-btn {$btnClass} display-7">
                                         {$linkText}
                                     </a>
@@ -394,16 +394,16 @@ class PageBuilder
         $cidClass = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
 
         return <<<HTML
-            <section data-bs-version="{$bsVersion}" class="header14 {$cidClass} mbr-parallax-background" id="{$id}">
+            <section data-bs-version="{$bsVersion}" class="header14 {$cidClass} ffr-parallax-background" id="{$id}">
                 <div class="container">
                     <div class="row justify-content-center">
                         <div class="card col-12 col-md-12 col-lg-9">
                             <div class="card-wrapper">
                                 <div class="card-box align-center">
-                                    <h1 class="card-title mbr-fonts-style mb-4 display-2">
+                                    <h1 class="card-title ffr-fonts-style mb-4 display-2">
                                         <strong>{$title}</strong>
                                     </h1>
-                                    <div class="mbr-section-btn mt-4">
+                                    <div class="ffr-section-btn mt-4">
                                         <a href="{$buttonHref}" class="btn {$btnClass} display-7">
                                             {$buttonText}
                                         </a>
@@ -411,61 +411,6 @@ class PageBuilder
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </section>
-            HTML;
-    }
-
-    /**
-     * Rendert einen horizontal scrollenden Galerie-Streifen ("gallery07")
-     *
-     * @param string      $id            Abschnitt-ID, z. B. "gallery07-k"
-     * @param array       $images        Liste der Bilder:
-     *                                   [
-     *                                      ['src' => 'assets/img1.webp', 'alt' => 'Alt-Text'],
-     *                                      …
-     *                                   ]
-     * @param string      $cidSuffix     Mobirise-CID-Suffix (leer, wenn egal)
-     * @param string      $gridClass     CSS-Klasse der Grid-Spalte (z. B. "grid-container-3")
-     * @param string      $movementClass Animations-Klasse (z. B. "moving-left")
-     * @param int         $translateX    Startversatz in px (für Inline-Style)
-     * @param string      $bsVersion     data-bs-version (Default: "5.1")
-     * @return string                    HTML-Code der Galerie
-     */
-    public function renderGalleryGrid(
-        string $id,
-        array $images,
-        string $cidSuffix = '',
-        string $gridClass = 'grid-container-3',
-        string $movementClass = 'moving-left',
-        int $translateX = -200,
-        string $bsVersion = '5.1'
-    ): string {
-        $cidClass = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
-
-        // Grid-Items zusammensetzen
-        $itemsHtml = '';
-        foreach ($images as $img) {
-            $src = $img['src'] ?? '';
-            $alt = $img['alt'] ?? '';
-            $itemsHtml .= <<<HTML
-                            <div class="grid-item">
-                                <img src="{$src}" alt="{$alt}" loading="lazy">
-                            </div>
-
-                HTML;
-        }
-
-        return <<<HTML
-            <section data-bs-version="{$bsVersion}" class="gallery07 {$cidClass}" id="{$id}">
-                <div class="container-fluid gallery-wrapper">
-                    <div class="row justify-content-center">
-                        <div class="col-12 content-head"></div>
-                    </div>
-                    <div class="grid-container">
-                        <div class="{$gridClass} {$movementClass}" style="transform: translate3d({$translateX}px, 0, 0);">
-            {$itemsHtml}            </div>
                     </div>
                 </div>
             </section>
@@ -517,16 +462,16 @@ class PageBuilder
                                        data-toggle="collapse" data-bs-toggle="collapse"
                                        href="#{$collapseId}" aria-expanded="false"
                                        aria-controls="{$collapseId}">
-                                        <h6 class="panel-title-edit mbr-semibold mbr-fonts-style mb-0 display-5">
+                                        <h6 class="panel-title-edit ffr-semibold ffr-fonts-style mb-0 display-5">
                                             {$question}
                                         </h6>
-                                        <span class="sign mbr-iconfont mobi-mbri-arrow-down"></span>
+                                        <span class="sign ffr-iconfont mobi-mbri-arrow-down"></span>
                                     </a>
                                 </div>
                                 <div id="{$collapseId}" class="panel-collapse noScroll collapse" role="tabpanel"
                                      aria-labelledby="{$headingId}" data-bs-parent="#{$panelGroupId}">
                                     <div class="panel-body">
-                                        <p class="mbr-fonts-style panel-text display-7 text-white">
+                                        <p class="ffr-fonts-style panel-text display-7 text-white">
                                             {$answer}
                                         </p>
                                     </div>
@@ -545,8 +490,8 @@ class PageBuilder
                             <div class="content">
                                 <div class="row justify-content-center mb-5">
                                     <div class="col-12 content-head">
-                                        <div class="mbr-section-head">
-                                            <h4 class="mbr-section-title mbr-fonts-style align-center mb-0 display-2">
+                                        <div class="ffr-section-head">
+                                            <h4 class="ffr-section-title ffr-fonts-style align-center mb-0 display-2">
                                                 <strong>{$title}</strong>
                                             </h4>
                                         </div>
@@ -677,7 +622,7 @@ class PageBuilder
                     <img class="w-100" src="{$src}" alt="{$alt}"
                          data-bs-slide-to="{$slideTo}" data-bs-target="#lb-{$lightboxId}" loading="lazy">
                     <div class="icon-wrapper">
-                        <span class="mobi-mbri mobi-mbri-search mbr-iconfont mbr-iconfont-btn"></span>
+                        <span class="mobi-mbri mobi-mbri-search ffr-iconfont ffr-iconfont-btn"></span>
                     </div>
                 </div>
             </div>
@@ -702,23 +647,23 @@ class PageBuilder
 
         // Full Gallery Section inkl. Modal
         return <<<HTML
-    <section data-bs-version="{$bsVersion}" class="gallery1 mbr-gallery {$cidClass}" id="{$id}">
+    <section data-bs-version="{$bsVersion}" class="gallery1 ffr-gallery {$cidClass}" id="{$id}">
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-12 content-head">
-                    <div class="mbr-section-head mb-5">
-                        <h3 class="mbr-section-title mbr-fonts-style align-center m-0 display-2">
+                    <div class="ffr-section-head mb-5">
+                        <h3 class="ffr-section-title ffr-fonts-style align-center m-0 display-2">
                             <strong>{$titleEscaped}</strong>
                         </h3>
                     </div>
                 </div>
             </div>
-            <div class="row mbr-gallery mbr-masonry" data-masonry='{"percentPosition": true }'>
+            <div class="row ffr-gallery ffr-masonry" data-masonry='{"percentPosition": true }'>
     {$gridHtml}
             </div>
     
             <!-- Lightbox Modal -->
-            <div class="modal mbr-slider" tabindex="-1" role="dialog" id="{$lightboxId}-modal">
+            <div class="modal ffr-slider" tabindex="-1" role="dialog" id="{$lightboxId}-modal">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-body">
@@ -767,10 +712,10 @@ class PageBuilder
             <div class="row justify-content-center">
                 <div class="col-lg-4">
                     <div class="col-12 col-md-12">
-                        <h5 class="mbr-section-title mbr-fonts-style mt-0 mb-4 display-2">
+                        <h5 class="ffr-section-title ffr-fonts-style mt-0 mb-4 display-2">
                             <strong>{$title}</strong>
                         </h5>
-                        <h6 class="mbr-section-subtitle mbr-fonts-style mt-0 mb-4 display-7">
+                        <h6 class="ffr-section-subtitle ffr-fonts-style mt-0 mb-4 display-7">
                             {$subtitle}
                         </h6>
                     </div>
@@ -795,7 +740,7 @@ class PageBuilder
     ): string {
         $cidClass = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
         $sectionTitle = $title !== ''
-            ? "<div class=\"row justify-content-center\"><div class=\"col-12 content-head\"><h3 class=\"mbr-section-title mbr-fonts-style align-center mb-5 display-2\"><strong>" . htmlspecialchars($title) . "</strong></h3></div></div>"
+            ? "<div class=\"row justify-content-center\"><div class=\"col-12 content-head\"><h3 class=\"ffr-section-title ffr-fonts-style align-center mb-5 display-2\"><strong>" . htmlspecialchars($title) . "</strong></h3></div></div>"
             : '';
 
         $cardsHtml = '';
@@ -812,10 +757,10 @@ class PageBuilder
                         <div class="img-wrapper mb-3">
                             <img src="{$img}" alt="{$alt}" loading="lazy">
                         </div>
-                        <h5 class="card-title mbr-fonts-style display-5">
+                        <h5 class="card-title ffr-fonts-style display-5">
                             <strong>{$headline}</strong>
                         </h5>
-                        <p class="card-text mbr-fonts-style display-7">
+                        <p class="card-text ffr-fonts-style display-7">
                             {$text}
                         </p>
                     </div>
@@ -853,10 +798,10 @@ class PageBuilder
                 <div class="card col-md-12 col-lg-12">
                     <div class="card-wrapper">
                         <div class="card-box align-left">
-                            <h4 class="card-title mbr-fonts-style display-2">
+                            <h4 class="card-title ffr-fonts-style display-2">
                                 <strong>{$title}</strong>
                             </h4>
-                            <p class="mbr-text mbr-fonts-style mt-4 display-7">
+                            <p class="ffr-text ffr-fonts-style mt-4 display-7">
                                 {$text}
                             </p>
                         </div>
@@ -914,10 +859,10 @@ class PageBuilder
                 <div class="card col-12 col-md-12 col-lg-12">
                     <div class="card-wrapper">
                         <div class="card-box align-center">
-                            <h1 class="card-title mbr-fonts-style mb-4 display-2">
+                            <h1 class="card-title ffr-fonts-style mb-4 display-2">
                                 <strong>{$title}</strong>
                             </h1>
-                            <div class="mbr-section-btn mt-4">
+                            <div class="ffr-section-btn mt-4">
                                 {$buttonHtml}
                             </div>
                         </div>
@@ -929,7 +874,7 @@ class PageBuilder
     HTML;
     }
 
-    public function renderDownloadHeaderAndTextBanner(
+    public function renderCTAHeaderTextButtonBanner(
         string $id,
         string $title,
         string $text,
@@ -945,19 +890,19 @@ class PageBuilder
         $buttonClass = htmlspecialchars($buttonClass);
 
         return <<<HTML
-<section data-bs-version="{$bsVersion}" class="header14 {$cidClass} mbr-parallax-background" id="{$id}">
+<section data-bs-version="{$bsVersion}" class="header14 {$cidClass} ffr-parallax-background" id="{$id}">
     <div class="container">
         <div class="row justify-content-center">
             <div class="card col-12 col-md-12 col-lg-12">
                 <div class="card-wrapper">
                     <div class="card-box align-center">
-                        <h1 class="card-title mbr-fonts-style mb-4 display-2">
+                        <h1 class="card-title ffr-fonts-style mb-4 display-2">
                             <strong>{$title}</strong>
                         </h1>
-                        <p class="mbr-text mbr-fonts-style mb-4 display-7 text-white">
+                        <p class="ffr-text ffr-fonts-style mb-4 display-7 text-white">
                             {$text}
                         </p>
-                        <div class="mbr-section-btn mt-4">
+                        <div class="ffr-section-btn mt-4">
                             <a class="btn {$buttonClass} display-7" href="{$buttonHref}">
                                 {$buttonLabel}
                             </a>
@@ -992,13 +937,13 @@ HTML;
             <div class="item features-without-image col-12 col-md-6 col-lg-4 item-mb">
                 <div class="item-wrapper">
                     <div class="card-box align-left">
-                        <h5 class="card-title mbr-fonts-style display-5">
+                        <h5 class="card-title ffr-fonts-style display-5">
                             <strong>{$title}</strong>
                         </h5>
-                        <p class="card-text mbr-fonts-style display-7">
+                        <p class="card-text ffr-fonts-style display-7">
                             {$text}
                         </p>
-                        <div class="mbr-section-btn item-footer">
+                        <div class="ffr-section-btn item-footer">
                             <a href="{$btnHref}" class="btn item-btn {$btnClass} display-7">{$btnLabel}</a>
                         </div>
                     </div>
@@ -1027,7 +972,7 @@ HTML;
     ): string {
         $cidClass = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
         $sectionTitle = $title !== ''
-            ? '<div class="row justify-content-center"><div class="col-12 mb-5 content-head"><h3 class="mbr-section-title mbr-fonts-style align-center mb-0 display-2"><strong>' . $title . '</strong></h3></div></div>'
+            ? '<div class="row justify-content-center"><div class="col-12 mb-5 content-head"><h3 class="ffr-section-title ffr-fonts-style align-center mb-0 display-2"><strong>' . $title . '</strong></h3></div></div>'
             : '';
 
         $cardsHtml = '';
@@ -1039,10 +984,10 @@ HTML;
             <div class="item features-without-image col-12 col-lg-4 item-mb">
                 <div class="item-wrapper">
                     <div class="card-box align-left">
-                        <h5 class="card-title mbr-fonts-style display-5">
+                        <h5 class="card-title ffr-fonts-style display-5">
                             <strong>{$headline}</strong>
                         </h5>
-                        <p class="card-text mbr-fonts-style display-7">
+                        <p class="card-text ffr-fonts-style display-7">
                             {$text}
                         </p>
                     </div>
@@ -1105,10 +1050,10 @@ HTML;
             $contentHtml .= <<<HTML
             <div class="item features-without-image col-12">
                 <div class="item-wrapper">
-                    <h4 class="mbr-section-subtitle mbr-fonts-style mb-3 display-5">
+                    <h4 class="ffr-section-subtitle ffr-fonts-style mb-3 display-5">
                         <strong>{$subtitle}</strong>
                     </h4>
-                    <p class="mbr-text mbr-fonts-style display-7">{$text}</p>
+                    <p class="ffr-text ffr-fonts-style display-7">{$text}</p>
                 </div>
             </div>
     HTML;
@@ -1120,7 +1065,7 @@ HTML;
             <div class="row justify-content-center">
                 <div class="card col-md-12 col-lg-10">
                     <div class="card-wrapper">
-                        <h3 class="card-title mbr-fonts-style mbr-white mt-3 mb-4 display-2">
+                        <h3 class="card-title ffr-fonts-style ffr-white mt-3 mb-4 display-2">
                             <strong>{$mainTitle}</strong>
                         </h3>
                         <div class="row card-box align-left">
@@ -1158,9 +1103,9 @@ HTML;
             <div class="col-md-6 mb-4">
                 <div class="card-wrapper">
                     <div class="card-box align-left">
-                        <h4 class="card-title mbr-fonts-style mb-3 display-5"><strong>{$docTitle}</strong></h4>
-                        <p class="mbr-text mbr-fonts-style mb-3 display-7">{$docDesc}</p>
-                        <div class="mbr-section-btn mt-3">
+                        <h4 class="card-title ffr-fonts-style mb-3 display-5"><strong>{$docTitle}</strong></h4>
+                        <p class="ffr-text ffr-fonts-style mb-3 display-7">{$docDesc}</p>
+                        <div class="ffr-section-btn mt-3">
                             <a class="btn btn-primary display-4" href="{$docLink}" target="_blank">{$btnLabel}</a>
                         </div>
                     </div>
@@ -1170,14 +1115,14 @@ HTML;
         }
 
         return <<<HTML
-    <section data-bs-version="{$bsVersion}" class="mbr-section content5 {$cidClass}" id="{$id}">
+    <section data-bs-version="{$bsVersion}" class="ffr-section content5 {$cidClass}" id="{$id}">
         <div class="container" style="margin-top: 6rem;">
             <div class="row justify-content-center">
                 <div class="col-md-12 text-center">
-                    <h2 class="mbr-section-title mbr-fonts-style mb-4 display-2 {$textColorClass}">
+                    <h2 class="ffr-section-title ffr-fonts-style mb-4 display-2 {$textColorClass}">
                         <strong>{$title}</strong>
                     </h2>
-                    <p class="mbr-text mbr-fonts-style display-7 text-center {$textColorClass}">
+                    <p class="ffr-text ffr-fonts-style display-7 text-center {$textColorClass}">
                         {$description}
                     </p>
                 </div>
@@ -1203,7 +1148,7 @@ HTML;
         $cidClass  = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
 
         $subtitleHtml = $subtitle !== ''
-            ? "<{$subtitleTag} class=\"mbr-section-subtitle align-center mbr-fonts-style mb-4 display-7\">{$subtitle}</{$subtitleTag}>"
+            ? "<{$subtitleTag} class=\"ffr-section-subtitle align-center ffr-fonts-style mb-4 display-7\">{$subtitle}</{$subtitleTag}>"
             : '';
 
         return <<<HTML
@@ -1211,7 +1156,7 @@ HTML;
         <div class="container" style="{$containerStyle}">
             <div class="row justify-content-center">
                 <div class="title col-md-12 col-lg-10">
-                    <{$titleTag} class="mbr-section-title mbr-fonts-style align-center mb-4 display-2">
+                    <{$titleTag} class="ffr-section-title ffr-fonts-style align-center mb-4 display-2">
                         <strong>{$title}</strong>
                     </{$titleTag}>
                     {$subtitleHtml}
@@ -1240,12 +1185,12 @@ HTML;
             $itemsHtml .= <<<HTML
             <div class="row mb-3">
                 <div class="col-12 col-md-8">
-                    <h5 class="mbr-fonts-style display-7"><strong>{$docTitle}</strong></h5>
-                    <p class="mbr-text mbr-fonts-style display-7">{$docDesc}</p>
+                    <h5 class="ffr-fonts-style display-7"><strong>{$docTitle}</strong></h5>
+                    <p class="ffr-text ffr-fonts-style display-7">{$docDesc}</p>
                 </div>
                 <div class="col-12 col-md-4 text-center text-md-end mt-3 mt-md-0">
                     <a href="{$docLink}" class="btn btn-primary display-7" target="_blank">
-                        <span class="mobi-mbri mobi-mbri-download mbr-iconfont mbr-iconfont-btn"></span>Herunterladen
+                        <span class="mobi-mbri mobi-mbri-download ffr-iconfont ffr-iconfont-btn"></span>Herunterladen
                     </a>
                 </div>
             </div>
@@ -1258,7 +1203,7 @@ HTML;
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-md-12 col-lg-10">
-                    <h4 class="mbr-section-title mbr-fonts-style mb-4 display-5"><strong>{$title}</strong></h4>
+                    <h4 class="ffr-section-title ffr-fonts-style mb-4 display-5"><strong>{$title}</strong></h4>
                     <div class="card p-3">
                         <div class="card-body">
                             {$itemsHtml}
@@ -1290,11 +1235,11 @@ HTML;
             $cardsHtml .= <<<HTML
             <div class="col mb-4">
                 <div class="p-3 border rounded h-100 d-flex flex-column">
-                    <h5 class="mbr-fonts-style display-7"><strong>{$pageTitle}</strong></h5>
-                    <p class="mbr-text mbr-fonts-style display-7 mb-3">{$desc}</p>
+                    <h5 class="ffr-fonts-style display-7"><strong>{$pageTitle}</strong></h5>
+                    <p class="ffr-text ffr-fonts-style display-7 mb-3">{$desc}</p>
                     <div class="text-end mt-auto">
                         <a href="{$href}" class="btn btn-secondary display-7">
-                            <span class="mobi-mbri mobi-mbri-right mbr-iconfont mbr-iconfont-btn"></span>{$button}
+                            <span class="mobi-mbri mobi-mbri-right ffr-iconfont ffr-iconfont-btn"></span>{$button}
                         </a>
                     </div>
                 </div>
@@ -1307,7 +1252,7 @@ HTML;
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-md-12 col-lg-10">
-                    <h4 class="mbr-section-title mbr-fonts-style mb-4 display-5">
+                    <h4 class="ffr-section-title ffr-fonts-style mb-4 display-5">
                         <strong>{$title}</strong>
                     </h4>
                     <div class="card p-3">
@@ -1388,8 +1333,8 @@ HTML;
                 <div class="card col-12 col-md-12 col-lg-10">
                     <div class="card-wrapper">
                         <div class="card-box align-center">
-                            <h1 class="card-title mbr-fonts-style mb-4 display-2"><strong>{$title}</strong></h1>
-                            <div class="mbr-section-btn mt-4">
+                            <h1 class="card-title ffr-fonts-style mb-4 display-2"><strong>{$title}</strong></h1>
+                            <div class="ffr-section-btn mt-4">
                                 <a class="btn btn-primary display-7" href="{$buttonHref}">{$buttonLabel}</a>
                             </div>
                         </div>

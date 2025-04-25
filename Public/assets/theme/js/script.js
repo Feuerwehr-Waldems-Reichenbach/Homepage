@@ -547,7 +547,7 @@ $jscomp.polyfill(
     }
     function c(a) {
       setTimeout(function () {
-        b(a, ".mbr-parallax-background").forEach(function (a) {
+        b(a, ".ffr-parallax-background").forEach(function (a) {
           jarallax &&
             (jarallax(a, { speed: 0.6 }), (a.style.position = "relative"));
         });
@@ -981,28 +981,28 @@ $jscomp.polyfill(
           window.smartresize(function () {
             var a = window.innerHeight;
             0 > c.indexOf(a) && (a = c[window.innerWidth > a ? 1 : 0]);
-            var b = document.querySelector(".mbr-section--full-height");
+            var b = document.querySelector(".ffr-section--full-height");
             b && (b.style.height = a + "px");
           });
         })(window.innerWidth, window.innerHeight)
       : K ||
         (window.smartresize(function () {
-          var a = document.querySelector(".mbr-section--full-height");
+          var a = document.querySelector(".ffr-section--full-height");
           a && (a.style.height = window.innerHeight + "px");
         }),
         document.addEventListener("add.cards", function (a) {
           document
             .querySelector("html")
             .classList.contains("mbr-site-loaded") &&
-            b(a.target, ".mbr-section--full-height").length &&
+            b(a.target, ".ffr-section--full-height").length &&
             window.dispatchEvent(new CustomEvent("resize"));
         }));
     window.addEventListener("smartresize", function () {
-      document.querySelectorAll(".mbr-section--16by9").forEach(a);
+      document.querySelectorAll(".ffr-section--16by9").forEach(a);
     });
     if (t)
       f(document).on("add.cards changeParameter.cards", function (c) {
-        var e = b(c.target, ".mbr-section--16by9");
+        var e = b(c.target, ".ffr-section--16by9");
         e.length
           ? e.forEach(function (b) {
               b.setAttribute("data-16by9", "true");
@@ -1017,7 +1017,7 @@ $jscomp.polyfill(
       window.addEventListener("update.parallax", function (a) {
         setTimeout(function () {
           if (a) {
-            var a = document.querySelector(".mbr-parallax-background");
+            var a = document.querySelector(".ffr-parallax-background");
             a.jarallax("coverImage");
             a.jarallax("clipContainer");
             a.jarallax("onScroll");
@@ -1305,7 +1305,7 @@ $jscomp.polyfill(
             !a.parents().filter(function (a) {
               if (
                 a.matches(
-                  "a, p, .navbar, .mbr-arrow, footer, .iconbox, .mbr-slider, .mbr-gallery, .mbr-testimonial .card-block, #cookiesdirective, .mbr-wowslider, .accordion, .tab-content, .engine, #scrollToTop, .modal, .item"
+                  "a, p, .navbar, .mbr-arrow, footer, .iconbox, .ffr-slider, .ffr-gallery, .mbr-testimonial .card-block, #cookiesdirective, .mbr-wowslider, .accordion, .tab-content, .engine, #scrollToTop, .modal, .item"
                 )
               )
                 return !0;
@@ -1370,9 +1370,9 @@ $jscomp.polyfill(
   }
   document.querySelectorAll("nav.navbar").length &&
     ((u = d(document.querySelector("nav.navbar"))),
-    document.querySelector(".mbr-after-navbar.mbr-fullscreen") &&
+    document.querySelector(".mbr-after-navbar.ffr-fullscreen") &&
       (document.querySelector(
-        ".mbr-after-navbar.mbr-fullscreen"
+        ".mbr-after-navbar.ffr-fullscreen"
       ).style.paddingTop = u + "px"));
   if (
     !n &&
@@ -1381,7 +1381,7 @@ $jscomp.polyfill(
   )
     f(document).on("add.cards", function (a) {
       var b = a.target;
-      b.classList.contains("mbr-fullscreen") &&
+      b.classList.contains("ffr-fullscreen") &&
         ((a = function () {
           b.style.height = "auto";
           b.offsetHeight <= window.innerHeight && (b.style.height = "1px");
@@ -1389,8 +1389,8 @@ $jscomp.polyfill(
         window.addEventListener("load", a),
         window.addEventListener("resize", a));
       if (
-        b.classList.contains("mbr-slider") ||
-        b.classList.contains("mbr-gallery")
+        b.classList.contains("ffr-slider") ||
+        b.classList.contains("ffr-gallery")
       )
         b.querySelectorAll(".carousel-indicators").forEach(function (a) {
           a.classList.add("ie-fix");
@@ -1399,7 +1399,7 @@ $jscomp.polyfill(
             a.style.width = "30px";
           });
         }),
-          b.classList.contains("mbr-slider") &&
+          b.classList.contains("ffr-slider") &&
             b
               .querySelectorAll(".full-screen .slider-fullscreen-image")
               .forEach(function (a) {
@@ -1588,7 +1588,7 @@ $jscomp.polyfill(
               e = a.closest(".card").querySelector(".panel-collapse"),
               d = a.querySelector("span.sign")
                 ? a.querySelector("span.sign")
-                : a.querySelector("span.mbr-iconfont");
+                : a.querySelector("span.ffr-iconfont");
             !e.classList.contains("collapsing") ||
               (-1 == b.indexOf("toggle") && -1 == b.indexOf("accordion")) ||
               (a.classList.contains("collapsed")
@@ -1605,14 +1605,14 @@ $jscomp.polyfill(
                   .forEach(function (a) {
                     a = a.querySelector("span.sign")
                       ? a.querySelector("span.sign")
-                      : a.querySelector("span.mbr-iconfont");
+                      : a.querySelector("span.ffr-iconfont");
                     a.classList.remove("mbri-arrow-up");
                     a.classList.add("mbri-arrow-down");
                   })));
           });
         })),
-    0 != document.querySelectorAll(".mbr-slider.carousel").length &&
-      document.querySelectorAll(".mbr-slider.carousel").forEach(function (a) {
+    0 != document.querySelectorAll(".ffr-slider.carousel").length &&
+      document.querySelectorAll(".ffr-slider.carousel").forEach(function (a) {
         var b = a.querySelectorAll(".carousel-control"),
           e = a.querySelectorAll(".carousel-indicators li"),
           d = function (a) {

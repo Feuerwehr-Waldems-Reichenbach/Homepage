@@ -21,7 +21,7 @@ $page->addContent($page->renderAccordionList(
             'a' => 'Bloß kein Wasser! Deckel oder Löschdecke drauf...'],
         // … beliebig viele weitere FAQs …
     ],
-    cidSuffix: 'u8J6dF66TX'  // optional, falls Mobirise‑Klasse wichtig
+    cidSuffix: 'FAQ'  // optional, falls Mobirise‑Klasse wichtig
 ));
 
 // Seite vollständig ausgeben

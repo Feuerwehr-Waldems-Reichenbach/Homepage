@@ -25,7 +25,7 @@ $page->addContent($page->renderFullscreenHero(
 // Füge den Abschnitt "Unsere Voraushelfer" (Bild rechts, Text links) hinzu
 $page->addContent($page->renderImageInfoBlock(
     id: 'image08-34',
-    cidSuffix: 'u8ZhN6kKrl',
+    cidSuffix: 'Image-Info-Image-Right',
     title: 'Unsere Voraushelfer',
     subtitle: 'Unsere Voraushelfer sind alle aktive Mitglieder der Einsatzabteilung. Sie kommen zum Einsatz, wenn der Rettungswagen die Hilfsfrist nicht einhalten kann und ein lebensbedrohlicher Zustand vorliegt. Ursprünglich planten wir nur die Anschaffung eines AED-Geräts zum Eigenschutz unserer Einsatzkräfte. Doch schließlich entschlossen wir uns, eine Voraushelfer-Gruppe für ganz Reichenbach zu gründen, zum Nutzen aller Bürger.',
     imageSrc: '../assets/images/img20241021203058.webp',
@@ -35,7 +35,7 @@ $page->addContent($page->renderImageInfoBlock(
 // Füge den Abschnitt "Einsatz und Auswirkungen" (Bild rechts, Text links) hinzu
 $page->addContent($page->renderImageInfoBlock(
     id: 'image08-36',
-    cidSuffix: 'u8ZhYSt9eE',
+    cidSuffix: 'Image-Info-Image-Left',
     title: 'Einsatz und Auswirkungen',
     subtitle: 'Zu unserem Ausrückebereich zählen neben Reichenbach noch drei weitere Waldemser Ortsteile. Mit einer Ausrückzeit von unter 3 Minuten können wir die therapiefreie Zeit wesentlich verkürzen. Die Patienten sind oft erleichtert, ein bekanntes Gesicht zu sehen. So tragen wir dazu bei, in Notfällen schnelle Hilfe zu leisten.',
     imageSrc: '../assets/images/img20241021204127.webp',
@@ -45,7 +45,7 @@ $page->addContent($page->renderImageInfoBlock(
 // Füge den Abschnitt "Organisation und Finanzierung" (Bild rechts, Text links) hinzu
 $page->addContent($page->renderImageInfoBlock(
     id: 'image08-5a',
-    cidSuffix: 'uH1euiJgSe',
+    cidSuffix: 'Image-Info-Image-Right',
     title: 'Organisation und Finanzierung',
     subtitle: 'Wir finanzieren uns ausschließlich durch Spenden. Unsere Helfer zeigen großes Engagement und bezahlen Teile ihrer Ausrüstung sogar privat. Mittlerweile sind wir weit über Reichenbach hinaus als sehr motivierte und gut ausgebildete Truppe bekannt. Diese Anerkennung bestärkt uns in unserer wichtigen Arbeit.',
     imageSrc: '../assets/images/img-20240821-wa0031.webp',

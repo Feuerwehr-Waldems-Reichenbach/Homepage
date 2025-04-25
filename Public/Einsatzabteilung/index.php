@@ -34,7 +34,7 @@ $page->addContent($page->renderImageInfoBlock(
     'Die Einsatzabteilung besteht aus engagierten, ehrenamtlichen Mitgliedern, die sich freiwillig für den Schutz und die Sicherheit unserer Gemeinde einsetzen.<br><br> Unsere Feuerwehrleute stehen rund um die Uhr bereit, um in Notfällen schnell und effektiv zu helfen.<br><br><br>', // Text (inkl. HTML <br>)
     '../assets/images/img20240513192710-1.webp', // Bildquelle
     'Einsatzkräfte im Einsatz', // Alternativtext für Bild (Beispiel)
-    'einsatzabteilung-image-card-right' // CID Suffix
+    'Image-Info-Image-Right' // CID Suffix
 ));
 
 // --- Text/Bild Block 2: Regelmäßige Übungen ---
@@ -44,7 +44,7 @@ $page->addContent($page->renderImageInfoBlock(
     'Um unsere Einsatzkräfte optimal vorzubereiten, führen wir regelmäßige Übungsabende durch. <br><br>Diese Trainingseinheiten ermöglichen es uns, verschiedene Einsatzszenarien zu üben und die Abläufe zu festigen, um im Notfall reibungslos und sicher zu arbeiten.', // Text (inkl. HTML <br>)
     '../assets/images/e69c6e0e-6622-49f5-a608-bd65a6a9dc8e.webp', // Bildquelle
     'Feuerwehrübung', // Alternativtext für Bild (Beispiel)
-    'einsatzabteilung-image-card-left' // CID Suffix
+    'Image-Info-Image-Left' // CID Suffix
 ));
 
 // --- Call to Action Banner ---
@@ -53,7 +53,7 @@ $page->addContent($page->renderCallToActionBanner(
     'Interesse geweckt?', // Titel
     '/Mitmachen', // Button Link
     'Jetzt mitmachen', // Button Text
-    'einsatzabteilung-call-to-action-card', // CID Suffix
+    'CTA-Einsatzabteilung', // CID Suffix
     'btn-primary' // Button Class
 ));
 
@@ -64,7 +64,7 @@ $page->addContent($page->renderImageInfoBlock(
     'Gut ausgebildet zu sein, ist für uns das A und O. Bei speziellen Trainings, wie hier im Gasbrand-Übungszentrum, bereiten wir uns auf die unterschiedlichsten Einsätze vor.<br>', // Text (inkl. HTML <br>)
     '../assets/images/img20240311194221-2.webp', // Bildquelle
     'Fortbildung Gasbrand', // Alternativtext für Bild (Beispiel)
-    'einsatzabteilung-image-card-right' // CID Suffix
+    'Image-Info-Image-Right' // CID Suffix
 ));
 
 // --- Text/Bild Block 4: Realistisch und abwechslungsreich ---
@@ -74,7 +74,7 @@ $page->addContent($page->renderImageInfoBlock(
     'In stark verrauchten Räumen, bei simulierten Bränden und bei der Personensuche, unsere Übungen sind vielseitig und orientieren sich an echten Einsatzbedingungen. <br><br>Durch abwechslungsreiche Trainings unter nahezu realen Bedingungen bleiben wir flexibel und sind auf alle Herausforderungen vorbereitet.', // Text (inkl. HTML <br>)
     '../assets/images/img20240729194549-genswap-1-neu.webp', // Bildquelle
     'Realistische Übung', // Alternativtext für Bild (Beispiel)
-    'einsatzabteilung-image-card-left' // CID Suffix
+    'Image-Info-Image-Left' // CID Suffix
 ));
 
 // --- Text/Bild Block 5: Zusammenarbeit ---
@@ -84,7 +84,7 @@ $page->addContent($page->renderImageInfoBlock(
     'Regelmäßige Übungen mit benachbarten Feuerwehren sind ein wichtiger Bestandteil unserer Arbeit. <br><br>Dabei trainieren wir gemeinsam verschiedene Einsatzszenarien, wie zum Beispiel technische Hilfeleistungen bei eingeklemmten Personen. <br><br>Diese Zusammenarbeit stärkt nicht nur den Teamgeist, sondern sorgt auch dafür, dass wir bei gemeinsamen Einsätzen effektiv und reibungslos agieren können.', // Text (inkl. HTML <br>)
     '../assets/images/img20240617193441.webp', // Bildquelle
     'Gemeinsame Übung mit anderer Feuerwehr', // Alternativtext für Bild (Beispiel)
-    'einsatzabteilung-image-card-right' // CID Suffix
+    'Image-Info-Image-Right' // CID Suffix
 ));
 
 // --- Galerie ---
@@ -119,7 +119,7 @@ $page->addContent($page->renderGalleryWithLightbox(
     'Sieh uns in Action', // Titel der Galerie
     $galleryImagesEa, // Array mit Bilddaten
     'einsatzabteilung-gallery-lightbox', // Eigene ID für die Lightbox (optional)
-    'einsatzabteilung-gallery-card' // CID Suffix (optional)
+    'Image-Gallery-Grid-With-Modal' // CID Suffix (optional)
 ));
 
 // 5. Gesamte Seite rendern

@@ -25,7 +25,7 @@ $page->addContent($page->renderFullscreenHero(
 // Füge den Features Abschnitt (Grillhütte Infos) hinzu
 $page->addContent($page->renderFeatureSection(
     id: 'features019-4d',
-    cidSuffix: 'ucMeMoyWyD',
+    cidSuffix: 'Feature-Cards-Grillhuette',
     title: 'Die Grillhütte in Waldems Reichenbach',
     features: [
         [
@@ -58,7 +58,7 @@ $page->addContent($page->renderFeatureSection(
 // Füge den Abschnitt "Jetzt Reservieren" (Bild + Text + Button) hinzu
 $page->addContent($page->renderImageTeaser(
     id: 'image08-4o',
-    cidSuffix: 'uk1oWlXE78',
+    cidSuffix: 'Image-Info-Image-Right',
     title: 'Jetzt Reservieren',
     subtitle: 'Unsere Grillhütte in Waldems Reichenbach ist von schöner Natur umgeben und bietet einen herrlichen Ausblick. Perfekt für entspannte Feiern und gesellige Treffen.',
     linkHref: '/Grillhuette/Reservierung/',
@@ -71,7 +71,7 @@ $page->addContent($page->renderImageTeaser(
 // Füge den Abschnitt "Sanitäre Einrichtungen" (Bild + Text) hinzu
 $page->addContent($page->renderImageInfoBlock(
     id: 'image08-4i',
-    cidSuffix: 'uirrr09eYT',
+    cidSuffix: 'Image-Info-Image-Left',
     title: 'Sanitäre Einrichtungen',
     subtitle: 'Unsere Grillhütte verfügt über eine Toilette. Strom- und Wasseranschluss sind ebenfalls vorhanden.',
     imageSrc: '../assets/images/img20240629134359.webp',
@@ -81,7 +81,7 @@ $page->addContent($page->renderImageInfoBlock(
 // Füge den Abschnitt "Gemütliche Atmosphäre" (Bild + Text) hinzu
 $page->addContent($page->renderImageInfoBlock(
     id: 'image08-4m',
-    cidSuffix: 'uirzTyy54v',
+    cidSuffix: 'Image-Info-Image-Right',
     title: 'Gemütliche Atmosphäre',
     subtitle: 'Die Hütte bietet eine rustikale und gemütliche Atmosphäre für Ihre Gäste. Der überdachte Bereich schützt bei jedem Wetter und sorgt für ein angenehmes Ambiente.',
     imageSrc: '../assets/images/img20240629134839.webp',
@@ -91,7 +91,7 @@ $page->addContent($page->renderImageInfoBlock(
 // Füge den Call-to-Action Banner (Parallax) hinzu
 $page->addContent($page->renderCallToActionBanner(
     id: 'header14-4n',
-    cidSuffix: 'uirAq4zQE4',
+    cidSuffix: 'CTA-Grillhuette',
     title: 'Interesse geweckt?',
     buttonHref: '/Grillhuette/Reservierung/',
     buttonText: 'Jetzt reservieren',
@@ -102,7 +102,7 @@ $page->addContent($page->renderCallToActionBanner(
 // Füge den Abschnitt "Weitläufiges Gelände" (Bild + Text) hinzu
 $page->addContent($page->renderImageInfoBlock(
     id: 'image08-4j',
-    cidSuffix: 'uirrBdLv9E',
+    cidSuffix: 'Image-Info-Image-Left',
     title: 'Weitläufiges Gelände',
     subtitle: 'Das großzügige Gelände bietet ausreichend Platz für Biertischgarnituren und zum Feiern unter freiem Himmel. Die natürliche Umgebung mit Bäumen spendet angenehmen Schatten.',
     imageSrc: '../assets/images/img20240514182602.webp',
@@ -112,7 +112,7 @@ $page->addContent($page->renderImageInfoBlock(
 // Füge den Abschnitt "Perfekt für Feiern" (Bild + Text) hinzu
 $page->addContent($page->renderImageInfoBlock(
     id: 'image08-4l',
-    cidSuffix: 'uirzufmCLC',
+    cidSuffix: 'Image-Info-Image-Right',
     title: 'Perfekt für Feiern',
     subtitle: 'Ob Geburtstag, Familientreffen oder Vereinsfeier - unsere Grillhütte bietet den idealen Rahmen für Ihre Veranstaltung. Das Überdachte Häuschen ermöglicht auch bei wechselhaftem Wetter einen angenehmen Aufenthalt.',
     imageSrc: '../assets/images/img20240629170654.webp',
@@ -122,7 +122,7 @@ $page->addContent($page->renderImageInfoBlock(
 // Füge den Google Maps Abschnitt hinzu
 $page->addContent($page->renderGoogleMap(
     id: 'map01-1z',
-    cidSuffix: 'u8O82GUYTO',
+    cidSuffix: 'Map-Google',
     iframeSrc: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4288.739201693983!2d8.374920483868253!3d50.27139912395397!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47bdb1bf3444aa6f%3A0x53abe310515b94df!2sGrillh%C3%BCtte%20Reichenbach!5e0!3m2!1sde!2sde!4v1712062474346!5m2!1sde!2sde' // Verwende die URL aus dem Original
 ));
 

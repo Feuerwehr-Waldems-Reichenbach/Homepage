@@ -95,8 +95,8 @@ $page->addContent($page->renderGalleryWithLightbox(
     'gallery02-41', // ID des Abschnitts
     'Siehe uns in Action!', // Titel der Galerie
     $galleryImages, // Array mit Bilddaten
-    'einsatz-gallery-lightbox', // Eigene ID für die Lightbox (optional)
-    'einsatz-gallery' // CID Suffix (optional)
+    'Image-Gallery-Grid-With-Modal-lightbox', // Eigene ID für die Lightbox (optional)
+    'Image-Gallery-Grid-With-Modal' // CID Suffix (optional)
 ));
 
 // 5. Gesamte Seite rendern

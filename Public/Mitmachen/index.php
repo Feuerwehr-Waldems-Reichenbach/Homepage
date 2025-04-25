@@ -25,7 +25,7 @@ $page->addContent($page->renderFullscreenHero(
 // Füge den Features Abschnitt (Einsatz-, Jugend-, Kinderfeuerwehr) hinzu
 $page->addContent($page->renderFeatureCardsWithImages(
     id: 'features019-1j',
-    cidSuffix: 'u8N1UzkJC0',
+    cidSuffix: 'Feature-Cards-With-Images',
     title: '', // Kein Titel oberhalb der Karten im Original
     features: [
         [
@@ -52,7 +52,7 @@ $page->addContent($page->renderFeatureCardsWithImages(
 // Füge den Textabschnitt "Interessiert?" hinzu
 $page->addContent($page->renderTextArticle(
     id: 'article13-4s',
-    cidSuffix: 'ukzYHmVHQq',
+    cidSuffix: 'Text-Article',
     title: 'Interessiert?',
     text: 'Wenn du neugierig bist und mehr über unsere Arbeit erfahren möchtest, bist du herzlich eingeladen, zu einem unserer Termine vorbeizukommen. Ob Einsatzabteilung, Jugendfeuerwehr oder Kinderfeuerwehr – schau einfach vorbei, lerne uns kennen und finde heraus, wie spannend und erfüllend das Engagement bei der Feuerwehr sein kann!',
 ));
@@ -60,7 +60,7 @@ $page->addContent($page->renderTextArticle(
 // Füge den Bildabschnitt hinzu
 $page->addContent($page->renderImageSection(
     id: 'image04-1l',
-    cidSuffix: 'u8N5hHePcj',
+    cidSuffix: 'Inage-Full-Size',
     imageSrc: 'Datei/Jahreskalender Feuerwehr Reichenbach.jpg',
     imageAlt: 'Kalender'
 ));
@@ -68,7 +68,7 @@ $page->addContent($page->renderImageSection(
 // Füge den Header mit Download-Buttons hinzu
 $page->addContent($page->renderDownloadHeaderWithButtons(
     id: 'header14-1n',
-    cidSuffix: 'u8N5PcjmYp',
+    cidSuffix: 'Download-header-With-Buttons',
     title: 'Hier gibt\'s unseren Übungsplan',
     buttons: [
         [

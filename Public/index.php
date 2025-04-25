@@ -19,7 +19,7 @@ $page->addContent($page->renderFullscreenHero(
 
 $page->addContent($page->renderImageTeaser(
     'image08-h',
-    'u8DwU6WLje',
+    'ImageTeaser-Image-Right',
     'Die Einsatzabteilung',
     'Unsere Einsatzabteilung ist immer bereit für schnelle und effiziente Hilfe bei Notfällen.',
     '/Einsatzabteilung',
@@ -30,7 +30,7 @@ $page->addContent($page->renderImageTeaser(
 
 $page->addContent($page->renderImageTeaser(
     'image08-2f',
-    'u8Te4FldCg',
+    'ImageTeaser-Image-Left',
     'Die Voraus-Helfer',
     'Unsere Voraus-Helfer leisten als Erste am Einsatzort lebensrettende Maßnahmen.',
     '/Voraus-Helfer',
@@ -45,12 +45,12 @@ $page->addContent($page->renderCallToActionBanner(
     'Bereit für den Einsatz deines Lebens?',
     '/Mitmachen',
     'Jetzt mitmachen',
-    'u8DE7DBCnr'
+    'CTA-Startseite'
 ));
 
 $page->addContent($page->renderImageTeaser(
     'image08-i',
-    'u8Dxu2alFC',
+    'ImageTeaser-Image-Right',
     'Die Realistische Unfalldarstellung',
     'Unsere Abteilung für Realistische Unfalldarstellung simuliert Unfälle, um Einsatzkräfte optimal zu schulen.',
     '/Realistische-Unfalldarstellung',
@@ -62,21 +62,22 @@ $page->addContent($page->renderImageTeaser(
 
 // foto slider
 
-$page->addContent($page->renderGalleryGrid(
-    'gallery07-k',
+$page->addContent($page->renderAnimatedGallery(
+    id: 'gallery07-k',
+    cidSuffix: 'Image-Slider-On-Scroll',
+   rows: [
     [
         ['src' => 'assets/images/img20240715191603.webp', 'alt' => 'Feuerwehr Reichenbach'],
         ['src' => 'assets/images/img-3957.webp', 'alt' => 'Feuerwehr Reichenbach'],
         ['src' => 'assets/images/img-3392.webp', 'alt' => 'Feuerwehr Reichenbach'],
         ['src' => 'assets/images/img20240715200605.webp', 'alt' => 'Feuerwehr Reichenbach']
-    ],
-    'u8DC2aFSso'
+    ] ],
 ));
 
 
 $page->addContent($page->renderImageTeaser(
     'image08-2h',
-    'u8TfeceLWe',
+    'ImageTeaser-Image-Left',
     'Die Jugendfeuerwehr',
     'Unsere Jugendfeuerwehr bietet Jugendlichen im Alter von 10 bis 17 Jahren praxisnahe Einblicke in die Feuerwehrarbeit.',
     '/Jugendfeuerwehr',
@@ -87,7 +88,7 @@ $page->addContent($page->renderImageTeaser(
 
 $page->addContent($page->renderImageTeaser(
     'image08-2i',
-    'u8Tft7TrpG',
+    'ImageTeaser-Image-Right',
     'Die Kinderfeuerwehr',
     'Unsere Kinderfeuerwehr richtet sich an Kinder von 6 bis 10 Jahren und vermittelt spielerisch die Grundlagen der Feuerwehrarbeit.',
     '/Kinderfeuerwehr',
@@ -107,10 +108,10 @@ $page->addContent($page->renderAccordionList(
         ['q' => 'Was sind die wichtigsten Erste-Hilfe-Maßnahmen, die jeder kennen sollte?', 'a' => 'Die stabile Seitenlage und die Herz-Lungen-Wiederbelebung sind lebensrettende Maßnahmen, die jeder beherrschen sollte. Auch das richtige Anlegen eines Druckverbandes kann im Notfall entscheidend sein.'],
         ['q' => 'Welche Informationen sind für die Einsatzkräfte wichtig, wenn ich einen Unfall melde?', 'a' => 'Gib genau an, wo der Unfall passiert ist, was geschehen ist und ob Personen verletzt sind. Informationen über Gefahrenstoffe oder besondere Risiken sind ebenfalls hilfreich.']
     ],
-    'u8J6dF66TX'
+    'FAQ'
 ));
 
-
+$page->addContent($page->renderPopup());
 
 // Seite vollständig ausgeben
 echo $page->renderFullPage();

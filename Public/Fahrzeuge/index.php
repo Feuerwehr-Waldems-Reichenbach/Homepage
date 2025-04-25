@@ -23,7 +23,7 @@ $page->addContent($page->renderFullscreenHero(
 // Füge den TSF-W Abschnitt (Bild + Text) hinzu
 $page->addContent($page->renderImageInfoBlock(
     id: 'image08-2r',
-    cidSuffix: 'u8UEWIhu82',
+    cidSuffix: 'Image-Info-Image-Left',
     title: 'TSF-W (Tragkraftspritzenfahrzeug mit Wassertank)',
     subtitle: 'Unser TSF-W ist ein vielseitiges Einsatzfahrzeug, das speziell für die Brandbekämpfung und technische Hilfeleistungen ausgestattet ist. Mit einem integrierten Wassertank und leistungsstarker Pumpe sind wir in der Lage, schnell und effektiv auf Brände zu reagieren. Das Fahrzeug verfügt zudem über moderne Ausrüstung für Rettungseinsätze, wodurch es ein unverzichtbarer Bestandteil unserer Einsatztabteilung ist.',
     imageSrc: '../assets/images/img-3899.webp',
@@ -33,7 +33,7 @@ $page->addContent($page->renderImageInfoBlock(
 // Füge den MTF Abschnitt (Bild + Text) hinzu
 $page->addContent($page->renderImageInfoBlock(
     id: 'image08-2u',
-    cidSuffix: 'u8UGspFSKh',
+    cidSuffix: 'Image-Info-Image-Right',
     title: 'MTF (Mannschaftstransportfahrzeug)',
     subtitle: 'Unser MTF dient hauptsächlich dem sicheren Transport unserer Einsatzkräfte zum Einsatzort. Es bietet ausreichend Platz für die gesamte Mannschaft und die notwendige Ausrüstung. Darüber hinaus wird das MTF für logistische Aufgaben und als mobiles Einsatzleitfahrzeug genutzt. Flexibilität und Schnelligkeit machen unser MTF zu einem wichtigen Fahrzeug in unserer Flotte.',
     imageSrc: '../assets/images/img20240819093838-1.webp',
@@ -43,7 +43,7 @@ $page->addContent($page->renderImageInfoBlock(
 // Füge den Galerie Abschnitt (Animierte Galerie) hinzu
 $page->addContent($page->renderAnimatedGallery(
     id: 'gallery04-2t',
-    cidSuffix: 'u8UG7oxgEZ',
+    cidSuffix: 'Image-Slider-On-Scroll',
     rows: [
         // Erste Reihe
         [

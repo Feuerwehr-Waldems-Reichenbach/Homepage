@@ -25,7 +25,7 @@ $page->addContent($page->renderFullscreenHero(
 // Füge den Abschnitt "Unsere Kinderfeuerwehr" (Bild rechts, Text links) hinzu
 $page->addContent($page->renderImageInfoBlock(
     id: 'image08-3j',
-    cidSuffix: 'u8ZkftLkKu',
+    cidSuffix: 'Image-Info-Image-Right',
     title: 'Unsere Kinderfeuerwehr',
     subtitle: 'Ein mal im Monat treffen wir uns, um gemeinsam in die Welt der Feuerwehr einzutauchen.&nbsp;<br><br>Es gibt viel zu erleben und zu entdecken, von spannenden Übungen bis hin zu interessanten Geschichten rund um die Feuerwehr.<br><br>&nbsp;', // Behalte die Zeilenumbrüche bei
     imageSrc: '../assets/images/img-20240821-wa0061.webp',
@@ -35,7 +35,7 @@ $page->addContent($page->renderImageInfoBlock(
 // Füge den Abschnitt "Spielerisch lernen" (Bild rechts, Text links) hinzu
 $page->addContent($page->renderImageInfoBlock(
     id: 'image08-3k',
-    cidSuffix: 'u8ZkfUVryG',
+    cidSuffix: 'Image-Info-Image-Left',
     title: 'Spielerisch lernen',
     subtitle: 'Auf altersgerechte Weise lernen die Kinder, wie sie im Notfall richtig handeln können. <br><br>Erste-Hilfe gehört genauso zum Programm wie spannende Übungen zur Brandbekämpfung. <br><br>Dabei dürfen die Kinder selbst aktiv werden und kleine Herausforderungen meistern.', // Behalte die Zeilenumbrüche bei
     imageSrc: '../assets/images/img-20240821-wa0058.webp',
@@ -45,7 +45,7 @@ $page->addContent($page->renderImageInfoBlock(
 // Füge den Call-to-Action Banner (Parallax) hinzu
 $page->addContent($page->renderCallToActionBanner(
     id: 'header14-4z',
-    cidSuffix: 'unSlpLFA8j',
+    cidSuffix: 'CTA-Kinderfeuerwehr',
     title: 'Interesse geweckt?',
     buttonHref: '/Mitmachen',
     buttonText: 'Jetzt mitmachen',
@@ -56,7 +56,7 @@ $page->addContent($page->renderCallToActionBanner(
 // Füge den Abschnitt "Entdecke die Welt der Feuerwehr" (Bild rechts, Text links) hinzu
 $page->addContent($page->renderImageInfoBlock(
     id: 'image08-4x',
-    cidSuffix: 'unSkfgCHrc',
+    cidSuffix: 'Image-Info-Image-Right',
     title: 'Entdecke die Welt der Feuerwehr',
     subtitle: 'Unsere Kinderfeuerwehr bietet eine wunderbare Gelegenheit, das Wissen über die vielfältigen Aufgaben der Feuerwehr zu vertiefen. <br><br>In interessanten und abwechslungsreichen Treffen können die Kinder viel Neues lernen und erleben.&nbsp;', // Behalte die Zeilenumbrüche bei
     imageSrc: '../assets/images/img-20240821-wa0079.webp',

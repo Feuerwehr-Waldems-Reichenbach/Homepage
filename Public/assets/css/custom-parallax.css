@@ -11,14 +11,14 @@
     z-index: 0;
 }
 /* Erste Inhaltssektion über den Header schieben */
-.image08.cid-u8DwU6WLje {
+.image08.cid-ImageTeaser-Image-Right {
     position: relative;
     z-index: 1;
     box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.1);
 }
 /* Verbesserte mobile Anpassungen */
 @media (max-width: 767px) {
-    .image08.cid-u8DwU6WLje {
+    .image08.cid-ImageTeaser-Image-Right {
         margin-top: -40px;
     }
 } 

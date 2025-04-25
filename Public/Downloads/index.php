@@ -14,10 +14,10 @@ $page = new PageBuilder(
 
 // --- Downloads Header ---
 $page->addContent($page->renderSectionHeader(
-    'download-header', // Eigene ID für den Abschnitt
+    'Download-header', // Eigene ID für den Abschnitt
     'Downloads',
     'Hier finden Sie alle wichtigen Dokumente und Links zum Download',
-    'download-header', // CID Suffix (optional)
+    'Download-header', // CID Suffix (optional)
     '5.1',
     'margin-top: 12rem;' // Zusätzlicher Style für den Container
 ));
@@ -57,10 +57,10 @@ $dokumente = [
 ];
 
 $page->addContent($page->renderDownloadList(
-    'download-documents-section', // Eigene ID
+    'Download-Documents-Section', // Eigene ID
     'Dokumente',
     $dokumente,
-    'download-documents-section' // CID Suffix (optional)
+    'Download-Documents-Section' // CID Suffix (optional)
 ));
 
 
@@ -95,10 +95,10 @@ $weitereSeiten = [
 ];
 
 $page->addContent($page->renderLinkCardGrid(
-    'download-other-pages-section', // Eigene ID
+    'Download-Other-Pages-Section', // Eigene ID
     'Weitere Seiten',
     $weitereSeiten,
-    'download-other-pages-section' // CID Suffix (optional)
+    'Download-Other-Pages-Section' // CID Suffix (optional)
 ));
 
 
