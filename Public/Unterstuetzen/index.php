@@ -64,7 +64,7 @@ $page->addContent($page->renderCTAHeaderTextButtonBanner(
     title: 'Lade dir den Aufnahmeantrag herunter',
     text: 'Als passives Mitglied unterstützt du die Feuerwehr mit einem jährlichen Beitrag. Diese Mittel helfen uns dabei, wichtige Ausrüstung anzuschaffen und unsere Einsatzbereitschaft aufrechtzuerhalten.',
     buttonLabel: 'Jetzt herunterladen',
-    buttonHref: 'Datei/Aufnahmeantrag.pdf',
+    buttonHref: '/assets/files/Aufnahmeantrag.pdf',
     buttonClass: 'btn-primary'
 ));
 

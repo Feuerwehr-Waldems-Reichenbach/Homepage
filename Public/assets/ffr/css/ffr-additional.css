@@ -5,7 +5,7 @@ img,
 .card-wrap,
 .card-wrapper,
 .video-wrapper,
-.mbr-figure iframe,
+.ffr-figure iframe,
 .google-map iframe,
 .slide-content,
 .plan,
@@ -620,24 +620,24 @@ a,
 a:hover {
   color: #000000;
 }
-.mbr-plan-header.bg-primary .mbr-plan-subtitle,
-.mbr-plan-header.bg-primary .mbr-plan-price-desc {
+.ffr-plan-header.bg-primary .ffr-plan-subtitle,
+.ffr-plan-header.bg-primary .ffr-plan-price-desc {
   color: #b3b3b3;
 }
-.mbr-plan-header.bg-success .mbr-plan-subtitle,
-.mbr-plan-header.bg-success .mbr-plan-price-desc {
+.ffr-plan-header.bg-success .ffr-plan-subtitle,
+.ffr-plan-header.bg-success .ffr-plan-price-desc {
   color: #b4b4b4;
 }
-.mbr-plan-header.bg-info .mbr-plan-subtitle,
-.mbr-plan-header.bg-info .mbr-plan-price-desc {
+.ffr-plan-header.bg-info .ffr-plan-subtitle,
+.ffr-plan-header.bg-info .ffr-plan-price-desc {
   color: #ffffff;
 }
-.mbr-plan-header.bg-warning .mbr-plan-subtitle,
-.mbr-plan-header.bg-warning .mbr-plan-price-desc {
+.ffr-plan-header.bg-warning .ffr-plan-subtitle,
+.ffr-plan-header.bg-warning .ffr-plan-price-desc {
   color: #b3b3b3;
 }
-.mbr-plan-header.bg-danger .mbr-plan-subtitle,
-.mbr-plan-header.bg-danger .mbr-plan-price-desc {
+.ffr-plan-header.bg-danger .ffr-plan-subtitle,
+.ffr-plan-header.bg-danger .ffr-plan-price-desc {
   color: #d5d5d5;
 }
 /* Scroll to top button*/
@@ -672,17 +672,17 @@ blockquote {
   border-color: #000000;
 }
 /* Forms */
-.mbr-form .input-group-btn .btn {
+.ffr-form .input-group-btn .btn {
   border-radius: 100px !important;
 }
-.mbr-form .input-group-btn .btn:hover {
+.ffr-form .input-group-btn .btn:hover {
   box-shadow: 0 10px 40px 0 rgba(0, 0, 0, 0.2);
 }
-.mbr-form .input-group-btn button[type="submit"] {
+.ffr-form .input-group-btn button[type="submit"] {
   border-radius: 100px !important;
   padding: 1rem 3rem;
 }
-.mbr-form .input-group-btn button[type="submit"]:hover {
+.ffr-form .input-group-btn button[type="submit"]:hover {
   box-shadow: 0 10px 40px 0 rgba(0, 0, 0, 0.2);
 }
 .jq-selectbox li:hover,
@@ -1172,7 +1172,7 @@ a {
     -webkit-align-items: center;
     align-items: center;
   }
-  .cid-Hero-Jugendfeuerwehr .mbr-row {
+  .cid-Hero-Jugendfeuerwehr .ffr-row {
     -webkit-justify-content: center;
     justify-content: center;
   }
@@ -1193,10 +1193,10 @@ a {
   padding-bottom: 3rem;
   background-color: #414141;
 }
-.cid-u8Zk2ZMT07 .mbr-fallback-image.disabled {
+.cid-u8Zk2ZMT07 .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-u8Zk2ZMT07 .mbr-fallback-image {
+.cid-u8Zk2ZMT07 .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -1232,10 +1232,10 @@ a {
   padding-bottom: 3rem;
   background-color: #414141;
 }
-.cid-u8Zk3sjFDf .mbr-fallback-image.disabled {
+.cid-u8Zk3sjFDf .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-u8Zk3sjFDf .mbr-fallback-image {
+.cid-u8Zk3sjFDf .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -1274,10 +1274,10 @@ a {
   padding-bottom: 6rem;
   background-image: url("../../../assets/images/whatsapp-bild-2024-08-13-um-19.38.35-64599a3b.webp");
 }
-.cid-CTA-Jugendfeuerwehr .mbr-fallback-image.disabled {
+.cid-CTA-Jugendfeuerwehr .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-CTA-Jugendfeuerwehr .mbr-fallback-image {
+.cid-CTA-Jugendfeuerwehr .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -1318,10 +1318,10 @@ a {
   padding-bottom: 3rem;
   background-color: #414141;
 }
-.cid-ulm2Z5pEbb .mbr-fallback-image.disabled {
+.cid-ulm2Z5pEbb .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-ulm2Z5pEbb .mbr-fallback-image {
+.cid-ulm2Z5pEbb .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -1362,10 +1362,10 @@ a {
   padding-bottom: 2rem;
   background-color: #414141;
 }
-.cid-ulm637T1Eg .mbr-fallback-image.disabled {
+.cid-ulm637T1Eg .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-ulm637T1Eg .mbr-fallback-image {
+.cid-ulm637T1Eg .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -1409,10 +1409,10 @@ a {
   padding-bottom: 6rem;
   background-color: #a72920;
 }
-.cid-u8MJkw2bNx .mbr-fallback-image.disabled {
+.cid-u8MJkw2bNx .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-u8MJkw2bNx .mbr-fallback-image {
+.cid-u8MJkw2bNx .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -1940,7 +1940,7 @@ a {
     -webkit-align-items: center;
     align-items: center;
   }
-  .cid-Hero-Kinderfeuerwehr .mbr-row {
+  .cid-Hero-Kinderfeuerwehr .ffr-row {
     -webkit-justify-content: center;
     justify-content: center;
   }
@@ -1961,10 +1961,10 @@ a {
   padding-bottom: 3rem;
   background-color: #414141;
 }
-.cid-u8ZkftLkKu .mbr-fallback-image.disabled {
+.cid-u8ZkftLkKu .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-u8ZkftLkKu .mbr-fallback-image {
+.cid-u8ZkftLkKu .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -2000,10 +2000,10 @@ a {
   padding-bottom: 3rem;
   background-color: #414141;
 }
-.cid-u8ZkfUVryG .mbr-fallback-image.disabled {
+.cid-u8ZkfUVryG .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-u8ZkfUVryG .mbr-fallback-image {
+.cid-u8ZkfUVryG .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -2042,10 +2042,10 @@ a {
   padding-bottom: 6rem;
   background-image: url("../../../assets/images/img-20240821-wa0041.webp");
 }
-.cid-CTA-Kinderfeuerwehr .mbr-fallback-image.disabled {
+.cid-CTA-Kinderfeuerwehr .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-CTA-Kinderfeuerwehr .mbr-fallback-image {
+.cid-CTA-Kinderfeuerwehr .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -2086,10 +2086,10 @@ a {
   padding-bottom: 3rem;
   background-color: #414141;
 }
-.cid-unSkfgCHrc .mbr-fallback-image.disabled {
+.cid-unSkfgCHrc .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-unSkfgCHrc .mbr-fallback-image {
+.cid-unSkfgCHrc .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -2125,10 +2125,10 @@ a {
   padding-bottom: 6rem;
   background-color: #a72920;
 }
-.cid-u8MJou9eUC .mbr-fallback-image.disabled {
+.cid-u8MJou9eUC .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-u8MJou9eUC .mbr-fallback-image {
+.cid-u8MJou9eUC .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -2656,7 +2656,7 @@ a {
     -webkit-align-items: center;
     align-items: center;
   }
-  .cid-Hero-Mitmachen .mbr-row {
+  .cid-Hero-Mitmachen .ffr-row {
     -webkit-justify-content: center;
     justify-content: center;
   }
@@ -2683,10 +2683,10 @@ a {
   object-fit: cover;
   border-radius: 50% !important;
 }
-.cid-Feature-Cards-With-Images .mbr-fallback-image.disabled {
+.cid-Feature-Cards-With-Images .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-Feature-Cards-With-Images .mbr-fallback-image {
+.cid-Feature-Cards-With-Images .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -2750,10 +2750,10 @@ a {
   padding-bottom: 5rem;
   background-color: #414141;
 }
-.cid-Text-Article .mbr-fallback-image.disabled {
+.cid-Text-Article .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-Text-Article .mbr-fallback-image {
+.cid-Text-Article .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -2803,10 +2803,10 @@ a {
   padding-bottom: 6rem;
   background-color: #414141;
 }
-.cid-Download-header-With-Buttons .mbr-fallback-image.disabled {
+.cid-Download-header-With-Buttons .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-Download-header-With-Buttons .mbr-fallback-image {
+.cid-Download-header-With-Buttons .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -2846,10 +2846,10 @@ a {
   padding-bottom: 6rem;
   background-color: #a72920;
 }
-.cid-u8MJuNN8A8 .mbr-fallback-image.disabled {
+.cid-u8MJuNN8A8 .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-u8MJuNN8A8 .mbr-fallback-image {
+.cid-u8MJuNN8A8 .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -3353,10 +3353,10 @@ a {
   padding-bottom: 5rem;
   background-color: #414141;
 }
-.cid-Download-Cards .mbr-fallback-image.disabled {
+.cid-Download-Cards .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-Download-Cards .mbr-fallback-image {
+.cid-Download-Cards .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -3398,10 +3398,10 @@ a {
   padding-bottom: 6rem;
   background-color: #a72920;
 }
-.cid-u8MJClwlPl .mbr-fallback-image.disabled {
+.cid-u8MJClwlPl .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-u8MJClwlPl .mbr-fallback-image {
+.cid-u8MJClwlPl .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -3929,7 +3929,7 @@ a {
     -webkit-align-items: center;
     align-items: center;
   }
-  .cid-Hero-Fahrzeuge .mbr-row {
+  .cid-Hero-Fahrzeuge .ffr-row {
     -webkit-justify-content: center;
     justify-content: center;
   }
@@ -3950,10 +3950,10 @@ a {
   padding-bottom: 3rem;
   background-color: #414141;
 }
-.cid-u8UEWIhu82 .mbr-fallback-image.disabled {
+.cid-u8UEWIhu82 .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-u8UEWIhu82 .mbr-fallback-image {
+.cid-u8UEWIhu82 .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -3992,10 +3992,10 @@ a {
   padding-bottom: 3rem;
   background-color: #414141;
 }
-.cid-u8UGspFSKh .mbr-fallback-image.disabled {
+.cid-u8UGspFSKh .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-u8UGspFSKh .mbr-fallback-image {
+.cid-u8UGspFSKh .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -4110,10 +4110,10 @@ a {
   padding-bottom: 6rem;
   background-color: #a72920;
 }
-.cid-u8TozI7tzQ .mbr-fallback-image.disabled {
+.cid-u8TozI7tzQ .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-u8TozI7tzQ .mbr-fallback-image {
+.cid-u8TozI7tzQ .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -4641,7 +4641,7 @@ a {
     -webkit-align-items: center;
     align-items: center;
   }
-  .cid-Hero-Feuerwehrhaus .mbr-row {
+  .cid-Hero-Feuerwehrhaus .ffr-row {
     -webkit-justify-content: center;
     justify-content: center;
   }
@@ -4794,10 +4794,10 @@ a {
   padding-bottom: 6rem;
   background-color: #a72920;
 }
-.cid-u8UNFhUOED .mbr-fallback-image.disabled {
+.cid-u8UNFhUOED .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-u8UNFhUOED .mbr-fallback-image {
+.cid-u8UNFhUOED .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -5325,7 +5325,7 @@ a {
     -webkit-align-items: center;
     align-items: center;
   }
-  .cid-Hero-Voraus-Helfer .mbr-row {
+  .cid-Hero-Voraus-Helfer .ffr-row {
     -webkit-justify-content: center;
     justify-content: center;
   }
@@ -5346,10 +5346,10 @@ a {
   padding-bottom: 3rem;
   background-color: #414141;
 }
-.cid-u8ZhN6kKrl .mbr-fallback-image.disabled {
+.cid-u8ZhN6kKrl .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-u8ZhN6kKrl .mbr-fallback-image {
+.cid-u8ZhN6kKrl .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -5385,10 +5385,10 @@ a {
   padding-bottom: 3rem;
   background-color: #414141;
 }
-.cid-u8ZhYSt9eE .mbr-fallback-image.disabled {
+.cid-u8ZhYSt9eE .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-u8ZhYSt9eE .mbr-fallback-image {
+.cid-u8ZhYSt9eE .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -5427,10 +5427,10 @@ a {
   padding-bottom: 3rem;
   background-color: #414141;
 }
-.cid-uH1euiJgSe .mbr-fallback-image.disabled {
+.cid-uH1euiJgSe .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-uH1euiJgSe .mbr-fallback-image {
+.cid-uH1euiJgSe .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -5466,10 +5466,10 @@ a {
   padding-bottom: 6rem;
   background-color: #a72920;
 }
-.cid-u8ZhLXYHkQ .mbr-fallback-image.disabled {
+.cid-u8ZhLXYHkQ .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-u8ZhLXYHkQ .mbr-fallback-image {
+.cid-u8ZhLXYHkQ .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -5997,7 +5997,7 @@ a {
     -webkit-align-items: center;
     align-items: center;
   }
-  .cid-Hero-RUD .mbr-row {
+  .cid-Hero-RUD .ffr-row {
     -webkit-justify-content: center;
     justify-content: center;
   }
@@ -6018,10 +6018,10 @@ a {
   padding-bottom: 3rem;
   background-color: #414141;
 }
-.cid-u8ZjuKvE8f .mbr-fallback-image.disabled {
+.cid-u8ZjuKvE8f .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-u8ZjuKvE8f .mbr-fallback-image {
+.cid-u8ZjuKvE8f .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -6057,10 +6057,10 @@ a {
   padding-bottom: 6rem;
   background-image: url("../../../assets/images/img20240706091207.webp");
 }
-.cid-CTA-RUD .mbr-fallback-image.disabled {
+.cid-CTA-RUD .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-CTA-RUD .mbr-fallback-image {
+.cid-CTA-RUD .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -6101,10 +6101,10 @@ a {
   padding-bottom: 3rem;
   background-color: #414141;
 }
-.cid-u8Zjvd54Wk .mbr-fallback-image.disabled {
+.cid-u8Zjvd54Wk .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-u8Zjvd54Wk .mbr-fallback-image {
+.cid-u8Zjvd54Wk .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -6143,10 +6143,10 @@ a {
   padding-bottom: 3rem;
   background-color: #414141;
 }
-.cid-u8Zjyzi0Q3 .mbr-fallback-image.disabled {
+.cid-u8Zjyzi0Q3 .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-u8Zjyzi0Q3 .mbr-fallback-image {
+.cid-u8Zjyzi0Q3 .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -6182,10 +6182,10 @@ a {
   padding-bottom: 3rem;
   background-color: #414141;
 }
-.cid-uqCga1hIYy .mbr-fallback-image.disabled {
+.cid-uqCga1hIYy .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-uqCga1hIYy .mbr-fallback-image {
+.cid-uqCga1hIYy .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -6342,10 +6342,10 @@ a {
   padding-bottom: 6rem;
   background-color: #a72920;
 }
-.cid-u8ZiNcGlRq .mbr-fallback-image.disabled {
+.cid-u8ZiNcGlRq .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-u8ZiNcGlRq .mbr-fallback-image {
+.cid-u8ZiNcGlRq .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -6873,7 +6873,7 @@ a {
     -webkit-align-items: center;
     align-items: center;
   }
-  .cid-Hero-Veranstaltungen .mbr-row {
+  .cid-Hero-Veranstaltungen .ffr-row {
     -webkit-justify-content: center;
     justify-content: center;
   }
@@ -6894,10 +6894,10 @@ a {
   padding-bottom: 6rem;
   background-color: #414141;
 }
-.cid-ukzEavxMa7 .mbr-fallback-image.disabled {
+.cid-ukzEavxMa7 .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-ukzEavxMa7 .mbr-fallback-image {
+.cid-ukzEavxMa7 .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -6911,10 +6911,10 @@ a {
   padding-bottom: 6rem;
   background-color: #a72920;
 }
-.cid-u8Zq101Sbg .mbr-fallback-image.disabled {
+.cid-u8Zq101Sbg .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-u8Zq101Sbg .mbr-fallback-image {
+.cid-u8Zq101Sbg .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -7442,7 +7442,7 @@ a {
     -webkit-align-items: center;
     align-items: center;
   }
-  .cid-Hero-Foerderverein .mbr-row {
+  .cid-Hero-Foerderverein .ffr-row {
     -webkit-justify-content: center;
     justify-content: center;
   }
@@ -7463,10 +7463,10 @@ a {
   padding-bottom: 5rem;
   background-color: #414141;
 }
-.cid-Text-Section-Foerderverein .mbr-fallback-image.disabled {
+.cid-Text-Section-Foerderverein .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-Text-Section-Foerderverein .mbr-fallback-image {
+.cid-Text-Section-Foerderverein .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -7508,10 +7508,10 @@ a {
   padding-bottom: 6rem;
   background-color: #414141;
 }
-.cid-CTA-Foerderverein .mbr-fallback-image.disabled {
+.cid-CTA-Foerderverein .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-CTA-Foerderverein .mbr-fallback-image {
+.cid-CTA-Foerderverein .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -7552,10 +7552,10 @@ a {
   padding-bottom: 6rem;
   background-color: #a72920;
 }
-.cid-u8MJqHFLOO .mbr-fallback-image.disabled {
+.cid-u8MJqHFLOO .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-u8MJqHFLOO .mbr-fallback-image {
+.cid-u8MJqHFLOO .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -8083,7 +8083,7 @@ a {
     -webkit-align-items: center;
     align-items: center;
   }
-  .cid-Hero-Untertuetzen .mbr-row {
+  .cid-Hero-Untertuetzen .ffr-row {
     -webkit-justify-content: center;
     justify-content: center;
   }
@@ -8104,10 +8104,10 @@ a {
   padding-bottom: 6rem;
   background-color: #414141;
 }
-.cid-Feature-Cards .mbr-fallback-image.disabled {
+.cid-Feature-Cards .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-Feature-Cards .mbr-fallback-image {
+.cid-Feature-Cards .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -8185,10 +8185,10 @@ a {
   padding-bottom: 6rem;
   background-color: #414141;
 }
-.cid-CTA-Unterstuetzen .mbr-fallback-image.disabled {
+.cid-CTA-Unterstuetzen .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-CTA-Unterstuetzen .mbr-fallback-image {
+.cid-CTA-Unterstuetzen .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -8228,10 +8228,10 @@ a {
   padding-bottom: 6rem;
   background-color: #a72920;
 }
-.cid-u8MJwRkbbj .mbr-fallback-image.disabled {
+.cid-u8MJwRkbbj .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-u8MJwRkbbj .mbr-fallback-image {
+.cid-u8MJwRkbbj .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -8759,7 +8759,7 @@ a {
     -webkit-align-items: center;
     align-items: center;
   }
-  .cid-Hero-Einsaetze .mbr-row {
+  .cid-Hero-Einsaetze .ffr-row {
     -webkit-justify-content: center;
     justify-content: center;
   }
@@ -8780,10 +8780,10 @@ a {
   padding-bottom: 6rem;
   background-color: #414141;
 }
-.cid-einsatz-card .mbr-fallback-image.disabled {
+.cid-einsatz-card .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-einsatz-card .mbr-fallback-image {
+.cid-einsatz-card .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -9056,10 +9056,10 @@ a {
   padding-bottom: 6rem;
   background-color: #a72920;
 }
-.cid-u8Zq9abicb .mbr-fallback-image.disabled {
+.cid-u8Zq9abicb .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-u8Zq9abicb .mbr-fallback-image {
+.cid-u8Zq9abicb .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -9587,7 +9587,7 @@ a {
     -webkit-align-items: center;
     align-items: center;
   }
-  .cid-Hero-Grillhuette .mbr-row {
+  .cid-Hero-Grillhuette .ffr-row {
     -webkit-justify-content: center;
     justify-content: center;
   }
@@ -9614,10 +9614,10 @@ a {
   object-fit: cover;
   border-radius: 50% !important;
 }
-.cid-Feature-Cards-Grillhuette .mbr-fallback-image.disabled {
+.cid-Feature-Cards-Grillhuette .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-Feature-Cards-Grillhuette .mbr-fallback-image {
+.cid-Feature-Cards-Grillhuette .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -9680,10 +9680,10 @@ a {
   padding-bottom: 3rem;
   background-color: #414141;
 }
-.cid-uk1oWlXE78 .mbr-fallback-image.disabled {
+.cid-uk1oWlXE78 .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-uk1oWlXE78 .mbr-fallback-image {
+.cid-uk1oWlXE78 .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -9719,10 +9719,10 @@ a {
   padding-bottom: 3rem;
   background-color: #414141;
 }
-.cid-uirrr09eYT .mbr-fallback-image.disabled {
+.cid-uirrr09eYT .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-uirrr09eYT .mbr-fallback-image {
+.cid-uirrr09eYT .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -9762,10 +9762,10 @@ a {
   padding-bottom: 3rem;
   background-color: #414141;
 }
-.cid-uirzTyy54v .mbr-fallback-image.disabled {
+.cid-uirzTyy54v .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-uirzTyy54v .mbr-fallback-image {
+.cid-uirzTyy54v .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -9801,10 +9801,10 @@ a {
   padding-bottom: 6rem;
   background-image: url("../../../assets/images/img20240514181524.webp");
 }
-.cid-CTA-Grillhuette .mbr-fallback-image.disabled {
+.cid-CTA-Grillhuette .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-CTA-Grillhuette .mbr-fallback-image {
+.cid-CTA-Grillhuette .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -9845,10 +9845,10 @@ a {
   padding-bottom: 3rem;
   background-color: #414141;
 }
-.cid-uirrBdLv9E .mbr-fallback-image.disabled {
+.cid-uirrBdLv9E .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-uirrBdLv9E .mbr-fallback-image {
+.cid-uirrBdLv9E .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -9887,10 +9887,10 @@ a {
   padding-bottom: 3rem;
   background-color: #414141;
 }
-.cid-uirzufmCLC .mbr-fallback-image.disabled {
+.cid-uirzufmCLC .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-uirzufmCLC .mbr-fallback-image {
+.cid-uirzufmCLC .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -9926,10 +9926,10 @@ a {
   padding-bottom: 6rem;
   background: #414141;
 }
-.cid-Map-Google .mbr-fallback-image.disabled {
+.cid-Map-Google .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-Map-Google .mbr-fallback-image {
+.cid-Map-Google .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -9973,10 +9973,10 @@ a {
   padding-bottom: 6rem;
   background-color: #a72920;
 }
-.cid-u8MJA3OzJv .mbr-fallback-image.disabled {
+.cid-u8MJA3OzJv .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-u8MJA3OzJv .mbr-fallback-image {
+.cid-u8MJA3OzJv .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -10480,10 +10480,10 @@ a {
   padding-bottom: 5rem;
   background-color: #414141;
 }
-.cid-dataprotection-card .mbr-fallback-image.disabled {
+.cid-dataprotection-card .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-dataprotection-card .mbr-fallback-image {
+.cid-dataprotection-card .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -10525,10 +10525,10 @@ a {
   padding-bottom: 6rem;
   background-color: #a72920;
 }
-.cid-u8MJEG7lfh .mbr-fallback-image.disabled {
+.cid-u8MJEG7lfh .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-u8MJEG7lfh .mbr-fallback-image {
+.cid-u8MJEG7lfh .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -11056,7 +11056,7 @@ a {
     -webkit-align-items: center;
     align-items: center;
   }
-  .cid-Hero-Homepage .mbr-row {
+  .cid-Hero-Homepage .ffr-row {
     -webkit-justify-content: center;
     justify-content: center;
   }
@@ -11080,10 +11080,10 @@ a {
   padding-bottom: 3rem;
   background-color: #414141;
 }
-.cid-ImageTeaser-Image-Right .mbr-fallback-image.disabled {
+.cid-ImageTeaser-Image-Right .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-ImageTeaser-Image-Right .mbr-fallback-image {
+.cid-ImageTeaser-Image-Right .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -11119,10 +11119,10 @@ a {
   padding-bottom: 3rem;
   background-color: #414141;
 }
-.cid-ImageTeaser-Image-Left .mbr-fallback-image.disabled {
+.cid-ImageTeaser-Image-Left .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-ImageTeaser-Image-Left .mbr-fallback-image {
+.cid-ImageTeaser-Image-Left .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -11161,10 +11161,10 @@ a {
   padding-bottom: 6rem;
   background-image: url("../../../assets/images/img20240729193049.webp");
 }
-.cid-CTA-Startseite .mbr-fallback-image.disabled {
+.cid-CTA-Startseite .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-CTA-Startseite .mbr-fallback-image {
+.cid-CTA-Startseite .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -11205,10 +11205,10 @@ a {
   padding-bottom: 3rem;
   background-color: #414141;
 }
-.cid-u8Dxu2alFC .mbr-fallback-image.disabled {
+.cid-u8Dxu2alFC .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-u8Dxu2alFC .mbr-fallback-image {
+.cid-u8Dxu2alFC .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -11329,10 +11329,10 @@ a {
   padding-bottom: 3rem;
   background-color: #414141;
 }
-.cid-u8TfeceLWe .mbr-fallback-image.disabled {
+.cid-u8TfeceLWe .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-u8TfeceLWe .mbr-fallback-image {
+.cid-u8TfeceLWe .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -11368,10 +11368,10 @@ a {
   padding-bottom: 3rem;
   background-color: #414141;
 }
-.cid-u8Tft7TrpG .mbr-fallback-image.disabled {
+.cid-u8Tft7TrpG .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-u8Tft7TrpG .mbr-fallback-image {
+.cid-u8Tft7TrpG .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -11502,10 +11502,10 @@ a {
   padding-bottom: 6rem;
   background-color: #a72920;
 }
-.cid-u8IYjDOq3T .mbr-fallback-image.disabled {
+.cid-u8IYjDOq3T .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-u8IYjDOq3T .mbr-fallback-image {
+.cid-u8IYjDOq3T .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -12033,7 +12033,7 @@ a {
     -webkit-align-items: center;
     align-items: center;
   }
-  .cid-Hero-Einsatzabteilung .mbr-row {
+  .cid-Hero-Einsatzabteilung .ffr-row {
     -webkit-justify-content: center;
     justify-content: center;
   }
@@ -12054,10 +12054,10 @@ a {
   padding-bottom: 3rem;
   background-color: #414141;
 }
-.cid-Image-Info-Image-Right .mbr-fallback-image.disabled {
+.cid-Image-Info-Image-Right .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-Image-Info-Image-Right .mbr-fallback-image {
+.cid-Image-Info-Image-Right .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -12093,10 +12093,10 @@ a {
   padding-bottom: 3rem;
   background-color: #414141;
 }
-.cid-Image-Info-Image-Left .mbr-fallback-image.disabled {
+.cid-Image-Info-Image-Left .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-Image-Info-Image-Left .mbr-fallback-image {
+.cid-Image-Info-Image-Left .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -12135,10 +12135,10 @@ a {
   padding-bottom: 6rem;
   background-image: url("../../../assets/images/img20240812195457.webp");
 }
-.cid-CTA-Einsatzabteilung .mbr-fallback-image.disabled {
+.cid-CTA-Einsatzabteilung .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-CTA-Einsatzabteilung .mbr-fallback-image {
+.cid-CTA-Einsatzabteilung .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -12179,10 +12179,10 @@ a {
   padding-bottom: 3rem;
   background-color: #414141;
 }
-.cid-unSrK9p4Yv .mbr-fallback-image.disabled {
+.cid-unSrK9p4Yv .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-unSrK9p4Yv .mbr-fallback-image {
+.cid-unSrK9p4Yv .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -12221,10 +12221,10 @@ a {
   padding-bottom: 3rem;
   background-color: #414141;
 }
-.cid-unSrj607fX .mbr-fallback-image.disabled {
+.cid-unSrj607fX .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-unSrj607fX .mbr-fallback-image {
+.cid-unSrj607fX .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -12260,10 +12260,10 @@ a {
   padding-bottom: 3rem;
   background-color: #414141;
 }
-.cid-unSrVEdzFY .mbr-fallback-image.disabled {
+.cid-unSrVEdzFY .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-unSrVEdzFY .mbr-fallback-image {
+.cid-unSrVEdzFY .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;
@@ -12561,10 +12561,10 @@ a {
   padding-bottom: 6rem;
   background-color: #a72920;
 }
-.cid-u8MJ2uMLmt .mbr-fallback-image.disabled {
+.cid-u8MJ2uMLmt .ffr-fallback-image.disabled {
   display: none;
 }
-.cid-u8MJ2uMLmt .mbr-fallback-image {
+.cid-u8MJ2uMLmt .ffr-fallback-image {
   display: block;
   background-size: cover;
   background-position: center center;

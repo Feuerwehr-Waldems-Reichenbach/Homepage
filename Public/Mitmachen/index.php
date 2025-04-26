@@ -61,7 +61,7 @@ $page->addContent($page->renderTextArticle(
 $page->addContent($page->renderImageSection(
     id: 'image04-1l',
     cidSuffix: 'Inage-Full-Size',
-    imageSrc: 'Datei/Jahreskalender Feuerwehr Reichenbach.jpg',
+    imageSrc: '/assets/files/Jahreskalender Feuerwehr Reichenbach.jpg',
     imageAlt: 'Kalender'
 ));
 
@@ -73,12 +73,12 @@ $page->addContent($page->renderDownloadHeaderWithButtons(
     buttons: [
         [
             'label' => 'PDF herunterladen',
-            'href' => 'Datei/Jahreskalender Feuerwehr Reichenbach final.pdf',
+            'href' => '/assets/files/Jahreskalender Feuerwehr Reichenbach final.pdf',
             'class' => 'btn-primary',
         ],
         [
             'label' => 'Bild herunterladen',
-            'href' => 'Datei/Jahreskalender Feuerwehr Reichenbach.jpg',
+            'href' => '/assets/files/Jahreskalender Feuerwehr Reichenbach.jpg',
             'class' => 'btn-primary',
         ],
     ]

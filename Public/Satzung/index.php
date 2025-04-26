@@ -22,13 +22,13 @@ $page->addContent($page->renderDocumentDownloadCards(
         [
             'title' => 'Feuerwehr Satzung',
             'description' => 'Feuerwehr Satzung nach GVE vom 16.09.2024 Waldems',
-            'href' => 'Datei/FW_Satzung_nach-GVE_16.09.2024_Waldems.pdf',
+            'href' => '/assets/files/FW_Satzung_nach-GVE_16.09.2024_Waldems.pdf',
             'button' => 'Herunterladen',
         ],
         [
             'title' => 'Förderverein Satzung',
             'description' => 'Vereinssatzung des Fördervereins der Freiwilligen Feuerwehr',
-            'href' => 'Datei/Vereinssatzung des Fördervereins der Freiwilligen Feuerwehr .pdf',
+            'href' => '/assets/files/Vereinssatzung des Fördervereins der Freiwilligen Feuerwehr .pdf',
             'button' => 'Herunterladen',
         ],
     ],

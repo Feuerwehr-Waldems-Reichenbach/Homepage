@@ -564,13 +564,13 @@ $jscomp.polyfill(
               /(http:\/\/|https:\/\/|)?(player.|www.)?(vimeo\.com|youtu(be\.com|\.be|be\.googleapis\.com))\/(shorts\/|video\/|embed\/|watch\?v=|v\/)?([A-Za-z0-9._%-]*)(&\S+)?/
             ),
             g =
-              a.querySelector(".mbr-background-video-preview") ||
+              a.querySelector(".ffr-background-video-preview") ||
               document.createElement("div");
-          g.classList.add("mbr-background-video-preview");
+          g.classList.add("ffr-background-video-preview");
           g.style.display = "none";
           g.style.backgroundSize = "cover";
           g.style.backgroundPosition = "center";
-          a.querySelector(".mbr-background-video-preview") ||
+          a.querySelector(".ffr-background-video-preview") ||
             a.childNodes[0].before(g);
           var J = function (a, b) {
             var c = window.outerWidth;
@@ -605,17 +605,17 @@ $jscomp.polyfill(
                 } else
                   (g.style.backgroundImage = 'url("' + d.src + '")'),
                     (g.style.display = "block");
-                a.querySelector(".mbr-background-video") &&
-                  a.querySelector(".mbr-background-video").remove();
+                a.querySelector(".ffr-background-video") &&
+                  a.querySelector(".ffr-background-video").remove();
                 b = document.createElement("div");
                 var c = document.createElement("div"),
                   f = document.createElement("div"),
                   v = document.createElement("div");
-                v.classList.add("mbr-video-foreground");
+                v.classList.add("ffr-video-foreground");
                 v.appendChild(b);
                 f.appendChild(v);
                 c.appendChild(f);
-                b.classList.add("mbr-background-video");
+                b.classList.add("ffr-background-video");
                 a.childNodes[1].before(c);
                 var h = d.naturalHeight,
                   p = d.naturalWidth,
@@ -700,10 +700,10 @@ $jscomp.polyfill(
                 }),
                 b.send(),
                 (b = null),
-                a.querySelector(".mbr-background-video") &&
-                  a.querySelector(".mbr-background-video").remove(),
+                a.querySelector(".ffr-background-video") &&
+                  a.querySelector(".ffr-background-video").remove(),
                 (b = document.createElement("div")),
-                b.classList.add("mbr-background-video"),
+                b.classList.add("ffr-background-video"),
                 a.childNodes[1].before(b),
                 (c = new Vimeo.Player(b, {
                   id: c,
@@ -748,9 +748,9 @@ $jscomp.polyfill(
             b.style.minHeight = "100%";
             b.style.transform = "translateX(-50%) translateY(-50%)";
             c = "";
-            a.querySelector(".mbr-fallback-image") &&
+            a.querySelector(".ffr-fallback-image") &&
               ((c = window.getComputedStyle(
-                a.querySelector(".mbr-fallback-image")
+                a.querySelector(".ffr-fallback-image")
               ).backgroundImage),
               (c = c.match(/\((.*?)\)/)[1].replace(/('|")/g, "")),
               b.setAttribute("poster", c));
@@ -761,11 +761,11 @@ $jscomp.polyfill(
     }
     document.querySelector("html").classList.add(w() ? "mobile" : "desktop");
     window.addEventListener("scroll", function () {
-      document.querySelectorAll(".mbr-navbar--sticky").forEach(function (a) {
+      document.querySelectorAll(".ffr-navbar--sticky").forEach(function (a) {
         var b = 10 < window.scrollTop ? "add" : "remove";
-        a.classList[b]("mbr-navbar--stuck");
-        if (!a.classList.contains(".mbr-navbar--open"))
-          a.classList[b]("mbr-navbar--short");
+        a.classList[b]("ffr-navbar--stuck");
+        if (!a.classList.contains(".ffr-navbar--open"))
+          a.classList[b]("ffr-navbar--short");
       });
     });
     w() && navigator.userAgent.match(/Chrome/i)
@@ -787,7 +787,7 @@ $jscomp.polyfill(
         document.addEventListener("add.cards", function (a) {
           document
             .querySelector("html")
-            .classList.contains("mbr-site-loaded") &&
+            .classList.contains("ffr-site-loaded") &&
             b(a.target, ".ffr-section--full-height").length &&
             window.dispatchEvent(new CustomEvent("resize"));
         }));
@@ -830,8 +830,8 @@ $jscomp.polyfill(
               ((b = a.target),
               jarallax && jarallax(b, "destroy"),
               (b.style.position = ""),
-              f(a.target).find(".mbr-background-video-preview").remove(),
-              f(a.target).find(".mbr-background-video").remove(),
+              f(a.target).find(".ffr-background-video-preview").remove(),
+              f(a.target).find(".ffr-background-video").remove(),
               k)
             ) {
               case "type":
@@ -878,14 +878,14 @@ $jscomp.polyfill(
         g && clearTimeout(g);
         g = setTimeout(function () {
           p && ((p.fixed = !1), p.elm.classList.remove("is-fixed"));
-          var a = document.querySelector(".mbr-fixed-top");
+          var a = document.querySelector(".ffr-fixed-top");
           a &&
             ((p = { breakPoint: h(a).top + 3 * d(a), fixed: !1, elm: a }),
             a.dispatchEvent(new CustomEvent("scroll")));
         }, 650);
       });
     window.smartresize(function () {
-      document.querySelectorAll(".mbr-embedded-video").forEach(function (a) {
+      document.querySelectorAll(".ffr-embedded-video").forEach(function (a) {
         a.style.height =
           (
             (q(a) * parseInt(a.getAttribute("height") || 315)) /
@@ -895,7 +895,7 @@ $jscomp.polyfill(
     });
     if (t)
       f(document).on("add.cards", function (a) {
-        document.querySelector("html").classList.contains("mbr-site-loaded") &&
+        document.querySelector("html").classList.contains("ffr-site-loaded") &&
           b(a.target, "iframe").length &&
           window.dispatchEvent(new CustomEvent("resize"));
       });
@@ -907,7 +907,7 @@ $jscomp.polyfill(
           !r.some(function (b) {
             return b === a.target;
           }) &&
-          a.target.hasAttribute("mbr-data-bg-video") &&
+          a.target.hasAttribute("ffr-data-bg-video") &&
           (r.push(a.target), e(a.target));
       });
     } else e(document.body);
@@ -922,7 +922,7 @@ $jscomp.polyfill(
               "video" === c.type && e(a.target);
           }
       });
-    document.querySelector("html").classList.add("mbr-site-loaded");
+    document.querySelector("html").classList.add("ffr-site-loaded");
     window.dispatchEvent(new CustomEvent("resize"));
     window.dispatchEvent(new CustomEvent("scroll"));
     n ||
@@ -959,7 +959,7 @@ $jscomp.polyfill(
         } catch (M) {}
       });
     document
-      .querySelectorAll(".cols-same-height .mbr-figure")
+      .querySelectorAll(".cols-same-height .ffr-figure")
       .forEach(function (a) {
         function b() {
           c.style.width = "";
@@ -1000,7 +1000,7 @@ $jscomp.polyfill(
   if (!n) {
     if (t && f.fn.socialLikes)
       f(document).on("add.cards", function (a) {
-        b(a.target, ".mbr-social-likes").forEach(function (a) {
+        b(a.target, ".ffr-social-likes").forEach(function (a) {
           a.addEventListener("counter.social-likes", function (a, b, c) {
             999 < c &&
               a.target
@@ -1017,7 +1017,7 @@ $jscomp.polyfill(
         return !a.matches("style, script");
       })
       .forEach(function (a) {
-        a.classList.contains("mbr-reveal") &&
+        a.classList.contains("ffr-reveal") &&
           a.addEventListener("add.cards", function () {
             a.footerReveal();
           });
@@ -1091,7 +1091,7 @@ $jscomp.polyfill(
           });
         var g = Array.from(
           document.querySelectorAll(
-            "p, h1, h2, h3, h4, h5, a, button, small, img, li, blockquote, .mbr-author-name, em, label, input, select, textarea, .input-group, .form-control, .iconbox, .btn-social, .mbr-figure, .mbr-map, .mbr-testimonial .card-block, .mbr-price-value, .mbr-price-figure, .dataTable, .dataTables_info, .item"
+            "p, h1, h2, h3, h4, h5, a, button, small, img, li, blockquote, .ffr-author-name, em, label, input, select, textarea, .input-group, .form-control, .iconbox, .btn-social, .ffr-figure, .ffr-map, .ffr-testimonial .card-block, .ffr-price-value, .ffr-price-figure, .dataTable, .dataTables_info, .item"
           )
         );
         g = g.filter(function (a) {
@@ -1099,7 +1099,7 @@ $jscomp.polyfill(
             !a.parents().filter(function (a) {
               if (
                 a.matches(
-                  "a, p, .navbar, .mbr-arrow, footer, .iconbox, .ffr-slider, .ffr-gallery, .mbr-testimonial .card-block, #cookiesdirective, .mbr-wowslider, .accordion, .tab-content, .engine, #scrollToTop, .modal, .item"
+                  "a, p, .navbar, .ffr-arrow, footer, .iconbox, .ffr-slider, .ffr-gallery, .ffr-testimonial .card-block, #cookiesdirective, .ffr-wowslider, .accordion, .tab-content, .engine, #scrollToTop, .modal, .item"
                 )
               )
                 return !0;
@@ -1127,7 +1127,7 @@ $jscomp.polyfill(
     });
   }
   l(function () {
-    if (document.querySelectorAll(".mbr-arrow-up").length) {
+    if (document.querySelectorAll(".ffr-arrow-up").length) {
       var a = document.querySelector("#scrollToTop");
       a.style.display = "none";
       window.addEventListener("scroll", function () {
@@ -1153,7 +1153,7 @@ $jscomp.polyfill(
     }
   });
   if (!n) {
-    var u = document.querySelector(".mbr-arrow");
+    var u = document.querySelector(".ffr-arrow");
     u &&
       u.addEventListener("click", function (a) {
         a = a.target.closest("section").nextElementSibling;
@@ -1164,9 +1164,9 @@ $jscomp.polyfill(
   }
   document.querySelectorAll("nav.navbar").length &&
     ((u = d(document.querySelector("nav.navbar"))),
-    document.querySelector(".mbr-after-navbar.ffr-fullscreen") &&
+    document.querySelector(".ffr-after-navbar.ffr-fullscreen") &&
       (document.querySelector(
-        ".mbr-after-navbar.ffr-fullscreen"
+        ".ffr-after-navbar.ffr-fullscreen"
       ).style.paddingTop = u + "px"));
   if (
     !n &&

@@ -27,32 +27,32 @@ $dokumente = [
     [
         'title' => 'Aufnahmeantrag Förderverein',
         'description' => 'Formular für neue Mitglieder des Fördervereins der Freiwilligen Feuerwehr Reichenbach',
-        'href' => '/Unterstuetzen/Datei/Aufnahmeantrag.pdf'
+        'href' => '/assets/files/Aufnahmeantrag.pdf'
     ],
     [
         'title' => 'Aufnahmeantrag Kinderfeuerwehr',
         'description' => 'Formular für neue Mitglieder der Kinderfeuerwehr der Freiwilligen Feuerwehr Reichenbach',
-        'href' => '/Mitmachen/Datei/Aufnahmeantrag%20Kinderfeuerwehr%2013.04.2025.pdf'
+        'href' => '/assets/files/Aufnahmeantrag%20Kinderfeuerwehr%2013.04.2025.pdf'
     ],
     [
         'title' => 'Jahreskalender (PDF)',
         'description' => 'Jahreskalender der Feuerwehr Reichenbach als PDF-Dokument',
-        'href' => '/Mitmachen/Datei/Jahreskalender%20Feuerwehr%20Reichenbach%20final.pdf'
+        'href' => '/assets/files/Jahreskalender%20Feuerwehr%20Reichenbach%20final.pdf'
     ],
     [
         'title' => 'Jahreskalender (JPG)',
         'description' => 'Jahreskalender der Feuerwehr Reichenbach als Bild-Datei',
-        'href' => '/Mitmachen/Datei/Jahreskalender%20Feuerwehr%20Reichenbach.jpg'
+        'href' => '/assets/files/Jahreskalender%20Feuerwehr%20Reichenbach.jpg'
     ],
     [
         'title' => 'Satzung Feuerwehr Waldems',
         'description' => 'Aktuelle Feuerwehr Satzung nach GVE vom 16.09.2024 Waldems',
-        'href' => '/Satzung/Datei/FW_Satzung_nach-GVE_16.09.2024_Waldems.pdf'
+        'href' => '/assets/files/FW_Satzung_nach-GVE_16.09.2024_Waldems.pdf'
     ],
     [
         'title' => 'Satzung Förderverein',
         'description' => 'Satzung des Fördervereins der Freiwilligen Feuerwehr Waldems-Reichenbach e.V.',
-        'href' => '/Satzung/Datei/Vereinssatzung%20des%20Fördervereins%20der%20Freiwilligen%20Feuerwehr%20.pdf'
+        'href' => '/assets/files/Vereinssatzung%20des%20Fördervereins%20der%20Freiwilligen%20Feuerwehr%20.pdf'
     ],
 ];
 
@@ -80,7 +80,7 @@ $weitereSeiten = [
     [
         'title' => 'Veranstaltungen',
         'description' => 'Flyer für kommende Events',
-        'href' => '/Veranstaltungen/Flyer/'
+        'href' => '/assets/Flyer/'
     ],
     [
         'title' => 'Grillhütte',
