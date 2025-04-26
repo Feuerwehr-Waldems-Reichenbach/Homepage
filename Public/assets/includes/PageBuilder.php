@@ -442,7 +442,7 @@ class PageBuilder
     ): string {
         $cidClass = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
         $accordionId = $accordionId !== '' ? $accordionId : "accordion-{$id}";
-        $panelGroupId = "bootstrap-{$accordionId}";
+        $panelGroupId = "accordion-bootstrap-{$accordionId}";
 
         // ── Einzelne Cards zusammensetzen ────────────────────────────────────
         $cardsHtml = '';
@@ -464,7 +464,7 @@ class PageBuilder
                                         <h6 class="panel-title-edit ffr-semibold ffr-fonts-style mb-0 display-5">
                                             {$question}
                                         </h6>
-                                        <span class="sign ffr-iconfont ffr-ffr-arrow-down"></span>
+                                        <span class="sign ffr-iconfont ffr-arrow-down"></span>
                                     </a>
                                 </div>
                                 <div id="{$collapseId}" class="panel-collapse noScroll collapse" role="tabpanel"

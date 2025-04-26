@@ -787,6 +787,25 @@ a {
 .cid-u8CwqCiTr0 nav.navbar {
   position: fixed;
 }
+/* Additional CSS for accordion arrows */
+.accordion .card-header a .sign.ffr-iconfont {
+    position: absolute;
+    right: 0;
+    top: 25%;
+    font-size: 1rem;
+}
+
+.accordion .card-header {
+    position: relative;
+}
+
+.ffr-arrow-down:before {
+    content: "\25BC";
+}
+
+.ffr-arrow-up:before {
+    content: "\25B2";
+}
 .cid-u8CwqCiTr0 .dropdown-item:before {
   font-family: Moririse2 !important;
   content: "\e966";
