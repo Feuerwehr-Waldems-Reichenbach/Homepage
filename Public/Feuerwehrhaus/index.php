@@ -2,8 +2,9 @@
 require_once $_SERVER['DOCUMENT_ROOT'] . '/assets/includes/PageBuilder.php'; 
 
 $page = new PageBuilder(
-    title: 'Feuerwehrhaus',
-    description: 'Erfahre mehr über das Feuerwehrhaus der Freiwilligen Feuerwehr Reichenbach. Schau dir unsere moderne Ausstattung und Einrichtungen an.',
+    title: 'Unser Feuerwehrhaus | Feuerwehr Reichenbach',
+    description: 'Entdecken Sie das Zuhause der Freiwilligen Feuerwehr Reichenbach. Erfahren Sie mehr über unsere Umkleideräume, den Schulungsraum für Ausbildung und den Gemeinschaftsraum für Kameradschaft.',
+    keywords: 'Feuerwehrhaus, Feuerwehr Reichenbach, Feuerwehr Waldems, Feuerwache, Umkleideräume, Schulungsraum, Gemeinschaftsraum, Ehrenamt, Training, Ausbildung, Feuerwehr Stützpunkt, Reichenbach',
     canonicalUrl: 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
 );
 

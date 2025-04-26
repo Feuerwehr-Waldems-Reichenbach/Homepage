@@ -4,8 +4,9 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/assets/includes/PageBuilder.php';
 
 
 $page = new PageBuilder(
-    'Einsatzabteilung', // Seitentitel
-    'Die Einsatzabteilung der Freiwilligen Feuerwehr Reichenbach. Erfahre mehr über unsere Arbeit, Ausbildung und Einsätze.', // Meta-Beschreibung
+    title: 'Unsere Einsatzabteilung | Feuerwehr Reichenbach',
+    description: 'Erfahren Sie mehr über die ehrenamtlichen Einsatzkräfte der Freiwilligen Feuerwehr Reichenbach. Wir sind 24/7 einsatzbereit und trainieren regelmäßig für Notfälle wie Brandbekämpfung und technische Hilfe.',
+    keywords: 'Einsatzabteilung, Feuerwehr Reichenbach, Freiwillige Feuerwehr Waldems, Einsatzkräfte, Ehrenamt, Training, Feuerwehr Übungen, Notfallhilfe, Brandbekämpfung, Technische Hilfe, Feuerwehr Reichenbach Waldems, Einsatzbereit',
     canonicalUrl: 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
 );
 

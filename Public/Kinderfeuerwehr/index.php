@@ -3,8 +3,9 @@
 require_once $_SERVER['DOCUMENT_ROOT'] . '/assets/includes/PageBuilder.php';
 
 $page = new PageBuilder(
-    title: 'Kinderfeuerwehr',
-    description: 'Unsere Kinderfeuerwehr bringt den Kleinsten spielerisch die Grundlagen der Feuerwehrarbeit näher. Erfahre mehr über unsere spannenden Programme.',
+    title: 'Kinderfeuerwehr Reichenbach | Spielerisch lernen in Waldems',
+    description: 'Bei der Kinderfeuerwehr Reichenbach in Waldems entdecken Kinder spielerisch die Welt der Feuerwehr, lernen Erste Hilfe und richtiges Verhalten im Notfall. Jetzt mehr erfahren!',
+    keywords: 'Kinderfeuerwehr Reichenbach, Feuerwehr Waldems Kinder, Feuerwehr für Kinder, Brandschutzerziehung, Erste Hilfe für Kinder, Feuerwehr spielerisch lernen, Kindergruppe Feuerwehr, Feuerwehr Reichenbach Waldems, Mitmachen Kinderfeuerwehr',
     canonicalUrl: 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
     
 );

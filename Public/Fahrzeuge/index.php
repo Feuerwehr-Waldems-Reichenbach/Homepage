@@ -2,8 +2,9 @@
 require_once $_SERVER['DOCUMENT_ROOT'] . '/assets/includes/PageBuilder.php'; 
 
 $page = new PageBuilder(
-    title: 'Fahrzeuge',
-    description: 'Erfahre mehr über die Fahrzeuge der Freiwilligen Feuerwehr Reichenbach. Wir verfügen über ein TSF-W und ein MTF, die für verschiedene Einsatzszenarien bereitstehen.',
+    title: 'Unsere Fahrzeuge | Feuerwehr Reichenbach',
+    description: 'Entdecken Sie die Fahrzeuge der Freiwilligen Feuerwehr Reichenbach in Waldems. Erfahren Sie mehr über unser TSF-W für Brandbekämpfung und technische Hilfe sowie unser MTF für Mannschaftstransport und Logistik.',
+    keywords: 'Feuerwehr Fahrzeuge, Feuerwehr Reichenbach, TSF-W, MTF, Tragkraftspritzenfahrzeug, Mannschaftstransportfahrzeug, Feuerwehrtechnik, Einsatzfahrzeuge, Fuhrpark, Feuerwehr Waldems, Reichenbach',
     canonicalUrl: 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
 );
 

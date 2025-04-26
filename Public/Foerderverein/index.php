@@ -3,8 +3,9 @@
 require_once $_SERVER['DOCUMENT_ROOT'] . '/assets/includes/PageBuilder.php';
 
 $page = new PageBuilder(
-    title: 'Förderverein',
-    description: 'Der Förderverein der Freiwilligen Feuerwehr Reichenbach unterstützt unsere Arbeit durch verschiedene Projekte und Aktionen. Erfahre mehr über unsere Arbeit und wie du Mitglied werden kannst.',
+    title: 'Förderverein | Feuerwehr Reichenbach',
+    description: 'Der Förderverein unterstützt die Freiwillige Feuerwehr Reichenbach. Erfahren Sie, wie der Verein die Jugendfeuerwehr, die Einsatzabteilung und das Gemeinschaftsleben in Reichenbach fördert.',
+    keywords: 'Förderverein Feuerwehr Reichenbach, Feuerwehr Waldems unterstützen, Feuerwehr Spenden, Jugendfeuerwehr Förderung, Einsatzabteilung Unterstützung, Feuerwehrverein Reichenbach, Ehrenamt unterstützen, Hähnchengrillen Reichenbach, Feuerwehr Reichenbach Waldems',
     canonicalUrl: 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
     
 );

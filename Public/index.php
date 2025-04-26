@@ -2,9 +2,9 @@
 require_once $_SERVER['DOCUMENT_ROOT'] . '/assets/includes/PageBuilder.php';
 
 $page = new PageBuilder(
-    title: 'Freiwillige Feuerwehr Reichenbach – Ehrenamt. Einsatz. Engagement.',
-    description: 'Lerne die Freiwillige Feuerwehr Reichenbach kennen, von Einsatzabteilung und Voraus-Helfern bis zur Jugend- und Kinderfeuerwehr sowie der Unfalldarstellung.',
-    keywords: 'Freiwillige Feuerwehr Reichenbach, Feuerwehr Waldems, Feuerwehr Ehrenamt, Jugendfeuerwehr Reichenbach, Einsätze, Voraus-Helfer, Kinderfeuerwehr, Unfalldarstellung',
+    title: 'Freiwillige Feuerwehr Reichenbach | Offizielle Website',
+    description: 'Willkommen bei der Freiwilligen Feuerwehr Reichenbach in Waldems. Erfahren Sie mehr über unsere Einsatzabteilung, Jugend- und Kinderfeuerwehr, aktuelle Einsätze und vieles mehr. Ihre Feuerwehr vor Ort.',
+    keywords: 'Feuerwehr Reichenbach, Freiwillige Feuerwehr Waldems, Feuerwehr Reichenbach Waldems, Einsatzabteilung, Jugendfeuerwehr, Kinderfeuerwehr, Feuerwehrverein, Brandbekämpfung, Hilfeleistung, Notfall, Ehrenamt, Mitmachen, Waldems, Reichenbach, Unfalldarstellung,',
     canonicalUrl: 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
 );
 

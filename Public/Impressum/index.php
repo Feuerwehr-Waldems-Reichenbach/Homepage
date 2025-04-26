@@ -2,9 +2,9 @@
 require_once $_SERVER['DOCUMENT_ROOT'] . '/assets/includes/PageBuilder.php';
 
 $page = new PageBuilder(
-    title: 'Datenschutzerklärung',
-    description: 'Unsere Datenschutzerklärung informiert dich über den Umgang mit deinen persönlichen Daten bei der Freiwilligen Feuerwehr Reichenbach. Erfahre mehr über deine Rechte und unsere Maßnahmen zum Datenschutz.',
-    keywords: 'Datenschutzerklärung, Freiwillige Feuerwehr Reichenbach, Datenschutz, Privatsphäre, Informationen',
+  title: 'Impressum | Feuerwehr Reichenbach',
+  description: 'Impressum der Freiwilligen Feuerwehr Reichenbach. Finden Sie hier die Kontaktdaten des Fördervereins, Registerinformationen sowie Hinweise zu Haftung und Datenschutz.',
+  keywords: 'Impressum, Feuerwehr Reichenbach, Förderverein, Kontaktdaten, Vereinsregister, Haftungsausschluss, Datenschutz, Waldems, Reichenbach, TMG, Online-Streitbeilegung',
     canonicalUrl: 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
 );
 

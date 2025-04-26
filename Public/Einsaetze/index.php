@@ -4,8 +4,9 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/assets/includes/PageBuilder.php';
 
 
 $page = new PageBuilder(
-    'Einsätze', // Seitentitel
-    'Einsätze der Freiwilligen Feuerwehr Reichenbach. Informationen zu aktuellen und vergangenen Einsätzen.', // Meta-Beschreibung
+    title: 'Einsätze der Feuerwehr Reichenbach | Aktuelle Berichte & Statistik',
+    description: 'Erfahren Sie alles über die Einsätze der Freiwilligen Feuerwehr Reichenbach in Waldems. Aktuelle Einsatzberichte, detaillierte Statistiken und eine Galerie unserer Arbeit im Einsatz.',
+    keywords: 'Einsätze Feuerwehr Reichenbach, Feuerwehr Waldems Einsätze, Einsatzberichte, Feuerwehr Statistik, Freiwillige Feuerwehr Reichenbach, Brand, Hilfeleistung, Technische Hilfe, Feuerwehr Einsatzbilder, Reichenbach Waldems',
     canonicalUrl: 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
 );
 

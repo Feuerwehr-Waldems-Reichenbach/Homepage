@@ -3,8 +3,9 @@
 require_once $_SERVER['DOCUMENT_ROOT'] . '/assets/includes/PageBuilder.php';
 
 $page = new PageBuilder(
-    title: 'Satzungen',
-    description: 'Unterstütze die Freiwillige Feuerwehr Reichenbach durch Spenden oder ehrenamtliches Engagement. Erfahre, wie du uns helfen kannst, noch besser zu werden.',
+    title: 'Satzungen | Feuerwehr Reichenbach',
+    description: 'Laden Sie hier die aktuellen Satzungen der Freiwilligen Feuerwehr Waldems und des Fördervereins der Freiwilligen Feuerwehr Reichenbach herunter.',
+    keywords: 'Satzungen Feuerwehr, Feuerwehr Satzung Waldems, Satzung Förderverein Feuerwehr, Downloads Satzungen, Feuerwehr Reichenbach, Waldems, Vereinssatzung, Feuerwehrrecht, Dokumente Feuerwehr Reichenbach',
     canonicalUrl: 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
     
 );

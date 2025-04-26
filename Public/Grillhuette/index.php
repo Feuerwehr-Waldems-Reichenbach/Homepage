@@ -3,8 +3,9 @@
 require_once $_SERVER['DOCUMENT_ROOT'] . '/assets/includes/PageBuilder.php';
 
 $page = new PageBuilder(
-    title: 'Grillhütte',
-    description: 'Informationen zur Grillhütte der Freiwilligen Feuerwehr Reichenbach. Details zu Ausstattung, Belegung und Mietmöglichkeiten.',
+    title: 'Grillhütte Reichenbach | Mieten für Feiern & Events in Waldems',
+    description: 'Mieten Sie die gemütliche Grillhütte der Freiwilligen Feuerwehr Reichenbach in Waldems für Ihre Feier. Hier finden Sie alle Infos zur Reservierung, Mietbedingungen, Ausstattung und Lage (Obergasse 31).',
+    keywords: 'Grillhütte mieten, Grillhütte Waldems, Grillhütte Reichenbach, Hütte mieten Waldems, Veranstaltungsort Reichenbach, Feierlocation Waldems, Grillplatz mieten, Grillhütte Reservierung, Feuerwehr Reichenbach Grillhütte, Waldems, Reichenbach Obergasse 31',
     canonicalUrl: 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
     
 );

@@ -2,9 +2,9 @@
 require_once $_SERVER['DOCUMENT_ROOT'] . '/assets/includes/PageBuilder.php';
 
 $page = new PageBuilder(
-    title: 'Datenschutzerklärung',
-    description: 'Unsere Datenschutzerklärung informiert dich über den Umgang mit deinen persönlichen Daten bei der Freiwilligen Feuerwehr Reichenbach. Erfahre mehr über deine Rechte und unsere Maßnahmen zum Datenschutz.',
-    keywords: 'Datenschutzerklärung, Freiwillige Feuerwehr Reichenbach, Datenschutz, Privatsphäre, Informationen',
+  title: 'Datenschutzerklärung | Freiwillige Feuerwehr Reichenbach',
+  description: 'Umfassende Datenschutzerklärung der Freiwilligen Feuerwehr Reichenbach (Förderverein) informiert über Datenerhebung, -verarbeitung, -speicherung, Ihre Rechte nach DSGVO im Rahmen der Website-Nutzung, Grillhütten-Reservierung und Mitgliedschaft.',
+  keywords: 'Datenschutzerklärung, Freiwillige Feuerwehr Reichenbach, Datenschutz, Privatsphäre, DSGVO, Datenverarbeitung, Rechte, Information, Grillhütten-Reservierung, Mitgliedschaft Förderverein',
     canonicalUrl: 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
 );
 

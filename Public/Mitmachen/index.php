@@ -3,10 +3,10 @@
 require_once $_SERVER['DOCUMENT_ROOT'] . '/assets/includes/PageBuilder.php';
 
 $page = new PageBuilder(
-    title: 'Mitmachen',
-    description: 'Möchtest du Teil der Freiwilligen Feuerwehr Reichenbach werden? Erfahre mehr darüber, wie du mitmachen und einen Unterschied machen kannst.',
-    canonicalUrl: 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
-    
+    title: 'Mach mit | Feuerwehr Reichenbach',
+    description: 'Engagiere dich bei der Freiwilligen Feuerwehr Reichenbach! Informiere dich über Möglichkeiten in der Einsatzabteilung, Jugend- oder Kinderfeuerwehr und lade unseren Übungsplan herunter.',
+    keywords: 'Mitmachen Feuerwehr, Feuerwehr Reichenbach beitreten, Ehrenamt Waldems, Freiwillige Feuerwehr Waldems, Einsatzabteilung Mitmachen, Jugendfeuerwehr Mitmachen, Kinderfeuerwehr Mitmachen, Feuerwehr Training Waldems, Übungsplan Feuerwehr, Reichenbach Waldems',
+    canonicalUrl: 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],  
 );
 
 // Füge den Fullscreen Hero Abschnitt hinzu

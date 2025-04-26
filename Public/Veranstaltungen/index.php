@@ -3,8 +3,9 @@
 require_once $_SERVER['DOCUMENT_ROOT'] . '/assets/includes/PageBuilder.php';
 
 $page = new PageBuilder(
-    title: 'Veranstaltungen',
-    description: 'Besuche unsere Veranstaltungen und lerne die Freiwillige Feuerwehr Reichenbach kennen. Erfahre mehr über unsere kommenden Events und Aktivitäten.',
+  title: 'Veranstaltungen & Termine | Feuerwehr Reichenbach',
+  description: 'Bleiben Sie informiert über die Veranstaltungen und Termine der Freiwilligen Feuerwehr Reichenbach in Waldems. Erfahren Sie, wann unser nächstes Hähnchengrillen stattfindet oder wann unsere Übungsabende sind.',
+  keywords: 'Veranstaltungen Feuerwehr Reichenbach, Feuerwehr Termine Waldems, Feuerwehr Feste, Hähnchengrillen Reichenbach, Feuerwehr Aktuelles, Nachrichten Feuerwehr, Events Feuerwehr Waldems, Freiwillige Feuerwehr Reichenbach, Waldems',
     canonicalUrl: 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
     
 );

@@ -3,8 +3,9 @@
 require_once $_SERVER['DOCUMENT_ROOT'] . '/assets/includes/PageBuilder.php';
 
 $page = new PageBuilder(
-    title: 'Unterstützen',
-    description: 'Unterstütze die Freiwillige Feuerwehr Reichenbach durch Spenden oder ehrenamtliches Engagement. Erfahre, wie du uns helfen kannst, noch besser zu werden.',
+    title: 'Unterstützen Sie die Feuerwehr Reichenbach',
+    description: 'Erfahren Sie, wie Sie die Freiwillige Feuerwehr Reichenbach unterstützen können, als aktives oder passives Mitglied, mit Spenden oder durch Besuch unserer Veranstaltungen. Jetzt Aufnahmeantrag herunterladen.',
+    keywords: 'Feuerwehr unterstützen, Feuerwehr spenden, Mitglied werden Feuerwehr Reichenbach, Passives Mitglied Feuerwehr, Ehrenamt Waldems, Freiwillige Feuerwehr Waldems, Spenden Feuerwehr Reichenbach, Aufnahmeantrag Feuerwehr, Feuerwehr Reichenbach Waldems',
     canonicalUrl: 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
     
 );

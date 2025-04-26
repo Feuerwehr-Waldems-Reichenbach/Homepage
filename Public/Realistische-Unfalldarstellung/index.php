@@ -5,8 +5,9 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/assets/includes/PageBuilder.php';
 include '../assets/includes/warningModal.php';
 
 $page = new PageBuilder(
-    title: 'Realistische Unfalldarstellung',
-    description: 'Die realistische Unfalldarstellung der Freiwilligen Feuerwehr Reichenbach hilft uns und auch anderen, auf den Ernstfall vorbereitet zu sein.',
+    title: 'Realistische Unfalldarstellung (RUD) | Feuerwehr Reichenbach',
+    description: 'Die RUD-Gruppe der Freiwilligen Feuerwehr Reichenbach in Waldems bietet realistische Unfallsimulationen für Feuerwehren und Hilfsorganisationen im Rheingau-Taunus-Kreis und darüber hinaus zur optimalen Einsatzvorbereitung.',
+    keywords: 'Realistische Unfalldarstellung, RUD, Feuerwehr Training, Notfalldarstellung, Verletzungsdarstellung, Feuerwehr Übung, Erste Hilfe Training, Feuerwehr Reichenbach, Waldems, Rheingau-Taunus-Kreis, Hilfsorganisationen Training, Rettungsdienst Training, Unfallsimulation',
     canonicalUrl: 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
     
 );

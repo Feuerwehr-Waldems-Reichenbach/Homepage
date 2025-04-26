@@ -4,8 +4,9 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/assets/includes/PageBuilder.php';
 
 
 $page = new PageBuilder(
-    'Downloads',
-    'Downloads der Freiwilligen Feuerwehr Reichenbach - Wichtige Dokumente und Links für Mitglieder und Interessierte.',
+    title: 'Downloads & wichtige Links | Feuerwehr Reichenbach',
+    description: 'Laden Sie hier wichtige Dokumente und Formulare der Freiwilligen Feuerwehr Reichenbach herunter, wie Aufnahmeanträge, Satzungen und den Jahreskalender. Finden Sie auch Links zu relevanten Seiten.',
+    keywords: 'Downloads, Dokumente, Formulare, Satzung, Jahreskalender, Aufnahmeantrag, Feuerwehr Reichenbach, Förderverein, Kinderfeuerwehr, Grillhütte, Impressum, Datenschutz, Veranstaltungen, PDF, Waldems',
     canonicalUrl: 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
 );
 

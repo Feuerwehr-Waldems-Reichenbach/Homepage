@@ -3,8 +3,9 @@
 require_once $_SERVER['DOCUMENT_ROOT'] . '/assets/includes/PageBuilder.php';
 
 $page = new PageBuilder(
-    title: 'Jugendfeuerwehr',
-    description: 'Die Jugendfeuerwehr Reichenbach bietet Jugendlichen die Möglichkeit, in die Welt der Feuerwehr einzutauchen. Erfahre mehr über unsere Aktivitäten und wie du mitmachen kannst.',
+    title: 'Jugendfeuerwehr Reichenbach | Ausbildung, Spaß & Teamgeist',
+    description: 'Erfahre mehr über die Jugendfeuerwehr Reichenbach in Waldems: Spannendes Training, Zeltlager, gemeinsame Aktionen und wie du dabei sein kannst.',
+    keywords: 'Jugendfeuerwehr Reichenbach, Feuerwehr Waldems Jugend, Feuerwehrnachwuchs, Jugendfeuerwehr Training, Feuerwehr Zeltlager, Weihnachtsbaum sammeln Reichenbach, Jugendfeuerwehr Mitmachen, Feuerwehr Waldems Reichenbach',
     canonicalUrl: 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
     
 );

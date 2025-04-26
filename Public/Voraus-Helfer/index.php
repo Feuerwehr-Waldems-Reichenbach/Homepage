@@ -3,8 +3,9 @@
 require_once $_SERVER['DOCUMENT_ROOT'] . '/assets/includes/PageBuilder.php';
 
 $page = new PageBuilder(
-    title: 'Voraus-Helfer',
-    description: 'Unsere Voraus-Helfer sind schnell zur Stelle, um in Notfällen erste Hilfe zu leisten. Erfahre mehr über ihre Aufgaben.',
+    title: 'Voraus-Helfer Feuerwehr Reichenbach | Feuerwehr Reichenbach',
+    description: 'Unsere Voraus-Helfer der Freiwilligen Feuerwehr Reichenbach in Waldems bieten schnelle medizinische Erstversorgung bei lebensbedrohlichen Zuständen, wenn der Rettungsdienst länger braucht. Erfahren Sie mehr über ihre wichtige ehrenamtliche Arbeit.',
+    keywords: 'Voraus-Helfer, Feuerwehr Reichenbach, First Responder Waldems, Schnelle Notfallhilfe, medizinische Erstversorgung, lebensbedrohlicher Zustand, Feuerwehr Waldems Reichenbach, Ehrenamtliche Helfer, Helfer vor Ort, Spenden Feuerwehr Reichenbach',
     canonicalUrl: 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
     
 );
