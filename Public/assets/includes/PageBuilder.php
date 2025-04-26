@@ -67,6 +67,7 @@ class PageBuilder
             '/assets/bootstrap/css/bootstrap.min.css',
             '/assets/bootstrap/css/bootstrap-grid.min.css',
             '/assets/bootstrap/css/bootstrap-reboot.min.css',
+            'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css',
             '/assets/parallax/jarallax.css',
             '/assets/dropdown/css/style.css',
             '/assets/socicon/css/styles.css',
@@ -619,7 +620,7 @@ class PageBuilder
                     <img class="w-100" src="{$src}" alt="{$alt}"
                          data-bs-slide-to="{$slideTo}" data-bs-target="#lb-{$lightboxId}" loading="lazy">
                     <div class="icon-wrapper">
-                        <span class="ffr-ffr ffr-ffr-search ffr-iconfont ffr-iconfont-btn"></span>
+                        <span class="bi bi-search ffr-iconfont ffr-iconfont-btn"></span>
                     </div>
                 </div>
             </div>
@@ -671,13 +672,13 @@ class PageBuilder
                                 <ol class="carousel-indicators">
     {$indicators}
                                 </ol>
-                                <a class="close" data-bs-dismiss="modal" aria-label="Close"></a>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 <a class="carousel-control-prev carousel-control" role="button" data-bs-slide="prev" href="#lb-{$lightboxId}">
-                                    <span class="ffr-ffr ffr-ffr-arrow-prev" aria-hidden="true"></span>
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                                     <span class="visually-hidden">Previous</span>
                                 </a>
                                 <a class="carousel-control-next carousel-control" role="button" data-bs-slide="next" href="#lb-{$lightboxId}">
-                                    <span class="ffr-ffr ffr-ffr-arrow-next" aria-hidden="true"></span>
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
                                     <span class="visually-hidden">Next</span>
                                 </a>
                             </div>
