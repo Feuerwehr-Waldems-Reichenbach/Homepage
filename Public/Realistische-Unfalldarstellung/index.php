@@ -2,8 +2,6 @@
 
 require_once $_SERVER['DOCUMENT_ROOT'] . '/assets/includes/PageBuilder.php';
 
-include '../assets/includes/warningModal.php';
-
 $page = new PageBuilder(
     title: 'Realistische Unfalldarstellung (RUD) | Feuerwehr Reichenbach',
     description: 'Die RUD-Gruppe der Freiwilligen Feuerwehr Reichenbach in Waldems bietet realistische Unfallsimulationen für Feuerwehren und Hilfsorganisationen im Rheingau-Taunus-Kreis und darüber hinaus zur optimalen Einsatzvorbereitung.',
@@ -11,6 +9,8 @@ $page = new PageBuilder(
     canonicalUrl: 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
     
 );
+
+$page->addContent('<div class="page-content">');
 
 // Füge den Fullscreen Hero Abschnitt hinzu
 $page->addContent($page->renderFullscreenHero(
@@ -73,7 +73,7 @@ $page->addContent($page->renderImageInfoBlock(
     id: 'image08-55',
     cidSuffix: 'Image-Info-Image-Left',
     title: 'Wir unterstützen Ihre Übungen',
-    subtitle: '<div><span style="font-size: 1.4rem;">Solltet ihr Interesse daran haben, eine Übung realistisch zu planen und durchzuführen, könnt ihr euch gerne&nbsp;an&nbsp;uns&nbsp;wenden.</span></div><br><div><span style="font-size: 1.4rem;"><em><a href="mailto:rud@feuerwehr-waldems-reichenbach.de" class="text-info">rud@feuerwehr-waldems-reichenbach.de</a></em><br></span><br></div>', // Behalte die HTML-Struktur bei
+    subtitle: '<div><span style="font-size: 1.4rem;">Solltet ihr Interesse daran haben, eine Übung realistisch zu planen und durchzuführen, könnt ihr euch gerne&nbsp;an&nbsp;uns&nbsp;wenden.</span></div><br><div><span style="font-size: 1.4rem;"><em><a style="color: #007bff;" href="mailto:rud@feuerwehr-waldems-reichenbach.de">ru<!--|-->d@fe<!--|--><!--|-->uerwehr-<!--|--><!--|-->wal<!--|-->dem<!--|-->s-re<!--|-->iche<!--|-->nb<!--|-->ach<!--|-->.de</a></em><br></span><br></div>', // Behalte die HTML-Struktur bei
     imageSrc: '../assets/images/img20240825115127.webp',
     imageAlt: 'RUD-Gruppe Kontakt' // Füge einen beschreibenden Alt-Text hinzu
 ));
@@ -95,6 +95,12 @@ $page->addContent($page->renderGalleryWithLightbox(
         ['src' => '../assets/images/img20240825115142.webp', 'alt' => 'RUD Demonstration Bild 9'],
     ]
 ));
+
+$page->addContent('</div>');
+
+
+$page->addContent(file_get_contents($_SERVER['DOCUMENT_ROOT'] . '/assets/includes/warningModal.php'));
+
 
 // Rendere die vollständige Seite inklusive Head, Includes und Scripts
 echo $page->renderFullPage();
