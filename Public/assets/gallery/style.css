@@ -134,7 +134,8 @@
   color: #fff; }
 .ffr-gallery .modal-dialog {
   max-width: 1000px !important;
-  margin: 1.75rem auto; }
+  margin: 1.75rem auto !important;
+}
 .ffr-gallery .modal.in .modal-dialog {
   margin: 0 auto; }
 /* modal back color opacity */
@@ -395,4 +396,17 @@
 .ffr-gallery .carousel-control-prev:hover .carousel-control-prev-icon,
 .ffr-gallery .carousel-control-next:hover .carousel-control-next-icon {
   opacity: 1;
+}
+
+/* Override any specific CSS classes that might be affecting individual galleries */
+[class*="cid-"] .ffr-gallery .modal-dialog {
+  max-width: 1000px !important;
+  margin: 1.75rem auto !important;
+}
+
+[class*="cid-"] .ffr-gallery .modal-body img {
+  width: 100%;
+  max-height: 90vh;
+  object-fit: contain;
+  margin: 0 auto;
 }
