@@ -461,7 +461,7 @@ class PageBuilder
                                        data-toggle="collapse" data-bs-toggle="collapse"
                                        href="#{$collapseId}" aria-expanded="false"
                                        aria-controls="{$collapseId}">
-                                        <h6 class="panel-title-edit ffr-semibold ffr-fonts-style mb-0 display-5">
+                                        <h6 class="panel-title-edit ffr-semibold ffr-fonts-style mb-0 display-5" style="margin-right: 10px;">
                                             {$question}
                                         </h6>
                                         <span class="sign ffr-iconfont ffr-arrow-down"></span>
