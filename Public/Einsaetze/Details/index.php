@@ -10,7 +10,6 @@
   <meta name="description"
     content="Details zu Einsätzen der Freiwilligen Feuerwehr Reichenbach. Erfahre mehr über unsere Einsätze und Aktivitäten.">
   <title>Einsatz Details</title>
-  <link rel="stylesheet" href="../../assets/web/assets/mobirise-icons2/mobirise2.css">
   <link rel="stylesheet" href="../../assets/bootstrap/css/bootstrap.min.css">
   <link rel="stylesheet" href="../../assets/bootstrap/css/bootstrap-grid.min.css">
   <link rel="stylesheet" href="../../assets/bootstrap/css/bootstrap-reboot.min.css">

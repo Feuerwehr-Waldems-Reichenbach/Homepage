@@ -311,7 +311,7 @@ class PageBuilder
 
 
     /**
-     * Liefert einen "Bild + Text" Teaser-Abschnitt (Mobirise-Layout image08)
+     * Liefert einen "Bild + Text" Teaser-Abschnitt (Layout image08)
      *
      * @param string $id          HTML-ID des Abschnitts (z. B. "image08-h")
      * @param string $title       Hauptüberschrift (h5 → display-2)
@@ -334,7 +334,7 @@ class PageBuilder
         string $imageAlt = '',
         string $btnClass = 'btn-secondary'
     ): string {
-        // Bootstrap-Version fix (Mobirise nutzt i. d. R. 5.1)
+        // Bootstrap-Version fix (nutzt i. d. R. 5.1)
         $bsVersion = '5.1';
         $cidClass = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
 
@@ -375,7 +375,7 @@ class PageBuilder
      * @param string $title        Überschrift (h1)
      * @param string $buttonHref   Ziel-URL des Call-to-Action-Buttons
      * @param string $buttonText   Button-Beschriftung
-     * @param string $cidSuffix    Teil hinter "cid-" für Mobirise-Klasse (leer = kein cid-Teil)
+     * @param string $cidSuffix    Teil hinter "cid-" für Klasse (leer = kein cid-Teil)
      * @param string $btnClass     Bootstrap-Klasse des Buttons (Default: "btn-primary")
      * @param string $bsVersion    data-bs-version (Default: "5.1")
      * @return string              Fertiger HTML-Code
@@ -417,7 +417,7 @@ class PageBuilder
     }
 
     /**
-     * Rendert eine Accordion-Liste (Mobirise list1)
+     * Rendert eine Accordion-Liste (list1)
      *
      * @param string $id           Abschnitt-ID, z. B. "list01-q"
      * @param string $title        Überschrift über dem Accordion
@@ -426,7 +426,7 @@ class PageBuilder
      *                               ['q' => 'Frage 1', 'a' => 'Antwort 1'],
      *                               …
      *                             ]
-     * @param string $cidSuffix    Mobirise-CID-Suffix (leer lassen, wenn egal)
+     * @param string $cidSuffix    CID-Suffix (leer lassen, wenn egal)
      * @param string $accordionId  HTML-ID des Accordion-Wrappers
      *                             (leer = automatisch "accordion-{$id}")
      * @param string $bsVersion    Bootstrap-Version im data-Attribut
@@ -464,7 +464,7 @@ class PageBuilder
                                         <h6 class="panel-title-edit ffr-semibold ffr-fonts-style mb-0 display-5">
                                             {$question}
                                         </h6>
-                                        <span class="sign ffr-iconfont mobi-mbri-arrow-down"></span>
+                                        <span class="sign ffr-iconfont ffr-ffr-arrow-down"></span>
                                     </a>
                                 </div>
                                 <div id="{$collapseId}" class="panel-collapse noScroll collapse" role="tabpanel"
@@ -620,7 +620,7 @@ class PageBuilder
                     <img class="w-100" src="{$src}" alt="{$alt}"
                          data-bs-slide-to="{$slideTo}" data-bs-target="#lb-{$lightboxId}" loading="lazy">
                     <div class="icon-wrapper">
-                        <span class="mobi-mbri mobi-mbri-search ffr-iconfont ffr-iconfont-btn"></span>
+                        <span class="ffr-ffr ffr-ffr-search ffr-iconfont ffr-iconfont-btn"></span>
                     </div>
                 </div>
             </div>
@@ -674,11 +674,11 @@ class PageBuilder
                                 </ol>
                                 <a class="close" data-bs-dismiss="modal" aria-label="Close"></a>
                                 <a class="carousel-control-prev carousel-control" role="button" data-bs-slide="prev" href="#lb-{$lightboxId}">
-                                    <span class="mobi-mbri mobi-mbri-arrow-prev" aria-hidden="true"></span>
+                                    <span class="ffr-ffr ffr-ffr-arrow-prev" aria-hidden="true"></span>
                                     <span class="visually-hidden">Previous</span>
                                 </a>
                                 <a class="carousel-control-next carousel-control" role="button" data-bs-slide="next" href="#lb-{$lightboxId}">
-                                    <span class="mobi-mbri mobi-mbri-arrow-next" aria-hidden="true"></span>
+                                    <span class="ffr-ffr ffr-ffr-arrow-next" aria-hidden="true"></span>
                                     <span class="visually-hidden">Next</span>
                                 </a>
                             </div>
@@ -1188,7 +1188,7 @@ HTML;
                 </div>
                 <div class="col-12 col-md-4 text-center text-md-end mt-3 mt-md-0">
                     <a href="{$docLink}" class="btn btn-primary display-7" target="_blank">
-                        <span class="mobi-mbri mobi-mbri-download ffr-iconfont ffr-iconfont-btn"></span>Herunterladen
+                        <span class="ffr-ffr ffr-ffr-download ffr-iconfont ffr-iconfont-btn"></span>Herunterladen
                     </a>
                 </div>
             </div>
@@ -1237,7 +1237,7 @@ HTML;
                     <p class="ffr-text ffr-fonts-style display-7 mb-3">{$desc}</p>
                     <div class="text-end mt-auto">
                         <a href="{$href}" class="btn btn-secondary display-7">
-                            <span class="mobi-mbri mobi-mbri-right ffr-iconfont ffr-iconfont-btn"></span>{$button}
+                            <span class="ffr-ffr ffr-ffr-right ffr-iconfont ffr-iconfont-btn"></span>{$button}
                         </a>
                     </div>
                 </div>
