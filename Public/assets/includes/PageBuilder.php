@@ -71,7 +71,6 @@ class PageBuilder
             '/assets/dropdown/css/style.css',
             '/assets/socicon/css/styles.css',
             '/assets/theme/css/style.css',
-            '/assets/css/custom-parallax.css',
             '/assets/ffr/css/ffr-additional.css?v=M1cYSM',
         ];
     }

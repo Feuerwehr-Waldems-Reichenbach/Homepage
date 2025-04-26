@@ -17,7 +17,6 @@
   <link rel="stylesheet" href="../../assets/dropdown/css/style.css">
   <link rel="stylesheet" href="../../assets/socicon/css/styles.css">
   <link rel="stylesheet" href="../../assets/theme/css/style.css">
-  <link rel="stylesheet" href="../../assets/css/custom-parallax.css">
   <link rel="preload"
     href="https://fonts.googleapis.com/css?family=Inter+Tight:100,200,300,400,500,600,700,800,900,100i,200i,300i,400i,500i,600i,700i,800i,900i&display=swap"
     as="style" onload="this.onload=null;this.rel='stylesheet'">
