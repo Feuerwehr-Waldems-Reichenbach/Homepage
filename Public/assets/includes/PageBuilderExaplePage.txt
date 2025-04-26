@@ -3,7 +3,8 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/assets/includes/PageBuilder.php';
 
 $page = new PageBuilder(
     title: 'Meine neue Seite',
-    description: 'Kurze Seitenbeschreibung'
+    description: 'Kurze Seitenbeschreibung',
+    canonicalUrl: 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
 );
 
 // Inhalt hinzufügen (kann leer bleiben oder später ergänzt werden)

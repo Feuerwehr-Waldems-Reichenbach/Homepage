@@ -1,11 +1,12 @@
 <?php
-// Passe den Pfad zur PageBuilder.php-Datei an
+
 require_once $_SERVER['DOCUMENT_ROOT'] . '/assets/includes/PageBuilder.php';
 
 $page = new PageBuilder(
     title: 'Förderverein',
     description: 'Der Förderverein der Freiwilligen Feuerwehr Reichenbach unterstützt unsere Arbeit durch verschiedene Projekte und Aktionen. Erfahre mehr über unsere Arbeit und wie du Mitglied werden kannst.',
-    // Favicon wird hier nicht explizit gesetzt, es wird der Standardwert der PageBuilder-Klasse verwendet.
+    canonicalUrl: 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
+    
 );
 
 // Füge den Fullscreen Hero Abschnitt hinzu

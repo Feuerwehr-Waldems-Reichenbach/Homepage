@@ -1,5 +1,5 @@
 <?php
-// Passe den Pfad zur PageBuilder.php-Datei an
+
 require_once $_SERVER['DOCUMENT_ROOT'] . '/assets/includes/PageBuilder.php';
 
 include '../assets/includes/warningModal.php';
@@ -7,7 +7,8 @@ include '../assets/includes/warningModal.php';
 $page = new PageBuilder(
     title: 'Realistische Unfalldarstellung',
     description: 'Die realistische Unfalldarstellung der Freiwilligen Feuerwehr Reichenbach hilft uns und auch anderen, auf den Ernstfall vorbereitet zu sein.',
-    // Favicon wird hier nicht explizit gesetzt, es wird der Standardwert der PageBuilder-Klasse verwendet.
+    canonicalUrl: 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
+    
 );
 
 // Füge den Fullscreen Hero Abschnitt hinzu

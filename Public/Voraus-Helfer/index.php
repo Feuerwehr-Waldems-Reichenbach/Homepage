@@ -1,11 +1,12 @@
 <?php
-// Passe den Pfad zur PageBuilder.php-Datei an
+
 require_once $_SERVER['DOCUMENT_ROOT'] . '/assets/includes/PageBuilder.php';
 
 $page = new PageBuilder(
     title: 'Voraus-Helfer',
     description: 'Unsere Voraus-Helfer sind schnell zur Stelle, um in Notfällen erste Hilfe zu leisten. Erfahre mehr über ihre Aufgaben.',
-    // Favicon wird hier nicht explizit gesetzt, es wird der Standardwert der PageBuilder-Klasse verwendet.
+    canonicalUrl: 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
+    
 );
 
 // Füge den Fullscreen Hero Abschnitt hinzu

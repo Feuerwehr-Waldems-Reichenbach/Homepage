@@ -1,9 +1,10 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT'] . '/assets/includes/PageBuilder.php'; // Passe den Pfad zur PageBuilder.php-Datei an
+require_once $_SERVER['DOCUMENT_ROOT'] . '/assets/includes/PageBuilder.php'; 
 
 $page = new PageBuilder(
     title: 'Feuerwehrhaus',
     description: 'Erfahre mehr über das Feuerwehrhaus der Freiwilligen Feuerwehr Reichenbach. Schau dir unsere moderne Ausstattung und Einrichtungen an.',
+    canonicalUrl: 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
 );
 
 // Füge den Fullscreen Hero Abschnitt hinzu

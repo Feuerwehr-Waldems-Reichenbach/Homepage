@@ -1,11 +1,12 @@
 <?php
-// 1. PageBuilder-Klasse mit absolutem Pfad einbinden
+
 require_once $_SERVER['DOCUMENT_ROOT'] . '/assets/includes/PageBuilder.php';
 
-// 2. PageBuilder Instanz erstellen
+
 $page = new PageBuilder(
     'Einsätze', // Seitentitel
-    'Einsätze der Freiwilligen Feuerwehr Reichenbach. Informationen zu aktuellen und vergangenen Einsätzen.' // Meta-Beschreibung
+    'Einsätze der Freiwilligen Feuerwehr Reichenbach. Informationen zu aktuellen und vergangenen Einsätzen.', // Meta-Beschreibung
+    canonicalUrl: 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
 );
 
 // 3. Zusätzliche Stylesheets hinzufügen (falls nicht im Standard-Bundle des Konstruktors)

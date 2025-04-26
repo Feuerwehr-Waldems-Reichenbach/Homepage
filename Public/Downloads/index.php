@@ -1,13 +1,12 @@
 <?php
-// Pfad zur PageBuilder-Klasse anpassen, falls nötig
+
 require_once $_SERVER['DOCUMENT_ROOT'] . '/assets/includes/PageBuilder.php';
 
-// 1. PageBuilder Instanz erstellen mit Seitentitel und Beschreibung
+
 $page = new PageBuilder(
     'Downloads',
-    'Downloads der Freiwilligen Feuerwehr Reichenbach - Wichtige Dokumente und Links für Mitglieder und Interessierte.'
-    // Weitere Meta-Informationen können hier im Konstruktor oder über set-Methoden gesetzt werden
-    // z.B. $page->setKeywords('Feuerwehr, Reichenbach, Downloads, Dokumente');
+    'Downloads der Freiwilligen Feuerwehr Reichenbach - Wichtige Dokumente und Links für Mitglieder und Interessierte.',
+    canonicalUrl: 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
 );
 
 // 2. Inhaltsblöcke hinzufügen
