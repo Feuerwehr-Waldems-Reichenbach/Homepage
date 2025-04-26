@@ -38,6 +38,11 @@ session_destroy();
 session_start();
 $_SESSION['success'] = 'Sie wurden erfolgreich abgemeldet.';
 
+// Use a more explicit, absolute URL for redirection
+$protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https://' : 'http://';
+$domain = $_SERVER['HTTP_HOST'];
+$path = dirname($_SERVER['REQUEST_URI'], 2); // Go up two levels from auth/logout.php to get to Verwaltung
+
 // Redirect to login page
-header('Location: ' . BASE_URL . '/index.php');
+header('Location: ' . $protocol . $domain . $path . '/index.php');
 exit; 

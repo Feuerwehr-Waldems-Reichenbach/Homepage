@@ -2,14 +2,19 @@
 // Include required files
 require_once dirname(__DIR__, 2) . '/Private/Database/Database.php';
 require_once __DIR__ . '/includes/config.php';
+require_once __DIR__ . '/includes/Security.php';
+
+// Session wird bereits in config.php gestartet - keine Notwendigkeit hier nochmal zu prüfen
+
+// Überprüfen, ob der Benutzer angemeldet ist
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['is_admin']) || !$_SESSION['is_admin']) {
+    $_SESSION['error'] = 'Bitte melden Sie sich an, um auf das Dashboard zuzugreifen.';
+    header('Location: ' . BASE_URL . '/index.php');
+    exit;
+}
 
 // Define title for the page
 $pageTitle = "Dashboard";
-
-// Start session if not already started
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
 
 // Get statistics from database
 try {
