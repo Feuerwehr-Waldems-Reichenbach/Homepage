@@ -180,7 +180,7 @@
                     <p class="ffr-text ffr-fonts-style mb-4 display-7">
                         Fragen? Melde Dich!&nbsp;<br>
                         <a href="mailto:info@feuerwehr-waldems-reichenbach.de"
-                            class="text-info">info@feuerwehr-waldems-reichenbach.de</a>
+                            class="text-info">info@fe<!--|-->uerweh<!--|-->r-wald<!--|--><!--|-->em<!--|-->s-re<!--|-->ich<!--|--><!--|--><!--|-->en<!--|-->bach.de</a>
                     </p>
                 </div>
             </div>
