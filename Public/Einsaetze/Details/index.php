@@ -32,7 +32,7 @@
     .ffr-section-subtitle,
     .footer-text,
     .footer-head {
-      color: rgb(0, 0, 0) !important;
+      color: rgb(255, 255, 255) !important;
     }
 
     .einsatz-details-container {
