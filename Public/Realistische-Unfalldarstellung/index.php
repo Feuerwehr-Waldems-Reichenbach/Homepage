@@ -102,7 +102,7 @@ $page->addContent('</div>');
 
 $page->addContent(file_get_contents($_SERVER['DOCUMENT_ROOT'] . '/assets/includes/warningModal.php'));
 
-
+$page->addStyle('assets/gallery/style.css');
 // Rendere die vollständige Seite inklusive Head, Includes und Scripts
 echo $page->renderFullPage();
 
