@@ -10,8 +10,8 @@ class PageBuilder
     private string $keywords;
     private string $author;
     private ?string $canonicalUrl;
-    private string $favicon = '/assets/images/gravatar-logo-dunkel.jpg';
-    private string $ogImage = '/assets/images/gravatar-logo-dunkel.jpg';
+    private string $favicon = '/assets/images/gravatar-logo-dunkel.webp';
+    private string $ogImage = '/assets/images/gravatar-logo-dunkel.webp';
     private string $twitterCardType = 'summary_large_image';
     private array $schemaOrgData = [];
     private string $metaRobots = 'index, follow';
@@ -19,7 +19,7 @@ class PageBuilder
     private string $siteLanguage = 'de-DE';
     private string $locale = 'de_DE';
     private string $organizationName = 'Freiwillige Feuerwehr Waldems Reichenbach';
-    private string $organizationLogo = '/assets/images/gravatar-logo-dunkel.jpg';
+    private string $organizationLogo = '/assets/images/gravatar-logo-dunkel.webp';
     private string $location = 'Waldems, Hessen, DE';
     private string $contactEmail = 'info@feuerwehr-waldems-reichenbach.de';
     private string $contactType = 'info';
@@ -33,13 +33,13 @@ class PageBuilder
         string $keywords = '',
         ?string $canonicalUrl = null,
         string $author = 'Freiwillige Feuerwehr Waldems Reichenbach',
-        string $ogImage = '/assets/images/gravatar-logo-dunkel.jpg',
+        string $ogImage = '/assets/images/gravatar-logo-dunkel.webp',
         string $twitterCardType = 'summary_large_image',
         string $metaRobots = 'index, follow',
         string $siteLanguage = 'de-DE',
         string $locale = 'de_DE',
         string $organizationName = 'Freiwillige Feuerwehr Waldems Reichenbach',
-        string $organizationLogo = '/assets/images/gravatar-logo-dunkel.jpg',
+        string $organizationLogo = '/assets/images/gravatar-logo-dunkel.webp',
         string $location = 'Am Dorfgemeinschaftshaus 1, 65529 Waldems, Hessen, DE',
         string $contactEmail = 'info@feuerwehr-waldems-reichenbach.de',
         string $contactType = 'info'

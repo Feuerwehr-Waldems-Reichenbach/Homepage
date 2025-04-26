@@ -73,7 +73,7 @@ function renderMenu($items, $level = 0)
     <div class="navbar-brand">
         <span class="navbar-logo">
             <a href="/">
-                <img src="<?php echo $baseAssetsPath; ?>/images/gravatar-logo-dunkel-1.webp" alt="Feuerwehr Reichenbach"
+                <img src="<?php echo $baseAssetsPath; ?>/images/gravatar-logo-dunkel.webp" alt="Feuerwehr Reichenbach"
                     style="height: 3rem;">
             </a>
         </span>
