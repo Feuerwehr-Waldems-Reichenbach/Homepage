@@ -120,7 +120,6 @@ if ($verwaltungPos !== false) {
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
                                 <li><a class="dropdown-item" href="<?php echo $ADMIN_ROOT; ?>/users/profile.php"><i class="fas fa-id-card me-1"></i> Profil</a></li>
-                                <li><a class="dropdown-item" href="<?php echo $ADMIN_ROOT; ?>/users/change-password.php"><i class="fas fa-key me-1"></i> Passwort ändern</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="<?php echo $ADMIN_ROOT; ?>/auth/logout.php"><i class="fas fa-sign-out-alt me-1"></i> Abmelden</a></li>
                             </ul>

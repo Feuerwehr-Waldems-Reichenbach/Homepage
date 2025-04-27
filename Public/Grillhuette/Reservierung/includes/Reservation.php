@@ -1819,7 +1819,7 @@ class Reservation
         // Status-abhängige Werte
         $statusText = $status == 'confirmed' ? 'bestätigt' : ($status == 'pending' ? 'ausstehend' : 'abgelehnt');
         $statusColor = $status == 'confirmed' ? '#28a745' : ($status == 'pending' ? '#ffc107' : '#dc3545');
-        $headerText = 'Status Ihrer Reservierung - ' . $statusText;
+        $headerText = 'Status Ihrer Reservierung | ' . $statusText;
         $subject = 'Status Ihrer Reservierung für die Grillhütte Waldems Reichenbach';
         $body = '
             <!DOCTYPE html>

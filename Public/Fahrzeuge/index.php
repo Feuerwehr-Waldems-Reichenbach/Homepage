@@ -27,7 +27,7 @@ $page->addContent($page->renderImageInfoBlock(
     id: 'image08-2r',
     cidSuffix: 'Image-Info-Image-Left',
     title: 'TSF-W (Tragkraftspritzenfahrzeug mit Wassertank)',
-    subtitle: 'Unser TSF-W ist ein vielseitiges Einsatzfahrzeug, das speziell für die Brandbekämpfung und technische Hilfeleistungen ausgestattet ist. Mit einem integrierten Wassertank und leistungsstarker Pumpe sind wir in der Lage, schnell und effektiv auf Brände zu reagieren. Das Fahrzeug verfügt zudem über moderne Ausrüstung für Rettungseinsätze, wodurch es ein unverzichtbarer Bestandteil unserer Einsatztabteilung ist.',
+    subtitle: 'Unser TSF-W ist ein vielseitiges Einsatzfahrzeug, das speziell für die Brandbekämpfung und technische Hilfeleistungen ausgestattet ist. Mit einem integrierten Wassertank und leistungsstarker Pumpe sind wir in der Lage, schnell und effektiv auf Brände zu reagieren. Das Fahrzeug verfügt zudem über moderne Ausrüstung für Rettungseinsätze, wodurch es ein unverzichtbarer Bestandteil unserer Einsatzabteilung ist.',
     imageSrc: '../assets/images/img-3899.webp',
     imageAlt: 'TSF-W Feuerwehr Reichenbach' // Füge einen beschreibenden Alt-Text hinzu
 ));

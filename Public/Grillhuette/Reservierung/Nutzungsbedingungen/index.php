@@ -45,9 +45,9 @@ require_once '../includes/header.php';
                         Termin zu stornieren. Stornierungen, die innerhalb von 48 Stunden vor dem vereinbarten Termin
                         vorgenommen werden, können zur Berechnung des gesamten Reservierungsbetrags führen, sofern keine
                         maßgeblichen Gründe vorliegen.</p>
-                    <p>In begründeten Ausnahmefällen (z.B. Krankheit, Todesfall in der Familie) kann der Betreiber von
+                    <p>In begründeten Ausnahmefällen (z. B. Krankheit, Todesfall in der Familie) kann der Betreiber von
                         der Erhebung der Stornierungsgebühren absehen.</p>
-                    <p>Schlechte Wetterbedingungen (wie z.B. Regen, Kälte oder Hitze) berechtigen nicht zur kostenlosen
+                    <p>Schlechte Wetterbedingungen (wie z. B. Regen, Kälte oder Hitze) berechtigen nicht zur kostenlosen
                         Stornierung oder Erstattung des Nutzungsentgelts.</p>
                     <h2 class="h4">4. Kaution und Schadensersatz</h2>
                     <p>Bei der Reservierung der Grillhütte kann vom Betreiber eine Kaution verlangt werden. Die Höhe der
@@ -56,7 +56,7 @@ require_once '../includes/header.php';
                     <ul>
                         <li>Bei Beschädigungen an der Grillhütte, deren Einrichtung oder dem Grundstück</li>
                         <li>Bei unzureichender Reinigung der Grillhütte</li>
-                        <li>Bei Verstößen gegen die Nutzungsregeln (z.B. Lärmbelästigung, Überschreitung der
+                        <li>Bei Verstößen gegen die Nutzungsregeln (z. B. Lärmbelästigung, Überschreitung der
                             Personenzahl)</li>
                         <li>Bei nicht ordnungsgemäßer Müllentsorgung</li>
                     </ul>
@@ -91,11 +91,11 @@ require_once '../includes/header.php';
                     <p>Der Betreiber haftet grundsätzlich nur bei Vorsatz oder grober Fahrlässigkeit. Für einfache
                         Fahrlässigkeit haftet der Betreiber nur bei Verletzung vertragswesentlicher Pflichten, d.h.
                         Pflichten, die für die ordnungsgemäße Erfüllung des Vertrages wesentlich sind und auf deren
-                        Einhaltung der Nutzer regelmäßig vertrauen darf (z.B. Bereitstellung der reservierten Grillhütte
+                        Einhaltung der Nutzer regelmäßig vertrauen darf (z. B. Bereitstellung der reservierten Grillhütte
                         in nutzungsfähigem Zustand). In diesen Fällen ist die Haftung jedoch auf den vertragstypischen,
                         vorhersehbaren Schaden begrenzt. Die Haftungsbeschränkungen gelten nicht für Schäden aus
                         Verletzungen von Leben, Körper oder Gesundheit oder bei gesetzlich vorgeschriebener Haftung
-                        (z.B. Produkthaftungsgesetz).</p>
+                        (z. B. Produkthaftungsgesetz).</p>
                     <p>Der Nutzer haftet gegenüber dem Betreiber für alle Schäden, die er selbst, seine Gäste oder
                         sonstige mit ihm in Verbindung stehende Personen im Rahmen der Nutzung an der Grillhütte, deren
                         Inventar oder dem Grundstück verursachen. Er stellt den Betreiber zudem von allen Ansprüchen

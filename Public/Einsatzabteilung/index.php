@@ -32,7 +32,7 @@ $page->addContent($page->renderFullscreenHero(
 // --- Text/Bild Block 1: Unsere Einsatzabteilung ---
 $page->addContent($page->renderImageInfoBlock(
     'image08-2k', // ID
-    'Unsere Einsatztabteilung', // Titel (Tippfehler aus HTML übernommen, ggf. zu "Einsatzabteilung" korrigieren)
+    'Unsere Einsatzabteilung', // Titel (Tippfehler aus HTML übernommen, ggf. zu "Einsatzabteilung" korrigieren)
     'Die Einsatzabteilung besteht aus engagierten, ehrenamtlichen Mitgliedern, die sich freiwillig für den Schutz und die Sicherheit unserer Gemeinde einsetzen.<br><br> Unsere Feuerwehrleute stehen rund um die Uhr bereit, um in Notfällen schnell und effektiv zu helfen.<br><br><br>', // Text (inkl. HTML <br>)
     '../assets/images/img20240513192710-1.webp', // Bildquelle
     'Einsatzkräfte im Einsatz', // Alternativtext für Bild (Beispiel)

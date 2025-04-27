@@ -424,7 +424,7 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
                                         <label for="event_name" class="form-label"><strong>Name Ihrer
                                                 Veranstaltung</strong></label>
                                         <input type="text" class="form-control" id="event_name" name="event_name"
-                                            maxlength="255" placeholder="z.B. Familienfest, Vereinsfest">
+                                            maxlength="255" placeholder="z. B. Familienfest, Vereinsfest">
                                         <div class="form-text">Dieser Name wird für alle sichtbar im Kalender angezeigt.
                                         </div>
                                     </div>
@@ -1284,7 +1284,7 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
                 title: "Schritt 2: Wann möchten Sie die Grillhütte nutzen?",
                 content: "Bitte wählen Sie den ersten Tag Ihrer Reservierung aus. Klicken Sie einfach auf einen grünen (freien) Tag im Kalender. Dies ist der erste Tag an dem sie die Hütte nutzen möchten.",
                 hints: ["Nur grüne Tage (frei) und blaue Tage (Schlüsselübergabe) können ausgewählt werden.",
-                    "Blaue Tage (Schlüsselübergabe) haben eingeschränkte Nutzungszeiten - bewegen Sie Ihre Maus über den Tag, um die verfügbare Zeit zu sehen.",
+                    "Blaue Tage (Schlüsselübergabe) haben eingeschränkte Nutzungszeiten, bewegen Sie Ihre Maus über den Tag, um die verfügbare Zeit zu sehen.",
                     "Sie können mit den Pfeilen über dem Kalender zwischen den Monaten wechseln, um andere Termine zu sehen."],
                 targetSelector: ".day.free:not(.other-month):not(.past), .day.key-handover:not(.other-month):not(.past)",
                 position: "right",
@@ -1295,9 +1295,9 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
                 title: "Schritt 3: Wie lange möchten Sie die Grillhütte nutzen?",
                 content: "Bitte wählen Sie den letzten Tag Ihrer Reservierung aus. Möchten Sie die Hütte nur für einen Tag? Dann klicken Sie nochmals auf denselben Tag. Für mehrere Tage wählen Sie einen späteren Tag aus.",
                 hints: ["Nur grüne Tage (frei) und blaue Tage (Schlüsselübergabe) können ausgewählt werden.",
-                    "Blaue Tage (Schlüsselübergabe) haben eingeschränkte Nutzungszeiten - bewegen Sie Ihre Maus über den Tag, um die verfügbare Zeit zu sehen.",
+                    "Blaue Tage (Schlüsselübergabe) haben eingeschränkte Nutzungszeiten, bewegen Sie Ihre Maus über den Tag, um die verfügbare Zeit zu sehen.",
                     "Beispiel: Für ein Wochenende wählen Sie zuerst den Freitag (Schritt 2) und dann den Sonntag (Schritt 3).",
-                    "Für nur einen Tag (z.B. Samstag) wählen Sie denselben Tag in Schritt 2 und 3."],
+                    "Für nur einen Tag (z. B. Samstag) wählen Sie denselben Tag in Schritt 2 und 3."],
                 targetSelector: ".day.free:not(.other-month):not(.past), .day.key-handover:not(.other-month):not(.past)",
                 position: "right",
                 waitForAction: true,
@@ -1338,7 +1338,7 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
             // Die Public-Event-Schritte werden dynamisch je nach Auswahl eingefügt
             {
                 title: "Schritt 6: Nachricht eingeben (optional)",
-                content: "Sie können eine optionale Nachricht für den Verwalter hinterlassen, z.B. für spezielle Anfragen. Klicken Sie auf 'Weiter', wenn Sie bereit sind.",
+                content: "Sie können eine optionale Nachricht für den Verwalter hinterlassen, z. B. für spezielle Anfragen. Klicken Sie auf 'Weiter', wenn Sie bereit sind.",
                 targetSelector: "#message",
                 position: "left",
                 waitForAction: false
@@ -1356,7 +1356,7 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
         const publicEventSteps = [
             {
                 title: "Zusatz 1: Name der Veranstaltung",
-                content: "Geben Sie einen Namen für Ihre öffentliche Veranstaltung ein, der im Kalender angezeigt wird (z.B. 'Feuerwehr Sommerfest').",
+                content: "Geben Sie einen Namen für Ihre öffentliche Veranstaltung ein, der im Kalender angezeigt wird (z. B. 'Feuerwehr Sommerfest').",
                 hint: "Wichtiger Hinweis: Der Name sollte kurz und aussagekräftig sein.",
                 targetSelector: "#event_name",
                 position: "left",

@@ -502,7 +502,7 @@ require_once '../../includes/header.php';
                     <div class="mb-3">
                         <label for="event_name" class="form-label">Name der Veranstaltung</label>
                         <input type="text" class="form-control" id="event_name" name="event_name" maxlength="255"
-                            placeholder="z.B. Grillfest" required>
+                            placeholder="z. B. Grillfest" required>
                     </div>
                     <div class="mb-3 form-check">
                         <input type="checkbox" class="form-check-input" id="show_date_range" name="show_date_range">

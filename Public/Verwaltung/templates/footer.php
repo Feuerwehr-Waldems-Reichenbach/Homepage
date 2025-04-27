@@ -1,22 +1,5 @@
     </main>
     
-    <footer class="py-4 mt-5">
-        <div class="container">
-            <div class="card glass-card">
-                <div class="card-body p-3">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <p class="mb-0 text-white">&copy; <?php echo date('Y'); ?> Feuerwehr Waldems Reichenbach</p>
-                        </div>
-                        <div class="col-md-6 text-md-end">
-                            <p class="mb-0 text-white">Verwaltungssystem</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </footer>
-    
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <!-- Bootstrap JS Bundle with Popper -->

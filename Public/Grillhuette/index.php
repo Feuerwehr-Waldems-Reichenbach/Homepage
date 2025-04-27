@@ -116,7 +116,7 @@ $page->addContent($page->renderImageInfoBlock(
     id: 'image08-4l',
     cidSuffix: 'Image-Info-Image-Right',
     title: 'Perfekt für Feiern',
-    subtitle: 'Ob Geburtstag, Familientreffen oder Vereinsfeier - unsere Grillhütte bietet den idealen Rahmen für Ihre Veranstaltung. Das Überdachte Häuschen ermöglicht auch bei wechselhaftem Wetter einen angenehmen Aufenthalt.',
+    subtitle: 'Ob Geburtstag, Familientreffen oder Vereinsfeier, unsere Grillhütte bietet den idealen Rahmen für Ihre Veranstaltung. Das überdachte Häuschen ermöglicht auch bei wechselhaftem Wetter einen angenehmen Aufenthalt.',
     imageSrc: '../assets/images/img20240629170654.webp',
     imageAlt: 'Grillhütte Waldems Reichenbach'
 ));

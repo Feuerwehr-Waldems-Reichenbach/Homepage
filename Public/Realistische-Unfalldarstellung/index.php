@@ -53,7 +53,7 @@ $page->addContent($page->renderImageInfoBlock(
     id: 'image08-3c',
     cidSuffix: 'Image-Info-Image-Left',
     title: 'Für authentisches Training',
-    subtitle: 'Die RUD-Gruppe schminkt unterschiedliche Arten von Wunden und mimt Betroffene, sodass die Einsatzkräfte unter fast realen Einsatzbedingungen lernen richtig zu reagieren.<div><br></div>', // Behalte die Zeilenumbrüche bei
+    subtitle: 'Die RUD-Gruppe schminkt unterschiedliche Arten von Wunden und mimt Betroffene, sodass die Einsatzkräfte unter fast realen Einsatzbedingungen lernen, richtig zu reagieren.<div><br></div>', // Behalte die Zeilenumbrüche bei
     imageSrc: '../assets/images/img-20231117-wa0015.webp',
     imageAlt: 'RUD-Gruppe schminkt Wunden' // Füge einen beschreibenden Alt-Text hinzu
 ));

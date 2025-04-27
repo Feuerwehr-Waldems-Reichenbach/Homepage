@@ -578,7 +578,7 @@ require_once '../../includes/header.php';
                         <div class="mb-3">
                             <label for="event_name" class="form-label">Name der Veranstaltung</label>
                             <input type="text" class="form-control" id="event_name" name="event_name" maxlength="255"
-                                placeholder="z.B. Grillfest">
+                                placeholder="z. B. Grillfest">
                         </div>
                         <div class="mb-3 form-check">
                             <input type="checkbox" class="form-check-input" id="show_date_range" name="show_date_range">
@@ -758,7 +758,7 @@ require_once '../../includes/header.php';
                         <div class="mb-3">
                             <label for="edit_event_name" class="form-label">Name der Veranstaltung</label>
                             <input type="text" class="form-control" id="edit_event_name" name="event_name"
-                                maxlength="255" placeholder="z.B. Grillfest">
+                                maxlength="255" placeholder="z. B. Grillfest">
                         </div>
                         <div class="mb-3 form-check">
                             <input type="checkbox" class="form-check-input" id="edit_show_date_range"

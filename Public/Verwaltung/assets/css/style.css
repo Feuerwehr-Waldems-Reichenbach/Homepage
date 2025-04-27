@@ -3,14 +3,10 @@
 /* Global Styles */
 body {
     font-family: 'Roboto', sans-serif;
-    background-color: #a72920;
-    background-image: url('/assets/images/Feuerwehrwartung mit gebrochenen Zahnrädern.webp');
-    background-size: cover;
-    background-position: top;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
+    background-color: #5c5c5c !important;
     min-height: 100vh;
 }
+
 
 .container, .container-fluid {
     padding-top: 2rem;

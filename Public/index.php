@@ -51,8 +51,8 @@ $page->addContent($page->renderCallToActionBanner(
 $page->addContent($page->renderImageTeaser(
     'image08-i',
     'ImageTeaser-Image-Right',
-    'Die Realistische Unfalldarstellung',
-    'Unsere Abteilung für Realistische Unfalldarstellung simuliert Unfälle, um Einsatzkräfte optimal zu schulen.',
+    'Die realistische Unfalldarstellung',
+    'Unsere Abteilung für realistische Unfalldarstellung simuliert Unfälle, um Einsatzkräfte optimal zu schulen.',
     '/Realistische-Unfalldarstellung',
     'Erfahre mehr',
     'assets/images/img20240825115107.webp',
@@ -101,7 +101,7 @@ $page->addContent($page->renderAccordionList(
     'list01-q',
     'Wissenswertes für den Notfall',
     [
-        ['q' => 'Flammen im Haus – was tun?', 'a' => 'Sofort raus und die 112 rufen. Wir kümmern uns um den Rest. Deine Sicherheit zuerst.'],
+        ['q' => 'Flammen im Haus... was tun?', 'a' => 'Sofort raus und die 112 rufen. Wir kümmern uns um den Rest. Deine Sicherheit zuerst.'],
         ['q' => 'Feuerlöscher-Einsatz: Was muss ich wissen?', 'a' => 'Merk dir das Kurzwort "PASS": Ziehe die Sicherung (Pull), ziel auf die Basis des Feuers (Aim), drücke den Hebel, um zu löschen (Squeeze), und schwenke den Löscher seitlich über die Flammen (Sweep).'],
         ['q' => 'Fettbrand in der Küche: Wie reagiere ich richtig?', 'a' => 'Bloß kein Wasser! Deckel oder Löschdecke drauf, um die Flammen zu ersticken. Und immer einen Küchenlöscher parat haben.'],
         ['q' => 'Wie verhalte ich mich, wenn ich Erster am Unfallort bin?', 'a' => 'Sichere die Unfallstelle und leiste Erste Hilfe, wenn du dazu in der Lage bist. Alarmiere umgehend die Rettungsdienste. Wichtig ist, ruhig und besonnen zu handeln.'],

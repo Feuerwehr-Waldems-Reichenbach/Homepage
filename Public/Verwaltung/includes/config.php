@@ -52,7 +52,7 @@ if (!is_dir(BASE_PATH . '/Private/logs/')) {
 
 // Bestimme die Domain für Cookies
 $cookieDomain = '';  // Leerer String bedeutet, Domain vom Host übernehmen
-// Optional: Wenn Sie eine spezifische Domain nutzen wollen (z.B. bei Subdomains)
+// Optional: Wenn Sie eine spezifische Domain nutzen wollen (z. B. bei Subdomains)
 // $cookieDomain = preg_match('/(?P<domain>[a-z0-9][a-z0-9\-]{1,63}\.[a-z\.]{2,6})$/i', $domain, $matches) ? $matches['domain'] : '';
 
 // Set session cookie parameters

@@ -77,7 +77,7 @@ include dirname(__DIR__) . '/templates/header.php';
                 <div class="invalid-feedback">
                     Bitte geben Sie eine Bezeichnung ein.
                 </div>
-                <small class="form-text text-muted">Eine eindeutige Bezeichnung für den Schlüssel, z.B. "API-Zugriff für App".</small>
+                <small class="form-text text-muted">Eine eindeutige Bezeichnung für den Schlüssel, z. B. "API-Zugriff für App".</small>
             </div>
             
             <div class="mb-3">

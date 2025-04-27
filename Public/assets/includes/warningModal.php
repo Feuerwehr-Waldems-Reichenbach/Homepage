@@ -3,7 +3,7 @@
   <div class="warningModal-content">
     <h2>Warnung: Sensible Inhalte</h2>
     <p>Diese Seite enthält realistische Darstellungen von simulierten Notfall- und Unfallszenarien. 
-      Zu Übungszwecken werden Verletzungsmuster und medizinische Notfälle nachgestellt (z.B. mit Kunstblut).
+      Zu Übungszwecken werden Verletzungsmuster und medizinische Notfälle nachgestellt (z. B. mit Kunstblut).
       Diese Inhalte sind nicht für Kinder oder sensible Personen geeignet und werden auf eigene Verantwortung betrachtet.</p>
     <div class="warningModal-actions">
       <button onclick="continueToPage()">Ich habe verstanden und möchte fortfahren</button>

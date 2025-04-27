@@ -40,7 +40,7 @@ $page->addContent($page->renderImageInfoBlock(
     id: 'image08-2l2',
     cidSuffix: 'Image-Info-Image-Left', // Die CID aus dem Original
     title: 'Unser Schulungsraum',
-    subtitle: 'In unserem Schulungsraum werden Theoriephasen und Lehrgänge Wie zum Beispiel Erste‑Hilfe‑Kurse durchgeführt. <br><br>Die Räumlichkeit entstand in Eigenarbeit unserer Einsatzkräfte und bietet heute eine ruhige, gut ausgestattete Umgebung für Aus‑ und Weiterbildungen. Eine kleine Küche erleichtert den Ablauf längerer Veranstaltungen. <br><br>Dass wir den Raum in dieser Qualität nutzen können, verdanken wir der Unterstützung unseres Fördervereins und zahlreicher Spenderinnen und Spender.',
+    subtitle: 'In unserem Schulungsraum werden Theoriephasen und Lehrgänge wie zum Beispiel Erste‑Hilfe‑Kurse durchgeführt. <br><br>Die Räumlichkeit entstand in Eigenarbeit unserer Einsatzkräfte und bietet heute eine ruhige, gut ausgestattete Umgebung für Aus‑ und Weiterbildungen. Eine kleine Küche erleichtert den Ablauf längerer Veranstaltungen. <br><br>Dass wir den Raum in dieser Qualität nutzen können, verdanken wir der Unterstützung unseres Fördervereins und zahlreicher Spenderinnen und Spender.',
     imageSrc: '../assets/images/yszsn-llw6i.webp',
     imageAlt: 'Schulungsraum mit kleiner Küche'
 ));

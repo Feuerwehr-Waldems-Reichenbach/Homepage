@@ -52,7 +52,7 @@ $page->addContent(
                     <li>Für die Erfüllung vertraglicher Pflichten (Art. 6 Abs. 1 lit. b DSGVO): Die Verarbeitung ist für
                       die Durchführung des Reservierungsvertrags erforderlich.</li>
                     <li>Zur Erfüllung rechtlicher Verpflichtungen (Art. 6 Abs. 1 lit. c DSGVO): Wir unterliegen
-                      verschiedenen gesetzlichen Anforderungen, die eine Datenverarbeitung nach sich ziehen können (z.B.
+                      verschiedenen gesetzlichen Anforderungen, die eine Datenverarbeitung nach sich ziehen können (z. B.
                       steuerrechtliche Aufbewahrungspflichten).</li>
                     <li>Aufgrund Ihrer Einwilligung (Art. 6 Abs. 1 lit. a DSGVO): Wenn Sie uns eine Einwilligung zur
                       Datenverarbeitung erteilt haben.</li>
@@ -115,7 +115,7 @@ $page->addContent(
                   <p class="ffr-text ffr-fonts-style display-7"><strong>Rechtsgrundlage:</strong> Erfüllung des
                     Reservierungsvertrags (Art. 6 Abs. 1 lit. b DSGVO).</p>
                   <h5 class="ffr-fonts-style display-5"><strong>3.3 Kommunikationsdaten</strong></h5>
-                  <p class="ffr-text ffr-fonts-style display-7">Bei der Kommunikation mit uns (z.B. per E-Mail oder über
+                  <p class="ffr-text ffr-fonts-style display-7">Bei der Kommunikation mit uns (z. B. per E-Mail oder über
                     das Kontaktformular) werden folgende Daten verarbeitet:</p>
                   <ul class="ffr-text ffr-fonts-style display-7">
                     <li>Kontaktdaten (Name, E-Mail-Adresse, ggf. Telefonnummer)</li>
@@ -244,7 +244,7 @@ $page->addContent(
                   <p class="ffr-text ffr-fonts-style display-7">Eine Weitergabe Ihrer personenbezogenen Daten erfolgt
                     ausschließlich:</p>
                   <ul class="ffr-text ffr-fonts-style display-7">
-                    <li>An unsere technischen Dienstleister (Auftragsverarbeiter wie z.B. Hosting-Provider), die
+                    <li>An unsere technischen Dienstleister (Auftragsverarbeiter wie z. B. Hosting-Provider), die
                       vertraglich zur Einhaltung der DSGVO verpflichtet sind</li>
                     <li>Bei Nutzung der Google Maps-Funktion auf unserer Website (siehe Abschnitt 3.8)</li>
                     <li>Wenn eine gesetzliche Verpflichtung zur Weitergabe besteht</li>

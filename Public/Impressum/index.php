@@ -82,7 +82,7 @@ $page->addContent(
                 <div class="item-wrapper">
                   <h4 class="ffr-section-subtitle ffr-fonts-style mb-3 display-5"><strong>Haftung für Inhalte</strong>
                   </h4>
-                  <p class="ffr-text ffr-fonts-style display-7">Als Diensteanbieter sind wir gemäß § 7 Abs.1 TMG für
+                  <p class="ffr-text ffr-fonts-style display-7">Als Diensteanbieter sind wir gemäß § 7 Abs. 1 TMG für
                     eigene Inhalte auf diesen Seiten nach den allgemeinen Gesetzen verantwortlich. Nach §§ 8 bis 10 TMG
                     sind wir als Diensteanbieter jedoch nicht verpflichtet, übermittelte oder gespeicherte fremde
                     Informationen zu überwachen oder nach Umständen zu forschen, die auf eine rechtswidrige Tätigkeit

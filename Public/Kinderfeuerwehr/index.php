@@ -29,7 +29,7 @@ $page->addContent($page->renderImageInfoBlock(
     id: 'image08-3j',
     cidSuffix: 'Image-Info-Image-Right',
     title: 'Unsere Kinderfeuerwehr',
-    subtitle: 'Ein mal im Monat treffen wir uns, um gemeinsam in die Welt der Feuerwehr einzutauchen.&nbsp;<br><br>Es gibt viel zu erleben und zu entdecken, von spannenden Übungen bis hin zu interessanten Geschichten rund um die Feuerwehr.<br><br>&nbsp;', // Behalte die Zeilenumbrüche bei
+    subtitle: 'Ein Mal im Monat treffen wir uns, um gemeinsam in die Welt der Feuerwehr einzutauchen.&nbsp;<br><br>Es gibt viel zu erleben und zu entdecken, von spannenden Übungen bis hin zu interessanten Geschichten rund um die Feuerwehr.<br><br>&nbsp;', // Behalte die Zeilenumbrüche bei
     imageSrc: '../assets/images/img-20240821-wa0061.webp',
     imageAlt: 'Kinderfeuerwehr beim Lernen' // Füge einen beschreibenden Alt-Text hinzu
 ));
