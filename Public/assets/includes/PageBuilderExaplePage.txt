@@ -1,29 +1,124 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT'] . '/assets/includes/PageBuilder.php';
 
+// Binde die PageBuilder-Klasse ein
+require_once 'PageBuilder.php';
+
+// 1. PageBuilder-Instanz erstellen (mit grundlegenden SEO-Informationen)
 $page = new PageBuilder(
-    title: 'Meine neue Seite',
-    description: 'Kurze Seitenbeschreibung',
-    canonicalUrl: 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
+    title: 'Beispielseite - PageBuilder Demo',
+    description: 'Dies ist eine Demonstrationsseite, die die verschiedenen Elemente des PageBuilders zeigt.',
+    keywords: 'PHP, PageBuilder, Webentwicklung, Beispiel, Demo',
+    author: 'Dein Name oder Organisation'
 );
 
-// Inhalt hinzufügen (kann leer bleiben oder später ergänzt werden)
-$page->addContent('<h1 class="text-center">Willkommen</h1>');
-$page->addContent('<p class="text-center">Hier entsteht etwas Neues.</p>');
-$page->addContent($page->renderAccordionList(
-    id: 'list01-notfall',
-    title: 'Wissenswertes für den Notfall',
-    items: [
-        ['q' => "Flammen im Haus\u{00A0}– was tun?",
-            'a' => 'Sofort raus und die 112 rufen. Wir kümmern uns um den Rest. Deine Sicherheit zuerst.'],
-        ['q' => 'Feuerlöscher‑Einsatz: Was muss ich wissen?',
-            'a' => 'Merk dir das Kurzwort "PASS": Ziehe die Sicherung (Pull)...'],
-        ['q' => 'Fettbrand in der Küche: Wie reagiere ich richtig?',
-            'a' => 'Bloß kein Wasser! Deckel oder Löschdecke drauf...'],
-        // … beliebig viele weitere FAQs …
-    ],
-    cidSuffix: 'FAQ' 
+// Optional: Favicon ändern
+// $page->setFavicon('/pfad/zum/eigenen/favicon.ico');
+
+// 2. Verschiedene Inhaltsblöcke hinzufügen
+
+// --- Fullscreen Hero ---
+$page->addContent($page->renderFullscreenHero(
+    id: 'hero-main',
+    title: 'Willkommen beim PageBuilder!',
+    subtitle: 'Entdecke die verschiedenen Elemente, die du einfach erstellen kannst.',
+    buttonText: 'Mehr erfahren',
+    buttonHref: '#features',
+    cidSuffix: 'xyz1', // Eindeutige ID für Mobirise
+    overlayOpacity: 0.5
 ));
 
-// Seite vollständig ausgeben
+// --- Bild-Teaser (Bild links, Text rechts) ---
+$page->addContent($page->renderImageTeaser(
+    id: 'teaser-intro',
+    cidSuffix: 'abc2',
+    title: 'Einfache Inhaltserstellung',
+    subtitle: 'Füge schnell und einfach Abschnitte mit Bild und Text hinzu.',
+    linkHref: '#accordion',
+    linkText: 'Siehe FAQs',
+    imageSrc: '/assets/images/beispielbild1.jpg', // Pfad zu einem Beispielbild
+    imageAlt: 'Platzhalterbild für Teaser',
+    btnClass: 'btn-info'
+));
+
+// --- Feature-Karten mit Bildern ---
+$featuresMitBild = [
+    ['img' => '/assets/images/icon1.png', 'alt' => 'Icon 1', 'title' => 'Feature 1', 'text' => 'Beschreibung für das erste Feature mit Bild.'],
+    ['img' => '/assets/images/icon2.png', 'alt' => 'Icon 2', 'title' => 'Feature 2', 'text' => 'Zweites Feature, ebenfalls mit einem Icon oder Bild.'],
+    ['img' => '/assets/images/icon3.png', 'alt' => 'Icon 3', 'title' => 'Feature 3', 'text' => 'Drittes Feature zur Demonstration der Karten.'],
+];
+$page->addContent($page->renderFeatureCardsWithImages(
+    id: 'features-visual',
+    title: 'Visuelle Features',
+    features: $featuresMitBild,
+    cidSuffix: 'def3'
+));
+
+// --- Text-Artikel ---
+$page->addContent($page->renderTextArticle(
+    id: 'article-main',
+    title: 'Detaillierte Informationen',
+    text: 'Hier kann längerer Text oder ein Artikel platziert werden. HTML-Tags wie <strong>fett</strong> oder <em>kursiv</em> sind ebenfalls möglich, wenn sie im Text übergeben werden.',
+    cidSuffix: 'ghi4'
+));
+
+// --- Accordion / FAQ-Liste ---
+$faqItems = [
+    ['q' => 'Frage 1: Was kann der PageBuilder?', 'a' => 'Er kann verschiedene HTML-Sektionen für eine Webseite generieren.'],
+    ['q' => 'Frage 2: Ist es einfach zu bedienen?', 'a' => 'Ja, durch die Methoden ist die Erstellung standardisierter Blöcke vereinfacht.'],
+    ['q' => 'Frage 3: Kann ich eigene CSS-Klassen hinzufügen?', 'a' => 'Ja, viele Methoden erlauben die Übergabe von zusätzlichen CSS-Klassen (z.B. für Buttons).'],
+];
+$page->addContent($page->renderAccordionList(
+    id: 'accordion-faq',
+    title: 'Häufig gestellte Fragen (FAQ)',
+    items: $faqItems,
+    cidSuffix: 'jkl5'
+));
+
+// --- Bildergalerie mit Lightbox ---
+$galleryImages = [
+    ['src' => '/assets/images/galerie1.jpg', 'alt' => 'Galeriebild 1'],
+    ['src' => '/assets/images/galerie2.jpg', 'alt' => 'Galeriebild 2'],
+    ['src' => '/assets/images/galerie3.jpg', 'alt' => 'Galeriebild 3'],
+    ['src' => '/assets/images/galerie4.jpg', 'alt' => 'Galeriebild 4'],
+];
+$page->addContent($page->renderGalleryWithLightbox(
+    id: 'gallery-showcase',
+    title: 'Bildergalerie',
+    images: $galleryImages,
+    cidSuffix: 'mno6'
+));
+
+// --- Call-to-Action Banner ---
+$page->addContent($page->renderCallToActionBanner(
+    id: 'cta-banner',
+    title: 'Bereit loszulegen?',
+    buttonHref: '#contact',
+    buttonText: 'Kontakt aufnehmen',
+    cidSuffix: 'pqr7',
+    btnClass: 'btn-success'
+));
+
+// --- Google Maps Einbindung ---
+$page->addContent($page->renderGoogleMap(
+    id: 'map-location',
+    iframeSrc: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d...', // Vollständige Embed-URL von Google Maps einfügen
+    cidSuffix: 'stu8'
+));
+
+// --- Download-Liste ---
+$downloads = [
+    ['title' => 'Dokument 1', 'description' => 'Wichtige Informationen im PDF-Format.', 'href' => '/downloads/dokument1.pdf'],
+    ['title' => 'Anleitung', 'description' => 'Installationsanleitung.', 'href' => '/downloads/anleitung.zip'],
+];
+$page->addContent($page->renderDownloadList(
+    id: 'downloads-section',
+    title: 'Downloads',
+    downloads: $downloads,
+    cidSuffix: 'vwx9'
+));
+
+
+// 3. Die gesamte Seite rendern (inkl. Head, Includes und Scripts)
 echo $page->renderFullPage();
+
+?>
