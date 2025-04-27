@@ -1,6 +1,10 @@
 <!-- Bootstrap Icons -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
 <?php
+
+ini_set('display_errors', 0);
+error_reporting(0);
+
 // Basispfad für Assets definieren
 $baseAssetsPath = isset($assetsPath) ? $assetsPath : '../assets';
 ?>
@@ -73,7 +77,7 @@ function renderMenu($items, $level = 0)
     <div class="navbar-brand">
         <span class="navbar-logo">
             <a href="/">
-                <img src="<?php echo $baseAssetsPath; ?>/images/gravatar-logo-dunkel-1.webp" alt="Feuerwehr Reichenbach"
+                <img src="<?php echo $baseAssetsPath; ?>/images/gravatar-logo-dunkel.webp" alt="Feuerwehr Reichenbach"
                     style="height: 3rem;">
             </a>
         </span>
@@ -93,7 +97,7 @@ function renderMenu($items, $level = 0)
         <ul class="navbar-nav nav-dropdown ms-auto">
             <?php renderMenu($menu); ?>
         </ul>
-        <div class="navbar-buttons mbr-section-btn">
+        <div class="navbar-buttons ffr-section-btn">
             <a class="btn btn-sm" href="https://www.facebook.com/groups/163127135137/" target="_blank">
                 <span class="socicon-facebook socicon"></span>
             </a>
@@ -204,7 +208,7 @@ function renderMenu($items, $level = 0)
         transform: translateY(-50%) translateX(3px);
     }
 
-    .navbar-buttons.mbr-section-btn .btn {
+    .navbar-buttons.ffr-section-btn .btn {
         background-color: transparent;
         border: none;
         color: white;
@@ -212,12 +216,12 @@ function renderMenu($items, $level = 0)
         transition: transform 0.3s ease, opacity 0.3s ease;
     }
 
-    .navbar-buttons.mbr-section-btn .btn:hover {
+    .navbar-buttons.ffr-section-btn .btn:hover {
         transform: translateY(-2px);
         opacity: 0.8;
     }
 
-    .navbar-buttons.mbr-section-btn .socicon {
+    .navbar-buttons.ffr-section-btn .socicon {
         font-size: 1.5rem;
     }
 
@@ -326,7 +330,7 @@ function renderMenu($items, $level = 0)
             transform: translateX(10px);
         }
 
-        .navbar-buttons.mbr-section-btn {
+        .navbar-buttons.ffr-section-btn {
             margin-top: 1rem;
             justify-content: center;
             display: flex;

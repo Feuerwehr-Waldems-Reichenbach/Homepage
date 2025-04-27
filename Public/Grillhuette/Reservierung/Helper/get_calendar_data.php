@@ -1,7 +1,7 @@
 <?php
 // Ensure any errors don't affect JSON output
 ini_set('display_errors', 0);
-error_reporting(E_ALL);
+error_reporting(0);
 // Catch errors and log them instead of displaying them
 function jsonErrorHandler($errno, $errstr, $errfile, $errline)
 {

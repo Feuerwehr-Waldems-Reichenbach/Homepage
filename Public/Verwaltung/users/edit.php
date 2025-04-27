@@ -14,8 +14,8 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 // Enable error reporting for debugging
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
+ini_set('display_errors', 0);
+error_reporting(0);
 
 // Generate CSRF token if not exists
 if (!isset($_SESSION['csrf_token'])) {

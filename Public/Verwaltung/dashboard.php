@@ -2,14 +2,19 @@
 // Include required files
 require_once dirname(__DIR__, 2) . '/Private/Database/Database.php';
 require_once __DIR__ . '/includes/config.php';
+require_once __DIR__ . '/includes/Security.php';
+
+// Session wird bereits in config.php gestartet - keine Notwendigkeit hier nochmal zu prüfen
+
+// Überprüfen, ob der Benutzer angemeldet ist
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['is_admin']) || !$_SESSION['is_admin']) {
+    $_SESSION['error'] = 'Bitte melden Sie sich an, um auf das Dashboard zuzugreifen.';
+    header('Location: ' . BASE_URL . '/index.php');
+    exit;
+}
 
 // Define title for the page
 $pageTitle = "Dashboard";
-
-// Start session if not already started
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
 
 // Get statistics from database
 try {
@@ -35,7 +40,6 @@ try {
     $stmt = $db->query("SELECT ID, Ueberschrift, Datum FROM neuigkeiten ORDER BY Datum DESC LIMIT 5");
     $recentNeuigkeiten = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
-    
 } catch (PDOException $e) {
     error_log('Dashboard error: ' . $e->getMessage());
     $_SESSION['error'] = 'Ein Fehler ist aufgetreten beim Laden des Dashboards.';
@@ -46,23 +50,75 @@ try {
     $recentEinsaetze = $recentNeuigkeiten = [];
 }
 
-// Include header
+// Standard header einbinden
 include __DIR__ . '/templates/header.php';
+
+// Zusätzliches CSS für Dashboard-spezifische Stile
 ?>
+<style>
+    .stats-card {
+        border-left: 4px solid rgba(167, 41, 32, 0.8);
+        height: 100%;
+    }
+    
+    .stats-card .card-body {
+        padding: 1.25rem;
+    }
+    
+    .stats-card .text-xs {
+        color: rgba(167, 41, 32, 0.9);
+        font-weight: bold;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+    }
+    
+    .stats-card .h5 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: #222;
+    }
+    
+    .stats-card .fa-2x {
+        color: rgba(167, 41, 32, 0.6);
+    }
+    
+    .table-card {
+        margin-bottom: 1.5rem;
+    }
+    
+    .table-card .card-header {
+        background-color: rgba(167, 41, 32, 0.85);
+        color: white;
+        font-weight: bold;
+        border-bottom: none;
+        padding: 1rem 1.25rem;
+    }
+    
+    .table-card .btn-primary {
+        background-color: rgba(255, 255, 255, 0.2);
+        border-color: rgba(255, 255, 255, 0.3);
+        color: white;
+    }
+    
+    .table-card .btn-primary:hover {
+        background-color: rgba(255, 255, 255, 0.3);
+        border-color: rgba(255, 255, 255, 0.4);
+    }
+</style>
 
 <div class="row mb-4">
     <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card border-left-primary shadow h-100 py-2">
+        <div class="card glass-card stats-card">
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                        <div class="text-xs mb-1">
                             Einsätze</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800"><?php echo $einsatzCount; ?></div>
+                        <div class="h5 mb-0 font-weight-bold"><?php echo $einsatzCount; ?></div>
                         <div class="small text-muted"><?php echo $publicEinsatzCount; ?> öffentlich</div>
                     </div>
                     <div class="col-auto">
-                        <i class="fas fa-fire-extinguisher fa-2x text-gray-300"></i>
+                        <i class="fas fa-fire-extinguisher fa-2x"></i>
                     </div>
                 </div>
             </div>
@@ -70,17 +126,17 @@ include __DIR__ . '/templates/header.php';
     </div>
 
     <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card border-left-success shadow h-100 py-2">
+        <div class="card glass-card stats-card">
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                        <div class="text-xs mb-1">
                             Neuigkeiten</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800"><?php echo $neuigkeitenCount; ?></div>
+                        <div class="h5 mb-0 font-weight-bold"><?php echo $neuigkeitenCount; ?></div>
                         <div class="small text-muted"><?php echo $activeNeuigkeitenCount; ?> aktiv</div>
                     </div>
                     <div class="col-auto">
-                        <i class="fas fa-newspaper fa-2x text-gray-300"></i>
+                        <i class="fas fa-newspaper fa-2x"></i>
                     </div>
                 </div>
             </div>
@@ -88,17 +144,17 @@ include __DIR__ . '/templates/header.php';
     </div>
 
     <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card border-left-info shadow h-100 py-2">
+        <div class="card glass-card stats-card">
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                        <div class="text-xs mb-1">
                             Auth-Schlüssel</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800"><?php echo $authSchluesselCount; ?></div>
+                        <div class="h5 mb-0 font-weight-bold"><?php echo $authSchluesselCount; ?></div>
                         <div class="small text-muted"><?php echo $activeAuthSchluesselCount; ?> aktiv</div>
                     </div>
                     <div class="col-auto">
-                        <i class="fas fa-key fa-2x text-gray-300"></i>
+                        <i class="fas fa-key fa-2x"></i>
                     </div>
                 </div>
             </div>
@@ -106,17 +162,17 @@ include __DIR__ . '/templates/header.php';
     </div>
 
     <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card border-left-warning shadow h-100 py-2">
+        <div class="card glass-card stats-card">
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                        <div class="text-xs mb-1">
                             Benutzer</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800"><?php echo $userCount; ?></div>
+                        <div class="h5 mb-0 font-weight-bold"><?php echo $userCount; ?></div>
                         <div class="small text-muted"><?php echo $adminCount; ?> Administratoren</div>
                     </div>
                     <div class="col-auto">
-                        <i class="fas fa-users fa-2x text-gray-300"></i>
+                        <i class="fas fa-users fa-2x"></i>
                     </div>
                 </div>
             </div>
@@ -126,9 +182,9 @@ include __DIR__ . '/templates/header.php';
 
 <div class="row">
     <div class="col-md-6 mb-4">
-        <div class="card shadow mb-4">
-            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-primary">Neueste Einsätze</h6>
+        <div class="card glass-card table-card">
+            <div class="card-header d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 fw-bold">Neueste Einsätze</h6>
                 <a href="<?php echo $ADMIN_ROOT; ?>/einsatz/list.php" class="btn btn-sm btn-primary">Alle anzeigen</a>
             </div>
             <div class="card-body">
@@ -169,9 +225,9 @@ include __DIR__ . '/templates/header.php';
     </div>
 
     <div class="col-md-6 mb-4">
-        <div class="card shadow mb-4">
-            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-primary">Neueste Neuigkeiten</h6>
+        <div class="card glass-card table-card">
+            <div class="card-header d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 fw-bold">Neueste Neuigkeiten</h6>
                 <a href="<?php echo $ADMIN_ROOT; ?>/neuigkeiten/list.php" class="btn btn-sm btn-primary">Alle anzeigen</a>
             </div>
             <div class="card-body">
@@ -211,6 +267,6 @@ include __DIR__ . '/templates/header.php';
 </div>
 
 <?php
-// Include footer
+// Footer einbinden
 include __DIR__ . '/templates/footer.php';
 ?> 

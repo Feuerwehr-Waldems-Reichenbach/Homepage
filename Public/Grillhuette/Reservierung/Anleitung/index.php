@@ -16,7 +16,7 @@ require_once '../includes/header.php';
                         <a class="nav-link" href="#benutzer-anmeldung">Benutzer-Anmeldung</a>
                         <a class="nav-link" href="#profil-verwalten">Profil verwalten</a>
                         <a class="nav-link" href="#passwort-zuruecksetzen">Passwort zurücksetzen</a>
-                        <a class="nav-link" href="#reservierung-uebersicht">Reservierung - Übersicht</a>
+                        <a class="nav-link" href="#reservierung-uebersicht">Reservierung-Übersicht</a>
                         <a class="nav-link" href="#reservierung-erstellen">Reservierung erstellen</a>
                         <a class="nav-link" href="#meine-reservierungen">Meine Reservierungen</a>
                         <a class="nav-link" href="#oeffentliche-veranstaltungen">Öffentliche Veranstaltungen</a>
@@ -180,7 +180,7 @@ require_once '../includes/header.php';
                         </div>
                     </div>
                     <div id="reservierung-uebersicht" class="mb-5">
-                        <h3>Reservierung - Übersicht</h3>
+                        <h3>Reservierung-Übersicht</h3>
                         <hr>
                         <p>
                             Die Startseite des Reservierungssystems zeigt einen Kalender mit den verfügbaren und bereits
@@ -362,7 +362,7 @@ require_once '../includes/header.php';
                         <ol>
                             <li>Erstellen Sie eine normale Reservierung wie oben beschrieben.</li>
                             <li>Setzen Sie einen Haken bei "Öffentliche Veranstaltung?".</li>
-                            <li>Geben Sie einen Namen für Ihre Veranstaltung ein (z.B. "Sommerfest", "Vereinstreffen").
+                            <li>Geben Sie einen Namen für Ihre Veranstaltung ein (z. B. "Sommerfest", "Vereinstreffen").
                             </li>
                             <li>Legen Sie den Zeitraum fest, in dem die Veranstaltung im Kalender angezeigt werden soll.
                                 Dieser Zeitraum muss innerhalb Ihres Reservierungszeitraums liegen.</li>
@@ -531,7 +531,7 @@ require_once '../includes/header.php';
                                         In den kälteren Monaten (ca. Oktober bis März) sind die Toiletten möglicherweise
                                         nicht
                                         nutzbar, da das Wasser abgestellt wird, um Frostschäden zu vermeiden. Der genaue
-                                        Zeitraum kann variieren.
+                                        Zeitraum kann variieren
                                     </div>
                                 </div>
                             </div>

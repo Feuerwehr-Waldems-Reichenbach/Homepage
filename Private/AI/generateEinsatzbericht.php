@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/sendLLMRequest.php';
 require_once __DIR__ . '/../Database/Database.php';
+require_once __DIR__ . '/../Email/emailSender.php';
 
 /**
  * Generiert einen Einsatzbericht anhand gegebener Einsatzdaten und speichert ihn in der Datenbank.
@@ -196,4 +197,10 @@ function logEinsatzGeneration(int $einsatzId, string $stichwort, string $ort, st
     $entry = "[{$timestamp}] Bericht für Einsatz #{$einsatzId} ({$stichwort}, {$ort}) generiert.\n------v Original v------\n{$bericht}\n-------v Cleaned v------\n\n {$cleanedText} \n------------\n\n";
 
     file_put_contents($logPath, $entry, FILE_APPEND);
+
+    $config = parse_ini_file("emailNotification.ini");
+    $receiver = $config['email'];
+    $subject = 'Einsatzbericht generiert';
+    $body = 'Ein Einsatzbericht für Einsatz #'.$einsatzId . '(' .$stichwort . ', ' .$ort .') wurde generiert.';
+    sendEmail($receiver, $subject, $body);
 }

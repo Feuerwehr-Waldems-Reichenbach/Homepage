@@ -22,7 +22,7 @@ $errorPageNonce = base64_encode(random_bytes(16));
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'nonce-<?php echo $errorPageNonce; ?>'">
-    <title>Fehlerseiten-Übersicht - Feuerwehr Waldems Reichenbach</title>
+    <title>Fehlerseiten-Übersicht | Feuerwehr Reichenbach</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap">
     <link rel="stylesheet" href="error-styles.css">
     <style>

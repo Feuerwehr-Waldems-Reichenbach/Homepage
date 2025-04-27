@@ -25,54 +25,65 @@ $pageTitle = "Verwaltung - Login";
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+        }
+    </style>
 </head>
-<body class="bg-light">
+<body class="login-page">
     <div class="container">
-        <div class="row justify-content-center mt-5">
+        <div class="row justify-content-center">
             <div class="col-md-6 col-lg-5">
-                <div class="card shadow">
-                    <div class="card-header bg-primary text-white text-center">
-                        <h4>Verwaltungssystem Login</h4>
+                <div class="card glass-card shadow">
+                    <div class="card-header text-white text-center">
+                        <h4 class="mb-0 fw-bold">Verwaltungssystem</h4>
                     </div>
                     <div class="card-body">
                         <?php if (isset($_SESSION['error'])): ?>
-                            <div class="alert alert-danger">
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <i class="fas fa-exclamation-circle me-2"></i>
                                 <?php 
                                     echo $_SESSION['error']; 
                                     unset($_SESSION['error']);
                                 ?>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                             </div>
                         <?php endif; ?>
                         
                         <?php if (isset($_SESSION['success'])): ?>
-                            <div class="alert alert-success">
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                <i class="fas fa-check-circle me-2"></i>
                                 <?php 
                                     echo $_SESSION['success']; 
                                     unset($_SESSION['success']);
                                 ?>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                             </div>
                         <?php endif; ?>
                         
                         <form action="auth/login.php" method="post" class="needs-validation" novalidate>
                             <input type="hidden" name="csrf_token" value="<?php echo $csrfToken; ?>">
                             
-                            <div class="mb-3">
-                                <label for="email" class="form-label">E-Mail</label>
+                            <div class="mb-4">
+                                <label for="email" class="form-label fw-bold">E-Mail</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                                    <input type="email" class="form-control" id="email" name="email" required>
+                                    <input type="email" class="form-control" id="email" name="email" required placeholder="ihreemail@beispiel.de">
                                 </div>
                                 <div class="invalid-feedback">
                                     Bitte geben Sie eine gültige E-Mail-Adresse ein.
                                 </div>
                             </div>
                             
-                            <div class="mb-3">
-                                <label for="password" class="form-label">Passwort</label>
+                            <div class="mb-4">
+                                <label for="password" class="form-label fw-bold">Passwort</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                                    <input type="password" class="form-control" id="password" name="password" required>
-                                    <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                    <input type="password" class="form-control" id="password" name="password" required placeholder="Ihr Passwort">
+                                    <button class="btn btn-outline-secondary" type="button" id="togglePassword" aria-label="Passwort anzeigen/verbergen">
                                         <i class="fas fa-eye"></i>
                                     </button>
                                 </div>
@@ -81,15 +92,22 @@ $pageTitle = "Verwaltung - Login";
                                 </div>
                             </div>
                             
-                            <div class="d-grid gap-2">
-                                <button type="submit" class="btn btn-primary">Anmelden</button>
+                            <div class="d-grid gap-2 mb-4">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-sign-in-alt me-2"></i>Anmelden
+                                </button>
                             </div>
                             
-                            <div class="text-center mt-3">
-                                <a href="auth/forgot-password.php" class="text-decoration-none">Passwort vergessen?</a>
+                            <div class="text-center">
+                                <a href="auth/forgot-password.php" class="text-decoration-none">
+                                    <i class="fas fa-key me-1"></i>Passwort vergessen?
+                                </a>
                             </div>
                         </form>
                     </div>
+                </div>
+                <div class="text-center mt-3 text-white">
+                    <small>&copy; <?php echo date('Y'); ?> Feuerwehr Verwaltungssystem</small>
                 </div>
             </div>
         </div>

@@ -396,7 +396,7 @@ function updateAllKategorien(PDO $conn, bool $nurNullWerte = true): array
 
     $updated = 0;
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        $kat     = getKategorie($row['Sachverhalt'], $row['Stichwort'], $row['ID']);
+        $kat     = getKategorie($row['Sachverhalt'], $row['Stichwort']);
         $updStmt = $conn->prepare('UPDATE `einsatz` SET `Kategorie` = ? WHERE `ID` = ?');
         if ($updStmt->execute([$kat, $row['ID']])) {
             $updated++;

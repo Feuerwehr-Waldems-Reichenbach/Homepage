@@ -1,18 +1,5 @@
     </main>
     
-    <footer class="bg-light py-4 mt-5">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6">
-                    <p class="mb-0">&copy; <?php echo date('Y'); ?> Feuerwehr Waldems Reichenbach</p>
-                </div>
-                <div class="col-md-6 text-md-end">
-                    <p class="mb-0">Verwaltungssystem</p>
-                </div>
-            </div>
-        </div>
-    </footer>
-    
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <!-- Bootstrap JS Bundle with Popper -->
@@ -45,8 +32,8 @@
                     text: "Diese Aktion kann nicht rückgängig gemacht werden!",
                     icon: 'warning',
                     showCancelButton: true,
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#3085d6',
+                    confirmButtonColor: '#a72920',
+                    cancelButtonColor: '#6c757d',
                     confirmButtonText: 'Ja, löschen!',
                     cancelButtonText: 'Abbrechen'
                 }).then((result) => {

@@ -9,14 +9,18 @@ define('ADMIN_PATH', dirname(__DIR__)); // Admin directory
 $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https://' : 'http://';
 $domain = $_SERVER['HTTP_HOST'];
 
-// Korrigiere den Pfad, damit er immer auf das Verwaltungsverzeichnis zeigt
-$scriptPath = $_SERVER['SCRIPT_NAME'];
-$verwaltungPos = strpos($scriptPath, '/Verwaltung/');
+// Calculate the base path more reliably
+$scriptPath = str_replace('\\', '/', $_SERVER['SCRIPT_NAME']);
+$scriptDir = dirname($scriptPath);
+
+// Find the position of '/Verwaltung/' in the script path
+$verwaltungPos = strpos($scriptDir, '/Verwaltung');
 if ($verwaltungPos !== false) {
-    $root = substr($scriptPath, 0, $verwaltungPos) . '/Verwaltung';
+    // Extract the path up to and including '/Verwaltung'
+    $root = substr($scriptDir, 0, $verwaltungPos) . '/Verwaltung';
 } else {
-    // Fallback wenn '/Verwaltung/' nicht im Pfad gefunden wird
-    $root = str_replace('\\', '/', dirname($_SERVER['PHP_SELF']));
+    // If '/Verwaltung/' isn't found, use the current directory
+    $root = $scriptDir;
 }
 
 define('BASE_URL', $protocol . $domain . $root);
@@ -37,7 +41,7 @@ define('UPLOAD_DIR', ADMIN_PATH . '/assets/images/');
 
 // Error reporting
 ini_set('display_errors', 0);
-error_reporting(E_ALL);
+error_reporting(0);
 ini_set('log_errors', 1);
 ini_set('error_log', BASE_PATH . '/Private/logs/error.log');
 
@@ -46,14 +50,19 @@ if (!is_dir(BASE_PATH . '/Private/logs/')) {
     mkdir(BASE_PATH . '/Private/logs/', 0755, true);
 }
 
+// Bestimme die Domain für Cookies
+$cookieDomain = '';  // Leerer String bedeutet, Domain vom Host übernehmen
+// Optional: Wenn Sie eine spezifische Domain nutzen wollen (z. B. bei Subdomains)
+// $cookieDomain = preg_match('/(?P<domain>[a-z0-9][a-z0-9\-]{1,63}\.[a-z\.]{2,6})$/i', $domain, $matches) ? $matches['domain'] : '';
+
 // Set session cookie parameters
 session_set_cookie_params([
     'lifetime' => SESSION_LIFETIME,
-    'path' => '/',
-    'domain' => $_SERVER['HTTP_HOST'],
+    'path' => '/',  // Wichtig: Der Pfad muss für alle Bereiche der Website gleich sein
+    'domain' => $cookieDomain,
     'secure' => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on',
     'httponly' => true,
-    'samesite' => 'Strict'
+    'samesite' => 'Lax'  // Geändert von 'Strict' zu 'Lax' für bessere Kompatibilität
 ]);
 
 // Start session if not already started

@@ -1,170 +1,91 @@
-<!DOCTYPE html>
-<html>
+<?php
 
-<head>
-  <!-- FFR Seite -->
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
-  <link rel="shortcut icon" href="../assets/images/gravatar-logo-dunkel.jpg" type="image/x-icon">
-  <meta name="description"
-    content="Möchtest du Teil der Freiwilligen Feuerwehr Reichenbach werden? Erfahre mehr darüber, wie du mitmachen und einen Unterschied machen kannst.">
-  <title>Mitmachen</title>
-  <link rel="stylesheet" href="../assets/web/assets/mobirise-icons2/mobirise2.css">
-  <link rel="stylesheet" href="../assets/bootstrap/css/bootstrap.min.css">
-  <link rel="stylesheet" href="../assets/bootstrap/css/bootstrap-grid.min.css">
-  <link rel="stylesheet" href="../assets/bootstrap/css/bootstrap-reboot.min.css">
-  <link rel="stylesheet" href="../assets/parallax/jarallax.css">
-  <link rel="stylesheet" href="../assets/dropdown/css/style.css">
-  <link rel="stylesheet" href="../assets/socicon/css/styles.css">
-  <link rel="stylesheet" href="../assets/theme/css/style.css">
-  <link rel="stylesheet" href="../assets/css/custom-parallax.css">
-  <link rel="preload"
-    href="https://fonts.googleapis.com/css?family=Inter+Tight:100,200,300,400,500,600,700,800,900,100i,200i,300i,400i,500i,600i,700i,800i,900i&display=swap"
-    as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript>
-    <link rel="stylesheet"
-      href="https://fonts.googleapis.com/css?family=Inter+Tight:100,200,300,400,500,600,700,800,900,100i,200i,300i,400i,500i,600i,700i,800i,900i&display=swap">
-  </noscript>
-  <link rel="preload" as="style" href="../assets/mobirise/css/mbr-additional.css?v=7TVD93">
-  <link rel="stylesheet" href="../assets/mobirise/css/mbr-additional.css?v=7TVD93" type="text/css">
-</head>
+require_once $_SERVER['DOCUMENT_ROOT'] . '/assets/includes/PageBuilder.php';
 
-<body>
-  <?php include '../assets/includes/navbar.php'; ?>
-  <section data-bs-version="5.1" class="header16 cid-u8N1tzsnVL mbr-fullscreen jarallax" id="header17-1i"
-    data-jarallax-speed="0.8">
-    <div class="mbr-overlay" style="opacity: 0.5; background-color: rgb(0, 0, 0);"></div>
-    <div class="container-fluid">
-      <div class="row">
-        <div class="content-wrap col-12 col-md-12">
-          <h1 class="mbr-section-title mbr-fonts-style mbr-white mb-4 display-1"><strong>Mach mit!</strong></h1>
-          <div class="mbr-section-btn"><a class="btn btn-white-outline display-7" href="#features019-1j">Erfahre
-              mehr!</a></div>
-        </div>
-      </div>
-    </div>
-  </section>
-  <section data-bs-version="5.1" class="features19 cid-u8N1UzkJC0" id="features019-1j">
-    <div class="container">
-      <div class="row justify-content-center">
-      </div>
-      <div class="row">
-        <div class="item features-without-image col-12 col-lg-4 item-mb active">
-          <div class="item-wrapper">
-            <div class="card-box align-left">
-              <div class="img-wrapper mb-3">
-                <img class="" src="../assets/images/1024d6e5-9a7b-4004-9dc4-8b416865dfe1.webp" alt="Einsatzabteilung">
-              </div>
-              <h5 class="card-title mbr-fonts-style display-5">
-                <strong>Einsatzabteilung</strong>
-              </h5>
-              <p class="card-text mbr-fonts-style display-7">
-                Unsere Einsatzabteilung trifft sich alle zwei Wochen montags zu Übungen. Hier bereiten wir uns auf
-                verschiedene Einsatzszenarien vor und verbessern unsere Fähigkeiten im Team.</p>
-            </div>
-          </div>
-        </div>
-        <div class="item features-without-image col-12 col-lg-4 item-mb">
-          <div class="item-wrapper">
-            <div class="card-box align-left">
-              <div class="img-wrapper mb-3">
-                <img class="" src="../assets/images/whatsapp-bild-2024-08-13-um-19.29.12-f774f342-1.webp"
-                  alt="Jugendfeuerwehr" data-slide-to="1" data-bs-slide-to="1">
-              </div>
-              <h5 class="card-title mbr-fonts-style display-5">
-                <strong>Jugendfeuerwehr</strong>
-              </h5>
-              <p class="card-text mbr-fonts-style display-7">
-                Die Jugendfeuerwehr trifft sich alle zwei Wochen dienstags. Jugendliche lernen hier spielerisch die
-                Grundlagen der Feuerwehrarbeit und erleben spannende Aktivitäten.</p>
-            </div>
-          </div>
-        </div>
-        <div class="item features-without-image col-12 col-lg-4 item-mb">
-          <div class="item-wrapper">
-            <div class="card-box align-left">
-              <div class="img-wrapper mb-3">
-                <img class="" src="../assets/images/lowpoly.webp" alt="Kinderfeuerwehr" data-slide-to="2"
-                  data-bs-slide-to="2">
-              </div>
-              <h5 class="card-title mbr-fonts-style display-5">
-                <strong>Kinderfeuerwehr</strong>
-              </h5>
-              <p class="card-text mbr-fonts-style display-7">
-                Die Kinderfeuerwehr trifft sich alle vier Wochen montags. Hier werden die Kinder spielerisch an die
-                Aufgaben der Feuerwehr herangeführt und nehmen an altersgerechten Übungen und Aktivitäten teil.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-  <section data-bs-version="5.1" class="article13 cid-ukzYHmVHQq" id="article13-4s">
-    <div class="container">
-      <div class="row justify-content-center">
-        <div class="card col-md-12 col-lg-12">
-          <div class="card-wrapper">
-            <div class="card-box align-left">
-              <h4 class="card-title mbr-fonts-style display-2">
-                <strong>Interessiert?</strong>
-              </h4>
-              <p class="mbr-text mbr-fonts-style mt-4 display-7">
-                Wenn du neugierig bist und mehr über unsere Arbeit erfahren möchtest, bist du herzlich eingeladen, zu
-                einem unserer Termine vorbeizukommen. Ob Einsatzabteilung, Jugendfeuerwehr oder Kinderfeuerwehr – schau
-                einfach vorbei, lerne uns kennen und finde heraus, wie spannend und erfüllend das Engagement bei der
-                Feuerwehr sein kann!
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-  <section data-bs-version="5.1" class="image03 cid-u8N5hHePcj" id="image04-1l">
-    <div class="image-block m-auto">
-      <img src="Datei/Jahreskalender Feuerwehr Reichenbach.jpg" alt="Kalender">
-    </div>
-  </section>
-  <section data-bs-version="5.1" class="header14 cid-u8N5PcjmYp" id="header14-1n">
-    <div class="container">
-      <div class="row justify-content-center">
-        <div class="card col-12 col-md-12 col-lg-12">
-          <div class="card-wrapper">
-            <div class="card-box align-center">
-              <h1 class="card-title mbr-fonts-style mb-4 display-2"><strong>Hier gibt's unseren
-                  Übungsplan&nbsp;</strong></h1>
-              <div class="mbr-section-btn mt-4">
-                <a class="btn btn-primary display-7" href="Datei/Jahreskalender Feuerwehr Reichenbach final.pdf">PDF
-                  herunterladen</a>
-                <a class="btn btn-primary display-7" href="Datei/Jahreskalender Feuerwehr Reichenbach.jpg">Bild
-                  herunterladen</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-  <?php include '../assets/includes/socialFooter.php'; ?>
-  <?php include '../assets/includes/footer.php'; ?>
-  <!-- Parallax Scripts -->
-  <script src="../assets/bootstrap/js/bootstrap.bundle.min.js"></script>
-  <script src="../assets/smoothscroll/smooth-scroll.js"></script>
-  <script src="../assets/ytplayer/index.js"></script>
-  <script src="../assets/dropdown/js/navbar-dropdown.js"></script>
-  <script src="../assets/theme/js/script.js"></script>
-  <script src="../assets/parallax/jarallax.js"></script>
-  <script>
-    // Initialisiere Jarallax nach dem Laden der Seite
-    document.addEventListener("DOMContentLoaded", function () {
-      jarallax(document.querySelectorAll('.jarallax'), {
-        speed: 0.6,
-        imgPosition: '50% 50%',
-        imgSize: 'cover'
-      });
-    });
-  </script>
-</body>
+$page = new PageBuilder(
+    title: 'Mach mit | Feuerwehr Reichenbach',
+    description: 'Engagiere dich bei der Freiwilligen Feuerwehr Reichenbach! Informiere dich über Möglichkeiten in der Einsatzabteilung, Jugend- oder Kinderfeuerwehr und lade unseren Übungsplan herunter.',
+    keywords: 'Mitmachen Feuerwehr, Feuerwehr Reichenbach beitreten, Ehrenamt Waldems, Freiwillige Feuerwehr Waldems, Einsatzabteilung Mitmachen, Jugendfeuerwehr Mitmachen, Kinderfeuerwehr Mitmachen, Feuerwehr Training Waldems, Übungsplan Feuerwehr, Reichenbach Waldems',
+    canonicalUrl: 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],  
+);
 
-</html>
+// Füge den Fullscreen Hero Abschnitt hinzu
+$page->addContent($page->renderFullscreenHero(
+    id: 'header17-1i',
+    cidSuffix: 'Hero-Mitmachen',
+    title: 'Mach mit!',
+    subtitle: '', // Kein Untertitel im ursprünglichen Header
+    buttonText: 'Erfahre mehr!',
+    buttonHref: '#features019-1j', // Link zum ersten Inhaltsblock
+    jarallaxSpeed: 0.8,
+    overlayOpacity: 0.5,
+    overlayColor: 'rgb(0, 0, 0)',
+    btnClass: 'btn-white-outline' // Passe die Button-Klasse an
+));
+
+// Füge den Features Abschnitt (Einsatz-, Jugend-, Kinderfeuerwehr) hinzu
+$page->addContent($page->renderFeatureCardsWithImages(
+    id: 'features019-1j',
+    cidSuffix: 'Feature-Cards-With-Images',
+    title: '', // Kein Titel oberhalb der Karten im Original
+    features: [
+        [
+            'img' => '../assets/images/1024d6e5-9a7b-4004-9dc4-8b416865dfe1.webp',
+            'alt' => 'Einsatzabteilung',
+            'title' => 'Einsatzabteilung',
+            'text' => 'Unsere Einsatzabteilung trifft sich alle zwei Wochen montags zu Übungen. Hier bereiten wir uns auf verschiedene Einsatzszenarien vor und verbessern unsere Fähigkeiten im Team.',
+        ],
+        [
+            'img' => '../assets/images/whatsapp-bild-2024-08-13-um-19.29.12-f774f342-1.webp',
+            'alt' => 'Jugendfeuerwehr',
+            'title' => 'Jugendfeuerwehr',
+            'text' => 'Die Jugendfeuerwehr trifft sich alle zwei Wochen dienstags. Jugendliche lernen hier spielerisch die Grundlagen der Feuerwehrarbeit und erleben spannende Aktivitäten.',
+        ],
+        [
+            'img' => '../assets/images/img-20240821-wa0061.webp',
+            'alt' => 'Kinderfeuerwehr',
+            'title' => 'Kinderfeuerwehr',
+            'text' => 'Die Kinderfeuerwehr trifft sich alle vier Wochen montags. Hier werden die Kinder spielerisch an die Aufgaben der Feuerwehr herangeführt und nehmen an altersgerechten Übungen und Aktivitäten teil.',
+        ],
+    ]
+));
+
+// Füge den Textabschnitt "Interessiert?" hinzu
+$page->addContent($page->renderTextArticle(
+    id: 'article13-4s',
+    cidSuffix: 'Text-Article',
+    title: 'Interessiert?',
+    text: 'Wenn du neugierig bist und mehr über unsere Arbeit erfahren möchtest, bist du herzlich eingeladen, zu einem unserer Termine vorbeizukommen. Ob Einsatzabteilung, Jugendfeuerwehr oder Kinderfeuerwehr – schau einfach vorbei, lerne uns kennen und finde heraus, wie spannend und erfüllend das Engagement bei der Feuerwehr sein kann!',
+));
+
+// Füge den Bildabschnitt hinzu
+$page->addContent($page->renderImageSection(
+    id: 'image04-1l',
+    cidSuffix: 'Inage-Full-Size',
+    imageSrc: '/assets/files/Jahreskalender Feuerwehr Reichenbach.jpg',
+    imageAlt: 'Kalender'
+));
+
+// Füge den Header mit Download-Buttons hinzu
+$page->addContent($page->renderDownloadHeaderWithButtons(
+    id: 'header14-1n',
+    cidSuffix: 'Download-header-With-Buttons',
+    title: 'Hier gibt\'s unseren Übungsplan',
+    buttons: [
+        [
+            'label' => 'PDF herunterladen',
+            'href' => '/assets/files/Jahreskalender Feuerwehr Reichenbach final.pdf',
+            'class' => 'btn-primary',
+        ],
+        [
+            'label' => 'Bild herunterladen',
+            'href' => '/assets/files/Jahreskalender Feuerwehr Reichenbach.jpg',
+            'class' => 'btn-primary',
+        ],
+    ]
+));
+
+// Rendere die vollständige Seite inklusive Head, Includes und Scripts
+echo $page->renderFullPage();
+
+?>

@@ -276,7 +276,7 @@ require_once '../../includes/header.php';
                                                                 id="info_content_<?php echo $info['id']; ?>" name="info_content"
                                                                 rows="3" <?php echo $category === $systemCategory ? '' : ''; ?>><?php echo htmlspecialchars($info['content']); ?></textarea>
                                                             <?php if (in_array($info['title'], ['MietpreisNormal', 'MietpreisAktivesMitglied', 'MietpreisFeuerwehr', 'Kautionspreis'])): ?>
-                                                                <div class="form-text">Bitte mit €-Zeichen eingeben, z.B. "100€"</div>
+                                                                <div class="form-text">Bitte mit €-Zeichen eingeben, z. B. "100€"</div>
                                                             <?php endif; ?>
                                                         </div>
                                                         <?php if (in_array($category, $editableCategories)): ?>
@@ -492,13 +492,13 @@ require_once '../../includes/header.php';
                                 rows="3" required placeholder="<?php
                                 switch ($category) {
                                     case 'grillhuette_info':
-                                        echo 'z.B. "Die Grillhütte verfügt über eine moderne Ausstattung."';
+                                        echo 'z. B. "Die Grillhütte verfügt über eine moderne Ausstattung."';
                                         break;
                                     case 'im_preis_enthalten':
-                                        echo 'z.B. "1m³ Wasser"';
+                                        echo 'z. B. "1m³ Wasser"';
                                         break;
                                     case 'wichtige_hinweise':
-                                        echo 'z.B. "Die Grillhütte ist sauber zu hinterlassen."';
+                                        echo 'z. B. "Die Grillhütte ist sauber zu hinterlassen."';
                                         break;
                                     default:
                                         echo '';

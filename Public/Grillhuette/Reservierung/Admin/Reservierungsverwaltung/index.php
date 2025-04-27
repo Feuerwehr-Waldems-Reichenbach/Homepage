@@ -578,7 +578,7 @@ require_once '../../includes/header.php';
                         <div class="mb-3">
                             <label for="event_name" class="form-label">Name der Veranstaltung</label>
                             <input type="text" class="form-control" id="event_name" name="event_name" maxlength="255"
-                                placeholder="z.B. Grillfest">
+                                placeholder="z. B. Grillfest">
                         </div>
                         <div class="mb-3 form-check">
                             <input type="checkbox" class="form-check-input" id="show_date_range" name="show_date_range">
@@ -758,7 +758,7 @@ require_once '../../includes/header.php';
                         <div class="mb-3">
                             <label for="edit_event_name" class="form-label">Name der Veranstaltung</label>
                             <input type="text" class="form-control" id="edit_event_name" name="event_name"
-                                maxlength="255" placeholder="z.B. Grillfest">
+                                maxlength="255" placeholder="z. B. Grillfest">
                         </div>
                         <div class="mb-3 form-check">
                             <input type="checkbox" class="form-check-input" id="edit_show_date_range"
@@ -1115,9 +1115,8 @@ require_once '../../includes/header.php';
             });
         }
         // Setup for new reservation button
-        const createReservationButton = document.querySelector('.modal-footer .btn-primary');
-        if (createReservationButton && !createReservationButton.id) {
-            createReservationButton.id = 'createReservationButton';
+        const createReservationButton = document.getElementById('createReservationButton');
+        if (createReservationButton) {
             createReservationButton.addEventListener('click', function () {
                 document.getElementById('createReservationForm').submit();
             });
@@ -1168,10 +1167,18 @@ require_once '../../includes/header.php';
             altFormat: "j. F Y",
             minDate: "today",
             disableMobile: "true",
-            onChange: function () {
+            onChange: function (selectedDates) {
                 updateNewCosts();
                 // Update constraints for event dates
                 updateNewEventDateConstraints();
+                // Set key handover date (day before start)
+                if (selectedDates[0]) {
+                    const handoverDate = new Date(selectedDates[0]);
+                    handoverDate.setDate(handoverDate.getDate() - 1);
+                    if (document.getElementById('key_handover_date')._flatpickr) {
+                        document.getElementById('key_handover_date')._flatpickr.setDate(handoverDate);
+                    }
+                }
             }
         });
         flatpickr('#end_date', {
@@ -1181,10 +1188,18 @@ require_once '../../includes/header.php';
             altFormat: "j. F Y",
             minDate: "today",
             disableMobile: "true",
-            onChange: function () {
+            onChange: function (selectedDates) {
                 updateNewCosts();
                 // Update constraints for event dates
                 updateNewEventDateConstraints();
+                // Set key return date (day after end)
+                if (selectedDates[0]) {
+                    const returnDate = new Date(selectedDates[0]);
+                    returnDate.setDate(returnDate.getDate() + 1);
+                    if (document.getElementById('key_return_date')._flatpickr) {
+                        document.getElementById('key_return_date')._flatpickr.setDate(returnDate);
+                    }
+                }
             }
         });
         // Initialize flatpickr for the event day fields

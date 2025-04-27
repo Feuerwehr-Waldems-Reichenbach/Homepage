@@ -7,12 +7,17 @@ require_once dirname(__DIR__) . '/includes/Security.php';
 // Set security headers
 Security::setSecurityHeaders();
 
+// Stellen Sie sicherstellen, dass die Session gestartet ist
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 // Check if the form was submitted
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Validate CSRF token
     if (!isset($_POST['csrf_token']) || !Security::validateCSRFToken($_POST['csrf_token'])) {
         $_SESSION['error'] = 'Ungültige Anfrage. Bitte versuchen Sie es erneut.';
-        header('Location: ' . dirname($_SERVER['PHP_SELF'], 2) . '/index.php');
+        header('Location: ' . BASE_URL . '/index.php');
         exit;
     }
     
@@ -23,14 +28,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Validate input
     if (empty($email) || empty($password)) {
         $_SESSION['error'] = 'Bitte füllen Sie alle Felder aus.';
-        header('Location: ' . dirname($_SERVER['PHP_SELF'], 2) . '/index.php');
+        header('Location: ' . BASE_URL . '/index.php');
         exit;
     }
     
     // Validate email format
     if (!Security::validateEmail($email)) {
         $_SESSION['error'] = 'Bitte geben Sie eine gültige E-Mail-Adresse ein.';
-        header('Location: ' . dirname($_SERVER['PHP_SELF'], 2) . '/index.php');
+        header('Location: ' . BASE_URL . '/index.php');
         exit;
     }
     
@@ -40,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         Security::logSecurityEvent($email, 'account_lockout', 'warning', 'Zu viele fehlgeschlagene Anmeldeversuche');
         
         $_SESSION['error'] = 'Zu viele fehlgeschlagene Anmeldeversuche. Bitte versuchen Sie es später erneut.';
-        header('Location: ' . dirname($_SERVER['PHP_SELF'], 2) . '/index.php');
+        header('Location: ' . BASE_URL . '/index.php');
         exit;
     }
     
@@ -62,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             Security::logSecurityEvent($email, 'login', 'failure', 'Ungültige Anmeldedaten');
             
             $_SESSION['error'] = 'Ungültige E-Mail oder Passwort.';
-            header('Location: ' . dirname($_SERVER['PHP_SELF'], 2) . '/index.php');
+            header('Location: ' . BASE_URL . '/index.php');
             exit;
         }
         
@@ -71,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             Security::logSecurityEvent($email, 'login', 'failure', 'Nicht verifizierter Account');
             
             $_SESSION['error'] = 'Ihr Konto wurde noch nicht verifiziert. Bitte überprüfen Sie Ihre E-Mails.';
-            header('Location: ' . dirname($_SERVER['PHP_SELF'], 2) . '/index.php');
+            header('Location: ' . BASE_URL . '/index.php');
             exit;
         }
         
@@ -80,7 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             Security::logSecurityEvent($email, 'login', 'failure', 'Kein Administratorzugriff');
             
             $_SESSION['error'] = 'Sie haben keinen Zugriff auf den Verwaltungsbereich.';
-            header('Location: ' . dirname($_SERVER['PHP_SELF'], 2) . '/index.php');
+            header('Location: ' . BASE_URL . '/index.php');
             exit;
         }
         
@@ -108,19 +113,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Log the successful login
         Security::logSecurityEvent($email, 'login', 'success', 'Erfolgreiche Anmeldung');
         
+        // Debug-Ausgabe zur Session-ID und Weiterleitung (kann später entfernt werden)
+        error_log('Login erfolgreich für ' . $email . ', Session-ID: ' . session_id());
+        
         // Redirect to dashboard
-        header('Location: ' . dirname($_SERVER['PHP_SELF'], 2) . '/dashboard.php');
+        header('Location: ' . BASE_URL . '/dashboard.php');
         exit;
     } catch (PDOException $e) {
         // Log the error
         error_log('Login error: ' . $e->getMessage());
         
         $_SESSION['error'] = 'Ein Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.';
-        header('Location: ' . dirname($_SERVER['PHP_SELF'], 2) . '/index.php');
+        header('Location: ' . BASE_URL . '/index.php');
         exit;
     }
 } else {
     // If not a POST request, redirect to login page
-    header('Location: ' . dirname($_SERVER['PHP_SELF'], 2) . '/index.php');
+    header('Location: ' . BASE_URL . '/index.php');
     exit;
 } 

@@ -1,137 +1,61 @@
-<!DOCTYPE html>
-<html>
+<?php
+require_once $_SERVER['DOCUMENT_ROOT'] . '/assets/includes/PageBuilder.php'; 
 
-<head>
-  <!-- FFR Seite -->
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
-  <link rel="shortcut icon" href="../assets/images/gravatar-logo-dunkel.jpg" type="image/x-icon">
-  <meta name="description"
-    content="Erfahre mehr über das Feuerwehrhaus der Freiwilligen Feuerwehr Reichenbach. Schau dir unsere moderne Ausstattung und Einrichtungen an.">
-  <title>Feuerwehrhaus</title>
-  <link rel="stylesheet" href="../assets/web/assets/mobirise-icons2/mobirise2.css">
-  <link rel="stylesheet" href="../assets/bootstrap/css/bootstrap.min.css">
-  <link rel="stylesheet" href="../assets/bootstrap/css/bootstrap-grid.min.css">
-  <link rel="stylesheet" href="../assets/bootstrap/css/bootstrap-reboot.min.css">
-  <link rel="stylesheet" href="../assets/parallax/jarallax.css">
-  <link rel="stylesheet" href="../assets/dropdown/css/style.css">
-  <link rel="stylesheet" href="../assets/socicon/css/styles.css">
-  <link rel="stylesheet" href="../assets/theme/css/style.css">
-  <link rel="stylesheet" href="../assets/css/custom-parallax.css">
-  <link rel="preload"
-    href="https://fonts.googleapis.com/css?family=Inter+Tight:100,200,300,400,500,600,700,800,900,100i,200i,300i,400i,500i,600i,700i,800i,900i&display=swap"
-    as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript>
-    <link rel="stylesheet"
-      href="https://fonts.googleapis.com/css?family=Inter+Tight:100,200,300,400,500,600,700,800,900,100i,200i,300i,400i,500i,600i,700i,800i,900i&display=swap">
-  </noscript>
-  <link rel="preload" as="style" href="../assets/mobirise/css/mbr-additional.css?v=4u1ODx">
-  <link rel="stylesheet" href="../assets/mobirise/css/mbr-additional.css?v=4u1ODx" type="text/css">
-</head>
+$page = new PageBuilder(
+    title: 'Unser Feuerwehrhaus | Feuerwehr Reichenbach',
+    description: 'Entdecken Sie das Zuhause der Freiwilligen Feuerwehr Reichenbach. Erfahren Sie mehr über unsere Umkleideräume, den Schulungsraum für Ausbildung und den Gemeinschaftsraum für Kameradschaft.',
+    keywords: 'Feuerwehrhaus, Feuerwehr Reichenbach, Feuerwehr Waldems, Feuerwache, Umkleideräume, Schulungsraum, Gemeinschaftsraum, Ehrenamt, Training, Ausbildung, Feuerwehr Stützpunkt, Reichenbach',
+    canonicalUrl: 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
+);
 
-<body>
-  <?php include '../assets/includes/navbar.php'; ?>
-  <section data-bs-version="5.1" class="header16 cid-u8UNI2kWf6 mbr-fullscreen jarallax" id="header17-2w"
-    data-jarallax-speed="0.8">
-    <div class="mbr-overlay" style="opacity: 0.5; background-color: rgb(0, 0, 0);"></div>
-    <div class="container-fluid">
-      <div class="row">
-        <div class="content-wrap col-12 col-md-12">
-          <h1 class="mbr-section-title mbr-fonts-style mbr-white mb-4 display-1"><strong>Feuerwehrhaus</strong></h1>
-          <div class="mbr-section-btn"><a class="btn btn-white-outline display-7" href="#article12-59">Erfahre mehr!</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+// Füge den Fullscreen Hero Abschnitt hinzu
+$page->addContent($page->renderFullscreenHero(
+    id: 'header17-2w',
+    cidSuffix: 'Hero-Feuerwehrhaus',
+    title: 'Feuerwehrhaus',
+    subtitle: '', // Kein Untertitel im ursprünglichen Header
+    buttonText: 'Erfahre mehr!',
+    buttonHref: '#image08-2k1', // Link zum ersten Inhaltsblock korrigiert
+    jarallaxSpeed: 0.8,
+    overlayOpacity: 0.5,
+    overlayColor: 'rgb(0, 0, 0)',
+    btnClass: 'btn-white-outline' // Passe die Button-Klasse an
+));
 
-  <section data-bs-version="5.1" class="image08 cid-einsatzabteilung-image-card-right" id="image08-2k1">
-    <div class="container">
-      <div class="row justify-content-center">
-        <div class="col-lg-4">
-          <div class="col-12 col-md-12">
-            <h5 class="mbr-section-title mbr-fonts-style mt-0 mb-4 display-2"><strong>Unsere Umkleideräume</strong></h5>
-            <h6 class="mbr-section-subtitle mbr-fonts-style mt-0 mb-4 display-7">
-            Die Umkleideräume sind ein zentraler Bestandteil unseres Feuerwehrhauses. Hier bereiten sich unsere Einsatzkräfte auf ihre Einsätze vor und legen ihre persönliche Schutzausrüstung an. <br><br>
+// Füge den Abschnitt "Unsere Umkleideräume" (Bild rechts, Text links) hinzu
+$page->addContent($page->renderImageInfoBlock(
+    id: 'image08-2k1',
+    cidSuffix: 'Image-Info-Image-Right', // Die CID
+    title: 'Unsere Umkleideräume',
+    subtitle: 'Die Umkleideräume sind ein zentraler Bestandteil unseres Feuerwehrhauses. Hier bereiten sich unsere Einsatzkräfte auf ihre Einsätze vor und legen ihre persönliche Schutzausrüstung an. <br><br>Für jedes Mitglied steht ein eigener, klar gekennzeichneter Spind bereit, in dem Helm, Schutzkleidung und Zusatzausrüstung übersichtlich und jederzeit griffbereit verstaut sind.',
+    imageSrc: '../assets/images/5i0r9-zlsem.webp',
+    imageAlt: 'Umkleideräume und Spinde'
+));
 
-            Für jedes Mitglied steht ein eigener, klar gekennzeichneter Spind bereit, in dem Helm, Schutzkleidung und Zusatz­ausrüstung übersichtlich und jederzeit griffbereit verstaut sind.
-            </h6>
-          </div>
-        </div>
-        <div class="col-lg-8 side-features">
-          <div class="image-wrapper mb-4">
-            <img class="w-100" src="../assets/images/5i0r9-zlsem.webp" alt="Umkleideräume und Spinde">
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-  <section data-bs-version="5.1" class="image08 cid-einsatzabteilung-image-card-left" id="image08-2l2">
-    <div class="container">
-      <div class="row justify-content-center">
-        <div class="col-lg-4">
-          <div class="col-12 col-md-12">
-            <h5 class="mbr-section-title mbr-fonts-style mt-0 mb-4 display-2"><strong>Unser Schulungsraum</strong></h5>
-            <h6 class="mbr-section-subtitle mbr-fonts-style mt-0 mb-4 display-7">
-              In unserem Schulungsraum werden Theoriephasen und Lehrgänge Wie zum Beispiel Erste‑Hilfe‑Kurse durchgeführt. <br><br>Die Räumlichkeit entstand in Eigenarbeit unserer Einsatzkräfte und bietet heute eine ruhige, gut ausgestattete Umgebung für Aus‑ und Weiterbildungen. Eine kleine Küche erleichtert den Ablauf längerer Veranstaltungen. <br><br>Dass wir den Raum in dieser Qualität nutzen können, verdanken wir der Unterstützung unseres Fördervereins und zahlreicher Spenderinnen und Spender.
-            </h6>
-          </div>
-        </div>
-        <div class="col-lg-8 side-features">
-          <div class="image-wrapper mb-4">
-            <img class="w-100" src="../assets/images/yszsn-llw6i.webp" alt="Schulungsraum mit kleiner Küche">
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-  <section data-bs-version="5.1" class="image08 cid-einsatzabteilung-image-card-right" id="image08-2k3">
-    <div class="container">
-      <div class="row justify-content-center">
-        <div class="col-lg-4">
-          <div class="col-12 col-md-12">
-            <h5 class="mbr-section-title mbr-fonts-style mt-0 mb-4 display-2"><strong>Unser Gemeinschaftsraum</strong></h5>
-            <h6 class="mbr-section-subtitle mbr-fonts-style mt-0 mb-4 display-7">
-            
-            Unser Aufenthaltsraum ist das Ergebnis vieler ehrenamtlich geleisteter Arbeitsstunden unserer Mitglieder. <br><br>
+// Füge den Abschnitt "Unser Schulungsraum" (Bild rechts, Text links) hinzu
+// Hinweis: Das Original-HTML verwendet hier eine Klasse "image08 cid-Image-Info-Image-Left",
+// aber die Struktur im HTML selbst (Text-Spalte zuerst, dann Bild-Spalte) führt zu Text links, Bild rechts,
+// was der renderImageInfoBlock-Methode entspricht. Die cidSuffix ist nur ein Bezeichner.
+$page->addContent($page->renderImageInfoBlock(
+    id: 'image08-2l2',
+    cidSuffix: 'Image-Info-Image-Left', // Die CID aus dem Original
+    title: 'Unser Schulungsraum',
+    subtitle: 'In unserem Schulungsraum werden Theoriephasen und Lehrgänge wie zum Beispiel Erste‑Hilfe‑Kurse durchgeführt. <br><br>Die Räumlichkeit entstand in Eigenarbeit unserer Einsatzkräfte und bietet heute eine ruhige, gut ausgestattete Umgebung für Aus‑ und Weiterbildungen. Eine kleine Küche erleichtert den Ablauf längerer Veranstaltungen. <br><br>Dass wir den Raum in dieser Qualität nutzen können, verdanken wir der Unterstützung unseres Fördervereins und zahlreicher Spenderinnen und Spender.',
+    imageSrc: '../assets/images/yszsn-llw6i.webp',
+    imageAlt: 'Schulungsraum mit kleiner Küche'
+));
 
-            In sorgfältiger Handarbeit entstand ein rustikaler Raum mit sichtbarem Gebälk, Holzwänden und langen Tischen, deren rote Sitzpolster einen warmen Akzent setzen. Die aufgehängten Geräte erinnern dezent an unseren Einsatzalltag und verleihen der Stube ihren einzigartigen Charakter.<br><br>
+// Füge den Abschnitt "Unser Gemeinschaftsraum" (Bild rechts, Text links) hinzu
+$page->addContent($page->renderImageInfoBlock(
+    id: 'image08-2k3',
+    cidSuffix: 'Image-Info-Image-Right', // Die CID
+    title: 'Unser Gemeinschaftsraum',
+    subtitle: 'Unser Aufenthaltsraum ist das Ergebnis vieler ehrenamtlich geleisteter Arbeitsstunden unserer Mitglieder. <br><br>In sorgfältiger Handarbeit entstand ein rustikaler Raum mit sichtbarem Gebälk, Holzwänden und langen Tischen, deren rote Sitzpolster einen warmen Akzent setzen. Die aufgehängten Geräte erinnern dezent an unseren Einsatzalltag und verleihen der Stube ihren einzigartigen Charakter.<br><br>Dieses Projekt wäre ohne unsere fleißigen Helfer und finanzielle Unterstützung nicht möglich gewesen. Heute bildet der Raum einen zentralen Treffpunkt für Besprechungen, kameradschaftliche Veranstaltungen und gemeinsame Stunden nach Einsätzen und Übungen.',
+    imageSrc: '../assets/images/234ae-8w1gl.webp',
+    imageAlt: 'Aufenthaltsraum'
+));
 
-            Dieses Projekt wäre ohne unsere fleißigen Helfer und finanzielle Unterstützung nicht möglich gewesen. Heute bildet der Raum einen zentralen Treffpunkt für Besprechungen, kameradschaftliche Veranstaltungen und gemeinsame Stunden nach Einsätzen und Übungen.
-          
-          
-          </h6>
-          </div>
-        </div>
-        <div class="col-lg-8 side-features">
-          <div class="image-wrapper mb-4">
-            <img class="w-100" src="../assets/images/234ae-8w1gl.webp" alt="Aufenthaltsraum">
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+// Rendere die vollständige Seite inklusive Head, Includes und Scripts
+echo $page->renderFullPage();
 
-  <?php include '../assets/includes/socialFooter.php'; ?>
-  <?php include '../assets/includes/footer.php'; ?>
-  <!-- Parallax Scripts -->
-  <script src="../assets/bootstrap/js/bootstrap.bundle.min.js"></script>
-  <script src="../assets/smoothscroll/smooth-scroll.js"></script>
-  <script src="../assets/ytplayer/index.js"></script>
-  <script src="../assets/dropdown/js/navbar-dropdown.js"></script>
-  <script src="../assets/theme/js/script.js"></script>
-  <script src="../assets/parallax/jarallax.js"></script>
-  <script>
-    // Initialisiere Jarallax nach dem Laden der Seite
-    document.addEventListener("DOMContentLoaded", function() {
-      jarallax(document.querySelectorAll('.jarallax'), {
-        speed: 0.6,
-        imgPosition: '50% 50%',
-        imgSize: 'cover'
-      });
-    });
-  </script>
-</body>
-
-</html>
+?>

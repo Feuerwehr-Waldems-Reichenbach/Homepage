@@ -96,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         $data['path_to_image'] = null;
     } elseif (isset($_FILES['image']) && $_FILES['image']['error'] != UPLOAD_ERR_NO_FILE) {
-        $relativePath = '/Veranstaltungen/Flyer/';
+        $relativePath = '/assets/Flyer/';
         $uploadDir = dirname(__DIR__, 3) . '/Public' . $relativePath;
         $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
     

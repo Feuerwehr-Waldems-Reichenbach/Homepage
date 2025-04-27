@@ -32,7 +32,7 @@
             color: #cccccc !important;
         }
 
-        .footer6 .mbr-section-subtitle {
+        .footer6 .ffr-section-subtitle {
             margin-bottom: 1rem;
             border-bottom: 2px solid rgba(255, 255, 255, 0.1);
             padding-bottom: 0.5rem;
@@ -149,7 +149,7 @@
         }
 
         @media (max-width: 767px) {
-            .footer6 .mbr-fonts-style {
+            .footer6 .ffr-fonts-style {
                 text-align: center;
             }
 
@@ -164,41 +164,42 @@
         }
     </style>
     <div class="container">
-        <div class="row content mbr-white">
-            <div class="col-12 col-md-3 mbr-fonts-style display-7">
-                <h5 class="mbr-section-subtitle mbr-fonts-style mb-2 display-7"><strong>Weitere Links</strong></h5>
+        <div class="row content ffr-white">
+            <div class="col-12 col-md-3 ffr-fonts-style display-7">
+                <h5 class="ffr-section-subtitle ffr-fonts-style mb-2 display-7"><strong>Weitere Links</strong></h5>
                 <div class="contact-info">
-                    <p class="mbr-text mbr-fonts-style display-7">
+                    <p class="ffr-text ffr-fonts-style display-7">
                         <a href="/Impressum" class="text-white">Impressum</a><br>
                         <a href="/Datenschutz" class="text-white">Datenschutz</a><br>
                         <a href="/Satzung" class="text-white">Satzungen</a><br>
-                        <a href="/Downloads" class="text-white">Downloads</a>
+                        <a href="/Downloads" class="text-white">Downloads</a><br>
+                        <a href="/Verwaltung" class="text-white">Verwaltung</a>
                     </p>
                 </div>
-                <h5 class="mbr-section-subtitle mbr-fonts-style mb-2 mt-4 display-7"><strong>Kontakt</strong></h5>
+                <h5 class="ffr-section-subtitle ffr-fonts-style mb-2 mt-4 display-7"><strong>Kontakt</strong></h5>
                 <div class="contact-info">
-                    <p class="mbr-text mbr-fonts-style mb-4 display-7">
+                    <p class="ffr-text ffr-fonts-style mb-4 display-7">
                         Fragen? Melde Dich!&nbsp;<br>
                         <a href="mailto:info@feuerwehr-waldems-reichenbach.de"
-                            class="text-info">info@feuerwehr-waldems-reichenbach.de</a>
+                            class="text-info">info@fe<!--|-->uerweh<!--|-->r-wald<!--|--><!--|-->em<!--|-->s-re<!--|-->ich<!--|--><!--|--><!--|-->en<!--|-->bach.de</a>
                     </p>
                 </div>
             </div>
-            <div class="col-12 col-md-3 mbr-fonts-style display-7">
-                <h5 class="mbr-section-subtitle mbr-fonts-style mb-2 display-7"><strong>Adresse</strong></h5>
-                <ul class="list mbr-fonts-style mb-4 display-4">Am Dorfgemeinschaftshaus 1, 65529 Waldems</ul>
+            <div class="col-12 col-md-3 ffr-fonts-style display-7">
+                <h5 class="ffr-section-subtitle ffr-fonts-style mb-2 display-7"><strong>Adresse</strong></h5>
+                <ul class="list ffr-fonts-style mb-4 display-4">Am Dorfgemeinschaftshaus 1, 65529 Waldems</ul>
                 <div class="social-wrapper">
-                    <h5 class="mbr-fonts-style display-7">Folge uns</h5>
+                    <h5 class="ffr-fonts-style display-7">Folge uns</h5>
                     <div class="social-list align-center">
                         <div class="soc-item">
                             <a href="https://www.instagram.com/feuerwehrreichenbach/" target="_blank">
-                                <span class="mbr-iconfont mbr-iconfont-social socicon-instagram socicon"
+                                <span class="ffr-iconfont ffr-iconfont-social socicon-instagram socicon"
                                     style="color: rgb(255, 255, 255); fill: rgb(255, 255, 255);"></span>
                             </a>
                         </div>
                         <div class="soc-item">
                             <a href="https://www.facebook.com/groups/163127135137/" target="_blank">
-                                <span class="mbr-iconfont mbr-iconfont-social socicon-facebook socicon"></span>
+                                <span class="ffr-iconfont ffr-iconfont-social socicon-facebook socicon"></span>
                             </a>
                         </div>
                     </div>
@@ -220,7 +221,7 @@
                 </div>
             </div>
             <div class="col-sm-12 copyright pl-0">
-                <p class="mbr-text mbr-fonts-style mbr-white display-7">
+                <p class="ffr-text ffr-fonts-style ffr-white display-7">
                     © Copyright 2024 Förderverein der Freiwilligen Feuerwehr Waldems-Reichenbach e.V. im Auftrag für die
                     Freiwillige Feuerwehr Waldems Reichenbach - Alle Rechte vorbehalten</p>
             </div>

@@ -77,6 +77,11 @@ header("Permissions-Policy: geolocation=(), camera=(), microphone=()");
                     <?php endif; ?>
                     <!-- Main Navigation -->
                     <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/">
+                                <i class="bi bi-globe me-2"></i>Zurück zur Feuerwehr
+                            </a>
+                        </li>
                         <!-- Allgemein Dropdown für Desktop -->
                         <li class="nav-item dropdown d-none d-lg-block">
                             <a class="nav-link dropdown-toggle" href="#" id="allgemeinDropdown" role="button"
