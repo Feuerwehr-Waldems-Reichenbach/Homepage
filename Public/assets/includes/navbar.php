@@ -1,6 +1,10 @@
 <!-- Bootstrap Icons -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
 <?php
+
+ini_set('display_errors', 0);
+error_reporting(0);
+
 // Basispfad für Assets definieren
 $baseAssetsPath = isset($assetsPath) ? $assetsPath : '../assets';
 ?>

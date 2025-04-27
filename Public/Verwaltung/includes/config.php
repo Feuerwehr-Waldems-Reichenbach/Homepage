@@ -41,7 +41,7 @@ define('UPLOAD_DIR', ADMIN_PATH . '/assets/images/');
 
 // Error reporting
 ini_set('display_errors', 0);
-error_reporting(E_ALL);
+error_reporting(0);
 ini_set('log_errors', 1);
 ini_set('error_log', BASE_PATH . '/Private/logs/error.log');
 

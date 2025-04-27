@@ -41,7 +41,10 @@ require_once $_SERVER['DOCUMENT_ROOT'] . "/assets/includes/einsaetze.php";
 $jahr = isset($_GET['statistik_jahr']) ? (int) $_GET['statistik_jahr'] : date('Y');
 showEinsaetze(4); 
 showEinsatzStatistik($jahr);
+
 EinsatzStatistikGesamt();
+EinsatzStatistikWochentagTageszeit();
+
 EinsatzStatistikJahresvergleich();
 EinsatzStatistikDauer();
 EinsatzStatistikMonate();
@@ -51,7 +54,6 @@ EinsatzStatistikTageszeit();
 EinsatzStatistikEinsaetzeProJahreszeit();
 EinsatzStatistikStichworte();
 EinsatzStatistikKategorien();
-EinsatzStatistikWochentagTageszeit();
 EinsatzStatistikDauerNachStichwort();
 EinsatzStatistikDauerNachOrt();
 EinsatzStatistikDauerNachKategorie();
