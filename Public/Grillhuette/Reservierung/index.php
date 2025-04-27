@@ -271,7 +271,7 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
                                     ?>
                                     <li><?php echo $infoData['WichtigerHinweis1'] ?? 'Es ist ausschließlich Barzahlung möglich'; ?>
                                     </li>
-                                    <li><?php echo $infoData['WichtigerHinweis2'] ?? 'Bitte beachten Sie, dass in den kälteren Monaten (ca. Oktober bis März) die Toiletten möglicherweise nicht nutzbar sind, da das Wasser abgestellt wird. Der genaue Zeitraum kann variieren.'; ?>
+                                    <li><?php echo $infoData['WichtigerHinweis2'] ?? 'Bitte beachten Sie, dass in den kälteren Monaten (ca. Oktober bis März) die Toiletten möglicherweise nicht nutzbar sind, da das Wasser abgestellt wird. Der genaue Zeitraum kann variieren'; ?>
                                     </li>
                                     <li><?php echo $infoData['WichtigerHinweis3'] ?? 'Die Grillhütte sowie die Toiletten sind sauber zu verlassen'; ?>
                                     </li>
@@ -618,7 +618,7 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
                                                     ?>
                                                     <li><?php echo $infoData['WichtigerHinweis1'] ?? 'Es ist ausschließlich Barzahlung möglich'; ?>
                                                     </li>
-                                                    <li><?php echo $infoData['WichtigerHinweis2'] ?? 'Bitte beachten Sie, dass in den kälteren Monaten (ca. Oktober bis März) die Toiletten möglicherweise nicht nutzbar sind, da das Wasser abgestellt wird. Der genaue Zeitraum kann variieren.'; ?>
+                                                    <li><?php echo $infoData['WichtigerHinweis2'] ?? 'Bitte beachten Sie, dass in den kälteren Monaten (ca. Oktober bis März) die Toiletten möglicherweise nicht nutzbar sind, da das Wasser abgestellt wird. Der genaue Zeitraum kann variieren'; ?>
                                                     </li>
                                                     <li><?php echo $infoData['WichtigerHinweis3'] ?? 'Die Grillhütte sowie die Toiletten sind sauber zu verlassen'; ?>
                                                     </li>

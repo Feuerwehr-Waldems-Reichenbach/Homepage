@@ -94,6 +94,17 @@ $page->addContent($page->renderGalleryWithLightbox(
         ['src' => '../assets/images/img20240825115142.webp', 'alt' => 'RUD Demonstration Bild 8'],
         ['src' => '../assets/images/img-20231117-wa0009.webp', 'alt' => 'RUD Demonstration Bild 9'],
         ['src' => '../assets/images/jf770-o1coi.webp', 'alt' => 'RUD Demonstration Bild 10'],
+        ['src' => '../assets/images/IMG-20231117-WA0005.webp', 'alt' => 'RUD Demonstration Bild 11'],
+        ['src' => '../assets/images/IMG-20231117-WA0007.webp', 'alt' => 'RUD Demonstration Bild 12'],
+        ['src' => '../assets/images/IMG-20240706-WA0059.webp', 'alt' => 'RUD Demonstration Bild 13'],
+        ['src' => '../assets/images/IMG-20240706-WA0075.webp', 'alt' => 'RUD Demonstration Bild 14'],
+        ['src' => '../assets/images/IMG20240706080125.webp', 'alt' => 'RUD Demonstration Bild 15'],
+        ['src' => '../assets/images/IMG20240706091034.webp', 'alt' => 'RUD Demonstration Bild 16'],
+        ['src' => '../assets/images/IMG20240825115200.webp', 'alt' => 'RUD Demonstration Bild 17'],
+        ['src' => '../assets/images/IMG20240922151125.webp', 'alt' => 'RUD Demonstration Bild 18'],
+        ['src' => '../assets/images/IMG20240929101545.webp', 'alt' => 'RUD Demonstration Bild 19'],
+        ['src' => '../assets/images/IMG20240929105230.webp', 'alt' => 'RUD Demonstration Bild 20'],
+
     ]
 ));
 

@@ -531,7 +531,7 @@ require_once '../includes/header.php';
                                         In den kälteren Monaten (ca. Oktober bis März) sind die Toiletten möglicherweise
                                         nicht
                                         nutzbar, da das Wasser abgestellt wird, um Frostschäden zu vermeiden. Der genaue
-                                        Zeitraum kann variieren.
+                                        Zeitraum kann variieren
                                     </div>
                                 </div>
                             </div>
