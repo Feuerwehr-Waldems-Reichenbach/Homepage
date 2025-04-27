@@ -122,7 +122,7 @@ class Reservation
             // Anzahl der Tage berechnen
             $daysCount = $this->calculateReservationDays($startDatetime, $endDatetime);
             // Standardpreise berechnen
-            $prices = $this->calculateDefaultCosts($daysCount);
+            $prices = $this->calculateDefaultCosts($daysCount, $userId);
             // SQL-Query für die Erstellung einer neuen Reservierung
             $sql = "INSERT INTO gh_reservations 
                     (user_id, start_datetime, end_datetime, key_handover_datetime, key_return_datetime, 
@@ -530,7 +530,7 @@ class Reservation
             }
             // Anzahl der Tage und Kosten berechnen
             $daysCount = $this->calculateReservationDays($startDatetime, $endDatetime);
-            $prices = $this->calculateDefaultCosts($daysCount);
+            $prices = $this->calculateDefaultCosts($daysCount, $userId);
             // SQL-Query für die Erstellung einer neuen Reservierung
             $sql = "INSERT INTO gh_reservations 
                     (user_id, start_datetime, end_datetime, key_handover_datetime, key_return_datetime, 
@@ -1049,7 +1049,7 @@ class Reservation
             }
             // Aktualisiere die Anzahl der Tage und die Kosten
             $daysCount = $this->calculateReservationDays($startDatetime, $endDatetime);
-            $prices = $this->calculateDefaultCosts($daysCount);
+            $prices = $this->calculateDefaultCosts($daysCount, $userId);
             $sql .= ", days_count = ?, base_price = ?, total_price = ?, deposit_amount = ?";
             $params[] = $daysCount;
             $params[] = $prices['base_price'];
@@ -1573,14 +1573,19 @@ class Reservation
      * Berechnet die Standardkosten basierend auf der Anzahl der Tage
      * 
      * @param int $daysCount Anzahl der Tage
+     * @param int|null $userId ID des Benutzers für spezifische Preise
      * @return array Array mit base_price, total_price und deposit_amount
      */
-    private function calculateDefaultCosts($daysCount)
+    private function calculateDefaultCosts($daysCount, $userId = null)
     {
-        // Standardwerte (können später durch Benutzer-/Gruppenspezifische Preise ersetzt werden)
-        $basePrice = 100.00;
+        // Holen der Preisinfos unter Berücksichtigung des Benutzers (falls vorhanden)
+        $priceInfo = $this->getPriceInformation($userId);
+        
+        // Benutze den spezifischen Preis des Benutzers oder den Standardpreis
+        $basePrice = $priceInfo['user_rate'];
         $totalPrice = $basePrice * $daysCount;
-        $depositAmount = 100.00;
+        $depositAmount = $priceInfo['deposit_amount'];
+        
         return [
             'base_price' => $basePrice,
             'total_price' => $totalPrice,
