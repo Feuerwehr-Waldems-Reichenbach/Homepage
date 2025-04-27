@@ -85,8 +85,7 @@ function renderMenu($items, $level = 0)
             <a class="navbar-caption text-white display-5" href="/">Feuerwehr Reichenbach</a>
         </span>
     </div>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler" type="button" id="navbarToggler" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <div class="hamburger">
             <span></span>
             <span></span>
@@ -428,7 +427,7 @@ function renderMenu($items, $level = 0)
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        // Make mobile dropdowns work with click instead of hover
+        // Dropdown functionality for mobile
         if (window.innerWidth < 992) {
             document.querySelectorAll('.dropdown-toggle').forEach(function (element) {
                 element.addEventListener('click', function (e) {
@@ -446,5 +445,17 @@ function renderMenu($items, $level = 0)
                 });
             });
         }
+
+        // Manual navbar toggler implementation
+        const navbarToggler = document.getElementById('navbarToggler');
+        const navbarCollapse = document.getElementById('navbarSupportedContent');
+        
+        navbarToggler.addEventListener('click', function() {
+            if (navbarCollapse.classList.contains('show')) {
+                navbarCollapse.classList.remove('show');
+            } else {
+                navbarCollapse.classList.add('show');
+            }
+        });
     });
 </script>
