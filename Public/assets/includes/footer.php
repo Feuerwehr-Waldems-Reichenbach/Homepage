@@ -172,7 +172,8 @@
                         <a href="/Impressum" class="text-white">Impressum</a><br>
                         <a href="/Datenschutz" class="text-white">Datenschutz</a><br>
                         <a href="/Satzung" class="text-white">Satzungen</a><br>
-                        <a href="/Downloads" class="text-white">Downloads</a>
+                        <a href="/Downloads" class="text-white">Downloads</a><br>
+                        <a href="/Verwaltung" class="text-white">Verwaltung</a>
                     </p>
                 </div>
                 <h5 class="ffr-section-subtitle ffr-fonts-style mb-2 mt-4 display-7"><strong>Kontakt</strong></h5>
