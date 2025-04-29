@@ -163,24 +163,34 @@
             }
         }
 
+        .developer-signature-container {
+            width: 100%;
+            bottom: 0;
+            left: 0;
+            text-align: center;
+            padding: 10px 0;
+            background: #414141;
+            pointer-events: none;
+            /* Damit es keine Klicks blockiert */
+            z-index: 999;
+        }
+
         .developer-signature {
             font-size: 0.8em;
-            text-align: center;
             color: rgba(255, 255, 255, 0.5);
-            /* Text leicht transparent */
-            margin: 20px 0;
+            margin: 0;
+            pointer-events: auto;
+            /* Damit der Link klickbar bleibt */
         }
 
         .developer-signature a {
             color: rgba(255, 255, 255, 0.53);
             text-decoration: none;
-            /* Optional: Unterstreichung weg */
             transition: color 0.3s ease;
         }
 
         .developer-signature a:hover {
             color: rgba(255, 255, 255, 1);
-            /* Beim Hover: heller werden */
             text-decoration: underline;
         }
     </style>
@@ -247,15 +257,14 @@
                     Freiwillige Feuerwehr Waldems Reichenbach - Alle Rechte vorbehalten</p>
             </div>
         </div>
-        <p class="developer-signature">
-            Erstellt von <a href="https://github.com/timbornemann" target="_blank" rel="noopener noreferrer">Tim
-                Bornemann</a>
-        </p>
-
     </div>
-
-
 </section>
 
+<div class="developer-signature-container">
+    <p class="developer-signature">
+        Erstellt von <a href="https://github.com/timbornemann" target="_blank" rel="noopener noreferrer">Tim
+            Bornemann</a>
+    </p>
+</div>
 
 <!-- End of Footer Section -->
