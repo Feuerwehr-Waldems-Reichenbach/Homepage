@@ -18,14 +18,20 @@ $csrfToken = $_SESSION['csrf_token'];
 $pageTitle = "Dokumentenverwaltung";
 include __DIR__ . '/templates/header.php';
 
-// Dokumente aus der Datenbank abrufen
+// Dokumente aus der Datenbank abrufen (nur neueste Versionen)
 try {
     $db = Database::getInstance()->getConnection();
-    // Join mit fw_users, um die E-Mail des Uploaders zu erhalten (ersetzt u.username)
+    // Join mit fw_users, um die E-Mail des Uploaders zu erhalten
+    // NEU: Nur Dokumente mit is_latest = 1 abrufen
+    // NEU: version_group_id und Anzahl der Versionen pro Gruppe abrufen
     $stmt = $db->query("
-        SELECT d.*, u.email as uploader_email 
+        SELECT 
+            d.*, 
+            u.email as uploader_email,
+            (SELECT COUNT(*) FROM verwaltung_dokumente v WHERE v.version_group_id = d.version_group_id) as version_count
         FROM verwaltung_dokumente d
         LEFT JOIN fw_users u ON d.hochgeladen_von_userid = u.id
+        WHERE d.is_latest = 1
         ORDER BY d.hochgeladen_am DESC
     ");
     $dokumente = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -65,7 +71,7 @@ function formatBytes($bytes, $precision = 2) {
                     <label for="dokument" class="form-label">Datei auswählen</label>
                     <input class="form-control" type="file" id="dokument" name="dokument" required>
                     <div class="form-text">
-                        Erlaubte Typen: PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX, JPG, PNG, GIF, WEBP, TXT.<br>
+                        Erlaubte Typen: PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX, JPG, PNG, GIF, WEBP, TXT, CSV, SQL.<br>
                         Maximale Größe: 20 MB.
                     </div>
                 </div>
@@ -90,8 +96,9 @@ function formatBytes($bytes, $precision = 2) {
                             <th>Dateiname</th>
                             <th>Typ</th>
                             <th>Größe</th>
-                            <th>Hochgeladen am</th>
+                            <th>Neueste Version</th>
                             <th>Hochgeladen von</th>
+                            <th>Versionen</th> 
                             <th>Aktionen</th>
                         </tr>
                     </thead>
@@ -104,12 +111,13 @@ function formatBytes($bytes, $precision = 2) {
                                 <td>Keine Dokumente vorhanden.</td>
                                 <td></td>
                                 <td></td>
+                                <td></td> 
                             </tr>
                         <?php else: ?>
                             <?php foreach ($dokumente as $doc): ?>
                                 <tr>
                                     <td>
-                                        <a href="dokumente_download.php?id=<?php echo $doc['id']; ?>" target="_blank" title="Dokument ansehen/herunterladen">
+                                        <a href="dokumente_download.php?id=<?php echo $doc['id']; ?>" target="_blank" title="Neueste Version ansehen/herunterladen">
                                             <i class="fas fa-file me-1"></i> <?php echo htmlspecialchars($doc['dateiname_original']); ?>
                                         </a>
                                     </td>
@@ -117,6 +125,20 @@ function formatBytes($bytes, $precision = 2) {
                                     <td><?php echo formatBytes($doc['groesse']); ?></td>
                                     <td><?php echo date('d.m.Y H:i', strtotime($doc['hochgeladen_am'])); ?></td>
                                     <td><?php echo htmlspecialchars($doc['uploader_email'] ?? 'Unbekannt'); ?></td>
+                                    <td class="text-center">
+                                        <?php if ($doc['version_count'] > 1): ?>
+                                            <button class="btn btn-secondary btn-sm view-versions-btn" 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#versionsModal"
+                                                    data-group-id="<?php echo $doc['version_group_id']; ?>" 
+                                                    data-doc-name="<?php echo htmlspecialchars($doc['dateiname_original']); ?>" 
+                                                    title="Ältere Versionen anzeigen">
+                                                <i class="fas fa-history"></i> (<?php echo $doc['version_count']; ?>)
+                                            </button>
+                                        <?php else: ?>
+                                            <span class="text-muted">1</span>
+                                        <?php endif; ?>
+                                    </td>
                                     <td class="actions-column">
                                         <a href="dokumente_download.php?id=<?php echo $doc['id']; ?>" class="btn btn-success btn-sm me-1" title="Download">
                                             <i class="fas fa-download"></i>
@@ -125,8 +147,8 @@ function formatBytes($bytes, $precision = 2) {
                                                 data-bs-toggle="modal" 
                                                 data-bs-target="#deleteConfirmModal"
                                                 data-doc-id="<?php echo $doc['id']; ?>" 
-                                                data-doc-name="<?php echo htmlspecialchars($doc['dateiname_original']); ?>" 
-                                                title="Löschen">
+                                                data-doc-name="<?php echo htmlspecialchars($doc['dateiname_original']); ?> (Version vom <?php echo date('d.m.Y H:i', strtotime($doc['hochgeladen_am'])); ?>)" 
+                                                title="Diese Version löschen">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </td>
@@ -145,11 +167,11 @@ function formatBytes($bytes, $precision = 2) {
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="deleteConfirmModalLabel">Löschen bestätigen</h5>
+                <h5 class="modal-title" id="deleteConfirmModalLabel">Version löschen?</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                Sind Sie sicher, dass Sie das Dokument "<strong id="docNameToDelete"></strong>" löschen möchten?
+                Sind Sie sicher, dass Sie die Version "<strong id="docNameToDelete"></strong>" löschen möchten?
                  Diese Aktion kann nicht rückgängig gemacht werden.
             </div>
             <div class="modal-footer">
@@ -159,6 +181,27 @@ function formatBytes($bytes, $precision = 2) {
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Abbrechen</button>
                     <button type="submit" class="btn btn-danger">Löschen</button>
                 </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- NEU: Versionen Anzeigen Modal -->
+<div class="modal fade" id="versionsModal" tabindex="-1" aria-labelledby="versionsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="versionsModalLabel">Versionen für: <span id="versionDocName"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="versionsTableContainer">
+                    <p class="text-center">Lade Versionen...</p>
+                    <!-- Tabelle wird hier per JS eingefügt -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Schließen</button>
             </div>
         </div>
     </div>
@@ -180,31 +223,71 @@ include __DIR__ . '/templates/footer.php'; // Footer einbinden
 <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 <script>
 $(document).ready(function() {
-    $('#dokumenteTable').DataTable({
+    const mainTable = $('#dokumenteTable').DataTable({
         "language": {
             "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/de-DE.json"
         },
-        "order": [[ 3, "desc" ]] // Sortiere nach "Hochgeladen am" absteigend (Spalte Index 3)
+        "order": [[ 3, "desc" ]], // Sortiere nach "Neueste Version" absteigend
+        "columnDefs": [ 
+            { "orderable": false, "targets": [5, 6] } // Spalten "Versionen" und "Aktionen" nicht sortierbar machen
+        ]
     });
 
-    // Löschen-Modal vorbereiten
+    // Löschen-Modal vorbereiten ( bleibt fast gleich, nur Titel angepasst )
     var deleteModal = document.getElementById('deleteConfirmModal');
     deleteModal.addEventListener('show.bs.modal', function (event) {
-        // Button that triggered the modal
         var button = event.relatedTarget;
-        // Extract info from data-* attributes
         var docId = button.getAttribute('data-doc-id');
         var docName = button.getAttribute('data-doc-name');
-        
-        // Update the modal's content.
-        var modalTitle = deleteModal.querySelector('.modal-title');
-        var modalBodyStrong = deleteModal.querySelector('#docNameToDelete');
-        var deleteFormInput = deleteModal.querySelector('#docIdToDelete');
-
-        //modalTitle.textContent = 'Dokument löschen'; // Optional: Titel anpassen
-        modalBodyStrong.textContent = docName;
-        deleteFormInput.value = docId;
+        deleteModal.querySelector('#docNameToDelete').textContent = docName;
+        deleteModal.querySelector('#docIdToDelete').value = docId;
+        deleteModal.querySelector('#deleteConfirmModalLabel').textContent = 'Version löschen?'; // Titel anpassen
     });
+
+    // NEU: Versionen-Modal vorbereiten und laden
+    var versionsModal = document.getElementById('versionsModal');
+    var versionsTableContainer = document.getElementById('versionsTableContainer');
+    var versionDocNameSpan = document.getElementById('versionDocName');
+
+    versionsModal.addEventListener('show.bs.modal', function (event) {
+        var button = event.relatedTarget;
+        var groupId = button.getAttribute('data-group-id');
+        var docName = button.getAttribute('data-doc-name');
+        
+        versionDocNameSpan.textContent = docName;
+        versionsTableContainer.innerHTML = '<p class="text-center"><i class="fas fa-spinner fa-spin"></i> Lade Versionen...</p>'; // Ladeindikator
+
+        // AJAX-Aufruf, um Versionen zu laden
+        $.ajax({
+            url: 'get_document_versions.php',
+            type: 'GET',
+            data: { group_id: groupId },
+            dataType: 'json',
+            success: function(response) {
+                if (response.success && response.versions.length > 0) {
+                    let tableHtml = '<table class="table table-sm table-bordered table-striped"><thead><tr><th>Version vom</th><th>Größe</th><th>Uploader</th><th>Aktionen</th></tr></thead><tbody>';
+                    response.versions.forEach(function(version) {
+                        tableHtml += `<tr>
+                            <td>${new Date(version.hochgeladen_am).toLocaleString('de-DE')} ${version.is_latest ? '<span class="badge bg-success ms-1">Neueste</span>' : ''}</td>
+                            <td>${version.groesse_formatiert}</td>
+                            <td>${version.uploader_email ? version.uploader_email : 'Unbekannt'}</td>
+                            <td>
+                                <a href="dokumente_download.php?id=${version.id}" class="btn btn-outline-success btn-sm" title="Download"><i class="fas fa-download"></i></a>
+                            </td>
+                        </tr>`;
+                    });
+                    tableHtml += '</tbody></table>';
+                    versionsTableContainer.innerHTML = tableHtml;
+                } else {
+                    versionsTableContainer.innerHTML = '<p class="text-center text-danger">Konnte Versionen nicht laden oder keine vorhanden.</p>';
+                }
+            },
+            error: function() {
+                versionsTableContainer.innerHTML = '<p class="text-center text-danger">Fehler beim Laden der Versionen.</p>';
+            }
+        });
+    });
+
 });
 </script>
 

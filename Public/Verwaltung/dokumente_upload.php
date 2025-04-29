@@ -19,7 +19,8 @@ $allowedMimeTypes = [
     'image/png' => 'png',
     'image/gif' => 'gif',
     'image/webp' => 'webp',
-    'text/plain' => 'txt',
+    'text/plain' => 'txt', // Deckt auch .sql ab
+    'text/csv' => 'csv', // CSV hinzugefügt
 ];
 $maxFileSize = 20 * 1024 * 1024; // 20 MB
 // --------------------
@@ -99,34 +100,78 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['dokument'])) {
     // Datei verschieben
     if (move_uploaded_file($file['tmp_name'], $uploadPath)) {
         // Eintrag in der Datenbank erstellen
+        $db = Database::getInstance()->getConnection();
+        $db->beginTransaction(); // Starte Transaktion
+        
         try {
-            $db = Database::getInstance()->getConnection();
-            $stmt = $db->prepare("
-                INSERT INTO verwaltung_dokumente 
-                (dateiname_original, dateiname_sicher, pfad, mime_typ, groesse, hochgeladen_von_userid, hochgeladen_am)
-                VALUES (:original, :sicher, :pfad, :mime, :groesse, :userid, NOW())
-            ");
-            $stmt->bindParam(':original', $originalFilename);
-            $stmt->bindParam(':sicher', $safeFilename);
-            $stmt->bindParam(':pfad', $uploadPath); // Speichere den vollen Pfad für einfachen Zugriff
-            $stmt->bindParam(':mime', $mimeType);
-            $stmt->bindParam(':groesse', $file['size'], PDO::PARAM_INT);
-            $stmt->bindParam(':userid', $userId, PDO::PARAM_INT);
-            
-            if ($stmt->execute()) {
-                $_SESSION['success'] = 'Dokument \'' . htmlspecialchars($originalFilename) . '\' erfolgreich hochgeladen.';
-            } else {
-                $_SESSION['error'] = 'Fehler beim Speichern der Dateiinformationen in der Datenbank.';
-                // Optional: Hochgeladene Datei wieder löschen, wenn DB-Eintrag fehlschlägt
-                unlink($uploadPath);
-                 error_log('DB Fehler beim Dokumentenupload: ' . implode('; ', $stmt->errorInfo()));
+            $versionGroupId = null;
+            $isNewVersion = false;
+
+            // Prüfen, ob eine Datei mit diesem Originalnamen bereits existiert (nur die neueste Version prüfen)
+            $stmtCheck = $db->prepare("SELECT id, version_group_id FROM verwaltung_dokumente WHERE dateiname_original = :original AND is_latest = 1 LIMIT 1");
+            $stmtCheck->bindParam(':original', $originalFilename);
+            $stmtCheck->execute();
+            $existingDoc = $stmtCheck->fetch(PDO::FETCH_ASSOC);
+
+            if ($existingDoc) {
+                // Datei existiert -> neue Version erstellen
+                $isNewVersion = true;
+                $versionGroupId = $existingDoc['version_group_id'];
+                $oldVersionId = $existingDoc['id'];
+
+                // Alte neueste Version auf is_latest = 0 setzen
+                $stmtUpdateOld = $db->prepare("UPDATE verwaltung_dokumente SET is_latest = 0 WHERE id = :id");
+                $stmtUpdateOld->bindParam(':id', $oldVersionId, PDO::PARAM_INT);
+                if (!$stmtUpdateOld->execute()) {
+                    throw new Exception("Konnte alte Version nicht aktualisieren.");
+                }
             }
 
-        } catch (PDOException $e) {
-            $_SESSION['error'] = 'Datenbankfehler beim Speichern des Dokuments.';
-            // Optional: Hochgeladene Datei wieder löschen
-            unlink($uploadPath);
-            error_log('PDOException beim Dokumentenupload: ' . $e->getMessage());
+            // Neuen Dokumenteneintrag einfügen (ist immer die neueste Version)
+            $stmtInsert = $db->prepare("
+                INSERT INTO verwaltung_dokumente 
+                (dateiname_original, dateiname_sicher, pfad, mime_typ, groesse, hochgeladen_von_userid, hochgeladen_am, is_latest, version_group_id)
+                VALUES (:original, :sicher, :pfad, :mime, :groesse, :userid, NOW(), 1, :vgroupid)
+            ");
+            $stmtInsert->bindParam(':original', $originalFilename);
+            $stmtInsert->bindParam(':sicher', $safeFilename);
+            $stmtInsert->bindParam(':pfad', $uploadPath); 
+            $stmtInsert->bindParam(':mime', $mimeType);
+            $stmtInsert->bindParam(':groesse', $file['size'], PDO::PARAM_INT);
+            $stmtInsert->bindParam(':userid', $userId, PDO::PARAM_INT);
+            $stmtInsert->bindParam(':vgroupid', $versionGroupId); // Kann hier noch NULL sein für erste Version
+            
+            if ($stmtInsert->execute()) {
+                $newDocId = $db->lastInsertId();
+
+                if (!$isNewVersion) {
+                    // Dies ist die erste Version, setze version_group_id auf die eigene ID
+                    $versionGroupId = $newDocId;
+                    $stmtUpdateVGroupId = $db->prepare("UPDATE verwaltung_dokumente SET version_group_id = :vgroupid WHERE id = :id");
+                    $stmtUpdateVGroupId->bindParam(':vgroupid', $versionGroupId, PDO::PARAM_INT);
+                    $stmtUpdateVGroupId->bindParam(':id', $newDocId, PDO::PARAM_INT);
+                    if (!$stmtUpdateVGroupId->execute()) {
+                        throw new Exception("Konnte version_group_id für erste Version nicht setzen.");
+                    }
+                }
+                
+                $db->commit(); // Transaktion erfolgreich abschließen
+                $_SESSION['success'] = 'Dokument \'' . htmlspecialchars($originalFilename) . '\' erfolgreich hochgeladen ' . ($isNewVersion ? '(Neue Version)' : '') . '.';
+
+            } else {
+                throw new Exception("Fehler beim Speichern der neuen Dokumentenversion in der Datenbank.");
+            }
+
+        } catch (Exception $e) {
+            // Bei Fehlern: Transaktion zurückrollen und Datei löschen
+            if ($db->inTransaction()) {
+                $db->rollBack();
+            }
+            if (file_exists($uploadPath)) {
+                 unlink($uploadPath);
+            }
+            $_SESSION['error'] = 'Fehler beim Upload: ' . $e->getMessage();
+            error_log('Fehler beim Dokumentenupload (Versionierung): ' . $e->getMessage());
         }
 
     } else {
