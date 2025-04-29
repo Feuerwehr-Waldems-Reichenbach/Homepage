@@ -1,4 +1,5 @@
 <?php
+session_name('verwaltung_session'); // Eindeutiger Session-Name für den Verwaltungsbereich
 session_start();
 // Redirect to dashboard if already logged in
 if (isset($_SESSION['user_id']) && $_SESSION['is_admin']) {

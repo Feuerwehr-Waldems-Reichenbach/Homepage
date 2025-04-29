@@ -65,6 +65,9 @@ session_set_cookie_params([
     'samesite' => 'Lax'  // Geändert von 'Strict' zu 'Lax' für bessere Kompatibilität
 ]);
 
+// Eindeutigen Session-Namen für den Verwaltungsbereich festlegen
+session_name('verwaltung_session');
+
 // Start session if not already started
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
