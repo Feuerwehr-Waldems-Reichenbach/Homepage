@@ -233,6 +233,7 @@ class PageBuilder
         <meta name="author" content="{$this->author}">
         <meta name="robots" content="{$this->metaRobots}">
         <meta name="language" content="{$this->siteLanguage}">
+        <meta name="theme-color" content="#A72920">
 
         <!-- Open Graph / Facebook -->
         <meta property="og:title" content="{$ogTitle}">
