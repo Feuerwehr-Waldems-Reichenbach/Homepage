@@ -80,42 +80,58 @@ class PageBuilder
     private function buildDefaultSchemaOrgData(): void
     {
         // Aufteilen des Standorts in seine Komponenten
-        $locationParts = explode(', ', $this->location);
-        $addressLocality = $locationParts[0] ?? '';
-        $addressRegion = $locationParts[1] ?? '';
-        $addressCountry = $locationParts[2] ?? 'DE';
-        
+        $locationParts = $this->location ? explode(', ', $this->location) : [];
+        $streetAddress = $locationParts[0] ?? ''; // Assuming first part might be street, though not used directly below
+        $addressLocality = $locationParts[count($locationParts) > 2 ? 1 : 0] ?? 'Waldems'; // Adjust index based on parts count
+        $addressRegion = $locationParts[count($locationParts) > 2 ? 2 : 1] ?? 'Hessen';
+        $addressCountry = count($locationParts) > 3 ? $locationParts[3] : 'DE'; // Assuming DE if not specified
+
         // URL der aktuellen Seite
         $currentUrl = "https://{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
-        
+        $baseUrl = "https://{$_SERVER['HTTP_HOST']}/";
+
         // Organization Schema
         $this->schemaOrgData[] = [
             '@context' => 'https://schema.org',
             '@type' => 'Organization',
-            'name' => $this->organizationName,
+            'name' => $this->organizationName ?: 'Freiwillige Feuerwehr Waldems Reichenbach',
             'url' => $currentUrl,
-            'logo' => "https://{$_SERVER['HTTP_HOST']}/" . ltrim($this->organizationLogo, '/'),
-            'description' => $this->description,
+            'logo' => $this->organizationLogo ? $baseUrl . ltrim($this->organizationLogo, '/') : ($this->favicon ? $baseUrl . ltrim($this->favicon, '/') : ''),
+            'description' => $this->description ?: '',
             'address' => [
                 '@type' => 'PostalAddress',
+                'streetAddress' => $streetAddress, // Added streetAddress
                 'addressLocality' => $addressLocality,
                 'addressRegion' => $addressRegion,
                 'addressCountry' => $addressCountry
             ],
             'contactPoint' => [
                 '@type' => 'ContactPoint',
-                'email' => $this->contactEmail,
-                'contactType' => $this->contactType
+                'email' => $this->contactEmail ?: '',
+                'contactType' => $this->contactType ?: 'customer service' // Provide a default
             ]
         ];
-        
+
         // WebPage Schema
         $this->schemaOrgData[] = [
             '@context' => 'https://schema.org',
             '@type' => 'WebPage',
-            'name' => $this->title,
-            'description' => $this->description,
-            'url' => $currentUrl
+            'name' => $this->title ?: '',
+            'description' => $this->description ?: '',
+            'url' => $currentUrl,
+            'isPartOf' => [ // Link WebPage to the Organization
+                '@type' => 'WebSite',
+                'url' => $baseUrl,
+                'name' => $this->organizationName ?: 'Freiwillige Feuerwehr Waldems Reichenbach',
+                'publisher' => [
+                    '@type' => 'Organization',
+                    'name' => $this->organizationName ?: 'Freiwillige Feuerwehr Waldems Reichenbach',
+                    'logo' => [ // Add logo info to publisher
+                        '@type' => 'ImageObject',
+                        'url' => $this->organizationLogo ? $baseUrl . ltrim($this->organizationLogo, '/') : ($this->favicon ? $baseUrl . ltrim($this->favicon, '/') : ''),
+                    ]
+                ]
+            ]
         ];
     }
 
