@@ -162,24 +162,27 @@
                 margin-top: 1.5rem;
             }
         }
+
         .developer-signature {
-  font-size: 0.8em;
-  text-align: center;
-  color: rgba(255, 255, 255, 0.5); /* Text leicht transparent */
-  margin: 20px 0;
-}
+            font-size: 0.8em;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.5);
+            /* Text leicht transparent */
+            margin: 20px 0;
+        }
 
-.developer-signature a {
-  color: rgba(255, 255, 255, 0.53);
-  text-decoration: none; /* Optional: Unterstreichung weg */
-  transition: color 0.3s ease;
-}
+        .developer-signature a {
+            color: rgba(255, 255, 255, 0.53);
+            text-decoration: none;
+            /* Optional: Unterstreichung weg */
+            transition: color 0.3s ease;
+        }
 
-.developer-signature a:hover {
-  color: rgba(255, 255, 255, 1); /* Beim Hover: heller werden */
-  text-decoration: underline;
-}
-
+        .developer-signature a:hover {
+            color: rgba(255, 255, 255, 1);
+            /* Beim Hover: heller werden */
+            text-decoration: underline;
+        }
     </style>
     <div class="container">
         <div class="row content ffr-white">
@@ -245,8 +248,9 @@
             </div>
         </div>
         <p class="developer-signature">
-  Erstellt von <a href="https://github.com/timbornemann" target="_blank" rel="noopener noreferrer">Tim Bornemann</a>
-</p>
+            Erstellt von <a href="https://github.com/timbornemann" target="_blank" rel="noopener noreferrer">Tim
+                Bornemann</a>
+        </p>
 
     </div>
 
