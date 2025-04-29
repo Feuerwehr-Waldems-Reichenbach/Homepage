@@ -49,6 +49,15 @@ header("Permissions-Policy: geolocation=(), camera=(), microphone=()");
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#343a40">
     <meta http-equiv="Content-Security-Policy" content="<?php echo $cspMeta; ?>">
+
+    <meta property="og:title" content="Reservierungssystem der Grillhütte Waldems Reichenbach">
+    <meta property="og:description" content="Reservierungssystem der Grillhütte Waldems Reichenbach">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://feuerwehr-waldems-reichenbach.de/Grillhuette/Reservierung">
+    <meta property="og:image" content="https://feuerwehr-waldems-reichenbach.de/Grillhuette/Reservierung/includes/favicon.ico">
+    <meta property="og:locale" content="de">
+    <meta property="og:site_name" content="Freiwillige Feuerwehr Waldems Reichenbach">
+
     <link rel="shortcut icon" href="/Grillhuette/Reservierung/includes/favicon.ico" type="image/x-icon">
     <title>Reservierungssystem der Grillhütte Waldems Reichenbach</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
