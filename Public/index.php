@@ -35,7 +35,7 @@ $page->addContent($page->renderImageTeaser(
     'Unsere Voraus-Helfer leisten als Erste am Einsatzort lebensrettende Maßnahmen.',
     '/Voraus-Helfer',
     'Erfahre mehr',
-    'assets/images/dsc-620.webp',
+    'assets/images/img20241021203058.webp',
     'Voraus-Helfer'
 ));
 
