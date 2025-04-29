@@ -77,11 +77,6 @@ header("Permissions-Policy: geolocation=(), camera=(), microphone=()");
                     <?php endif; ?>
                     <!-- Main Navigation -->
                     <ul class="navbar-nav me-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="/">
-                                <i class="bi bi-globe me-2"></i>Zurück zur Feuerwehr
-                            </a>
-                        </li>
                         <!-- Allgemein Dropdown für Desktop -->
                         <li class="nav-item dropdown d-none d-lg-block">
                             <a class="nav-link dropdown-toggle" href="#" id="allgemeinDropdown" role="button"
@@ -89,11 +84,15 @@ header("Permissions-Policy: geolocation=(), camera=(), microphone=()");
                                 Allgemein
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="allgemeinDropdown">
+                                <li><a class="dropdown-item" href="/">
+                                        <i class="bi bi-globe me-2"></i>Zurück zur Feuerwehr
+                                    </a>
+                                </li>
                                 <li><a class="dropdown-item" href="/Grillhuette">
                                         <i class="bi bi-info-square me-2"></i>Informationen</a>
                                 </li>
                                 <li><a class="dropdown-item" href="<?php echo getRelativePath('home'); ?>">
-                                        <i class="bi bi-house-door me-2"></i>Startseite</a>
+                                        <i class="bi bi-calendar-check me-2"></i>Kalender</a>
                                 </li>
                                 <li><a class="dropdown-item" href="<?php echo getRelativePath('Anleitung'); ?>">
                                         <i class="bi bi-question-circle me-2"></i>Anleitung</a>
