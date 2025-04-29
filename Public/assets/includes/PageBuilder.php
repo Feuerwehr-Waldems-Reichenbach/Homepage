@@ -10,7 +10,7 @@ class PageBuilder
     private string $keywords;
     private string $author;
     private ?string $canonicalUrl;
-    private string $favicon = '/assets/images/gravatar-logo-dunkel.webp';
+    private string $favicon = '/favicon.ico';
     private string $ogImage = '/assets/images/gravatar-logo-dunkel.webp';
     private string $twitterCardType = 'summary_large_image';
     private array $schemaOrgData = [];
