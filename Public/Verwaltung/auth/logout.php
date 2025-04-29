@@ -2,6 +2,7 @@
 // Include required files
 require_once dirname(__DIR__) . '/includes/config.php';
 require_once dirname(__DIR__) . '/includes/Security.php';
+require_once dirname(__DIR__, 3) . '/Private/Database/Database.php';
 
 // Start session if not already started
 if (session_status() === PHP_SESSION_NONE) {
