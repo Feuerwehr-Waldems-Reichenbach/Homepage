@@ -341,12 +341,12 @@ nav .ffr-section-btn {
 /*! Scroll to top arrow */
 .ffr-arrow-up {
   bottom: 25px;
-  right: 90px;
+  right: 25px;
   position: fixed;
   text-align: right;
- 
   color: #ffffff;
   font-size: 22px;
+  z-index: 1000;
 }
 .ffr-arrow-up a {
   background: rgba(0, 0, 0, 0.2);
