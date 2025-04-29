@@ -54,7 +54,6 @@ function formatBytes($bytes, $precision = 2) {
 ?>
 
 <div class="container-fluid px-4">
-    <h1 class="mt-4">Dokumentenverwaltung</h1>
 
     <?php include __DIR__ . '/templates/alert_messages.php'; ?>
 
