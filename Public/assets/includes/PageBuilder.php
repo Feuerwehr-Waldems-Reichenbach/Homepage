@@ -269,6 +269,8 @@ class PageBuilder
         {$alternateTags}
         <link rel="canonical" href="{$canonicalUrl}">
         <link rel="shortcut icon" href="{$this->favicon}" type="image/x-icon">
+        <link rel="icon" href="{$this->favicon}" type="image/x-icon">
+        
         <title>{$this->title}</title>
 
         {$styleTags}
