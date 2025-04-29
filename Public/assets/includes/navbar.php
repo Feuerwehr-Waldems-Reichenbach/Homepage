@@ -78,7 +78,7 @@ function renderMenu($items, $level = 0)
         <span class="navbar-logo">
             <a href="/">
                 <img src="<?php echo $baseAssetsPath; ?>/images/gravatar-logo-dunkel.webp" alt="Feuerwehr Reichenbach"
-                    style="height: 3rem;">
+                    style="height: 3rem; width: auto;">
             </a>
         </span>
         <span class="navbar-caption-wrap">
