@@ -1599,11 +1599,6 @@ a {
 .cid-u8CwqCiTr0 .dropdown-item {
   border-bottom: 1px solid #e6e6e6;
 }
-.cid-u8CwqCiTr0 .dropdown-item:hover,
-.cid-u8CwqCiTr0 .dropdown-item:focus {
-  background: #000000 !important;
-  color: white !important;
-}
 .cid-u8CwqCiTr0 .dropdown-item:hover span {
   color: white;
 }
@@ -7742,11 +7737,6 @@ a {
 .cid-u8CwqCiTr0 .dropdown-item {
   border-bottom: 1px solid #e6e6e6;
 }
-.cid-u8CwqCiTr0 .dropdown-item:hover,
-.cid-u8CwqCiTr0 .dropdown-item:focus {
-  background: #000000 !important;
-  color: white !important;
-}
 .cid-u8CwqCiTr0 .dropdown-item:hover span {
   color: white;
 }
@@ -10163,11 +10153,6 @@ a {
 .cid-u8CwqCiTr0 .dropdown-item {
   border-bottom: 1px solid #e6e6e6;
 }
-.cid-u8CwqCiTr0 .dropdown-item:hover,
-.cid-u8CwqCiTr0 .dropdown-item:focus {
-  background: #000000 !important;
-  color: white !important;
-}
 .cid-u8CwqCiTr0 .dropdown-item:hover span {
   color: white;
 }
@@ -10714,11 +10699,6 @@ a {
 }
 .cid-u8CwqCiTr0 .dropdown-item {
   border-bottom: 1px solid #e6e6e6;
-}
-.cid-u8CwqCiTr0 .dropdown-item:hover,
-.cid-u8CwqCiTr0 .dropdown-item:focus {
-  background: #000000 !important;
-  color: white !important;
 }
 .cid-u8CwqCiTr0 .dropdown-item:hover span {
   color: white;
@@ -11429,25 +11409,56 @@ a {
   padding-bottom: 6rem;
   background-color: #414141;
 }
+
+/* Entferne die alten Pfeil-Styles */
 .cid-FAQ .ffr-iconfont {
-  font-size: 1.2rem !important;
-  font-family: 'Moririse2' !important;
-  color: white;
-  transition: all 0.3s;
-  transform: rotate(180deg);
-  padding-left: 0.5rem;
+  display: none;
 }
+
+/* Neuer moderner Pfeil mit CSS */
+.cid-FAQ .panel-title::after {
+  content: '';
+  position: absolute;
+  right: 1.5rem;
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  border-right: 2px solid white;
+  border-bottom: 2px solid white;
+  transform: translateY(-50%) rotate(45deg);
+  transition: transform 0.3s ease;
+}
+
+/* Wenn ausgeklappt, Pfeil nach oben drehen */
+.cid-FAQ .panel-title[aria-expanded="true"]::after {
+  transform: translateY(-50%) rotate(-135deg);
+}
+
 .cid-FAQ .panel-group {
   border: none;
 }
+
 .cid-FAQ .card-header {
   padding: 0rem;
 }
+
+.cid-FAQ .panel-title {
+  display: flex;
+  align-items: center;
+  position: relative;
+  padding-right: 3rem;
+}
+
 @media (max-width: 767px) {
   .cid-FAQ .card-header {
     padding: 0rem;
   }
+  
+  .cid-FAQ .panel-title::after {
+    right: 1rem;
+  }
 }
+
 .cid-FAQ .panel-body {
   padding: 0rem;
   padding-bottom: 0.5rem;
@@ -11691,11 +11702,6 @@ a {
 }
 .cid-u8CwqCiTr0 .dropdown-item {
   border-bottom: 1px solid #e6e6e6;
-}
-.cid-u8CwqCiTr0 .dropdown-item:hover,
-.cid-u8CwqCiTr0 .dropdown-item:focus {
-  background: #000000 !important;
-  color: white !important;
 }
 .cid-u8CwqCiTr0 .dropdown-item:hover span {
   color: white;
