@@ -2404,17 +2404,67 @@ function showStatistikMonatStichwort()
  */
 function showStatistikWochentagTageszeit()
 {
-    global $stats, $wochentage;
+    global $stats, $wochentage, $aktuellesStatistikJahr;
+    // Datenbankobjekt holen
+    $db = Database::getInstance();
+    $conn = $db->getConnection();
+    // Startdatum und Enddatum aus der globalen Konfiguration holen
+    $startDate = $aktuellesStatistikJahr . '-01-01 00:00:00';
+    $endDate = $aktuellesStatistikJahr . '-12-31 23:59:59';
+
     // Daten für die Wochentag-Tageszeit-Analyse erzeugen
     $wochentagTageszeitData = [];
-    $tageszeitReihenfolge = ['Morgen', 'Nachmittag', 'Abend', 'Nacht'];
+    $tageszeitReihenfolge = [
+        'Morgen (6-12 Uhr)',
+        'Nachmittag (12-18 Uhr)',
+        'Abend (18-23 Uhr)',
+        'Nacht (23-6 Uhr)'
+    ];
+
+    // Abfrage für Wochentag-Tageszeit-Verteilung
+    $query = "SELECT 
+                WEEKDAY(Datum) as Wochentag,
+                CASE 
+                    WHEN HOUR(Datum) BETWEEN 6 AND 11 THEN 'Morgen (6-12 Uhr)'
+                    WHEN HOUR(Datum) BETWEEN 12 AND 17 THEN 'Nachmittag (12-18 Uhr)'
+                    WHEN HOUR(Datum) BETWEEN 18 AND 22 THEN 'Abend (18-23 Uhr)'
+                    ELSE 'Nacht (23-6 Uhr)'
+                END as Tageszeit,
+                COUNT(*) as Anzahl
+              FROM einsatz 
+              WHERE Anzeigen = 1 AND Datum BETWEEN :startDate AND :endDate 
+              GROUP BY Wochentag, Tageszeit 
+              ORDER BY Wochentag, 
+                  CASE 
+                      WHEN Tageszeit = 'Morgen (6-12 Uhr)' THEN 1
+                      WHEN Tageszeit = 'Nachmittag (12-18 Uhr)' THEN 2
+                      WHEN Tageszeit = 'Abend (18-23 Uhr)' THEN 3
+                      ELSE 4
+                  END";
+    $stmt = $conn->prepare($query);
+    $stmt->bindParam(':startDate', $startDate);
+    $stmt->bindParam(':endDate', $endDate);
+    $stmt->execute();
+    $rawData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
     // Matrix initialisieren
     for ($tag = 0; $tag < 7; $tag++) {
         $wochentagTageszeitData[$tag] = [];
         foreach ($tageszeitReihenfolge as $tageszeit) {
-            $wochentagTageszeitData[$tag][$tageszeit] = rand(0, 10); // Zufallswerte für die Demo
+            $wochentagTageszeitData[$tag][$tageszeit] = 0; // Mit 0 initialisieren
         }
     }
+
+    // Matrix mit echten Daten füllen
+    foreach ($rawData as $row) {
+        $wochentag = (int) $row['Wochentag'];
+        $tageszeit = $row['Tageszeit'];
+        $anzahl = (int) $row['Anzahl'];
+        if (isset($wochentagTageszeitData[$wochentag]) && isset($wochentagTageszeitData[$wochentag][$tageszeit])) {
+            $wochentagTageszeitData[$wochentag][$tageszeit] = $anzahl;
+        }
+    }
+
     $html = '<div class="statistik-card">';
     $html .= '<div class="statistik-card-title"><i class="bi bi-clock-history"></i> Einsatzverteilung nach Zeit</div>';
     $html .= '<div class="statistik-heatmap">';
@@ -2422,7 +2472,9 @@ function showStatistikWochentagTageszeit()
     $html .= '<div class="statistik-heatmap-row statistik-heatmap-header">';
     $html .= '<div class="statistik-heatmap-cell"></div>'; // Leere Ecke oben links
     foreach ($tageszeitReihenfolge as $tageszeit) {
-        $html .= '<div class="statistik-heatmap-cell">' . $tageszeit . '</div>';
+        // Nur den Namen der Tageszeit anzeigen (ohne Uhrzeit)
+        $tageszeitName = explode(' ', $tageszeit)[0];
+        $html .= '<div class="statistik-heatmap-cell" title="' . htmlspecialchars($tageszeit) . '">' . $tageszeitName . '</div>';
     }
     $html .= '</div>';
     // Maximalwert für Farbcodierung finden
@@ -2441,7 +2493,7 @@ function showStatistikWochentagTageszeit()
             $intensity = ($maxAnzahl > 0) ? ($anzahl / $maxAnzahl) : 0;
             $backgroundColor = getHeatmapColor($intensity);
             $textColor = ($intensity > 0.7) ? '#fff' : '#333';
-            $html .= '<div class="statistik-heatmap-cell" style="background-color: ' . $backgroundColor . '; color: ' . $textColor . ';" title="' . $wochentage[$tag] . ' ' . $tageszeit . ': ' . $anzahl . ' Einsätze">';
+            $html .= '<div class="statistik-heatmap-cell" style="background-color: ' . $backgroundColor . '; color: ' . $textColor . ';" title="' . $wochentage[$tag] . ' ' . htmlspecialchars($tageszeit) . ': ' . $anzahl . ' Einsätze">';
             $html .= $anzahl;
             $html .= '</div>';
         }
@@ -2458,19 +2510,42 @@ function showStatistikWochentagTageszeit()
  */
 function showStatistikDauerNachStichwort()
 {
-    global $stats;
+    global $stats, $aktuellesStatistikJahr;
+    // Datenbankobjekt holen
+    $db = Database::getInstance();
+    $conn = $db->getConnection();
+    // Startdatum und Enddatum aus der globalen Konfiguration holen
+    $startDate = $aktuellesStatistikJahr . '-01-01 00:00:00';
+    $endDate = $aktuellesStatistikJahr . '-12-31 23:59:59';
+
     // Daten für die Einsatzdauer nach Stichworten erzeugen
     $dauerStichwortData = [];
+    // Abfrage für durchschnittliche Dauer nach Stichwort (Top 10 nach Anzahl)
+    $query = "SELECT Stichwort, 
+              AVG(TIMESTAMPDIFF(MINUTE, Datum, Endzeit)) as DurchschnittMinuten,
+              COUNT(*) as Anzahl
+              FROM einsatz 
+              WHERE Anzeigen = 1 AND Datum BETWEEN :startDate AND :endDate 
+              GROUP BY Stichwort 
+              HAVING COUNT(*) >= 3 -- Nur Stichworte mit mind. 3 Einsätzen berücksichtigen
+              ORDER BY Anzahl DESC 
+              LIMIT 10";
+    $stmt = $conn->prepare($query);
+    $stmt->bindParam(':startDate', $startDate);
+    $stmt->bindParam(':endDate', $endDate);
+    $stmt->execute();
+    $dauerStichwortData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
     // Erzeugt Demo-Daten basierend auf vorhandenen Stichworten
-    if (isset($stats['stichworte'])) {
-        foreach ($stats['stichworte'] as $stichwort) {
-            $dauerStichwortData[] = [
-                'Stichwort' => $stichwort['Stichwort'],
-                'DurchschnittMinuten' => rand(30, 240), // Zufällige Dauer zwischen 30 Min und 4 Std
-                'Anzahl' => $stichwort['Anzahl']
-            ];
-        }
-    }
+    // if (isset($stats['stichworte'])) {
+    //     foreach ($stats['stichworte'] as $stichwort) {
+    //         $dauerStichwortData[] = [
+    //             'Stichwort' => $stichwort['Stichwort'],
+    //             'DurchschnittMinuten' => rand(30, 240), // Zufällige Dauer zwischen 30 Min und 4 Std
+    //             'Anzahl' => $stichwort['Anzahl']
+    //         ];
+    //     }
+    // }
     $html = '<div class="statistik-card">';
     $html .= '<div class="statistik-card-title"><i class="bi bi-hourglass-split"></i> Einsatzdauer nach Stichwort</div>';
     if (!empty($dauerStichwortData)) {
@@ -2499,9 +2574,9 @@ function showStatistikDauerNachStichwort()
         }
         $html .= '</div>';
     } else {
-        $html .= '<div class="statistik-info-text">Keine Daten verfügbar</div>';
+        $html .= '<div class="statistik-info-text">Keine Daten verfügbar (min. 3 Einsätze pro Stichwort nötig)</div>';
     }
-    $html .= '<div class="statistik-info-text">Durchschnittliche Einsatzdauer nach Stichworten</div>';
+    $html .= '<div class="statistik-info-text">Durchschnittliche Einsatzdauer der häufigsten Stichworte</div>';
     $html .= '</div>';
     return $html;
 }

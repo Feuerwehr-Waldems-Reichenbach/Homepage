@@ -43,20 +43,16 @@ showEinsaetze(4);
 showEinsatzStatistik($jahr);
 
 EinsatzStatistikGesamt();
-EinsatzStatistikWochentagTageszeit();
 
 EinsatzStatistikJahresvergleich();
 EinsatzStatistikDauer();
 EinsatzStatistikMonate();
-EinsatzStatistikTageImMonat();
-EinsatzStatistikWochentage();
-EinsatzStatistikTageszeit();
-EinsatzStatistikEinsaetzeProJahreszeit();
+EinsatzStatistikWochentagTageszeit();
+EinsatzStatistikDauerNachStichwort();
 EinsatzStatistikStichworte();
 EinsatzStatistikKategorien();
-EinsatzStatistikDauerNachStichwort();
 EinsatzStatistikDauerNachOrt();
-EinsatzStatistikDauerNachKategorie();
+
 
 // 🧩 2. Ausgabe in Variable speichern
 $statistikHtml = ob_get_clean();
