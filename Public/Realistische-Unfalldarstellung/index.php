@@ -82,7 +82,7 @@ $page->addContent($page->renderImageInfoBlock(
 $page->addContent($page->renderGalleryWithLightbox(
     id: 'gallery01-5b', // Verwende eine passende ID für die Galerie mit Lightbox
     cidSuffix: 'Image-Gallery-Grid-With-Modal', // Behalte das ursprüngliche CID-Suffix bei
-    title: 'Bildergalerie RUD', // Füge einen Titel für die Galerie hinzu
+    title: 'Sieht echt aus, ist es aber nicht!', // Füge einen Titel für die Galerie hinzu
     images: [
         ['src' => '../assets/images/img20240706082638-1.webp', 'alt' => 'RUD Demonstration Bild 1'],
         ['src' => '../assets/images/img20240706125716.webp', 'alt' => 'RUD Demonstration Bild 2'],
