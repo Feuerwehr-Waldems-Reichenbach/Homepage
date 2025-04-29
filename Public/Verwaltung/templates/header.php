@@ -112,6 +112,11 @@ if ($verwaltungPos !== false) {
                                 <li><a class="dropdown-item" href="<?php echo $ADMIN_ROOT; ?>/users/create.php">Neuer Benutzer</a></li>
                             </ul>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="<?php echo $ADMIN_ROOT; ?>/dokumente.php">
+                                <i class="fas fa-file-alt me-1"></i> Dokumente
+                            </a>
+                        </li>
                     </ul>
                     <ul class="navbar-nav">
                         <li class="nav-item dropdown">
