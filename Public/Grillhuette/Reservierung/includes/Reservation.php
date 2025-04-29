@@ -360,7 +360,7 @@ class Reservation
             $stmt->execute([$message, $id]);
             // Admin benachrichtigen
             $reservation = $this->getById($id);
-            $adminStmt = $this->db->prepare("SELECT email FROM gh_users WHERE is_admin = 1");
+            $adminStmt = $this->db->prepare("SELECT email, erhaelt_emails FROM gh_users WHERE is_admin = 1");
             $adminStmt->execute();
             $admins = $adminStmt->fetchAll(PDO::FETCH_ASSOC);
             if (!empty($admins)) {
@@ -407,7 +407,9 @@ class Reservation
                     </html>
                 ';
                 foreach ($admins as $admin) {
-                    sendEmail($admin['email'], $subject, $body);
+                    if ($admin['erhaelt_emails'] == 1) {
+                        sendEmail($admin['email'], $subject, $body);
+                    }
                 }
             }
             return [
@@ -665,7 +667,7 @@ class Reservation
             }
             // Admin benachrichtigen, falls vom Benutzer storniert
             if (!isset($_SESSION['is_admin']) || !$_SESSION['is_admin']) {
-                $adminStmt = $this->db->prepare("SELECT email FROM gh_users WHERE is_admin = 1");
+                $adminStmt = $this->db->prepare("SELECT email, erhaelt_emails FROM gh_users WHERE is_admin = 1");
                 $adminStmt->execute();
                 $admins = $adminStmt->fetchAll(PDO::FETCH_ASSOC);
                 if (!empty($admins)) {
@@ -717,7 +719,9 @@ class Reservation
                         </html>
                     ';
                     foreach ($admins as $admin) {
-                        sendEmail($admin['email'], $subject, $body);
+                        if ($admin['erhaelt_emails'] == 1) {
+                            sendEmail($admin['email'], $subject, $body);
+                        }
                     }
                 }
             }
@@ -1733,7 +1737,7 @@ class Reservation
     private function sendAdminReservationNotification($user, $startDatetime, $endDatetime, $adminReservationsUrl, $receiptRequested)
     {
         // Admin-E-Mails abrufen
-        $stmt = $this->db->prepare("SELECT email FROM gh_users WHERE is_admin = 1");
+        $stmt = $this->db->prepare("SELECT email, erhaelt_emails FROM gh_users WHERE is_admin = 1");
         $stmt->execute();
         $admins = $stmt->fetchAll(PDO::FETCH_ASSOC);
         if (empty($admins)) {
@@ -1793,7 +1797,9 @@ class Reservation
             </html>
         ';
         foreach ($admins as $admin) {
-            sendEmail($admin['email'], $subject, $body);
+            if ($admin['erhaelt_emails'] == 1) {
+                sendEmail($admin['email'], $subject, $body);
+            }
         }
     }
     private function sendUserReservationUpdate($user, $startDatetime, $endDatetime, $myReservationsUrl, $status, $adminMessage = null, $keyHandoverDatetime = null, $keyReturnDatetime = null)
