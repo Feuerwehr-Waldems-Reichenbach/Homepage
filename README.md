@@ -24,7 +24,6 @@ Diese Webseite dient als Informationsplattform für alle Aktivitäten, Abteilung
   - **Verwaltung/** - Verwaltungsbereich der Webseite
   - **Unterstuetzen/** - Informationen zur Unterstützung der Feuerwehr
   - **Satzung/** - Satzung der Feuerwehr
-  - **Maintenance/** - Wartungsmodus-Seiten
   - **Grillhuette/** - Reservierungssystem der Grillhütte
   - **Foerderverein/** - Bereich für den Förderverein
   - **Feuerwehrhaus/** - Informationen zum Feuerwehrhaus
