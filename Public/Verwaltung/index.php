@@ -40,7 +40,7 @@ $pageTitle = "Verwaltung - Login";
             <div class="col-md-6 col-lg-5">
                 <div class="card glass-card shadow">
                     <div class="card-header text-white text-center">
-                        <h4 class="mb-0 fw-bold">Verwaltungssystem</h4>
+                        <h4 class="mb-0 fw-bold">Verwaltung</h4>
                     </div>
                     <div class="card-body">
                         <?php if (isset($_SESSION['error'])): ?>
@@ -72,7 +72,7 @@ $pageTitle = "Verwaltung - Login";
                                 <label for="email" class="form-label fw-bold">E-Mail</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                                    <input type="email" class="form-control" id="email" name="email" required placeholder="ihreemail@beispiel.de">
+                                    <input type="email" class="form-control" id="email" name="email" required placeholder="Ihre E-Mail-Adresse">
                                 </div>
                                 <div class="invalid-feedback">
                                     Bitte geben Sie eine gültige E-Mail-Adresse ein.

@@ -137,7 +137,7 @@ $pageTitle = "Passwort vergessen";
                                     <label for="email" class="form-label fw-bold">E-Mail</label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                                        <input type="email" class="form-control" id="email" name="email" required placeholder="ihreemail@beispiel.de">
+                                        <input type="email" class="form-control" id="email" name="email" required placeholder="Ihre E-Mail-Adresse">
                                     </div>
                                     <div class="invalid-feedback">
                                         Bitte geben Sie eine gültige E-Mail-Adresse ein.
