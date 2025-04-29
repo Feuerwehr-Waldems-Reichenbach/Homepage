@@ -22,7 +22,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 $stepsBack = 3;
-$basePath   = __DIR__;
+$basePath = __DIR__;
 for ($i = 0; $i < $stepsBack; $i++) {
     $basePath = dirname($basePath);
 }
@@ -39,7 +39,7 @@ require_once BASE_PATH_DB . '/Private/Database/Database.php';
  */
 function isValidAuthKey(PDO $conn, string $authKey): bool
 {
-    $sql  = "SELECT COUNT(*) FROM `authentifizierungsschluessel` WHERE `auth_key` = ? AND `active` = 1";
+    $sql = "SELECT COUNT(*) FROM `authentifizierungsschluessel` WHERE `auth_key` = ? AND `active` = 1";
     $stmt = $conn->prepare($sql);
     $stmt->execute([$authKey]);
     return $stmt->fetchColumn() > 0;
@@ -260,7 +260,8 @@ function getKategorie(string $sachverhalt, string $stichwort): string
     // Schlüsselwortsuche jetzt mit besserer Wortgrenzenerkennung
     foreach ($kategorien as $kategorie => $woerter) {
         foreach ($woerter as $wort) {
-            if (empty($wort)) continue;
+            if (empty($wort))
+                continue;
 
             // Prüfen auf exakte Übereinstimmung mit Wortgrenzen
             $pattern = '/\b' . preg_quote($wort, '/') . '\b/ui';
@@ -285,7 +286,8 @@ function getKategorie(string $sachverhalt, string $stichwort): string
     }
 
     // Prüfe Sturm/Baum Kombinationen
-    if ((preg_match('/\bsturm\b/ui', $text) || preg_match('/\bunwetter\b/ui', $text)) &&
+    if (
+        (preg_match('/\bsturm\b/ui', $text) || preg_match('/\bunwetter\b/ui', $text)) &&
         (preg_match('/\bbaum\b/ui', $text) || preg_match('/\bdach\b/ui', $text))
     ) {
         return 'Unwetter';
@@ -340,15 +342,17 @@ function insertEinsatz(PDO $conn, array $params): array
 
     $stmt = $conn->prepare($sql);
 
-    if ($stmt->execute([
-        $params['datum'],
-        $params['sachverhalt'],
-        $params['stichwort'],
-        $params['ort'],
-        $params['einheit'],
-        $params['einsatzID'],
-        $params['kategorie']
-    ])) {
+    if (
+        $stmt->execute([
+            $params['datum'],
+            $params['sachverhalt'],
+            $params['stichwort'],
+            $params['ort'],
+            $params['einheit'],
+            $params['einsatzID'],
+            $params['kategorie']
+        ])
+    ) {
         return [true, 'Einsatz erfolgreich eingetragen.'];
     }
 
@@ -363,7 +367,7 @@ function updateEinsatz(PDO $conn, array $params): array
 
     if ($params['beendet'] == 1) {
         // Einsatz beenden → Endzeit setzen + anzeigen
-        $sql  = 'UPDATE `einsatz` SET `Anzeigen` = true, `Endzeit` = ? WHERE `EinsatzID` = ?';
+        $sql = 'UPDATE `einsatz` SET `Anzeigen` = true, `Endzeit` = ? WHERE `EinsatzID` = ?';
         $stmt = $conn->prepare($sql);
         $result = $stmt->execute([$params['datum'], $params['einsatzID']]);
 
@@ -374,7 +378,7 @@ function updateEinsatz(PDO $conn, array $params): array
     }
 
     // Einsatz läuft noch → ggf. Kategorie nachtragen
-    $sql  = "UPDATE `einsatz` SET `Kategorie` = ? WHERE `EinsatzID` = ? AND (`Kategorie` IS NULL OR `Kategorie` = '')";
+    $sql = "UPDATE `einsatz` SET `Kategorie` = ? WHERE `EinsatzID` = ? AND (`Kategorie` IS NULL OR `Kategorie` = '')";
     $stmt = $conn->prepare($sql);
     $result = $stmt->execute([$params['kategorie'], $params['einsatzID']]);
 
@@ -390,13 +394,17 @@ function updateEinsatz(PDO $conn, array $params): array
  */
 function updateAllKategorien(PDO $conn, bool $nurNullWerte = true): array
 {
+    $query = "SELECT `ID`, `EinsatzID`, `Sachverhalt`, `Stichwort` FROM `einsatz`";
+    if ($nurNullWerte) {
+        $query .= " WHERE `Kategorie` IS NULL OR `Kategorie` = ''";
+    }
+    $stmt = $conn->prepare($query);
+    $stmt->execute();
 
-    $where = $nurNullWerte ? "WHERE `Kategorie` IS NULL OR `Kategorie` = ''" : '';
-    $stmt  = $conn->query("SELECT `ID`, `EinsatzID`, `Sachverhalt`, `Stichwort` FROM `einsatz` $where");
 
     $updated = 0;
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        $kat     = getKategorie($row['Sachverhalt'], $row['Stichwort']);
+        $kat = getKategorie($row['Sachverhalt'], $row['Stichwort']);
         $updStmt = $conn->prepare('UPDATE `einsatz` SET `Kategorie` = ? WHERE `ID` = ?');
         if ($updStmt->execute([$kat, $row['ID']])) {
             $updated++;
@@ -405,6 +413,7 @@ function updateAllKategorien(PDO $conn, bool $nurNullWerte = true): array
 
     return [$updated, "Kategorien für $updated Einsätze aktualisiert."];
 }
+
 
 /**
  * Löscht alle Kategorie‑Einträge (Reset).
