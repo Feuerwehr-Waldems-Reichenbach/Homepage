@@ -21,10 +21,20 @@ Diese Webseite dient als Informationsplattform für alle Aktivitäten, Abteilung
   - **Downloads/** - Downloadbereich für Dokumente und Formulare
   - **Datenschutz/** - Datenschutzerklärung
   - **Impressum/** - Impressum und rechtliche Informationen
+  - **Verwaltung/** - Verwaltungsbereich der Webseite
+  - **Unterstuetzen/** - Informationen zur Unterstützung der Feuerwehr
+  - **Satzung/** - Satzung der Feuerwehr
+  - **Maintenance/** - Wartungsmodus-Seiten
+  - **Grillhuette/** - Reservierungssystem der Grillhütte
+  - **Foerderverein/** - Bereich für den Förderverein
+  - **Feuerwehrhaus/** - Informationen zum Feuerwehrhaus
+  - **Fahrzeuge/** - Übersicht der Fahrzeuge
+  - **ErrorPages/** - Fehlerseiten (404, 500, etc.)
+  - **WebHook/** - WebHook-Funktionalitäten
+  - **index.php** - Hauptdatei der Webseite
+  - **robots.txt** - Anweisungen für Suchmaschinen-Crawler
+  - **sitemap.xml** - Sitemap für Suchmaschinen
 
-- **Private/** - Interne Bereiche und Ressourcen (nicht öffentlich zugänglich)
-- **vendor/** - Abhängigkeiten und externe Bibliotheken
-- **tests/** - Testumgebung für die Webseite
 
 ## Technologien
 
