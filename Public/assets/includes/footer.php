@@ -253,7 +253,7 @@
             </div>
             <div class="col-sm-12 copyright pl-0">
                 <p class="ffr-text ffr-fonts-style ffr-white display-7">
-                    © Copyright 2024 Förderverein der Freiwilligen Feuerwehr Waldems-Reichenbach e.V. im Auftrag für die
+                    © Copyright <?php echo date('Y'); ?> Förderverein der Freiwilligen Feuerwehr Waldems-Reichenbach e.V. im Auftrag für die
                     Freiwillige Feuerwehr Waldems Reichenbach - Alle Rechte vorbehalten</p>
             </div>
         </div>
