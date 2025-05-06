@@ -41,50 +41,52 @@ function generateEinsatzbericht(
     $cleanedEinsatzgruppe = str_replace('Alle Monitore', '', $einsatzgruppe);
 
     $prompt = <<<PROMPT
-Deine Aufgabe ist es, einen Einsatzbericht für die Webseite der Freiwilligen Feuerwehr zu schreiben. Der Bericht soll informativ, ehrlich und nachvollziehbar sein – ohne Übertreibungen, ohne falsche Aussagen und ohne ausgedachte Inhalte.
-
-Der Text richtet sich an die interessierte Öffentlichkeit, insbesondere Bürgerinnen und Bürger aus der Umgebung. Der Stil soll menschlich und leicht lesbar sein, so als hätte ein Mitglied der Feuerwehr den Bericht selbst verfasst – mit Charakter, aber trotzdem sachlich und in einem formal passenden Ton.
-
-Verzichte dabei auf:
-- Aussagen über den Erfolg oder Misserfolg des Einsatzes
-- Dankesworte oder Grußformeln
-- Wiederholungen der Formulierung „die Feuerwehr Reichenbach“ oder dass „wir ausgerückt sind“ – das ergibt sich bereits aus dem Kontext
-- das bloße Wiederholen der Einsatzdetails in gleicher Formulierung
-
-Nutze stattdessen:
-- eine umformulierte Darstellung des Einsatzablaufs
-- kurze Bemerkungen zur Lage, zum Ort oder zu den Gegebenheiten, wenn passend
-- wenn die voraushelfer im einsatz waren erwähne das explizit
-- bei Fahrzeugen: verwende anstelle der Funkkennung (z. B. 4/19) immer die **Ortsbezeichnung und Fahrzeugtyp**, z. B. „Mannschaftstransportfahrzeug aus Reichenbach“
-
-Die folgenden Einsatzdetails dienen dir als Grundlage. Verwende sie zur Einbettung der Informationen in einem gut lesbaren und interessanten Fließtext. Bitte abstrahiere und formuliere sie um – der Text darf niemals wie ein automatisch generierter Eintrag wirken:
-
-Datum/Zeit: {$start} bis {$end}  
-Einsatzstichwort: "{$stichwort}"  
-Einsatzort: {$ort}  
-Sachverhalt bei Alarmierung: "{$sachverhalt}"  
-Kategorie: "{$kategorie}"  
-Einsatzgruppe: "{$cleanedEinsatzgruppe}"  
-Fahrzeuge im Einsatz: {$cleanedFahrzeuge}
-
-Wenn du Fahrzeuge beschreibst, nutze diese Zuordnung zur besseren Lesbarkeit:
-- 1-xx = Bermbach
-- 2-xx = Esch
-- 3-xx = Niederems
-- 4-xx = Reichenbach
-- 5-xx = Steinfischbach
-- 6-xx = Wüstems
-
-Beispiel:
-„4-19“ ist ein Mannschaftstransportfahrzeug aus Reichenbach
-„4-48“ ist ein Tragkraftspritzenfahrzeug mit Wassertank aus Reichenbach
-„3-82-1“ ist ein Notarzt hier gibt es keinen Ort die zahl am anfang ist egal
-„16.83“ ist ein Retungswagen hier gibt es keinen Ort die zahl am anfang ist egal
-
-Der Bericht soll zum Schluss kommen, sobald alle relevanten Informationen vermittelt sind. Keine Floskeln, kein Fazit, kein Werturteil.
-Der Komplette Bericht soll in Deutsch geschrieben werden und keine andere Sprache verwenden.
-
-PROMPT;
+    Deine Aufgabe ist es, einen Einsatzbericht für die Webseite der Freiwilligen Feuerwehr Reichenbach zu verfassen. Der Text soll sachlich bleiben, aber lebendig und für Bürgerinnen und Bürger nachvollziehbar geschrieben sein. Stelle dir vor, ein Feuerwehrkamerad erzählt den Einsatz in ruhiger, aber prägnanter Sprache mit Charakter, ohne jedoch zu bewerten oder zu übertreiben.
+    
+    ### Wichtige Grundsätze:
+    - **Keine Erfindungen:** Verwende ausschließlich die gegebenen Einsatzdetails. Interpretiere keine Ergebnisse, schreibe keine Szenarien, die nicht belegt sind.
+    - **Natürliche Sprache:** Nutze aktive Formulierungen, vermeide starre Satzmuster. Der Text soll wie von Mensch zu Mensch wirken.
+    - **Abwechslungsreich, aber präzise:** Variiere Satzlänge und -struktur, ohne vom Faktischen abzuweichen.
+    
+    ### Verbotene Formulierungen:
+    - Bewertungen wie „erfolgreich“, „kritisch“, „glücklich“ oder „schwerwiegend“
+    - Wiederholte Nennung von „Freiwillige Feuerwehr Reichenbach“ – halte dich an die Fahrzeug-Ort-Verknüpfung
+    - Direkte Übernahme der Einsatzdetails in Originalform (z.B. „Sachverhalt: {$sachverhalt}“) formuliere diese aus und erkläre gegebenfalls was der Sachverhalt aussagt und für einsatzkräfte normalerweise allgemein bedeutet.
+    
+    ### Erlaubte und gewünschte Formulierungen:
+    - **Fahrzeugbeschreibungen:** Übersetze Funkkennungen in verständliche Begriffe:
+      - **Beispiele:**  
+        - „4-19“ → Mannschaftstransportfahrzeug aus Reichenbach 
+        - „4-48“ → Tragkraftspritzenfahrzeug mit Wassertank aus Reichenbach 
+        - „3-82-1“ → Notarzt (kein Ort nötig)  
+        - „16.83“ → Rettungswagen (kein Ort nötig)
+        - für alle anderen fahrzeuge nenne immer nur die Nummer 
+    - **Einsatzablauf:** Nutze flüssige Abfolgen wie „Nach Eintreffen… | Vor Ort… | Anschließend…“, ohne Details zu erfinden
+    - **Kontextuelle Einbettung:** Leichte Erwähnungen wie „aufgrund der Wetterbedingungen“, „bei Dunkelheit“ – **nur wenn die Gegebenheiten belegt sind oder realistisch, wie wenn es 23 uhr ist, dann ist es dunkel**
+    - **Voraushelfer:** Nenne sie explizit, wenn im Einsatz: „Ein Voraushelfer unterstützte bereits vor unserem Eintreffen“
+    
+    ### Strukturvorschlag:
+    1. **Einleitung:** Datum/Zeit + Einsatzort + Stichwort in einer flüssigen Einleitung
+    2. **Hauptteil:** 
+       - Einsatzgruppe & Fahrzeuge
+       - Kurze Beschreibung der Tätigkeiten (ohne Ergebnisse zu nennen)
+       - Erwähnung von Voraushelfern, Wetterbedingungen oder spezifischen Gegebenheiten, **wenn bekannt**
+    3. **Abschluss:** Natürliche Beendigung nach letzter Faktenmeldung – kein Fazit, keine Floskel
+    
+    ### Beispiel für Fahrzeugintegration:
+    „Mit dem Tragkraftspritzenfahrzeug aus Reichenbach und dem Rettungswagen rückten die Einsatzkräfte zum Einsatzort vor.“
+    
+    ### Einsatzdetails als Grundlage:
+    Datum/Zeit: {$start} bis {$end}  
+    Einsatzstichwort: "{$stichwort}"  
+    Einsatzort: {$ort}  
+    Sachverhalt bei Alarmierung: "{$sachverhalt}"  
+    Kategorie: "{$kategorie}"  
+    Einsatzgruppe: "{$cleanedEinsatzgruppe}"  
+    Fahrzeuge im Einsatz: {$cleanedFahrzeuge}
+    
+    Der Bericht soll enden, sobald alle relevanten Informationen ausgedrückt wurden – ohne Schlusssatz, Bewertung oder Dank.
+    PROMPT;
 
     $generatedText = sendLLMRequest($prompt);
 
@@ -137,30 +139,45 @@ function generateEinsatzbericht2(
     string $ort,
 ) {
     $prompt = <<<PROMPT
-    Deine Aufgabe ist es, einen Einsatzbericht für die Webseite der Freiwilligen Feuerwehr zu schreiben. Der Bericht soll informativ, ehrlich und nachvollziehbar sein – ohne Übertreibungen, ohne falsche Aussagen und ohne ausgedachte Inhalte.
+    Deine Aufgabe ist es, einen Einsatzbericht für die Webseite der Freiwilligen Feuerwehr Reichenbach zu verfassen. Der Text soll sachlich bleiben, aber lebendig und menschlich wirken. 
 
-    WICHTIG: Es dürfen keine Annahmen getroffen werden. Wenn zu einem Aspekt keine konkrete Information vorliegt, darf er im Text nicht interpretiert, ergänzt oder ausgeschmückt werden. Erfinde niemals Situationen, Beobachtungen oder Abläufe.
+    WICHTIG: 
+    - Es dürfen keine Informationen hinzuerfunden werden, die nicht in den Einsatzdaten enthalten sind.
+    - Vermeide spekulative Formulierungen, Bewertungen oder Interpretationen. 
+    - Wenn Details fehlen, nutze allgemeine, aber flüssige Formulierungen, um einen zusammenhängenden Text zu erzeugen.
 
-    Du darfst allgemeine, nichts-aussagende Formulierungen verwenden, um einen vollständigen Satz zu bilden, aber vermeide alles, was den Anschein einer genauen Aussage erwecken könnte, wenn die Datenlage das nicht hergibt.
-
-    Der Stil soll menschlich und leicht lesbar sein – so, als hätte ein Mitglied der Feuerwehr den Bericht selbst verfasst. Er soll natürlich wirken, aber trotzdem sachlich und formal korrekt sein.
-
-    Verzichte dabei auf:
-    - Aussagen über Erfolg oder Ergebnis des Einsatzes
-    - Dankesworte, Einschätzungen oder persönliche Meinungen
-    - Wiederholungen der Formulierung „die Feuerwehr Reichenbach“ oder dass „wir ausgerückt sind“
-    - Formulierungen wie „es stellte sich heraus“, „es wurde festgestellt“, „die Lage war“ – wenn diese Informationen nicht vorliegen
-    - jede Art von ausformuliertem Ablauf, der nicht konkret durch die Einsatzdaten gedeckt ist
+    Stilvorgaben:
+    - Schreibe im aktivischen Präsens ("Die Einsatzkräfte erkunden die Lage" statt "Es erfolgte eine Erkundung")
+    - Verwende natürliche Satzkonstruktionen mit variierter Länge und Struktur
+    - Nutze leichte Abwechslung in der Darstellung (z.B. "Die Teammitglieder prüften..."/"Im Einsatz zeigte sich...")
+    - Vermeide monotone Wiederholungen von Satzanfängen
 
     Erlaube dir:
-    - kurze, zurückhaltende Formulierungen
-    - neutrale Umschreibungen wie „es erfolgte eine Erkundung“, „die Lage wurde überprüft“, „weitere Maßnahmen erfolgten je nach Erfordernis“
-    - wenn nur sehr wenige Informationen vorhanden sind, darf der Text entsprechend kurz und allgemein bleiben
+    - Leichte Verben wie "prüfen", "erkennen", "stellen fest", "handeln" (ohne spezifische Ergebnisse zu nennen)
+    - Natürliche Abfolgen wie "Nach Eintreffen... | Vor Ort... | Anschließend..."
+    - Allgemeine Beschreibungen von Tätigkeiten wie "die Einsatzkräfte sicherten die Einsatzstelle", "es wurden weitere Kräfte nachgezogen"
 
-    Wenn die Voraushelfer beteiligt waren, erwähne das explizit.
+    Verzichte weiterhin auf:
+    - Jede Form von Bewertung, Dank oder Reflexion
+    - Feste Phrasen wie "es stellte sich heraus", "die Lage war", "Erfolg wurde erzielt"
+    - Wiederholte Erwähnung von "die Feuerwehr Reichenbach" oder "wir rückten aus"
 
-    Diese Einsatzdetails dienen dir als Grundlage. Verwende sie zur Einbettung in einen ruhigen, zurückhaltenden Fließtext. Der Bericht soll nicht wie automatisch generiert wirken, sondern wie von einem Mitglied geschrieben.
+    Sonstiges:
+    - Erwähne Voraushelfer explizit, wenn beteiligt
+    - Halte die Textlänge proportional zur Informationsdichte (kurz bei wenig Daten, länger bei komplexen Einsätzen)
+    - Enden Sie mit dem letzten relevanten Fakt, kein Fazit oder Schlusssatz
 
+
+    ### Strukturvorschlag:
+    1. **Einleitung:** Datum/Zeit + Einsatzort + Stichwort in einer flüssigen Einleitung
+    2. **Hauptteil:** 
+       - Einsatzgruppe & Fahrzeuge
+       - Kurze Beschreibung der Tätigkeiten (ohne Ergebnisse zu nennen)
+       - Erwähnung von Voraushelfern, Wetterbedingungen oder spezifischen Gegebenheiten, **wenn bekannt**
+    3. **Abschluss:** Natürliche Beendigung nach letzter Faktenmeldung – kein Fazit, keine Floskel
+    
+
+    Einsatzdetails:  
     Datum/Zeit: {$start} bis {$end}  
     Einsatzstichwort: "{$stichwort}"  
     Einsatzort: {$ort}  
@@ -168,8 +185,7 @@ function generateEinsatzbericht2(
     Kategorie: "{$kategorie}"  
     Einsatzgruppe: "{$einsatzgruppe}"
 
-    Der Bericht soll enden, sobald alle relevanten Informationen ausgedrückt wurden. Kein Fazit, keine Floskeln, keine Wertung. Der komplette Text soll ausschließlich auf Deutsch verfasst sein.
-
+    Der Bericht soll authentisch wirken, wie von einem Feuerwehrangehörigen geschrieben, aber strikt auf den Fakten basieren.
 PROMPT;
 
     $generatedText = sendLLMRequest($prompt);
