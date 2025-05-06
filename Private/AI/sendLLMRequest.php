@@ -4,7 +4,7 @@ $configPath = BASE_PATH_API_Sender . "/Private/Initializations/api_keys.ini";
 
 // API-Key laden
 $config = parse_ini_file($configPath);
-$apiKey = $config['groq_api_key'] ?? null;
+$apiKey = $config['openRouter_key'] ?? null;
 
 if (!$apiKey) {
     throw new Exception("API Key 'groq_api_key' nicht gefunden.");
@@ -21,17 +21,14 @@ function sendLLMRequest(string $input): string
 {
     global $apiKey;
 
-    $url = "https://api.groq.com/openai/v1/chat/completions";
+      $url = "https://openrouter.ai/api/v1/chat/completions";
 
     $data = [
         "messages" => [
             ["role" => "user", "content" => $input]
         ],
-        "model" => "deepseek-r1-distill-llama-70b",
-        "temperature" => 0.85,
-        "max_completion_tokens" => 2024,
-        "top_p" => 1,
-        "stream" => false, // Obwohl konfig angegeben ist mit true – in PHP blockierend einfacher
+        "model" => "qwen/qwen3-235b-a22b:free",
+        "stream" => false,
         "stop" => null
     ];
 
