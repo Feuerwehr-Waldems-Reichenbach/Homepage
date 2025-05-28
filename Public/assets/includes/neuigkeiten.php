@@ -107,7 +107,7 @@ function loadNeuigkeitenCSS()
 {
     $version = '1.1.1'; // Increment this when you make CSS changes
     return '<link rel="stylesheet" href="/assets/css/neuigkeiten.css?v=' . $version . '">' .
-        '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">' .
+        '<link rel="stylesheet" href="/assets/fonts/font-awesome/css/all.min.css">' .
         '<style>
                 .btn-neuigkeit-aktion {
                     display: inline-flex;

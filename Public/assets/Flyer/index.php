@@ -18,11 +18,11 @@
   <link rel="stylesheet" href="../../assets/socicon/css/styles.css">
   <link rel="stylesheet" href="../../assets/theme/css/style.css">
   <link rel="preload"
-    href="https://fonts.googleapis.com/css?family=Inter+Tight:100,200,300,400,500,600,700,800,900,100i,200i,300i,400i,500i,600i,700i,800i,900i&display=swap"
+    href="../../assets/fonts/inter-tight/inter-tight.css"
     as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript>
     <link rel="stylesheet"
-      href="https://fonts.googleapis.com/css?family=Inter+Tight:100,200,300,400,500,600,700,800,900,100i,200i,300i,400i,500i,600i,700i,800i,900i&display=swap">
+      href="../../assets/fonts/inter-tight/inter-tight.css">
   </noscript>
   <link rel="preload" as="style" href="../../assets/ffr/css/ffr-additional.css?v=acTmw9">
   <link rel="stylesheet" href="../../assets/ffr/css/ffr-additional.css?v=acTmw9" type="text/css">
