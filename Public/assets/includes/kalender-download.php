@@ -20,20 +20,25 @@ try {
         exit;
     }
     
+    // Deutsche Zeitzone setzen
+    $timezone = new DateTimeZone('Europe/Berlin');
+    
     // Korrekte Verarbeitung des Datums mit Uhrzeit
-    $datum = new DateTime($neuigkeit['Datum']);
-    $datumStart = $datum->format('Ymd\THis\Z'); // Mit Z für UTC Zeit
+    $datum = new DateTime($neuigkeit['Datum'], $timezone);
+    
+    // Datum im lokalen Format mit Zeitzone
+    $datumStart = $datum->format('Ymd\THis');
     
     // Enddatum 4 Stunde später (kann nach Bedarf angepasst werden)
     $endDatum = clone $datum;
     $endDatum->modify('+4 hour');
-    $datumEnde = $endDatum->format('Ymd\THis\Z');
+    $datumEnde = $endDatum->format('Ymd\THis');
     
     // Zufällige ID für den Kalendereintrag generieren
     $uid = md5(uniqid(mt_rand(), true)) . '@' . $_SERVER['HTTP_HOST'];
     
-    // Aktuelle Zeit für DTSTAMP
-    $jetzt = new DateTime();
+    // Aktuelle Zeit für DTSTAMP im UTC Format
+    $jetzt = new DateTime('now', new DateTimeZone('UTC'));
     $jetzt = $jetzt->format('Ymd\THis\Z');
     
     // Bildanhang vorbereiten, wenn vorhanden
@@ -55,8 +60,9 @@ try {
     $ical .= "BEGIN:VEVENT\r\n";
     $ical .= "UID:" . $uid . "\r\n";
     $ical .= "DTSTAMP:" . $jetzt . "\r\n";
-    $ical .= "DTSTART:" . $datumStart . "\r\n";
-    $ical .= "DTEND:" . $datumEnde . "\r\n";
+    // Lokale Zeitzone angeben
+    $ical .= "DTSTART;TZID=Europe/Berlin:" . $datumStart . "\r\n";
+    $ical .= "DTEND;TZID=Europe/Berlin:" . $datumEnde . "\r\n";
     $ical .= "SUMMARY:" . $neuigkeit['Ueberschrift'] . "\r\n";
     
     // Beschreibung: Information aus der Datenbank
