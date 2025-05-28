@@ -278,12 +278,12 @@ class PageBuilder
         {$schemaOrgScript}
 
         <link rel="preload"
-              href="https://fonts.googleapis.com/css?family=Inter+Tight:100,200,300,400,500,600,700,800,900&display=swap"
+              href="/assets/fonts/inter-tight/inter-tight.css"
               as="style"
               onload="this.onload=null;this.rel='stylesheet'">
         <noscript>
             <link rel="stylesheet"
-                  href="https://fonts.googleapis.com/css?family=Inter+Tight:100,200,300,400,500,600,700,800,900&display=swap">
+                  href="/assets/fonts/inter-tight/inter-tight.css">
         </noscript>
     </head>
     HTML;
