@@ -64,7 +64,7 @@ $page->addContent($page->renderImageTeaser(
     title: 'Jetzt Reservieren',
     subtitle: 'Unsere Grillhütte in Waldems Reichenbach ist von schöner Natur umgeben und bietet einen herrlichen Ausblick. Perfekt für entspannte Feiern und gesellige Treffen.',
     linkHref: '/Grillhuette/Reservierung/',
-    linkText: 'Jetzt reservieren',
+    linkText: 'Zum Reservierungssystem',
     imageSrc: '../assets/images/img20240514182422.webp',
     imageAlt: 'Grillhütte Waldems Reichenbach',
     btnClass: 'btn-secondary'
@@ -96,7 +96,7 @@ $page->addContent($page->renderCallToActionBanner(
     cidSuffix: 'CTA-Grillhuette',
     title: 'Interesse geweckt?',
     buttonHref: '/Grillhuette/Reservierung/',
-    buttonText: 'Jetzt reservieren',
+    buttonText: 'Zum Reservierungssystem',
     btnClass: 'btn-primary'
     // Parallax background und Overlay werden durch die Methode gehandhabt
 ));
