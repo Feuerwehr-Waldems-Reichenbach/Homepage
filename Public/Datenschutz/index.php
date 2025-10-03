@@ -246,22 +246,62 @@ $page->addContent(
                   <ul class="ffr-text ffr-fonts-style display-7">
                     <li>An unsere technischen Dienstleister (Auftragsverarbeiter wie z. B. Hosting-Provider), die
                       vertraglich zur Einhaltung der DSGVO verpflichtet sind</li>
-                    <li>Bei Nutzung der Google Maps-Funktion auf unserer Website (siehe Abschnitt 3.8)</li>
+                    <li>Bei Nutzung der Google Maps-Funktion auf unserer Website (siehe Abschnitt 5.4)</li>
                     <li>Wenn eine gesetzliche Verpflichtung zur Weitergabe besteht</li>
                   </ul>
                   <p class="ffr-text ffr-fonts-style display-7">Eine Weitergabe Ihrer Daten zu Werbe- oder
                     Marketingzwecken findet nicht statt.</p>
-                  <h5 class="ffr-fonts-style display-5"><strong>3.8 Google Maps</strong></h5>
-                  <p class="ffr-text ffr-fonts-style display-7">Auf unserer Website ist eine Karte von Google Maps
-                    eingebunden, um Ihnen unseren Standort anzuzeigen. Bei der Nutzung von Google Maps können Daten über
-                    die Nutzung der Maps-Funktionen an Google in den USA übertragen werden.</p>
-                  <p class="ffr-text ffr-fonts-style display-7"><strong>Zweck:</strong> Darstellung unseres Standorts
-                    und Bereitstellung von Wegbeschreibungen.</p>
-                  <p class="ffr-text ffr-fonts-style display-7"><strong>Rechtsgrundlage:</strong> Berechtigtes Interesse
-                    (Art. 6 Abs. 1 lit. f DSGVO) an der benutzerfreundlichen Darstellung unseres Standorts.</p>
-                  <p class="ffr-text ffr-fonts-style display-7">Wenn Sie nicht möchten, dass Google über unseren
-                    Internetauftritt Daten über Sie erhebt, können Sie die Anzeige der Karte deaktivieren, indem Sie
-                    JavaScript in Ihrem Browser deaktivieren.</p>
+                  <h5 class="ffr-fonts-style display-5"><strong>5.4 Google Maps (2-Klick-Lösung)</strong></h5>
+                  <p class="ffr-text ffr-fonts-style display-7">Auf unserer Website verwenden wir Google Maps, um Ihnen unsere 
+                    Standorte (Feuerwehrhaus und Grillhütte) übersichtlich anzuzeigen. Um Ihre Privatsphäre zu schützen, 
+                    haben wir eine <strong>2-Klick-Lösung</strong> implementiert.</p>
+                  <p class="ffr-text ffr-fonts-style display-7"><strong>So funktioniert die 2-Klick-Lösung:</strong></p>
+                  <ul class="ffr-text ffr-fonts-style display-7">
+                    <li>Beim ersten Besuch der Seite wird die Karte <strong>nicht automatisch geladen</strong>.</li>
+                    <li>Sie sehen stattdessen einen Platzhalter mit einem Hinweis zum Datenschutz.</li>
+                    <li>Erst wenn Sie aktiv auf den Button "Karte laden" klicken, wird die Google Maps Karte geladen und Ihre IP-Adresse an Google-Server übertragen.</li>
+                    <li>Ihre Zustimmung wird lokal in Ihrem Browser gespeichert, sodass die Karte bei zukünftigen Besuchen automatisch geladen wird.</li>
+                    <li>Sie können Ihre Zustimmung jederzeit durch Löschen Ihrer Browser-Daten widerrufen.</li>
+                  </ul>
+                  <p class="ffr-text ffr-fonts-style display-7"><strong>Datenübertragung an Google:</strong> Wenn Sie die Karte 
+                    laden, werden folgende Daten an Google LLC (mit Sitz in den USA) übertragen:</p>
+                  <ul class="ffr-text ffr-fonts-style display-7">
+                    <li>Ihre IP-Adresse</li>
+                    <li>Datum und Uhrzeit des Aufrufs</li>
+                    <li>Informationen zu Ihrem Browser und Betriebssystem</li>
+                    <li>Die aufgerufene Seiten-URL</li>
+                  </ul>
+                  <p class="ffr-text ffr-fonts-style display-7"><strong>Zweck:</strong> Darstellung unserer Standorte 
+                    und Bereitstellung von Wegbeschreibungen für Besucher.</p>
+                  <p class="ffr-text ffr-fonts-style display-7"><strong>Rechtsgrundlage:</strong> Ihre Einwilligung 
+                    (Art. 6 Abs. 1 lit. a DSGVO) durch aktives Klicken auf "Karte laden".</p>
+                  <p class="ffr-text ffr-fonts-style display-7"><strong>Datenverarbeitung in den USA:</strong> Google ist 
+                    Teil des EU-US Data Privacy Framework. Weitere Informationen zum Datenschutz bei Google Maps finden Sie 
+                    in der <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Datenschutzerklärung von Google</a>.</p>
+                  <h5 class="ffr-fonts-style display-5"><strong>5.5 Social Media Funktionen und externe Verlinkungen</strong></h5>
+                  <p class="ffr-text ffr-fonts-style display-7">Unsere Website enthält Links zu unseren Social-Media-Präsenzen 
+                    (Instagram, Facebook) sowie Share-Funktionen zum Teilen von Inhalten.</p>
+                  <p class="ffr-text ffr-fonts-style display-7"><strong>Social Media Links:</strong> Bei den Links zu Instagram 
+                    und Facebook handelt es sich um einfache Hyperlinks. Eine Datenübertragung erfolgt erst, wenn Sie aktiv auf 
+                    den Link klicken und die externe Plattform besuchen. Wir binden keine Social Media Plugins (Like-Buttons, 
+                    Share-Buttons mit automatischem Tracking) ein.</p>
+                  <p class="ffr-text ffr-fonts-style display-7"><strong>Share-Funktion (X/Twitter):</strong> Bei Neuigkeiten 
+                    bieten wir die Möglichkeit an, Inhalte über X (ehemals Twitter) zu teilen. Wenn Sie auf den Share-Button 
+                    klicken, werden Sie auf die externe Website von X weitergeleitet. Dabei werden folgende Daten an X Corp. 
+                    (mit Sitz in den USA) übertragen:</p>
+                  <ul class="ffr-text ffr-fonts-style display-7">
+                    <li>Ihre IP-Adresse</li>
+                    <li>Der zu teilende Text und die URL</li>
+                    <li>Informationen zu Ihrem Browser</li>
+                  </ul>
+                  <p class="ffr-text ffr-fonts-style display-7"><strong>Zweck:</strong> Ermöglichung des Teilens von 
+                    Inhalten auf Social Media Plattformen zur Verbreitung von Informationen über unsere Feuerwehr.</p>
+                  <p class="ffr-text ffr-fonts-style display-7"><strong>Rechtsgrundlage:</strong> Berechtigtes Interesse 
+                    (Art. 6 Abs. 1 lit. f DSGVO) an der Bereitstellung von Share-Funktionen sowie Ihre aktive Handlung durch 
+                    Klicken auf den Share-Button.</p>
+                  <p class="ffr-text ffr-fonts-style display-7"><strong>Hinweis:</strong> Sobald Sie auf einen dieser Links 
+                    oder Buttons klicken, verlassen Sie unsere Website. Für die weitere Datenverarbeitung durch die jeweilige 
+                    Plattform sind deren Datenschutzbestimmungen maßgeblich, auf die wir keinen Einfluss haben.</p>
                   </p>
                 </div>
               </div>
