@@ -76,46 +76,32 @@ if ($verwaltungPos !== false) {
                                 <i class="fas fa-tachometer-alt me-1"></i> Dashboard
                             </a>
                         </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="einsatzDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <li class="nav-item">
+                            <a class="nav-link <?php echo strpos($_SERVER['REQUEST_URI'], '/einsatz/') !== false ? 'active' : ''; ?>" href="<?php echo $ADMIN_ROOT; ?>/einsatz/list.php">
                                 <i class="fas fa-fire-extinguisher me-1"></i> Einsätze
                             </a>
-                            <ul class="dropdown-menu" aria-labelledby="einsatzDropdown">
-                                <li><a class="dropdown-item" href="<?php echo $ADMIN_ROOT; ?>/einsatz/list.php">Alle Einsätze</a></li>
-                                <li><a class="dropdown-item" href="<?php echo $ADMIN_ROOT; ?>/einsatz/create.php">Neuer Einsatz</a></li>
-                            </ul>
                         </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="newsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <li class="nav-item">
+                            <a class="nav-link <?php echo strpos($_SERVER['REQUEST_URI'], '/neuigkeiten/') !== false ? 'active' : ''; ?>" href="<?php echo $ADMIN_ROOT; ?>/neuigkeiten/list.php">
                                 <i class="fas fa-newspaper me-1"></i> Neuigkeiten
                             </a>
-                            <ul class="dropdown-menu" aria-labelledby="newsDropdown">
-                                <li><a class="dropdown-item" href="<?php echo $ADMIN_ROOT; ?>/neuigkeiten/list.php">Alle Neuigkeiten</a></li>
-                                <li><a class="dropdown-item" href="<?php echo $ADMIN_ROOT; ?>/neuigkeiten/create.php">Neue Neuigkeit</a></li>
-                            </ul>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="authDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-key me-1"></i> Auth-Schlüssel
-                            </a>
-                            <ul class="dropdown-menu" aria-labelledby="authDropdown">
-                                <li><a class="dropdown-item" href="<?php echo $ADMIN_ROOT; ?>/auth-schluessel/list.php">Alle Schlüssel</a></li>
-                                <li><a class="dropdown-item" href="<?php echo $ADMIN_ROOT; ?>/auth-schluessel/create.php">Neuer Schlüssel</a></li>
-                            </ul>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-users me-1"></i> Benutzer
-                            </a>
-                            <ul class="dropdown-menu" aria-labelledby="userDropdown">
-                                <li><a class="dropdown-item" href="<?php echo $ADMIN_ROOT; ?>/users/list.php">Alle Benutzer</a></li>
-                                <li><a class="dropdown-item" href="<?php echo $ADMIN_ROOT; ?>/users/create.php">Neuer Benutzer</a></li>
-                            </ul>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="<?php echo $ADMIN_ROOT; ?>/dokumente.php">
                                 <i class="fas fa-file-alt me-1"></i> Dokumente
                             </a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle <?php echo (strpos($_SERVER['REQUEST_URI'], '/auth-schluessel/') !== false || strpos($_SERVER['REQUEST_URI'], '/users/') !== false) ? 'active' : ''; ?>" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-cog me-1"></i> Verwaltung
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="adminDropdown">
+                                <li><h6 class="dropdown-header"><i class="fas fa-users me-1"></i> Benutzer</h6></li>
+                                <li><a class="dropdown-item" href="<?php echo $ADMIN_ROOT; ?>/users/list.php">Alle Benutzer</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><h6 class="dropdown-header"><i class="fas fa-key me-1"></i> Auth-Schlüssel</h6></li>
+                                <li><a class="dropdown-item" href="<?php echo $ADMIN_ROOT; ?>/auth-schluessel/list.php">Alle Schlüssel</a></li>
+                            </ul>
                         </li>
                     </ul>
                     <ul class="navbar-nav">
