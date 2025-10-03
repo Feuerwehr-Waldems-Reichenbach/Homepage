@@ -73,6 +73,7 @@ class PageBuilder
             '/assets/socicon/css/styles.css',
             '/assets/theme/css/style.css',
             '/assets/ffr/css/ffr-additional.css?v=M1cYSM',
+            '/assets/css/two-click-map.css',
         ];
     }
 
@@ -545,7 +546,7 @@ class PageBuilder
         $scripts = [
             '/assets/bootstrap/js/bootstrap.bundle.min.js',
             '/assets/smoothscroll/smooth-scroll.js',
-
+            '/assets/js/two-click-map.js',
             '/assets/theme/js/script.js',
             '/assets/parallax/jarallax.js',
             '/assets/scrollgallery/scroll-gallery.js',
@@ -1029,10 +1030,21 @@ HTML;
         string $id,
         string $iframeSrc,
         string $cidSuffix = '',
-        string $bsVersion = '5.1'
+        string $bsVersion = '5.1',
+        string $theme = 'grillhuette',
+        string $title = 'Standort Grillhütte Reichenbach',
+        string $description = 'Sehen Sie den Standort unserer Grillhütte auf Google Maps. Mit einem Klick auf "Karte laden" wird die interaktive Karte angezeigt.',
+        string $icon = 'bi-geo-alt-fill'
     ): string {
         $cidClass  = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
         $iframeSrc = htmlspecialchars($iframeSrc);
+        $containerId = $id . '-map-container';
+        $storageKey = 'map-consent-' . $id;
+        
+        // Escaping für JavaScript
+        $iframeSrcJs = addslashes($iframeSrc);
+        $titleJs = addslashes($title);
+        $descriptionJs = addslashes($description);
 
         return <<<HTML
     <section data-bs-version="{$bsVersion}" class="map1 {$cidClass}" id="{$id}">
@@ -1041,10 +1053,25 @@ HTML;
                 <div class="col-12 content-head"></div>
             </div>
             <div class="google-map">
-                <iframe frameborder="0" style="border:0" src="{$iframeSrc}" allowfullscreen></iframe>
+                <div id="{$containerId}"></div>
             </div>
         </div>
     </section>
+    <script>
+        // Initialisiere 2-Klick-Lösung für diese Karte
+        document.addEventListener('DOMContentLoaded', function() {
+            new TwoClickMap('{$containerId}', 
+                '{$iframeSrcJs}',
+                {
+                    theme: '{$theme}',
+                    title: '{$titleJs}',
+                    description: '{$descriptionJs}',
+                    icon: '{$icon}',
+                    storageKey: '{$storageKey}'
+                }
+            );
+        });
+    </script>
     HTML;
     }
 

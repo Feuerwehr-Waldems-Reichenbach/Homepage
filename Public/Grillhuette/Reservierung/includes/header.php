@@ -63,6 +63,7 @@ header("Permissions-Policy: geolocation=(), camera=(), microphone=()");
     <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="/assets/fonts/bootstrap-icons/bootstrap-icons.css">
     <link rel="stylesheet" href="/assets/flatpickr/flatpickr.min.css">
+    <link rel="stylesheet" href="/assets/css/two-click-map.css">
     <link rel="stylesheet"
         href="<?php echo str_repeat('../', substr_count($_SERVER['REQUEST_URI'], '/') - 3); ?>assets/css/style.css">
 </head>

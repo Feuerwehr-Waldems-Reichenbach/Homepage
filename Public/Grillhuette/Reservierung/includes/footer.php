@@ -11,13 +11,7 @@
                             <i class="bi bi-box-arrow-up-right me-1"></i>Google Maps öffnen
                         </a>
                     </div>
-                    <div class="map-container rounded shadow-sm overflow-hidden">
-                        <iframe
-                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d5132.282750261533!2d8.371175454928999!3d50.268477518526375!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47bdb1bf3444aa6f%3A0x53abe310515b94df!2sGrillh%C3%BCtte%20Reichenbach!5e1!3m2!1sde!2sde!4v1743380028454!5m2!1sde!2sde"
-                            width="100%" height="250" style="border:0; display:block;" allowfullscreen="" loading="lazy"
-                            referrerpolicy="no-referrer-when-downgrade"
-                            title="Standort Grillhütte Reichenbach"></iframe>
-                    </div>
+                    <div id="grillhuette-map-container"></div>
                 </div>
             </div>
         </div>
@@ -106,6 +100,8 @@
 <script src="/assets/flatpickr/l10n/de.js" nonce="<?php echo $cspNonce; ?>"></script>
 <script src="/assets/moment/moment.min.js" nonce="<?php echo $cspNonce; ?>"></script>
 <script src="/assets/moment/locale/de.js" nonce="<?php echo $cspNonce; ?>"></script>
+<!-- 2-Klick Google Maps Lösung -->
+<script src="/assets/js/two-click-map.js"></script>
 <script src="<?php echo str_repeat('../', substr_count($_SERVER['REQUEST_URI'], '/') - 3); ?>assets/js/main.js"
     nonce="<?php echo $cspNonce; ?>"></script>
 <script nonce="<?php echo $cspNonce; ?>">
@@ -139,6 +135,26 @@
         updateSafeAreaPadding();
         window.addEventListener('resize', updateSafeAreaPadding);
     });
+</script>
+<script nonce="<?php echo $cspNonce; ?>">
+    // Initialisiere Grillhütten-Karte mit 2-Klick-Lösung
+    (function() {
+        // Warte bis TwoClickMap verfügbar ist
+        if (typeof TwoClickMap !== 'undefined') {
+            new TwoClickMap('grillhuette-map-container', 
+                'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d5132.282750261533!2d8.371175454928999!3d50.268477518526375!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47bdb1bf3444aa6f%3A0x53abe310515b94df!2sGrillh%C3%BCtte%20Reichenbach!5e1!3m2!1sde!2sde!4v1743380028454!5m2!1sde!2sde',
+                {
+                    theme: 'grillhuette',
+                    title: 'Standort Grillhütte Reichenbach',
+                    description: 'Sehen Sie den Standort unserer Grillhütte auf Google Maps. Mit einem Klick auf "Karte laden" wird die interaktive Karte angezeigt.',
+                    icon: 'bi-geo-alt-fill',
+                    storageKey: 'map-consent-grillhuette-reservierung'
+                }
+            );
+        } else {
+            console.error('TwoClickMap ist nicht geladen!');
+        }
+    })();
 </script>
 </body>
 

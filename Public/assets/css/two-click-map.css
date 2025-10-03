@@ -1,0 +1,263 @@
+/**
+ * 2-Klick-Lösung für Google Maps
+ * Datenschutzkonforme Einbindung von Google Maps
+ */
+
+.map-consent-overlay {
+    position: relative;
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+}
+
+.map-consent-overlay:hover {
+    box-shadow: 0 6px 20px rgba(167, 41, 32, 0.4);
+}
+
+/* Hintergrundmuster für Feuerwehr-Look */
+.map-consent-overlay::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        linear-gradient(45deg, rgba(167, 41, 32, 0.05) 25%, transparent 25%),
+        linear-gradient(-45deg, rgba(167, 41, 32, 0.05) 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, rgba(167, 41, 32, 0.05) 75%),
+        linear-gradient(-45deg, transparent 75%, rgba(167, 41, 32, 0.05) 75%);
+    background-size: 30px 30px;
+    background-position: 0 0, 0 15px, 15px -15px, -15px 0px;
+    opacity: 0.3;
+    z-index: 1;
+}
+
+.map-consent-content {
+    position: relative;
+    z-index: 2;
+    padding: 3rem 2rem;
+    text-align: center;
+    color: #ffffff;
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.map-consent-icon {
+    font-size: 4rem;
+    color: #a72920;
+    margin-bottom: 1.5rem;
+    animation: pulse-icon 2s ease-in-out infinite;
+}
+
+@keyframes pulse-icon {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.05);
+        opacity: 0.9;
+    }
+}
+
+.map-consent-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #ffffff;
+    margin-bottom: 1rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Variante für Grillhütte */
+.map-consent-overlay.grillhuette .map-consent-icon {
+    color: #28a745;
+}
+
+.map-consent-overlay.grillhuette::before {
+    background-image: 
+        linear-gradient(45deg, rgba(40, 167, 69, 0.05) 25%, transparent 25%),
+        linear-gradient(-45deg, rgba(40, 167, 69, 0.05) 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, rgba(40, 167, 69, 0.05) 75%),
+        linear-gradient(-45deg, transparent 75%, rgba(40, 167, 69, 0.05) 75%);
+    background-size: 30px 30px;
+}
+
+.map-consent-text {
+    font-size: 0.95rem;
+    color: #d1d1d1;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+    max-width: 500px;
+}
+
+.map-consent-privacy {
+    font-size: 0.85rem;
+    color: #999999;
+    margin-top: 1rem;
+    padding: 0.75rem 1rem;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+    border-left: 3px solid #a72920;
+}
+
+.map-consent-overlay.grillhuette .map-consent-privacy {
+    border-left-color: #28a745;
+}
+
+.map-consent-privacy i {
+    margin-right: 0.5rem;
+    color: #ffc107;
+}
+
+/* Buttons */
+.btn-activate-map {
+    background: linear-gradient(135deg, #a72920 0%, #8a1f19 100%);
+    color: #ffffff;
+    border: none;
+    padding: 0.875rem 2rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(167, 41, 32, 0.4);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-activate-map::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.btn-activate-map:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.btn-activate-map:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(167, 41, 32, 0.6);
+}
+
+.btn-activate-map:active {
+    transform: translateY(0);
+}
+
+.btn-activate-map i {
+    margin-right: 0.5rem;
+    font-size: 1.2rem;
+}
+
+/* Grillhütte Button */
+.map-consent-overlay.grillhuette .btn-activate-map {
+    background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+}
+
+.map-consent-overlay.grillhuette .btn-activate-map:hover {
+    box-shadow: 0 6px 20px rgba(40, 167, 69, 0.6);
+}
+
+/* Loading State */
+.map-loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 300px;
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+}
+
+.map-loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid rgba(167, 41, 32, 0.2);
+    border-top-color: #a72920;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+.map-consent-overlay.grillhuette .map-loading-spinner {
+    border-color: rgba(40, 167, 69, 0.2);
+    border-top-color: #28a745;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Iframe container */
+.map-iframe-container {
+    position: relative;
+    width: 100%;
+    height: 300px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.map-iframe-container iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .map-consent-content {
+        padding: 2rem 1.5rem;
+        min-height: 250px;
+    }
+    
+    .map-consent-icon {
+        font-size: 3rem;
+    }
+    
+    .map-consent-title {
+        font-size: 1.25rem;
+    }
+    
+    .map-consent-text {
+        font-size: 0.9rem;
+    }
+    
+    .btn-activate-map {
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+    }
+}
+
+/* Fade-in Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.map-consent-overlay {
+    animation: fadeIn 0.5s ease-out;
+}
+
+.map-iframe-container {
+    animation: fadeIn 0.5s ease-out;
+}
+

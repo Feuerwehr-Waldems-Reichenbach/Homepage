@@ -237,12 +237,7 @@
                 </div>
             </div>
             <div class="col-12 col-md-6">
-                <div class="google-map">
-                    <iframe
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1275.0386132892022!2d8.3730795!3d50.2718241!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47bdb1c0618ad845%3A0x8cb4e6795a859e93!2sFreiwillige%20Feuerwehr%20Waldems-Reichenbach!5e0!3m2!1sde!2sde!4v1712585902083!5m2!1sde!2sde"
-                        style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
-                    </iframe>
-                </div>
+                <div id="feuerwehr-map-container"></div>
             </div>
         </div>
         <div class="footer-lower">
@@ -268,3 +263,22 @@
 </div>
 
 <!-- End of Footer Section -->
+
+<!-- 2-Klick Google Maps Lösung -->
+<link rel="stylesheet" href="/assets/css/two-click-map.css">
+<script src="/assets/js/two-click-map.js"></script>
+<script>
+    // Initialisiere Feuerwehr-Karte mit 2-Klick-Lösung
+    document.addEventListener('DOMContentLoaded', function() {
+        new TwoClickMap('feuerwehr-map-container', 
+            'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1275.0386132892022!2d8.3730795!3d50.2718241!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47bdb1c0618ad845%3A0x8cb4e6795a859e93!2sFreiwillige%20Feuerwehr%20Waldems-Reichenbach!5e0!3m2!1sde!2sde!4v1712585902083!5m2!1sde!2sde',
+            {
+                theme: 'feuerwehr',
+                title: 'Standort Feuerwehr Reichenbach',
+                description: 'Sehen Sie unseren Standort auf Google Maps. Mit einem Klick auf "Karte laden" wird die interaktive Karte angezeigt.',
+                icon: 'bi-fire',
+                storageKey: 'map-consent-feuerwehr'
+            }
+        );
+    });
+</script>
