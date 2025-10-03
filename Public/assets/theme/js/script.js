@@ -561,7 +561,7 @@ $jscomp.polyfill(
           var b = new URLSearchParams(c),
             e = Number(b.has("t") ? b.get("t") : 0) || 0,
             k = c.match(
-              /(http:\/\/|https:\/\/|)?(player.|www.)?(vimeo\.com|youtu(be\.com|\.be|be\.googleapis\.com))\/(shorts\/|video\/|embed\/|watch\?v=|v\/)?([A-Za-z0-9._%-]*)(&\S+)?/
+              /(http:\/\/|https:\/\/|)?(player.|www.)?(vimeo\.com)\/(video\/|embed\/)?([A-Za-z0-9._%-]*)(&\S+)?/
             ),
             g =
               a.querySelector(".ffr-background-video-preview") ||
@@ -580,11 +580,11 @@ $jscomp.polyfill(
             k < b && ((k = b), (c = Math.ceil(k * e)));
             a.setSize(c, k);
           };
-          if (k && (/youtu\.?be/g.test(k[3]) || /vimeo/g.test(k[3])))
-            if (k && /youtu\.?be/g.test(k[3])) {
-              k[6] = k[6].replace("shorts", "embed");
-              c = "http" + ("https:" === location.protocol ? "s" : "") + ":";
-              c += "//img.youtube.com/vi/" + k[6] + "/maxresdefault.jpg";
+          if (k && /vimeo/g.test(k[3]))
+            /* YouTube Support entfernt - nur noch Vimeo */
+            if (!1) {
+              /* YouTube Code deaktiviert */
+              c = "";
               var d = new Image();
               d.onload = function () {
                 if (120 === (d.naturalWidth || d.width)) {
@@ -625,18 +625,8 @@ $jscomp.polyfill(
                 h = h < l ? h : l;
                 p = p > B ? p : B;
                 h / p != F && (h = p * F);
-                var m = new YouTubePlayer(b, {
-                  modestBranding: !0,
-                  autoplay: !0,
-                  controls: !1,
-                  origin: "*",
-                  iv_load_policy: !1,
-                  keyboard: !1,
-                  captions: !1,
-                  annotations: !1,
-                  related: !1,
-                  start: e,
-                });
+                /* YouTubePlayer entfernt - nicht verwendet */
+                var m = null;
                 c.style.overflow = "hidden";
                 c.style.position = "absolute";
                 c.style.width = "100%";
@@ -1259,14 +1249,10 @@ $jscomp.polyfill(
           if (b) {
             a.removeAttribute("data-src");
             var c = b.match(
-              /(http:\/\/|https:\/\/|)?(player.|www.)?(vimeo\.com|youtu(be\.com|\.be|be\.googleapis\.com))\/(shorts\/|video\/|embed\/|watch\?v=|v\/)?([A-Za-z0-9._%-]*)(&\S+)?/
+              /(http:\/\/|https:\/\/|)?(player.|www.)?(vimeo\.com)\/(video\/|embed\/)?([A-Za-z0-9._%-]*)(&\S+)?/
             );
-            if (-1 !== b.indexOf("youtu"))
-              a.setAttribute(
-                "src",
-                "https://youtube.com/embed/" + c[6] + "?rel=0&enablejsapi=1"
-              );
-            else if (-1 !== b.indexOf("vimeo"))
+            /* YouTube entfernt */
+            if (-1 !== b.indexOf("vimeo"))
               a.setAttribute(
                 "src",
                 "https://player.vimeo.com/video/" + c[6] + "?autoplay=0&loop=0"
