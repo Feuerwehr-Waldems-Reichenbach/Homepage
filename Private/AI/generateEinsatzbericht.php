@@ -94,7 +94,19 @@ function generateEinsatzbericht(
     $cleanedText = preg_replace('/^\s*(<think>.*?<\/think>\s*)+/s', '', $generatedText);
 
 
-    logEinsatzGeneration($einsatz_ID, $stichwort, $ort, $generatedText, $cleanedText);
+    logEinsatzGeneration(
+        $einsatz_ID, 
+        $start, 
+        $end, 
+        $stichwort, 
+        $ort, 
+        $sachverhalt,
+        $kategorie,
+        $cleanedEinsatzgruppe,
+        $cleanedFahrzeuge,
+        $generatedText, 
+        $cleanedText
+    );
     
     // Wenn der Bericht in der Datenbank gespeichert werden soll
     if ($saveToDatabase) {
@@ -192,22 +204,52 @@ PROMPT;
 
     $cleanedText = preg_replace('/^\s*(<think>.*?<\/think>\s*)+/s', '', $generatedText);
 
-    logEinsatzGeneration($einsatz_ID, $stichwort, $ort, $generatedText, $cleanedText);
+    logEinsatzGeneration(
+        $einsatz_ID, 
+        $start, 
+        $end, 
+        $stichwort, 
+        $ort, 
+        $sachverhalt,
+        $kategorie,
+        $einsatzgruppe,
+        '', // keine Fahrzeuge in dieser Funktion
+        $generatedText, 
+        $cleanedText
+    );
 
     return $cleanedText;
 }
 
 /**
- * Schreibt einen Logeintrag in eine Datei im aktuellen Verzeichnis.
+ * Schreibt einen Logeintrag in eine Datei im aktuellen Verzeichnis und versendet eine E-Mail-Benachrichtigung.
  *
  * @param int $einsatzId
+ * @param string $start
+ * @param string $end
  * @param string $stichwort
  * @param string $ort
+ * @param string $sachverhalt
+ * @param string $kategorie
+ * @param string $einsatzgruppe
+ * @param string $fahrzeuge
  * @param string $bericht
+ * @param string $cleanedText
  * @return void
  */
-function logEinsatzGeneration(int $einsatzId, string $stichwort, string $ort, string $bericht, string $cleanedText): void
-{
+function logEinsatzGeneration(
+    int $einsatzId, 
+    string $start, 
+    string $end, 
+    string $stichwort, 
+    string $ort, 
+    string $sachverhalt,
+    string $kategorie,
+    string $einsatzgruppe,
+    string $fahrzeuge,
+    string $bericht, 
+    string $cleanedText
+): void {
     $logPath = __DIR__ . '/einsatzbericht.log';
     $timestamp = date('Y-m-d H:i:s');
     $entry = "[{$timestamp}] Bericht für Einsatz #{$einsatzId} ({$stichwort}, {$ort}) generiert.\n------v Original v------\n{$bericht}\n-------v Cleaned v------\n\n {$cleanedText} \n------------\n\n";
@@ -216,7 +258,104 @@ function logEinsatzGeneration(int $einsatzId, string $stichwort, string $ort, st
 
     $config = parse_ini_file("emailNotification.ini");
     $receiver = $config['email'];
-    $subject = 'Einsatzbericht generiert';
-    $body = 'Ein Einsatzbericht für Einsatz #'.$einsatzId . '(' .$stichwort . ', ' .$ort .') wurde generiert.';
+    $subject = '🚒 Einsatzbericht #' . $einsatzId . ' generiert';
+    
+    // Formatiere Datum und Zeit für bessere Lesbarkeit
+    $startFormatted = date('d.m.Y H:i', strtotime($start));
+    $endFormatted = date('d.m.Y H:i', strtotime($end));
+    
+    // Erstelle eine schön formatierte HTML-E-Mail
+    $body = <<<HTML
+<div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 700px; margin: 0 auto; color: #333333; line-height: 1.6;">
+    <!-- Header -->
+    <div style="background: linear-gradient(135deg, #A72920 0%, #8B1F1A 100%); padding: 30px 20px; text-align: center; border-radius: 10px 10px 0 0;">
+        <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 600;">🚒 Einsatzbericht generiert</h1>
+        <p style="color: #ffcccc; margin: 10px 0 0 0; font-size: 16px;">Ein neuer Einsatzbericht wurde automatisch erstellt</p>
+    </div>
+    
+    <!-- Content -->
+    <div style="background: #f8f9fa; padding: 30px 20px; border-left: 3px solid #A72920; border-right: 3px solid #A72920;">
+        <!-- Einsatz-Übersicht -->
+        <div style="background: #ffffff; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h2 style="color: #A72920; margin: 0 0 15px 0; font-size: 20px; border-bottom: 2px solid #A72920; padding-bottom: 10px;">
+                📋 Einsatz-Details
+            </h2>
+            <table style="width: 100%; border-collapse: collapse;">
+                <tr>
+                    <td style="padding: 8px 0; font-weight: 600; color: #555; width: 40%;">Einsatz-Nr.:</td>
+                    <td style="padding: 8px 0; color: #333;">#{$einsatzId}</td>
+                </tr>
+                <tr style="background: #f8f9fa;">
+                    <td style="padding: 8px 0; font-weight: 600; color: #555;">Stichwort:</td>
+                    <td style="padding: 8px 0; color: #333; font-weight: 600;">{$stichwort}</td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px 0; font-weight: 600; color: #555;">Einsatzort:</td>
+                    <td style="padding: 8px 0; color: #333;">{$ort}</td>
+                </tr>
+                <tr style="background: #f8f9fa;">
+                    <td style="padding: 8px 0; font-weight: 600; color: #555;">Kategorie:</td>
+                    <td style="padding: 8px 0; color: #333;">{$kategorie}</td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px 0; font-weight: 600; color: #555;">Zeitraum:</td>
+                    <td style="padding: 8px 0; color: #333;">{$startFormatted} - {$endFormatted}</td>
+                </tr>
+HTML;
+
+    // Nur anzeigen wenn vorhanden
+    if (!empty($einsatzgruppe)) {
+        $body .= <<<HTML
+                <tr style="background: #f8f9fa;">
+                    <td style="padding: 8px 0; font-weight: 600; color: #555;">Einsatzgruppe:</td>
+                    <td style="padding: 8px 0; color: #333;">{$einsatzgruppe}</td>
+                </tr>
+HTML;
+    }
+    
+    if (!empty($fahrzeuge)) {
+        $body .= <<<HTML
+                <tr>
+                    <td style="padding: 8px 0; font-weight: 600; color: #555;">Fahrzeuge:</td>
+                    <td style="padding: 8px 0; color: #333;">{$fahrzeuge}</td>
+                </tr>
+HTML;
+    }
+    
+    $body .= <<<HTML
+            </table>
+        </div>
+        
+        <!-- Sachverhalt -->
+        <div style="background: #fff7e6; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #ffa500;">
+            <h3 style="color: #cc8400; margin: 0 0 10px 0; font-size: 16px;">
+                📞 Gemeldeter Sachverhalt
+            </h3>
+            <p style="margin: 0; color: #666; font-style: italic;">"{$sachverhalt}"</p>
+        </div>
+        
+        <!-- Generierter Bericht -->
+        <div style="background: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h2 style="color: #A72920; margin: 0 0 15px 0; font-size: 20px; border-bottom: 2px solid #A72920; padding-bottom: 10px;">
+                📝 Generierter Einsatzbericht
+            </h2>
+            <div style="color: #333; font-size: 15px; line-height: 1.8; text-align: justify;">
+                {$cleanedText}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer Info -->
+    <div style="background: #e9ecef; padding: 20px; text-align: center; border-radius: 0 0 10px 10px; border-left: 3px solid #A72920; border-right: 3px solid #A72920; border-bottom: 3px solid #A72920;">
+        <p style="margin: 0; color: #666; font-size: 14px;">
+            ⚡ Dieser Bericht wurde automatisch von der KI-gestützten Berichtsgenerierung erstellt.
+        </p>
+        <p style="margin: 10px 0 0 0; color: #999; font-size: 12px;">
+            Zeitstempel: {$timestamp}
+        </p>
+    </div>
+</div>
+HTML;
+
     sendEmail($receiver, $subject, $body);
 }
