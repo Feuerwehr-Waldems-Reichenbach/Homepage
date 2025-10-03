@@ -560,9 +560,6 @@ $jscomp.polyfill(
         if (c) {
           var b = new URLSearchParams(c),
             e = Number(b.has("t") ? b.get("t") : 0) || 0,
-            k = c.match(
-              /(http:\/\/|https:\/\/|)?(player.|www.)?(vimeo\.com)\/(video\/|embed\/)?([A-Za-z0-9._%-]*)(&\S+)?/
-            ),
             g =
               a.querySelector(".ffr-background-video-preview") ||
               document.createElement("div");
@@ -572,18 +569,9 @@ $jscomp.polyfill(
           g.style.backgroundPosition = "center";
           a.querySelector(".ffr-background-video-preview") ||
             a.childNodes[0].before(g);
-          var J = function (a, b) {
-            var c = window.outerWidth;
-            b = window.outerHeight;
-            var e = a._opts.width / a._opts.height;
-            var k = Math.ceil(c / e);
-            k < b && ((k = b), (c = Math.ceil(k * e)));
-            a.setSize(c, k);
-          };
-          if (k && /vimeo/g.test(k[3]))
-            /* YouTube Support entfernt - nur noch Vimeo */
-            if (!1) {
-              /* YouTube Code deaktiviert */
+          /* Vimeo und YouTube Funktionen entfernt - nicht verwendet */
+          if (!1) {
+              /* Video-Code deaktiviert */
               c = "";
               var d = new Image();
               d.onload = function () {
@@ -666,53 +654,7 @@ $jscomp.polyfill(
                 J(m);
               };
               d.setAttribute("src", c);
-            } else
-              k &&
-                /vimeo/g.test(k[3]) &&
-                ((b = new XMLHttpRequest()),
-                b.open(
-                  "GET",
-                  "https://vimeo.com/api/v2/video/" + k[6] + ".json",
-                  !0
-                ),
-                (b.onreadystatechange = function () {
-                  if (4 === this.readyState)
-                    if (200 <= this.status && 400 > this.status) {
-                      var a = JSON.parse(this.responseText);
-                      g.style.backgroundImage =
-                        'url("' + a[0].thumbnail_large + '")';
-                      g.style.display = "block";
-                    } else
-                      n &&
-                        ((g.style.backgroundImage =
-                          'url("images/no-video.jpg")'),
-                        (g.style.display = "block"));
-                }),
-                b.send(),
-                (b = null),
-                a.querySelector(".ffr-background-video") &&
-                  a.querySelector(".ffr-background-video").remove(),
-                (b = document.createElement("div")),
-                b.classList.add("ffr-background-video"),
-                a.childNodes[1].before(b),
-                (c = new Vimeo.Player(b, {
-                  id: c,
-                  loop: !0,
-                  background: !0,
-                  responsive: !0,
-                  autoplay: !0,
-                  byline: !1,
-                  title: !1,
-                  muted: !0,
-                  controls: !1,
-                })),
-                (b = c.element.parentNode),
-                (b.style.overflow = "hidden"),
-                (c.element.style.pointerEvents = "none"),
-                (c.element.style.marginLeft =
-                  "-" + (c.element.scrollWidth - b.scrollWidth) / 2 + "px"),
-                (c.element.style.minHeight = "100vh"),
-                (c.element.style.minWidth = "177.77vh"));
+            } /* Vimeo-Code entfernt - nicht verwendet */
           else if (n)
             (g.style.backgroundImage = 'url("images/video-placeholder.jpg")'),
               (g.style.display = "block");
@@ -1205,17 +1147,7 @@ $jscomp.polyfill(
             a.style.zIndex = "5000";
           });
           if (e) {
-            if (
-              (-1 !== e.indexOf("youtu") &&
-                c.contentWindow.postMessage(
-                  '{"event":"command","func":"playVideo","args":""}',
-                  "*"
-                ),
-              -1 !== e.indexOf("vimeo"))
-            ) {
-              var d = new Vimeo.Player(c);
-              d.play();
-            }
+            /* YouTube und Vimeo entfernt - nicht verwendet */
           } else {
             var f = c.parentNode.querySelector("video");
             f && f.play && f.play();
@@ -1227,16 +1159,11 @@ $jscomp.polyfill(
           l.style.display = "table";
           l.addEventListener("click", function (b) {
             "VIDEO" !== b.target.tagName &&
-              (e
-                ? (-1 !== e.indexOf("youtu") &&
-                    c.contentWindow.postMessage(
-                      '{"event":"command","func":"pauseVideo","args":""}',
-                      "*"
-                    ),
-                  -1 !== e.indexOf("vimeo") && d.pause())
-                : (b = c.parentNode.querySelector("video")) &&
-                  b.pause &&
-                  b.pause(),
+              (/* YouTube und Vimeo entfernt - nicht verwendet */
+              !e &&
+                (b = c.parentNode.querySelector("video")) &&
+                b.pause &&
+                b.pause(),
               (l.style.display = "none"),
               l.removeEventListener("click", a),
               (h.style.zIndex = "0"));
@@ -1248,16 +1175,8 @@ $jscomp.polyfill(
           var b = a.getAttribute("data-src");
           if (b) {
             a.removeAttribute("data-src");
-            var c = b.match(
-              /(http:\/\/|https:\/\/|)?(player.|www.)?(vimeo\.com)\/(video\/|embed\/)?([A-Za-z0-9._%-]*)(&\S+)?/
-            );
-            /* YouTube entfernt */
-            if (-1 !== b.indexOf("vimeo"))
-              a.setAttribute(
-                "src",
-                "https://player.vimeo.com/video/" + c[6] + "?autoplay=0&loop=0"
-              );
-            else if (/\.mp4|\.webm|\.ogg|\.ogv|\.m4a|\.m4v/.test(b)) {
+            /* Vimeo und YouTube entfernt - nicht verwendet */
+            if (/\.mp4|\.webm|\.ogg|\.ogv|\.m4a|\.m4v/.test(b)) {
               c = document.createElement("video");
               c.onloadeddata = function (a) {
                 a.target.style.height =
