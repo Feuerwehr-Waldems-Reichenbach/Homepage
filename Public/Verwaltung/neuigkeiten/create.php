@@ -138,7 +138,12 @@ include dirname(__DIR__) . '/templates/header.php';
             <div class="row">
                 <div class="col-md-6 mb-3">
                     <label for="ueberschrift" class="form-label">Überschrift</label>
-                    <input type="text" class="form-control" id="ueberschrift" name="ueberschrift" required>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="ueberschrift" name="ueberschrift" required>
+                        <button type="button" id="generateHeadlineBtn" class="btn btn-outline-primary" title="Überschrift mit KI generieren">
+                            <i class="fas fa-magic"></i> KI-Überschrift
+                        </button>
+                    </div>
                     <div class="invalid-feedback">
                         Bitte geben Sie eine Überschrift ein.
                     </div>
@@ -163,9 +168,43 @@ include dirname(__DIR__) . '/templates/header.php';
             
             <div class="mb-3">
                 <label for="information" class="form-label">Information</label>
+                <div class="input-group mb-2">
+                    <input type="text" class="form-control" id="thema_input" placeholder="Thema/Stichwort für KI-Generierung (optional)">
+                    <button type="button" id="generateTextBtn" class="btn btn-outline-secondary" title="Kompletten Text mit KI generieren">
+                        <i class="fas fa-robot"></i> Text generieren
+                    </button>
+                </div>
                 <textarea class="form-control" id="information" name="information" rows="6" required></textarea>
                 <div class="invalid-feedback">
                     Bitte geben Sie Informationen ein.
+                </div>
+                
+                <!-- AI-Funktionen Toolbar -->
+                <div class="btn-toolbar mt-2" role="toolbar">
+                    <div class="btn-group me-2" role="group">
+                        <button type="button" id="correctSpellingBtn" class="btn btn-sm btn-outline-primary" title="Rechtschreibung korrigieren">
+                            <i class="fas fa-spell-check"></i> Rechtschreibung
+                        </button>
+                    </div>
+                    
+                    <div class="btn-group me-2" role="group">
+                        <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-pen-fancy"></i> Stil ändern
+                        </button>
+                        <ul class="dropdown-menu" id="styleDropdown">
+                            <li><a class="dropdown-item" href="#" data-style="informativ">Informativ und sachlich</a></li>
+                            <li><a class="dropdown-item" href="#" data-style="einladend">Einladend und motivierend</a></li>
+                            <li><a class="dropdown-item" href="#" data-style="kurz">Kurz und knapp</a></li>
+                            <li><a class="dropdown-item" href="#" data-style="ausfuehrlich">Ausführlich und detailliert</a></li>
+                            <li><a class="dropdown-item" href="#" data-style="offiziell">Offiziell und formell</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="btn-group" role="group">
+                        <button type="button" id="customPromptBtn" class="btn btn-sm btn-outline-primary" title="Eigene Anweisung">
+                            <i class="fas fa-edit"></i> Eigene Anweisung
+                        </button>
+                    </div>
                 </div>
             </div>
             
@@ -225,6 +264,8 @@ include dirname(__DIR__) . '/templates/header.php';
 <script>
     // Initialize CKEditor
     document.addEventListener('DOMContentLoaded', function() {
+        let editor;
+        
         ClassicEditor
             .create(document.getElementById('information'), {
                 toolbar: ['heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote', 'insertTable', 'undo', 'redo'],
@@ -237,9 +278,271 @@ include dirname(__DIR__) . '/templates/header.php';
                     ]
                 }
             })
+            .then(editorInstance => {
+                editor = editorInstance;
+                
+                // Add event listener for headline generation
+                document.getElementById('generateHeadlineBtn').addEventListener('click', function() {
+                    generateHeadline(editor);
+                });
+                
+                // Add event listener for text generation
+                document.getElementById('generateTextBtn').addEventListener('click', function() {
+                    generateNewsText(editor);
+                });
+                
+                // Add event listener for spelling correction
+                document.getElementById('correctSpellingBtn').addEventListener('click', function() {
+                    correctSpelling(editor);
+                });
+                
+                // Add event listeners for style change dropdown
+                document.querySelectorAll('#styleDropdown .dropdown-item').forEach(item => {
+                    item.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const style = this.getAttribute('data-style');
+                        changeStyle(editor, style);
+                    });
+                });
+                
+                // Add event listener for custom prompt
+                document.getElementById('customPromptBtn').addEventListener('click', function() {
+                    showCustomPromptModal(editor);
+                });
+            })
             .catch(error => {
                 console.error(error);
             });
+        
+        // Function to generate headline
+        function generateHeadline(editor) {
+            const thema = document.getElementById('thema_input').value || document.getElementById('ueberschrift').value;
+            const ort = document.getElementById('ort').value;
+            const datum = document.getElementById('datum').value;
+            const text = editor.getData();
+            
+            if (!thema && !text) {
+                alert('Bitte geben Sie entweder ein Thema ein oder schreiben Sie einen Text.');
+                return;
+            }
+            
+            const btn = document.getElementById('generateHeadlineBtn');
+            const originalHTML = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generiere...';
+            
+            fetch('<?php echo BASE_URL; ?>/neuigkeiten/news-ai-functions.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    function: 'generate_headline',
+                    thema: thema,
+                    ort: ort,
+                    datum: datum,
+                    text: text,
+                    csrf_token: '<?php echo $_SESSION['csrf_token']; ?>'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('ueberschrift').value = data.data.headline;
+                } else {
+                    alert('Fehler: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Fehler beim Generieren der Überschrift: ' + error.message);
+            })
+            .finally(() => {
+                btn.disabled = false;
+                btn.innerHTML = originalHTML;
+            });
+        }
+        
+        // Function to generate news text
+        function generateNewsText(editor) {
+            const thema = document.getElementById('thema_input').value;
+            const ort = document.getElementById('ort').value;
+            const datum = document.getElementById('datum').value;
+            
+            if (!thema) {
+                alert('Bitte geben Sie ein Thema ein.');
+                return;
+            }
+            
+            const btn = document.getElementById('generateTextBtn');
+            const originalHTML = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generiere...';
+            
+            fetch('<?php echo BASE_URL; ?>/neuigkeiten/news-ai-functions.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    function: 'generate_text',
+                    thema: thema,
+                    ort: ort,
+                    datum: datum,
+                    csrf_token: '<?php echo $_SESSION['csrf_token']; ?>'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    editor.setData(data.data.text);
+                } else {
+                    alert('Fehler: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Fehler beim Generieren des Textes: ' + error.message);
+            })
+            .finally(() => {
+                btn.disabled = false;
+                btn.innerHTML = originalHTML;
+            });
+        }
+        
+        // Function to correct spelling
+        function correctSpelling(editor) {
+            const text = editor.getData();
+            
+            if (!text || text.trim() === '') {
+                alert('Bitte geben Sie zuerst einen Text ein.');
+                return;
+            }
+            
+            const btn = document.getElementById('correctSpellingBtn');
+            const originalHTML = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Korrigiere...';
+            
+            fetch('<?php echo BASE_URL; ?>/neuigkeiten/news-ai-functions.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    function: 'correct_spelling',
+                    text: text,
+                    csrf_token: '<?php echo $_SESSION['csrf_token']; ?>'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    editor.setData(data.data.text);
+                } else {
+                    alert('Fehler: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Fehler bei der Rechtschreibkorrektur: ' + error.message);
+            })
+            .finally(() => {
+                btn.disabled = false;
+                btn.innerHTML = originalHTML;
+            });
+        }
+        
+        // Function to change style
+        function changeStyle(editor, style) {
+            const text = editor.getData();
+            
+            if (!text || text.trim() === '') {
+                alert('Bitte geben Sie zuerst einen Text ein.');
+                return;
+            }
+            
+            // Disable all AI buttons
+            disableAIButtons(true);
+            
+            fetch('<?php echo BASE_URL; ?>/neuigkeiten/news-ai-functions.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    function: 'change_style',
+                    text: text,
+                    style: style,
+                    csrf_token: '<?php echo $_SESSION['csrf_token']; ?>'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    editor.setData(data.data.text);
+                } else {
+                    alert('Fehler: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Fehler beim Ändern des Stils: ' + error.message);
+            })
+            .finally(() => {
+                disableAIButtons(false);
+            });
+        }
+        
+        // Function to show custom prompt modal
+        function showCustomPromptModal(editor) {
+            const instruction = prompt('Geben Sie Ihre eigene Anweisung für die KI ein:\n\n(Der aktuelle Text wird als Kontext verwendet)');
+            
+            if (!instruction || instruction.trim() === '') {
+                return;
+            }
+            
+            const text = editor.getData();
+            
+            // Disable all AI buttons
+            disableAIButtons(true);
+            
+            fetch('<?php echo BASE_URL; ?>/neuigkeiten/news-ai-functions.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    function: 'custom_prompt',
+                    text: text,
+                    instruction: instruction,
+                    csrf_token: '<?php echo $_SESSION['csrf_token']; ?>'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    editor.setData(data.data.text);
+                } else {
+                    alert('Fehler: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Fehler bei der Verarbeitung: ' + error.message);
+            })
+            .finally(() => {
+                disableAIButtons(false);
+            });
+        }
+        
+        // Helper function to disable/enable all AI buttons
+        function disableAIButtons(disabled) {
+            document.getElementById('generateHeadlineBtn').disabled = disabled;
+            document.getElementById('generateTextBtn').disabled = disabled;
+            document.getElementById('correctSpellingBtn').disabled = disabled;
+            document.getElementById('customPromptBtn').disabled = disabled;
+        }
         
         // Image preview
         document.getElementById('image').addEventListener('change', function(e) {
