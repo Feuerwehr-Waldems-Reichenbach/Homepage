@@ -137,7 +137,7 @@ include dirname(__DIR__) . '/templates/header.php';
 </div>
 
 <!-- Clipboard.js for copy functionality -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.8/clipboard.min.js"></script>
+<script src="/assets/clipboard/clipboard.min.js"></script>
 <script>
     // Initialize clipboard.js
     document.addEventListener('DOMContentLoaded', function() {

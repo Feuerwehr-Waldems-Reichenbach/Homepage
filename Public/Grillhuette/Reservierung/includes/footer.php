@@ -100,12 +100,12 @@
         </div>
     </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+<script src="/assets/bootstrap/js/bootstrap.bundle.min.js"
     nonce="<?php echo $cspNonce; ?>"></script>
-<script src="https://cdn.jsdelivr.net/npm/flatpickr" nonce="<?php echo $cspNonce; ?>"></script>
-<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/de.js" nonce="<?php echo $cspNonce; ?>"></script>
-<script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js" nonce="<?php echo $cspNonce; ?>"></script>
-<script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/locale/de.js" nonce="<?php echo $cspNonce; ?>"></script>
+<script src="/assets/flatpickr/flatpickr.min.js" nonce="<?php echo $cspNonce; ?>"></script>
+<script src="/assets/flatpickr/l10n/de.js" nonce="<?php echo $cspNonce; ?>"></script>
+<script src="/assets/moment/moment.min.js" nonce="<?php echo $cspNonce; ?>"></script>
+<script src="/assets/moment/locale/de.js" nonce="<?php echo $cspNonce; ?>"></script>
 <script src="<?php echo str_repeat('../', substr_count($_SERVER['REQUEST_URI'], '/') - 3); ?>assets/js/main.js"
     nonce="<?php echo $cspNonce; ?>"></script>
 <script nonce="<?php echo $cspNonce; ?>">

@@ -212,19 +212,39 @@ $additionalScripts = '';
 
 // Füge CSS für DataTables hinzu (kann im Header oder hier sein)
 ?>
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+<link rel="stylesheet" href="/assets/dataTables/css/dataTables.bootstrap5.min.css">
 <?php
 include __DIR__ . '/templates/footer.php'; // Footer einbinden
 ?>
 
 <!-- JavaScript für DataTables und Löschbestätigung (nach dem Footer/jQuery etc.) -->
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+<script src="/assets/dataTables/js/jquery.dataTables.min.js"></script>
+<script src="/assets/dataTables/js/dataTables.bootstrap5.min.js"></script>
 <script>
 $(document).ready(function() {
     const mainTable = $('#dokumenteTable').DataTable({
         "language": {
-            "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/de-DE.json"
+            "decimal": ",",
+            "thousands": ".",
+            "info": "Zeige _START_ bis _END_ von _TOTAL_ Einträgen",
+            "infoEmpty": "Keine Einträge vorhanden",
+            "infoFiltered": "(gefiltert von _MAX_ Einträgen)",
+            "infoPostFix": "",
+            "lengthMenu": "_MENU_ Einträge anzeigen",
+            "loadingRecords": "Wird geladen...",
+            "processing": "Bitte warten...",
+            "search": "Suchen:",
+            "zeroRecords": "Keine Einträge gefunden",
+            "paginate": {
+                "first": "Erste",
+                "last": "Letzte",
+                "next": "Nächste",
+                "previous": "Vorherige"
+            },
+            "aria": {
+                "sortAscending": ": aktivieren, um Spalte aufsteigend zu sortieren",
+                "sortDescending": ": aktivieren, um Spalte absteigend zu sortieren"
+            }
         },
         "order": [[ 3, "desc" ]], // Sortiere nach "Neueste Version" absteigend
         "columnDefs": [ 

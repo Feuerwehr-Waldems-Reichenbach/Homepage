@@ -67,7 +67,7 @@ class PageBuilder
             '/assets/bootstrap/css/bootstrap.min.css',
             '/assets/bootstrap/css/bootstrap-grid.min.css',
             '/assets/bootstrap/css/bootstrap-reboot.min.css',
-            'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css',
+            '/assets/fonts/bootstrap-icons/bootstrap-icons.css',
             '/assets/parallax/jarallax.css',
             '/assets/dropdown/css/style.css',
             '/assets/socicon/css/styles.css',

@@ -1,5 +1,5 @@
 <!-- Bootstrap Icons -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+<link rel="stylesheet" href="/assets/fonts/bootstrap-icons/bootstrap-icons.css">
 <?php
 
 ini_set('display_errors', 0);
@@ -424,7 +424,7 @@ function renderMenu($items, $level = 0)
     }
 </style>
 <!-- Bootstrap Bundle with Popper -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/assets/bootstrap/js/bootstrap.bundle.min.js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         // Dropdown functionality for mobile

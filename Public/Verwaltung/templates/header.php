@@ -42,17 +42,17 @@ if ($verwaltungPos !== false) {
     <title><?php echo $pageTitle ?? 'Verwaltungssystem'; ?></title>
     <link rel="stylesheet" href="<?php echo $ADMIN_ROOT; ?>/assets/css/style.css">
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="/assets/fonts/font-awesome/css/all.min.css">
     <!-- Google Fonts -->
     <link href="/assets/fonts/inter-tight/inter-tight.css" rel="stylesheet">
     <!-- DataTables CSS -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" href="/assets/dataTables/css/dataTables.bootstrap5.min.css">
     <!-- SweetAlert2 CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="/assets/sweetalert2/sweetalert2.min.css">
     <!-- CKEditor -->
-    <script src="https://cdn.ckeditor.com/ckeditor5/40.0.0/classic/ckeditor.js"></script>
+    <script src="/assets/ckeditor/ckeditor.js"></script>
 </head>
 <body>
     <header>

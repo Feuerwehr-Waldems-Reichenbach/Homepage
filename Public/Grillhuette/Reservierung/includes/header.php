@@ -7,10 +7,10 @@ $cspNonce = base64_encode(random_bytes(16));
 // Content Security Policy definieren
 $cspHeader = "Content-Security-Policy: " .
     "default-src 'self'; " .
-    "script-src 'self' 'nonce-{$cspNonce}' https://cdn.jsdelivr.net/npm/ https://cdn.jsdelivr.net/npm/flatpickr/ https://cdn.jsdelivr.net/npm/moment@2.29.4/ https://www.google.com/maps/ https://maps.googleapis.com; " .
-    "style-src 'self' https://cdn.jsdelivr.net/npm/ https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/ https://cdn.jsdelivr.net/npm/flatpickr/ 'unsafe-inline'; " .
+    "script-src 'self' 'nonce-{$cspNonce}' https://www.google.com/maps/ https://maps.googleapis.com; " .
+    "style-src 'self' 'unsafe-inline'; " .
     "img-src 'self' data: https://www.google.com/maps/ https://*.googleapis.com https://*.gstatic.com; " .
-    "font-src 'self' https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/; " .
+    "font-src 'self'; " .
     "connect-src 'self'; " .
     "frame-src 'self' https://www.google.com/maps/ https://maps.googleapis.com; " .
     "object-src 'none'; " .
@@ -20,10 +20,10 @@ $cspHeader = "Content-Security-Policy: " .
     (isSecureConnection() ? "upgrade-insecure-requests;" : "");
 // Content Security Policy für den Meta-Tag (ohne frame-ancestors)
 $cspMeta = "default-src 'self'; " .
-    "script-src 'self' 'nonce-{$cspNonce}' https://cdn.jsdelivr.net/npm/ https://cdn.jsdelivr.net/npm/flatpickr/ https://cdn.jsdelivr.net/npm/moment@2.29.4/ https://www.google.com/maps/ https://maps.googleapis.com; " .
-    "style-src 'self' https://cdn.jsdelivr.net/npm/ https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/ https://cdn.jsdelivr.net/npm/flatpickr/ 'unsafe-inline'; " .
+    "script-src 'self' 'nonce-{$cspNonce}' https://www.google.com/maps/ https://maps.googleapis.com; " .
+    "style-src 'self' 'unsafe-inline'; " .
     "img-src 'self' data: https://www.google.com/maps/ https://*.googleapis.com https://*.gstatic.com; " .
-    "font-src 'self' https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/; " .
+    "font-src 'self'; " .
     "connect-src 'self'; " .
     "frame-src 'self' https://www.google.com/maps/ https://maps.googleapis.com; " .
     "object-src 'none'; " .
@@ -60,9 +60,9 @@ header("Permissions-Policy: geolocation=(), camera=(), microphone=()");
 
     <link rel="shortcut icon" href="/Grillhuette/Reservierung/includes/favicon.ico" type="image/x-icon">
     <title>Reservierungssystem der Grillhütte Waldems Reichenbach</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/fonts/bootstrap-icons/bootstrap-icons.css">
+    <link rel="stylesheet" href="/assets/flatpickr/flatpickr.min.css">
     <link rel="stylesheet"
         href="<?php echo str_repeat('../', substr_count($_SERVER['REQUEST_URI'], '/') - 3); ?>assets/css/style.css">
 </head>
