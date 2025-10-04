@@ -29,7 +29,9 @@ $page->addContent(
                     <br>Förderverein der Freiwilligen Feuerwehr Waldems-Reichenbach e.V.
                     <br>Am Dorfgemeinschaftshaus 1
                     <br>65529 Waldems-Reichenbach
-                    <br>Deutschland<br><br>Diese Datenschutzerklärung informiert Sie über Art, Umfang und Zweck der
+                    <br>Deutschland
+                    <br>E-Mail: info@feuerwehr-waldems-reichenbach.de
+                    <br><br>Diese Datenschutzerklärung informiert Sie über Art, Umfang und Zweck der
                     Verarbeitung von personenbezogenen Daten im Rahmen unseres Grillhütten-Reservierungssystems sowie
                     der Mitgliedschaft im Förderverein der Freiwilligen Feuerwehr Waldems-Reichenbach e.V. und über die
                     Ihnen zustehenden Rechte. Wir nehmen den Schutz Ihrer persönlichen Daten sehr ernst und halten uns
@@ -159,23 +161,25 @@ $page->addContent(
                   <p class="ffr-text ffr-fonts-style display-7">Diese Daten werden nach spätestens 1 Jahr gelöscht, 
                     sofern keine längere Speicherung aus Sicherheitsgründen erforderlich ist.</p>
                   <h5 class="ffr-fonts-style display-5"><strong>3.6 Protokolldaten (Server-Logs)</strong></h5>
-                  <p class="ffr-text ffr-fonts-style display-7">Bei der Nutzung unserer Website werden automatisch
-                    technische Zugriffsdaten erhoben:</p>
+                  <p class="ffr-text ffr-fonts-style display-7">Beim Aufruf unserer Website fallen Server-Logfiles bei unserem 
+                    Hosting-Provider STRATO an. Verarbeitet werden insbesondere:</p>
                   <ul class="ffr-text ffr-fonts-style display-7">
-                    <li>IP-Adresse (anonymisiert)</li>
+                    <li>Aufgerufene URL/Datei</li>
                     <li>Datum und Uhrzeit der Anfrage</li>
-                    <li>Aufgerufene Seite/Name der angeforderten Datei</li>
                     <li>Übertragene Datenmenge</li>
                     <li>Zugriffsstatus (Datei übertragen, Datei nicht gefunden etc.)</li>
-                    <li>Verwendeter Browser und Betriebssystem</li>
                     <li>Referrer URL (die zuvor besuchte Seite)</li>
+                    <li>User-Agent (verwendeter Browser und Betriebssystem)</li>
+                    <li>IP-Adresse</li>
                   </ul>
+                  <p class="ffr-text ffr-fonts-style display-7"><strong>Sicherheitszweck & Speicherdauer bei STRATO:</strong> 
+                    Zur Erkennung und Abwehr von Angriffen speichert STRATO nicht-anonymisierte IP-Adressen maximal 7 Tage; 
+                    anschließend werden sie unwiderruflich anonymisiert. Wir selbst können IP-Adressen ausschließlich in 
+                    anonymisierter Form einsehen.</p>
                   <p class="ffr-text ffr-fonts-style display-7"><strong>Zweck:</strong> Technische Bereitstellung der
-                    Website, Sicherheit und Missbrauchsschutz, Statistik, Fehlerbehebung.</p>
+                    Website, Sicherheit und Missbrauchsschutz, Fehlerbehebung, stabiler Betrieb.</p>
                   <p class="ffr-text ffr-fonts-style display-7"><strong>Rechtsgrundlage:</strong> Berechtigtes Interesse
-                    an der sicheren und funktionalen Bereitstellung der Website (Art. 6 Abs. 1 lit. f DSGVO).</p>
-                  <p class="ffr-text ffr-fonts-style display-7">Diese Daten werden nach spätestens 7 Tagen anonymisiert
-                    oder gelöscht, sofern keine längere Speicherung aus Sicherheitsgründen erforderlich ist.</p>
+                    an der sicheren und stabilen Bereitstellung der Website (Art. 6 Abs. 1 lit. f DSGVO).</p>
                   <h5 class="ffr-fonts-style display-5"><strong>3.7 Cookies und lokale Speicherung</strong></h5>
                   <p class="ffr-text ffr-fonts-style display-7"><strong>Warum Sie auf unserer Hauptseite keinen Cookie-Banner sehen:</strong></p>
                   <p class="ffr-text ffr-fonts-style display-7">Die öffentliche Hauptseite unserer Website verwendet <strong>keine Tracking-Cookies, Werbe-Cookies oder Analyse-Tools</strong> wie Google Analytics, Facebook Pixel oder ähnliches. Daher ist hier auch kein Cookie-Banner erforderlich. Wir setzen auf Ihre Privatsphäre und verzichten bewusst auf jegliches Tracking.</p>
@@ -202,7 +206,7 @@ $page->addContent(
                   <p class="ffr-text ffr-fonts-style display-7"><strong>Rechtsgrundlage:</strong> Berechtigtes Interesse
                     an der technischen Bereitstellung der Website (Art. 6 Abs. 1 lit. f DSGVO). Diese Cookies sind technisch notwendig und erfordern nach DSGVO und ePrivacy-Richtlinie keine explizite Einwilligung.</p>
                     
-                  <p class="ffr-text ffr-fonts-style display-7"><strong>Wichtig zu wissen:</strong> Ein Cookie-Banner ist nur dann rechtlich verpflichtend, wenn nicht notwendige Cookies oder Tracking-Technologien eingesetzt werden. Da unsere öffentliche Website ausschließlich technisch notwendige Speichermechanismen verwendet und keine Daten an Dritte zu Tracking- oder Werbezwecken weitergibt, ist kein Cookie-Banner erforderlich.</p>
+                  <p class="ffr-text ffr-fonts-style display-7"><strong>Wichtig zu wissen:</strong> Ein Cookie-Banner ist nur dann rechtlich verpflichtend, wenn nicht notwendige Cookies oder Tracking-Technologien eingesetzt werden. Nach §25 TTDSG (Telekommunikation-Telemedien-Datenschutz-Gesetz) ist das Speichern von und der Zugriff auf Informationen im Endgerät (Cookies, Local Storage) nur zulässig, wenn es unbedingt erforderlich ist oder Sie eingewilligt haben. Da unsere öffentliche Website ausschließlich technisch notwendige Speichermechanismen verwendet (Local Storage nur für Ihre Kartenzustimmung) und keine Daten an Dritte zu Tracking- oder Werbezwecken weitergibt, ist kein Cookie-Banner erforderlich.</p>
                   
                   <p class="ffr-text ffr-fonts-style display-7">Die meisten Browser akzeptieren Cookies automatisch. Sie
                     können Ihren Browser jedoch so konfigurieren, dass keine Cookies gespeichert werden oder dass vor
@@ -211,9 +215,10 @@ $page->addContent(
                     (insbesondere das Reservierungssystem) nutzen können.</p>
                   <h5 class="ffr-fonts-style display-5"><strong>3.8 Mitgliedschaftsdaten im Förderverein</strong></h5>
                   <p class="ffr-text ffr-fonts-style display-7">Für die Bearbeitung von Mitgliedschaften im Förderverein
-                    der Freiwilligen Feuerwehr Waldems-Reichenbach e.V. erheben wir persönliche Daten digital und auf
-                    Papier, welche zur Vereinsführung notwendig sind. Diese Daten werden sicher aufbewahrt und nicht an
-                    Dritte weitergegeben.</p>
+                    der Freiwilligen Feuerwehr Waldems-Reichenbach e.V. erheben wir personenbezogene Daten, welche zur 
+                    Vereinsführung notwendig sind. Sämtliche personenbezogenen Daten unterliegen den Datenschutzvorschriften 
+                    der DSGVO, unabhängig davon, ob sie digital oder in Papierform gespeichert werden. Diese Daten werden 
+                    sicher aufbewahrt und nicht an Dritte weitergegeben.</p>
                   <p class="ffr-text ffr-fonts-style display-7">Bitte beachten Sie, dass Sie auch passives Mitglied des
                     Fördervereins werden können. Die Mitgliedschaftsanträge werden in Papierform gespeichert und sicher
                     verwahrt. Bei Beendigung der Mitgliedschaft werden Ihre Daten entsprechend der gesetzlichen
@@ -236,7 +241,8 @@ $page->addContent(
                     Maßnahmen, um Ihre Daten zu schützen:</p>
                   <ul class="ffr-text ffr-fonts-style display-7">
                     <li>Verschlüsselte Übertragung mittels HTTPS/TLS</li>
-                    <li>Verschlüsselte Speicherung von Passwörtern</li>
+                    <li>Passwörter werden gehasht gespeichert (z. B. bcrypt mit Salt)</li>
+                    <li>Hosting in ISO/IEC-27001-zertifizierten Rechenzentren in Deutschland (STRATO)</li>
                     <li>Regelmäßige Sicherheits-Updates</li>
                     <li>Zugriffsbeschränkungen und Zugriffskontrollen</li>
                     <li>Regelmäßige Backups</li>
@@ -261,13 +267,28 @@ $page->addContent(
                   </h5>
                   <p class="ffr-text ffr-fonts-style display-7">Wir setzen für bestimmte Verarbeitungstätigkeiten
                     Dienstleister ein, die in unserem Auftrag tätig werden:</p>
+                  <p class="ffr-text ffr-fonts-style display-7"><strong>Hosting-Provider: STRATO GmbH</strong></p>
                   <ul class="ffr-text ffr-fonts-style display-7">
-                    <li>Hosting-Provider: Bereitstellung der Server-Infrastruktur</li>
-                    <li>E-Mail-Dienstleister: Versand von E-Mail-Benachrichtigungen</li>
+                    <li>Anbieter: STRATO GmbH, Otto-Ostrowski-Straße 7, 10249 Berlin, Deutschland</li>
+                    <li>Rechenzentrumsstandorte: Deutschland (Berlin und Karlsruhe)</li>
+                    <li>Zertifizierung: ISO/IEC 27001</li>
+                    <li>Verarbeitete Daten: Server-Logdaten, Website-Inhalte, Datenbanken</li>
+                    <li>Zweck: Bereitstellung der Server-Infrastruktur für Website und Datenbanken</li>
+                    <li>Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an sicherem, performantem Hosting) und Art. 28 DSGVO (Auftragsverarbeitung)</li>
+                    <li>Auftragsverarbeitungsvertrag: Ein AVV nach Art. 28 DSGVO ist abgeschlossen</li>
+                    <li>Drittlandtransfer: Findet nicht statt (Verarbeitung ausschließlich in Deutschland)</li>
                   </ul>
-                  <p class="ffr-text ffr-fonts-style display-7">Mit diesen Dienstleistern haben wir entsprechende
-                    Auftragsverarbeitungsverträge gemäß Art. 28 DSGVO abgeschlossen, die sicherstellen, dass Ihre Daten
-                    entsprechend den gesetzlichen Vorgaben verarbeitet werden.</p>
+                  <p class="ffr-text ffr-fonts-style display-7"><strong>E-Mail-Dienstleister: STRATO GmbH</strong></p>
+                  <ul class="ffr-text ffr-fonts-style display-7">
+                    <li>Anbieter: STRATO GmbH, Otto-Ostrowski-Straße 7, 10249 Berlin, Deutschland</li>
+                    <li>Zweck: Versand von E-Mail-Benachrichtigungen (Registrierung, Reservierungsbestätigungen, Passwort-Reset)</li>
+                    <li>Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO und Art. 28 DSGVO (Auftragsverarbeitung)</li>
+                    <li>Auftragsverarbeitungsvertrag: Ein AVV nach Art. 28 DSGVO ist abgeschlossen</li>
+                    <li>Drittlandtransfer: Findet nicht statt</li>
+                  </ul>
+                  <p class="ffr-text ffr-fonts-style display-7">Im Rahmen der technischen Bereitstellung und des Betriebs 
+                    der Website verarbeitet STRATO als unser Auftragsverarbeiter u. a. Verbindungs- und Log-Daten in seinen 
+                    Rechenzentren in Deutschland. Eine Weitergabe in Drittländer erfolgt dabei nicht.</p>
                   <h5 class="ffr-fonts-style display-5"><strong>5.3 Datenübermittlung</strong></h5>
                   <p class="ffr-text ffr-fonts-style display-7">Eine Weitergabe Ihrer personenbezogenen Daten erfolgt
                     ausschließlich:</p>
@@ -302,10 +323,11 @@ $page->addContent(
                   <p class="ffr-text ffr-fonts-style display-7"><strong>Zweck:</strong> Darstellung unserer Standorte 
                     und Bereitstellung von Wegbeschreibungen für Besucher.</p>
                   <p class="ffr-text ffr-fonts-style display-7"><strong>Rechtsgrundlage:</strong> Ihre Einwilligung 
-                    (Art. 6 Abs. 1 lit. a DSGVO) durch aktives Klicken auf "Karte laden".</p>
-                  <p class="ffr-text ffr-fonts-style display-7"><strong>Datenverarbeitung in den USA:</strong> Google ist 
-                    Teil des EU-US Data Privacy Framework. Weitere Informationen zum Datenschutz bei Google Maps finden Sie 
-                    in der <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Datenschutzerklärung von Google</a>.</p>
+                    (Art. 6 Abs. 1 lit. a DSGVO sowie §25 TTDSG) durch aktives Klicken auf "Karte laden".</p>
+                  <p class="ffr-text ffr-fonts-style display-7"><strong>Datenverarbeitung in den USA:</strong> Die Datenübermittlung 
+                    in die USA erfolgt auf Grundlage des EU-US Data Privacy Framework. Google LLC ist unter diesem Rahmenwerk zertifiziert 
+                    und verpflichtet sich zur Einhaltung europäischer Datenschutzstandards. Weitere Informationen zum Datenschutz bei 
+                    Google Maps finden Sie in der <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Datenschutzerklärung von Google</a>.</p>
                   <h5 class="ffr-fonts-style display-5"><strong>5.5 Social Media Funktionen und externe Verlinkungen</strong></h5>
                   <p class="ffr-text ffr-fonts-style display-7">Unsere Website enthält Links zu unseren Social-Media-Präsenzen 
                     (Instagram, Facebook) sowie Share-Funktionen zum Teilen von Inhalten.</p>
@@ -409,6 +431,12 @@ $page->addContent(
                     E-Mail: poststelle@datenschutz.hessen.de<br>
                     Website: https://datenschutz.hessen.de
                   </p>
+                  <h5 class="ffr-fonts-style display-5"><strong>6.9 Keine automatisierte Entscheidungsfindung</strong></h5>
+                  <p class="ffr-text ffr-fonts-style display-7">Wir setzen keine automatisierte Entscheidungsfindung 
+                    einschließlich Profiling gemäß Art. 22 DSGVO ein. Alle Entscheidungen, die Sie betreffen (z. B. die 
+                    Bestätigung oder Ablehnung einer Reservierung), werden von unseren Mitarbeitern manuell getroffen. 
+                    Es erfolgt keine ausschließlich auf einer automatisierten Verarbeitung beruhende Entscheidung, die 
+                    Ihnen gegenüber rechtliche Wirkung entfaltet oder Sie in ähnlicher Weise erheblich beeinträchtigt.</p>
                 </div>
               </div>
               <div class="item features-without-image col-12">
