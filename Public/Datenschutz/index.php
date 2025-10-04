@@ -89,15 +89,13 @@ $page->addContent(
                   <p class="ffr-text ffr-fonts-style display-7">Für die Nutzung unseres Reservierungssystems ist die
                     Einrichtung eines Benutzerkontos erforderlich. Dabei werden folgende Daten erhoben:</p>
                   <ul class="ffr-text ffr-fonts-style display-7">
-                    <li>Vor- und Nachname</li>
                     <li>E-Mail-Adresse</li>
                     <li>Passwort (verschlüsselt gespeichert)</li>
+                    <li>Vor- und Nachname</li>
                     <li>Telefonnummer (optional)</li>
-                    <li>Adresse (optional)</li>
-                    <li>Mitgliedsstatus (Feuerwehrangehöriger oder nicht)</li>
                   </ul>
                   <p class="ffr-text ffr-fonts-style display-7"><strong>Zweck:</strong> Verwaltung Ihres Benutzerkontos,
-                    Authentifizierung und Bereitstellung der Reservierungsfunktionen.</p>
+                    Authentifizierung, Bereitstellung der Reservierungsfunktionen und Preiskalkulation basierend auf Ihrem Mitgliedsstatus.</p>
                   <p class="ffr-text ffr-fonts-style display-7"><strong>Rechtsgrundlage:</strong> Erfüllung des
                     Nutzungsvertrags (Art. 6 Abs. 1 lit. b DSGVO).</p>
                   <h5 class="ffr-fonts-style display-5"><strong>3.2 Reservierungsdaten</strong></h5>
@@ -105,13 +103,14 @@ $page->addContent(
                     Daten verarbeitet:</p>
                   <ul class="ffr-text ffr-fonts-style display-7">
                     <li>Reservierungszeitraum (Start- und Enddatum, Uhrzeit)</li>
-                    <li>Anmerkungen zur Reservierung</li>
+                    <li>Schlüsselübergabe- und Rückgabezeiten</li>
                     <li>Reservierungsstatus</li>
-                    <li>Zahlungsinformationen</li>
-                    <li>Zeitpunkt der Reservierungsanfrage</li>
+                    <li>Ihre Nachrichten zur Reservierung</li>
+                    <li>Preise (Grundpreis, Gesamtpreis, Kaution)</li>
+                    <li>Event-Name (falls gewünscht)</li>
                   </ul>
                   <p class="ffr-text ffr-fonts-style display-7"><strong>Zweck:</strong> Durchführung und Verwaltung
-                    Ihrer Reservierung, Überprüfung der Verfügbarkeit, Abrechnung.</p>
+                    Ihrer Reservierung, Überprüfung der Verfügbarkeit, Abrechnung und Terminverwaltung.</p>
                   <p class="ffr-text ffr-fonts-style display-7"><strong>Rechtsgrundlage:</strong> Erfüllung des
                     Reservierungsvertrags (Art. 6 Abs. 1 lit. b DSGVO).</p>
                   <h5 class="ffr-fonts-style display-5"><strong>3.3 Kommunikationsdaten</strong></h5>
@@ -142,7 +141,24 @@ $page->addContent(
                     Vorgänge im Zusammenhang mit Ihrem Benutzerkonto oder Ihrer Reservierung.</p>
                   <p class="ffr-text ffr-fonts-style display-7"><strong>Rechtsgrundlage:</strong> Erfüllung des
                     Nutzungs- bzw. Reservierungsvertrags (Art. 6 Abs. 1 lit. b DSGVO).</p>
-                  <h5 class="ffr-fonts-style display-5"><strong>3.5 Protokolldaten (Server-Logs)</strong></h5>
+                  <h5 class="ffr-fonts-style display-5"><strong>3.5 Sicherheits- und Login-Protokolle</strong></h5>
+                  <p class="ffr-text ffr-fonts-style display-7">Zur Gewährleistung der Sicherheit unseres Systems werden
+                    folgende Daten protokolliert:</p>
+                  <ul class="ffr-text ffr-fonts-style display-7">
+                    <li>E-Mail-Adresse bei Login-Versuchen</li>
+                    <li>IP-Adresse bei Login-Versuchen</li>
+                    <li>Zeitstempel der Login-Versuche</li>
+                    <li>Art der Sicherheitsaktion (Login, Sicherheitswarnung, Passwort-Reset, Account-Sperrung)</li>
+                    <li>Status der Aktion (Erfolg, Fehler, Warnung, Kritisch)</li>
+                    <li>Zusätzliche Details zur Sicherheitsaktion</li>
+                  </ul>
+                  <p class="ffr-text ffr-fonts-style display-7"><strong>Zweck:</strong> Sicherheit des Systems, 
+                    Missbrauchsschutz, Erkennung von verdächtigen Aktivitäten und Schutz vor unbefugten Zugriffen.</p>
+                  <p class="ffr-text ffr-fonts-style display-7"><strong>Rechtsgrundlage:</strong> Berechtigtes Interesse
+                    an der Sicherheit des Systems (Art. 6 Abs. 1 lit. f DSGVO).</p>
+                  <p class="ffr-text ffr-fonts-style display-7">Diese Daten werden nach spätestens 1 Jahr gelöscht, 
+                    sofern keine längere Speicherung aus Sicherheitsgründen erforderlich ist.</p>
+                  <h5 class="ffr-fonts-style display-5"><strong>3.6 Protokolldaten (Server-Logs)</strong></h5>
                   <p class="ffr-text ffr-fonts-style display-7">Bei der Nutzung unserer Website werden automatisch
                     technische Zugriffsdaten erhoben:</p>
                   <ul class="ffr-text ffr-fonts-style display-7">
@@ -160,28 +176,40 @@ $page->addContent(
                     an der sicheren und funktionalen Bereitstellung der Website (Art. 6 Abs. 1 lit. f DSGVO).</p>
                   <p class="ffr-text ffr-fonts-style display-7">Diese Daten werden nach spätestens 7 Tagen anonymisiert
                     oder gelöscht, sofern keine längere Speicherung aus Sicherheitsgründen erforderlich ist.</p>
-                  <h5 class="ffr-fonts-style display-5"><strong>3.6 Cookies</strong></h5>
-                  <p class="ffr-text ffr-fonts-style display-7">Unsere Website verwendet ausschließlich technisch
-                    notwendige Cookies, die für den Betrieb der Website erforderlich sind:</p>
+                  <h5 class="ffr-fonts-style display-5"><strong>3.7 Cookies und lokale Speicherung</strong></h5>
+                  <p class="ffr-text ffr-fonts-style display-7"><strong>Warum Sie auf unserer Hauptseite keinen Cookie-Banner sehen:</strong></p>
+                  <p class="ffr-text ffr-fonts-style display-7">Die öffentliche Hauptseite unserer Website verwendet <strong>keine Tracking-Cookies, Werbe-Cookies oder Analyse-Tools</strong> wie Google Analytics, Facebook Pixel oder ähnliches. Daher ist hier auch kein Cookie-Banner erforderlich. Wir setzen auf Ihre Privatsphäre und verzichten bewusst auf jegliches Tracking.</p>
+                  
+                  <p class="ffr-text ffr-fonts-style display-7"><strong>Was wir speichern:</strong></p>
+                  <ul class="ffr-text ffr-fonts-style display-7">
+                    <li><strong>Local Storage für Google Maps (2-Klick-Lösung):</strong> Wenn Sie auf den Button "Karte laden" klicken, wird Ihre Zustimmung im Local Storage Ihres Browsers gespeichert. Dies ist eine rein lokale Speicherung in Ihrem Browser und sendet keine Daten an uns oder Dritte. Der Local Storage merkt sich lediglich, dass Sie die Karte bereits aktiviert haben, damit Sie nicht bei jedem Besuch erneut zustimmen müssen. Dies ist eine Komfortfunktion ohne Tracking-Zweck.</li>
+                  </ul>
+                  
+                  <p class="ffr-text ffr-fonts-style display-7"><strong>Im Grillhütten-Reservierungssystem und Verwaltungsbereich:</strong></p>
+                  <p class="ffr-text ffr-fonts-style display-7">Nur in den geschützten Bereichen (Reservierungssystem und Verwaltung) verwenden wir technisch notwendige Cookies:</p>
                   <ul class="ffr-text ffr-fonts-style display-7">
                     <li><strong>Sitzungs-Cookies (Session-Cookies):</strong> Diese werden benötigt, um Sie während Ihres
-                      Besuchs auf unserer Website zu erkennen und Ihre Benutzersitzung zu verwalten. Sie werden nach
-                      Schließen des Browsers gelöscht.</li>
+                      Besuchs eingeloggt zu halten und Ihre Benutzersitzung zu verwalten. Sie werden nach
+                      Schließen des Browsers oder nach Inaktivität automatisch gelöscht.</li>
                     <li><strong>CSRF-Token-Cookie:</strong> Schützt vor Cross-Site-Request-Forgery-Angriffen und erhöht
                       damit die Sicherheit bei Formular-Übermittlungen.</li>
                     <li><strong>Cookie-Einwilligungs-Cookie:</strong> Speichert Ihre Entscheidung bezüglich der
-                      Cookie-Nutzung.</li>
+                      Cookie-Nutzung im Reservierungssystem.</li>
                   </ul>
+                  
                   <p class="ffr-text ffr-fonts-style display-7"><strong>Zweck:</strong> Technische Funktionalität der
                     Website, Sicherheit, Benutzerfreundlichkeit.</p>
                   <p class="ffr-text ffr-fonts-style display-7"><strong>Rechtsgrundlage:</strong> Berechtigtes Interesse
-                    an der technischen Bereitstellung der Website (Art. 6 Abs. 1 lit. f DSGVO).</p>
+                    an der technischen Bereitstellung der Website (Art. 6 Abs. 1 lit. f DSGVO). Diese Cookies sind technisch notwendig und erfordern nach DSGVO und ePrivacy-Richtlinie keine explizite Einwilligung.</p>
+                    
+                  <p class="ffr-text ffr-fonts-style display-7"><strong>Wichtig zu wissen:</strong> Ein Cookie-Banner ist nur dann rechtlich verpflichtend, wenn nicht notwendige Cookies oder Tracking-Technologien eingesetzt werden. Da unsere öffentliche Website ausschließlich technisch notwendige Speichermechanismen verwendet und keine Daten an Dritte zu Tracking- oder Werbezwecken weitergibt, ist kein Cookie-Banner erforderlich.</p>
+                  
                   <p class="ffr-text ffr-fonts-style display-7">Die meisten Browser akzeptieren Cookies automatisch. Sie
                     können Ihren Browser jedoch so konfigurieren, dass keine Cookies gespeichert werden oder dass vor
                     dem Speichern eines Cookies eine ausdrückliche Zustimmung erforderlich ist. Die vollständige
                     Deaktivierung von Cookies kann jedoch dazu führen, dass Sie nicht alle Funktionen unserer Website
-                    nutzen können.</p>
-                  <h5 class="ffr-fonts-style display-5"><strong>3.7 Mitgliedschaftsdaten im Förderverein</strong></h5>
+                    (insbesondere das Reservierungssystem) nutzen können.</p>
+                  <h5 class="ffr-fonts-style display-5"><strong>3.8 Mitgliedschaftsdaten im Förderverein</strong></h5>
                   <p class="ffr-text ffr-fonts-style display-7">Für die Bearbeitung von Mitgliedschaften im Förderverein
                     der Freiwilligen Feuerwehr Waldems-Reichenbach e.V. erheben wir persönliche Daten digital und auf
                     Papier, welche zur Vereinsführung notwendig sind. Diese Daten werden sicher aufbewahrt und nicht an
