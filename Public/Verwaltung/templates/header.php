@@ -101,6 +101,9 @@ if ($verwaltungPos !== false) {
                                 <li><hr class="dropdown-divider"></li>
                                 <li><h6 class="dropdown-header"><i class="fas fa-key me-1"></i> Auth-Schlüssel</h6></li>
                                 <li><a class="dropdown-item" href="<?php echo $ADMIN_ROOT; ?>/auth-schluessel/list.php">Alle Schlüssel</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><h6 class="dropdown-header"><i class="fas fa-shield-alt me-1"></i> Benachrichtigungen</h6></li>
+                                <li><a class="dropdown-item" href="<?php echo $ADMIN_ROOT; ?>/datenschutz-benachrichtigung.php">Datenschutz-Update</a></li>
                             </ul>
                         </li>
                     </ul>
