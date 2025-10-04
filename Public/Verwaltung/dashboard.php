@@ -180,31 +180,6 @@ include __DIR__ . '/templates/header.php';
     </div>
 </div>
 
-<div class="row mb-4">
-    <div class="col-12">
-        <div class="card glass-card" style="border-left: 4px solid rgba(167, 41, 32, 0.8);">
-            <div class="card-body">
-                <div class="row align-items-center">
-                    <div class="col-md-8">
-                        <h5 class="mb-2">
-                            <i class="fas fa-shield-alt me-2" style="color: rgba(167, 41, 32, 0.9);"></i>
-                            Datenschutz-Benachrichtigung versenden
-                        </h5>
-                        <p class="mb-0 text-muted">
-                            Informieren Sie alle Benutzer über Aktualisierungen der Datenschutzerklärung per E-Mail.
-                        </p>
-                    </div>
-                    <div class="col-md-4 text-end">
-                        <a href="<?php echo $ADMIN_ROOT; ?>/datenschutz-benachrichtigung.php" class="btn btn-primary" style="background-color: rgba(167, 41, 32, 0.85); border: none;">
-                            <i class="fas fa-paper-plane me-2"></i> Benachrichtigung senden
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
 <div class="row">
     <div class="col-md-6 mb-4">
         <div class="card glass-card table-card">
