@@ -100,6 +100,10 @@ $page->addContent(
                     Authentifizierung, Bereitstellung der Reservierungsfunktionen und Preiskalkulation basierend auf Ihrem Mitgliedsstatus.</p>
                   <p class="ffr-text ffr-fonts-style display-7"><strong>Rechtsgrundlage:</strong> Erfüllung des
                     Nutzungsvertrags (Art. 6 Abs. 1 lit. b DSGVO).</p>
+                  <p class="ffr-text ffr-fonts-style display-7"><strong>Pflicht zur Bereitstellung:</strong> Die Angabe von 
+                    E-Mail-Adresse, Passwort, Vor- und Nachname ist für die Registrierung erforderlich. Ohne diese Daten kann 
+                    kein Benutzerkonto angelegt werden. Die Telefonnummer ist optional. Rechtsfolgen einer Nichtbereitstellung 
+                    der Pflichtangaben: Ohne vollständige Registrierung ist keine Nutzung des Reservierungssystems möglich.</p>
                   <h5 class="ffr-fonts-style display-5"><strong>3.2 Reservierungsdaten</strong></h5>
                   <p class="ffr-text ffr-fonts-style display-7">Bei der Durchführung einer Reservierung werden folgende
                     Daten verarbeitet:</p>
@@ -115,6 +119,9 @@ $page->addContent(
                     Ihrer Reservierung, Überprüfung der Verfügbarkeit, Abrechnung und Terminverwaltung.</p>
                   <p class="ffr-text ffr-fonts-style display-7"><strong>Rechtsgrundlage:</strong> Erfüllung des
                     Reservierungsvertrags (Art. 6 Abs. 1 lit. b DSGVO).</p>
+                  <p class="ffr-text ffr-fonts-style display-7"><strong>Pflicht zur Bereitstellung:</strong> Der Reservierungszeitraum 
+                    ist für die Durchführung einer Reservierung erforderlich. Ihre Nachrichten und der Event-Name sind freiwillig. 
+                    Rechtsfolgen einer Nichtbereitstellung: Ohne Angabe des Reservierungszeitraums kann keine Reservierung abgeschlossen werden.</p>
                   <h5 class="ffr-fonts-style display-5"><strong>3.3 Kommunikationsdaten</strong></h5>
                   <p class="ffr-text ffr-fonts-style display-7">Bei der Kommunikation mit uns (z. B. per E-Mail oder über
                     das Kontaktformular) werden folgende Daten verarbeitet:</p>
@@ -186,7 +193,7 @@ $page->addContent(
                   
                   <p class="ffr-text ffr-fonts-style display-7"><strong>Was wir speichern:</strong></p>
                   <ul class="ffr-text ffr-fonts-style display-7">
-                    <li><strong>Local Storage für Google Maps (2-Klick-Lösung):</strong> Wenn Sie auf den Button "Karte laden" klicken, wird Ihre Zustimmung im Local Storage Ihres Browsers gespeichert. Dies ist eine rein lokale Speicherung in Ihrem Browser und sendet keine Daten an uns oder Dritte. Der Local Storage merkt sich lediglich, dass Sie die Karte bereits aktiviert haben, damit Sie nicht bei jedem Besuch erneut zustimmen müssen. Dies ist eine Komfortfunktion ohne Tracking-Zweck.</li>
+                    <li><strong>Local Storage für Google Maps (2-Klick-Lösung):</strong> Wenn Sie auf den Button "Karte laden" klicken, wird Ihre Zustimmung im Local Storage Ihres Browsers gespeichert. Dies ist eine rein lokale Speicherung in Ihrem Browser und sendet keine Daten an uns oder Dritte. Der Local Storage merkt sich lediglich, dass Sie die Karte bereits aktiviert haben, damit Sie nicht bei jedem Besuch erneut zustimmen müssen. Dies ist eine Komfortfunktion für einen ausdrücklich von Ihnen gewünschten Dienst (Google Maps) ohne Tracking-Zweck. Die Speicherung ist für die Bereitstellung dieses von Ihnen gewünschten Dienstes unbedingt erforderlich (§ 25 Abs. 2 Nr. 2 TDDDG).</li>
                   </ul>
                   
                   <p class="ffr-text ffr-fonts-style display-7"><strong>Im Grillhütten-Reservierungssystem und Verwaltungsbereich:</strong></p>
@@ -206,7 +213,7 @@ $page->addContent(
                   <p class="ffr-text ffr-fonts-style display-7"><strong>Rechtsgrundlage:</strong> Berechtigtes Interesse
                     an der technischen Bereitstellung der Website (Art. 6 Abs. 1 lit. f DSGVO). Diese Cookies sind technisch notwendig und erfordern nach DSGVO und ePrivacy-Richtlinie keine explizite Einwilligung.</p>
                     
-                  <p class="ffr-text ffr-fonts-style display-7"><strong>Wichtig zu wissen:</strong> Ein Cookie-Banner ist nur dann rechtlich verpflichtend, wenn nicht notwendige Cookies oder Tracking-Technologien eingesetzt werden. Nach §25 TTDSG (Telekommunikation-Telemedien-Datenschutz-Gesetz) ist das Speichern von und der Zugriff auf Informationen im Endgerät (Cookies, Local Storage) nur zulässig, wenn es unbedingt erforderlich ist oder Sie eingewilligt haben. Da unsere öffentliche Website ausschließlich technisch notwendige Speichermechanismen verwendet (Local Storage nur für Ihre Kartenzustimmung) und keine Daten an Dritte zu Tracking- oder Werbezwecken weitergibt, ist kein Cookie-Banner erforderlich.</p>
+                  <p class="ffr-text ffr-fonts-style display-7"><strong>Wichtig zu wissen:</strong> Ein Cookie-Banner ist nur dann rechtlich verpflichtend, wenn nicht notwendige Cookies oder Tracking-Technologien eingesetzt werden. Nach § 25 TDDDG (Telekommunikation-Digitale-Dienste-Datenschutz-Gesetz) ist das Speichern von und der Zugriff auf Informationen im Endgerät (Cookies, Local Storage) nur zulässig, wenn es unbedingt erforderlich ist oder Sie eingewilligt haben. Da unsere öffentliche Website ausschließlich technisch notwendige Speichermechanismen verwendet (Local Storage nur für Ihre Kartenzustimmung als ausdrücklich gewünschter Dienst) und keine Daten an Dritte zu Tracking- oder Werbezwecken weitergibt, ist kein Cookie-Banner erforderlich.</p>
                   
                   <p class="ffr-text ffr-fonts-style display-7">Die meisten Browser akzeptieren Cookies automatisch. Sie
                     können Ihren Browser jedoch so konfigurieren, dass keine Cookies gespeichert werden oder dass vor
@@ -323,10 +330,11 @@ $page->addContent(
                   <p class="ffr-text ffr-fonts-style display-7"><strong>Zweck:</strong> Darstellung unserer Standorte 
                     und Bereitstellung von Wegbeschreibungen für Besucher.</p>
                   <p class="ffr-text ffr-fonts-style display-7"><strong>Rechtsgrundlage:</strong> Ihre Einwilligung 
-                    (Art. 6 Abs. 1 lit. a DSGVO sowie §25 TTDSG) durch aktives Klicken auf "Karte laden".</p>
+                    (Art. 6 Abs. 1 lit. a DSGVO sowie § 25 TDDDG) durch aktives Klicken auf "Karte laden".</p>
                   <p class="ffr-text ffr-fonts-style display-7"><strong>Datenverarbeitung in den USA:</strong> Die Datenübermittlung 
                     in die USA erfolgt auf Grundlage des EU-US Data Privacy Framework. Google LLC ist unter diesem Rahmenwerk zertifiziert 
-                    und verpflichtet sich zur Einhaltung europäischer Datenschutzstandards. Weitere Informationen zum Datenschutz bei 
+                    und verpflichtet sich zur Einhaltung europäischer Datenschutzstandards. Google verweist auf seine DPF-Zertifizierung; 
+                    der Eintrag ist im offiziellen DPF-List-Register abrufbar. Weitere Informationen zum Datenschutz bei 
                     Google Maps finden Sie in der <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Datenschutzerklärung von Google</a>.</p>
                   <h5 class="ffr-fonts-style display-5"><strong>5.5 Social Media Funktionen und externe Verlinkungen</strong></h5>
                   <p class="ffr-text ffr-fonts-style display-7">Unsere Website enthält Links zu unseren Social-Media-Präsenzen 
