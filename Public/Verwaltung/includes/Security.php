@@ -76,10 +76,7 @@ class Security {
         $input = trim($input);
         
         if ($allowHtml) {
-            // Remove <p>-Tags if they are not desired
-            $input = preg_replace('#</?p[^>]*>#', '', $input);
-        
-            $allowedTags = '<br><strong><em><ul><ol><li><a><blockquote><h1><h2><h3><h4><h5><h6><img><table><tr><td><th><thead><tbody><caption><div><span><hr>';
+            $allowedTags = '<p><br><strong><em><ul><ol><li><a><blockquote><h1><h2><h3><h4><h5><h6><img><table><tr><td><th><thead><tbody><caption><div><span><hr>';
             return strip_tags($input, $allowedTags);
         }
         else {
