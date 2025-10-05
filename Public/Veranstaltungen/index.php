@@ -45,7 +45,16 @@ $page->addContent('
 </section>
 ');
 
-
+// Call-to-Action Bereich für vergangene Veranstaltungen (Flyer)
+$page->addContent($page->renderCTAHeaderTextButtonBanner(
+    id: 'header14-51',
+    cidSuffix: 'CTA-Veranstaltungen',
+    title: 'Vergangene Veranstaltungen',
+    text: 'Schau dir unsere vergangenen Feste und Aktionen im Flyer-Archiv an!',
+    buttonLabel: 'Zum Flyer-Archiv',
+    buttonHref: '/assets/Flyer/',
+    buttonClass: 'btn-primary'
+));
 
 // Rendere die vollständige Seite inklusive Head, Includes und Scripts
 echo $page->renderFullPage();
