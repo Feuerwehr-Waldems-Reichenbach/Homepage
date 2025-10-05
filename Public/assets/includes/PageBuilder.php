@@ -291,6 +291,13 @@ class PageBuilder
     }
 
 
+    /**
+     * Rendert einen Fullscreen-Hero ("header16").
+     *
+     * Standard-IDs für generisches Styling:
+     *  - Section-ID: 'pb-fullscreen-hero'
+     *  - CID-Suffix: 'PB-FullscreenHero'
+     */
     public function renderFullscreenHero(
         string $id,
         string $title,
@@ -342,6 +349,10 @@ class PageBuilder
      * @param string $imageAlt    Alt-Attribut des Bildes
      * @param string $btnClass    optionale zusätzliche Button-Klasse (z. B. "btn-primary")
      * @return string             Fertiger HTML-Code
+     *
+     * Standard-IDs für generisches Styling:
+     *  - Section-ID: 'pb-image-teaser'
+     *  - CID-Suffix: 'PB-ImageTeaser'
      */
     public function renderImageTeaser(
         string $id,
@@ -399,6 +410,10 @@ class PageBuilder
      * @param string $btnClass     Bootstrap-Klasse des Buttons (Default: "btn-primary")
      * @param string $bsVersion    data-bs-version (Default: "5.1")
      * @return string              Fertiger HTML-Code
+     *
+     * Standard-IDs für generisches Styling:
+     *  - Section-ID: 'pb-call-to-action'
+     *  - CID-Suffix: 'PB-CallToAction'
      */
     public function renderCallToActionBanner(
         string $id,
@@ -451,6 +466,10 @@ class PageBuilder
      *                             (leer = automatisch "accordion-{$id}")
      * @param string $bsVersion    Bootstrap-Version im data-Attribut
      * @return string              Fertiger HTML-Block
+     *
+     * Standard-IDs für generisches Styling:
+     *  - Section-ID: 'pb-accordion'
+     *  - CID-Suffix: 'PB-Accordion'
      */
     public function renderAccordionList(
         string $id,
@@ -610,6 +629,13 @@ class PageBuilder
     }
 
 
+    /**
+     * Rendert eine Galerie mit Lightbox ("gallery1").
+     *
+     * Standard-IDs für generisches Styling:
+     *  - Section-ID: 'pb-gallery-lightbox'
+     *  - CID-Suffix: 'PB-GalleryLightbox'
+     */
     public function renderGalleryWithLightbox(
         string $id,
         string $title,
@@ -711,6 +737,13 @@ class PageBuilder
     HTML;
     }
 
+    /**
+     * Rendert einen Bild-Infoblock ("image08") ohne Button.
+     *
+     * Standard-IDs für generisches Styling:
+     *  - Section-ID: 'pb-image-info'
+     *  - CID-Suffix: 'PB-ImageInfo'
+     */
     public function renderImageInfoBlock(
         string $id,
         string $title,
@@ -749,6 +782,13 @@ class PageBuilder
     HTML;
     }
 
+    /**
+     * Rendert Feature-Karten mit Bild ("features19").
+     *
+     * Standard-IDs für generisches Styling:
+     *  - Section-ID: 'pb-feature-cards-images'
+     *  - CID-Suffix: 'PB-FeatureCardsImages'
+     */
     public function renderFeatureCardsWithImages(
         string $id,
         string $title = '',
@@ -799,6 +839,13 @@ class PageBuilder
     HTML;
     }
 
+    /**
+     * Rendert einen Text-Artikel ("article13").
+     *
+     * Standard-IDs für generisches Styling:
+     *  - Section-ID: 'pb-text-article'
+     *  - CID-Suffix: 'PB-TextArticle'
+     */
     public function renderTextArticle(
         string $id,
         string $title,
@@ -831,6 +878,13 @@ class PageBuilder
     HTML;
     }
 
+    /**
+     * Rendert eine reine Bildsektion ("image03").
+     *
+     * Standard-IDs für generisches Styling:
+     *  - Section-ID: 'pb-image-section'
+     *  - CID-Suffix: 'PB-ImageSection'
+     */
     public function renderImageSection(
         string $id,
         string $imageSrc,
@@ -851,6 +905,13 @@ class PageBuilder
     HTML;
     }
 
+    /**
+     * Rendert einen Download-Header mit mehreren Buttons ("header14").
+     *
+     * Standard-IDs für generisches Styling:
+     *  - Section-ID: 'pb-download-header'
+     *  - CID-Suffix: 'PB-DownloadHeader'
+     */
     public function renderDownloadHeaderWithButtons(
         string $id,
         string $title,
@@ -892,6 +953,13 @@ class PageBuilder
     HTML;
     }
 
+    /**
+     * Rendert einen CTA-Header mit Text und Button ("header14").
+     *
+     * Standard-IDs für generisches Styling:
+     *  - Section-ID: 'pb-cta-header'
+     *  - CID-Suffix: 'PB-CTAHeader'
+     */
     public function renderCTAHeaderTextButtonBanner(
         string $id,
         string $title,
@@ -935,6 +1003,13 @@ HTML;
     }
 
 
+    /**
+     * Rendert Feature-Karten mit Button ("features5").
+     *
+     * Standard-IDs für generisches Styling:
+     *  - Section-ID: 'pb-feature-cards-buttons'
+     *  - CID-Suffix: 'PB-FeatureCardsButtons'
+     */
     public function renderFeatureCardsWithButtons(
         string $id,
         array $features,
@@ -981,6 +1056,13 @@ HTML;
     HTML;
     }
 
+    /**
+     * Rendert eine Feature-Sektion ohne Bilder ("features19").
+     *
+     * Standard-IDs für generisches Styling:
+     *  - Section-ID: 'pb-feature-section'
+     *  - CID-Suffix: 'PB-FeatureSection'
+     */
     public function renderFeatureSection(
         string $id,
         array $features,
@@ -1026,6 +1108,13 @@ HTML;
     HTML;
     }
 
+    /**
+     * Rendert eine Zwei-Klick-Google-Map ("map1").
+     *
+     * Standard-IDs für generisches Styling:
+     *  - Section-ID: 'pb-google-map'
+     *  - CID-Suffix: 'PB-GoogleMap'
+     */
     public function renderGoogleMap(
         string $id,
         string $iframeSrc,
@@ -1076,6 +1165,13 @@ HTML;
     }
 
 
+    /**
+     * Rendert eine Text-Sektion mit mehreren Abschnitten ("article07").
+     *
+     * Standard-IDs für generisches Styling:
+     *  - Section-ID: 'pb-text-section'
+     *  - CID-Suffix: 'PB-TextSection'
+     */
     public function renderTextSection(
         string $id,
         string $mainTitle,
@@ -1124,6 +1220,13 @@ HTML;
     }
 
 
+    /**
+     * Rendert Download-Karten ("content5") mit Buttons.
+     *
+     * Standard-IDs für generisches Styling:
+     *  - Section-ID: 'pb-document-cards'
+     *  - CID-Suffix: 'PB-DocumentCards'
+     */
     public function renderDocumentDownloadCards(
         string $id,
         string $title,
@@ -1179,6 +1282,13 @@ HTML;
     HTML;
     }
 
+    /**
+     * Rendert einen Abschnitts-Header ("content4").
+     *
+     * Standard-IDs für generisches Styling:
+     *  - Section-ID: 'pb-section-header'
+     *  - CID-Suffix: 'PB-SectionHeader'
+     */
     public function renderSectionHeader(
         string $id,
         string $title,
@@ -1211,6 +1321,13 @@ HTML;
     HTML;
     }
 
+    /**
+     * Rendert eine Downloadliste ("content5").
+     *
+     * Standard-IDs für generisches Styling:
+     *  - Section-ID: 'pb-download-list'
+     *  - CID-Suffix: 'PB-DownloadList'
+     */
     public function renderDownloadList(
         string $id,
         string $title,
@@ -1260,6 +1377,13 @@ HTML;
     HTML;
     }
 
+    /**
+     * Rendert ein Raster aus Link-Karten ("content5").
+     *
+     * Standard-IDs für generisches Styling:
+     *  - Section-ID: 'pb-link-grid'
+     *  - CID-Suffix: 'PB-LinkGrid'
+     */
     public function renderLinkCardGrid(
         string $id,
         string $title,
@@ -1313,6 +1437,13 @@ HTML;
     HTML;
     }
 
+    /**
+     * Rendert eine animierte Galerie ("gallery4").
+     *
+     * Standard-IDs für generisches Styling:
+     *  - Section-ID: 'pb-animated-gallery'
+     *  - CID-Suffix: 'PB-AnimatedGallery'
+     */
     public function renderAnimatedGallery(
         string $id,
         array $rows,
@@ -1358,6 +1489,13 @@ HTML;
     HTML;
     }
 
+    /**
+     * Rendert einen zentral ausgerichteten CTA ("header14").
+     *
+     * Standard-IDs für generisches Styling:
+     *  - Section-ID: 'pb-centered-cta'
+     *  - CID-Suffix: 'PB-CenteredCTA'
+     */
     public function renderCenteredCTA(
         string $id,
         string $title,
