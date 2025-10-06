@@ -23,7 +23,8 @@ $page->addContent($page->renderFullscreenHero(
     jarallaxSpeed: 0.8,
     overlayOpacity: 0.5,
     overlayColor: 'rgb(0, 0, 0)',
-    btnClass: 'btn-white-outline' // Passe die Button-Klasse an
+    btnClass: 'btn-white-outline', // Passe die Button-Klasse an
+    backgroundImage: '/assets/images/img20240825115019.webp'
 ));
 
 // Füge den Abschnitt "R(ealistische)U(nfall)D(arstellung)" (Bild rechts, Text links) hinzu
@@ -44,7 +45,8 @@ $page->addContent($page->renderCTAHeaderTextButtonBanner(
     text: 'Unsere RUD-Gruppe bietet Ihnen die Möglichkeit, realistische Trainingsszenarien zu erleben, die Ihre Einsatzkräfte optimal vorbereiten.', // Verwende den Textparameter für den Untertitel
     buttonLabel: 'Jetzt Kontakt aufnehmen',
     buttonHref: '#image08-55',
-    buttonClass: 'btn-primary'
+    buttonClass: 'btn-primary',
+    backgroundImage: '/assets/images/img20240706091207.webp'
     // Parallax background und Overlay werden durch die Methode gehandhabt
 ));
 

@@ -21,7 +21,8 @@ $page->addContent($page->renderFullscreenHero(
     jarallaxSpeed: 0.8,
     overlayOpacity: 0.5,
     overlayColor: 'rgb(0, 0, 0)',
-    btnClass: 'btn-white-outline' // Passe die Button-Klasse an
+    btnClass: 'btn-white-outline', // Passe die Button-Klasse an
+    backgroundImage: '/assets/images/img-20240821-wa0074.webp'
 ));
 
 // Füge den Abschnitt "Unsere Kinderfeuerwehr" (Bild rechts, Text links) hinzu
@@ -51,7 +52,8 @@ $page->addContent($page->renderCallToActionBanner(
     title: 'Interesse geweckt?',
     buttonHref: '/Mitmachen',
     buttonText: 'Jetzt mitmachen',
-    btnClass: 'btn-primary'
+    btnClass: 'btn-primary',
+    backgroundImage: '/assets/images/img-20240821-wa0041.webp'
     // Parallax background und Overlay werden durch die Methode gehandhabt
 ));
 

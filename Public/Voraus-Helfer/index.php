@@ -21,7 +21,8 @@ $page->addContent($page->renderFullscreenHero(
     jarallaxSpeed: 0.8,
     overlayOpacity: 0.5,
     overlayColor: 'rgb(0, 0, 0)',
-    btnClass: 'btn-white-outline' // Passe die Button-Klasse an
+    btnClass: 'btn-white-outline', // Passe die Button-Klasse an
+    backgroundImage: '/assets/images/img20241021205129.webp'
 ));
 
 // Füge den Abschnitt "Unsere Voraushelfer" (Bild rechts, Text links) hinzu

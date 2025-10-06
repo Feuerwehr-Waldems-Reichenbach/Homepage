@@ -26,7 +26,8 @@ $page->addContent($page->renderFullscreenHero(
     0.8, // Jarallax Speed
     0.5, // Overlay Opacity
     'rgb(0, 0, 0)', // Overlay Color
-    'btn-white-outline' // Button Class
+    'btn-white-outline', // Button Class
+    backgroundImage: '/assets/images/img-20231218-wa0006-1.webp'
 ));
 
 // --- Einsatzliste & Statistik (PHP Include Block) ---

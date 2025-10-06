@@ -21,7 +21,8 @@ $page->addContent($page->renderFullscreenHero(
     jarallaxSpeed: 0.8,
     overlayOpacity: 0.5,
     overlayColor: 'rgb(0, 0, 0)',
-    btnClass: 'btn-white-outline' // Passe die Button-Klasse an
+    btnClass: 'btn-white-outline', // Passe die Button-Klasse an
+    backgroundImage: '/assets/images/img20240514181849.webp'
 ));
 
 // Füge den Features Abschnitt (Grillhütte Infos) hinzu
@@ -97,7 +98,8 @@ $page->addContent($page->renderCallToActionBanner(
     title: 'Interesse geweckt?',
     buttonHref: '/Grillhuette/Reservierung/',
     buttonText: 'Zum Reservierungssystem',
-    btnClass: 'btn-primary'
+    btnClass: 'btn-primary',
+    backgroundImage: '/assets/images/img20240514181524.webp'
     // Parallax background und Overlay werden durch die Methode gehandhabt
 ));
 

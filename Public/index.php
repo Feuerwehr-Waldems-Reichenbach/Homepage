@@ -14,7 +14,8 @@ $page->addContent($page->renderFullscreenHero(
     'Im Glanz der Flammen, im Herzen des Dorfes.',
     'Erfahre mehr',
     '#image08-h',
-    'Hero-Homepage'
+    'Hero-Homepage',
+    backgroundImage: '/assets/images/img20240729201025-2.webp'
 ));
 
 $page->addContent($page->renderImageTeaser(
@@ -45,7 +46,8 @@ $page->addContent($page->renderCallToActionBanner(
     'Bereit für den Einsatz deines Lebens?',
     '/Mitmachen',
     'Jetzt mitmachen',
-    'CTA-Startseite'
+    'CTA-Startseite',
+    backgroundImage: '/assets/images/img20240729193049.webp'
 ));
 
 $page->addContent($page->renderImageTeaser(
