@@ -21,7 +21,8 @@ $page->addContent($page->renderFullscreenHero(
     jarallaxSpeed: 0.8,
     overlayOpacity: 0.5,
     overlayColor: 'rgb(0, 0, 0)',
-    btnClass: 'btn-white-outline' // Passe die Button-Klasse an
+    btnClass: 'btn-white-outline', // Passe die Button-Klasse an
+    backgroundImage: '/assets/images/whatsapp-bild-2024-08-13-um-19.38.10-b7588198-kopie.webp'
 ));
 
 // Füge den Abschnitt "Unsere Jugendfeuerwehr" (Bild rechts, Text links) hinzu
@@ -51,7 +52,8 @@ $page->addContent($page->renderCallToActionBanner(
     title: 'Interesse geweckt?',
     buttonHref: '/Mitmachen',
     buttonText: 'Jetzt mitmachen',
-    btnClass: 'btn-primary'
+    btnClass: 'btn-primary',
+    backgroundImage: '/assets/images/whatsapp-bild-2024-08-13-um-19.38.35-64599a3b.webp'
     // Parallax background und Overlay werden durch die Methode gehandhabt
 ));
 

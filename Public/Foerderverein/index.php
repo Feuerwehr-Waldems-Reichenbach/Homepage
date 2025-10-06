@@ -21,7 +21,8 @@ $page->addContent($page->renderFullscreenHero(
     jarallaxSpeed: 0.8,
     overlayOpacity: 0.5,
     overlayColor: 'rgb(0, 0, 0)',
-    btnClass: 'btn-white-outline' // Passe die Button-Klasse an
+    btnClass: 'btn-white-outline', // Passe die Button-Klasse an
+    backgroundImage: '/assets/images/chatgpt-image-31.-mrz-2025.webp'
 ));
 
 // Füge den Textabschnitt "Förderverein" hinzu

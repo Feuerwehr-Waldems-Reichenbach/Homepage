@@ -157,6 +157,26 @@ class PageBuilder
         $this->contentBlocks[] = $html;
     }
 
+    /**
+     * Baut das optionale Inline-Style-Attribut für dynamische Hintergrundbilder.
+     */
+    private function buildBackgroundStyle(?string $backgroundImage): string
+    {
+        if ($backgroundImage === null) {
+            return '';
+        }
+
+        $backgroundImage = trim($backgroundImage);
+
+        if ($backgroundImage === '') {
+            return '';
+        }
+
+        $backgroundImage = htmlspecialchars($backgroundImage, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+
+        return " style=\"background-image: url('{$backgroundImage}');\"";
+    }
+
     public function setFavicon(string $href): void
     {
         // Ensure path starts with a slash for absolute paths from the site root
@@ -294,6 +314,8 @@ class PageBuilder
     /**
      * Rendert einen Fullscreen-Hero ("header16").
      *
+     * @param string|null $backgroundImage Optionales Hintergrundbild (überschreibt CSS-Default)
+     *
      * Standard-IDs für generisches Styling:
      *  - Section-ID: 'pb-fullscreen-hero'
      *  - CID-Suffix: 'PB-FullscreenHero'
@@ -309,12 +331,14 @@ class PageBuilder
         float  $overlayOpacity = 0.2,
         string $overlayColor = 'rgb(0, 0, 0)',
         string $btnClass = 'btn-secondary',
+        ?string $backgroundImage = null,
         string $bsVersion = '5.1'
     ): string {
         $cidClass = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
+        $backgroundStyle = $this->buildBackgroundStyle($backgroundImage);
 
         return <<<HTML
-    <section data-bs-version="{$bsVersion}" class="header16 {$cidClass} ffr-fullscreen jarallax" id="{$id}" data-jarallax-speed="{$jarallaxSpeed}">
+    <section data-bs-version="{$bsVersion}" class="header16 {$cidClass} ffr-fullscreen jarallax" id="{$id}" data-jarallax-speed="{$jarallaxSpeed}"{$backgroundStyle}>
         <div class="ffr-overlay" style="opacity: {$overlayOpacity}; background-color: {$overlayColor};"></div>
         <div class="container-fluid">
             <div class="row">
@@ -408,6 +432,7 @@ class PageBuilder
      * @param string $buttonText   Button-Beschriftung
      * @param string $cidSuffix    Teil hinter "cid-" für Klasse (leer = kein cid-Teil)
      * @param string $btnClass     Bootstrap-Klasse des Buttons (Default: "btn-primary")
+     * @param string|null $backgroundImage Optionales Hintergrundbild (überschreibt CSS-Default)
      * @param string $bsVersion    data-bs-version (Default: "5.1")
      * @return string              Fertiger HTML-Code
      *
@@ -422,13 +447,15 @@ class PageBuilder
         string $buttonText,
         string $cidSuffix = '',
         string $btnClass = 'btn-primary',
+        ?string $backgroundImage = null,
         string $bsVersion = '5.1'
     ): string {
         // "cid-..." nur anhängen, wenn gewünscht
         $cidClass = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
+        $backgroundStyle = $this->buildBackgroundStyle($backgroundImage);
 
         return <<<HTML
-            <section data-bs-version="{$bsVersion}" class="header14 {$cidClass} ffr-parallax-background" id="{$id}">
+            <section data-bs-version="{$bsVersion}" class="header14 {$cidClass} ffr-parallax-background" id="{$id}"{$backgroundStyle}>
                 <div class="container">
                     <div class="row justify-content-center">
                         <div class="card col-12 col-md-12 col-lg-9">
@@ -908,6 +935,8 @@ class PageBuilder
     /**
      * Rendert einen Download-Header mit mehreren Buttons ("header14").
      *
+     * @param string|null $backgroundImage Optionales Hintergrundbild (überschreibt CSS-Default)
+     *
      * Standard-IDs für generisches Styling:
      *  - Section-ID: 'pb-download-header'
      *  - CID-Suffix: 'PB-DownloadHeader'
@@ -917,9 +946,11 @@ class PageBuilder
         string $title,
         array $buttons, // Format: [['label' => 'Text', 'href' => 'link', 'class' => 'btn-primary'], ...]
         string $cidSuffix = '',
+        ?string $backgroundImage = null,
         string $bsVersion = '5.1'
     ): string {
         $cidClass = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
+        $backgroundStyle = $this->buildBackgroundStyle($backgroundImage);
 
         $buttonHtml = '';
         foreach ($buttons as $btn) {
@@ -932,7 +963,7 @@ class PageBuilder
         }
 
         return <<<HTML
-    <section data-bs-version="{$bsVersion}" class="header14 {$cidClass}" id="{$id}">
+    <section data-bs-version="{$bsVersion}" class="header14 {$cidClass}" id="{$id}"{$backgroundStyle}>
         <div class="container">
             <div class="row justify-content-center">
                 <div class="card col-12 col-md-12 col-lg-12">
@@ -956,6 +987,8 @@ class PageBuilder
     /**
      * Rendert einen CTA-Header mit Text und Button ("header14").
      *
+     * @param string|null $backgroundImage Optionales Hintergrundbild (überschreibt CSS-Default)
+     *
      * Standard-IDs für generisches Styling:
      *  - Section-ID: 'pb-cta-header'
      *  - CID-Suffix: 'PB-CTAHeader'
@@ -968,15 +1001,17 @@ class PageBuilder
         string $buttonHref,
         string $buttonClass = 'btn-primary',
         string $cidSuffix = '',
+        ?string $backgroundImage = null,
         string $bsVersion = '5.1'
     ): string {
         $cidClass   = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
         $buttonLabel = htmlspecialchars($buttonLabel);
         $buttonHref  = htmlspecialchars($buttonHref);
         $buttonClass = htmlspecialchars($buttonClass);
+        $backgroundStyle = $this->buildBackgroundStyle($backgroundImage);
 
         return <<<HTML
-<section data-bs-version="{$bsVersion}" class="header14 {$cidClass} ffr-parallax-background" id="{$id}">
+<section data-bs-version="{$bsVersion}" class="header14 {$cidClass} ffr-parallax-background" id="{$id}"{$backgroundStyle}>
     <div class="container">
         <div class="row justify-content-center">
             <div class="card col-12 col-md-12 col-lg-12">
@@ -1492,6 +1527,8 @@ HTML;
     /**
      * Rendert einen zentral ausgerichteten CTA ("header14").
      *
+     * @param string|null $backgroundImage Optionales Hintergrundbild (überschreibt CSS-Default)
+     *
      * Standard-IDs für generisches Styling:
      *  - Section-ID: 'pb-centered-cta'
      *  - CID-Suffix: 'PB-CenteredCTA'
@@ -1502,14 +1539,16 @@ HTML;
         string $buttonLabel,
         string $buttonHref,
         string $cidSuffix = '',
+        ?string $backgroundImage = null,
         string $bsVersion = '5.1'
     ): string {
         $cidClass     = $cidSuffix !== '' ? "cid-{$cidSuffix}" : '';
         $buttonLabel  = htmlspecialchars($buttonLabel);
         $buttonHref   = htmlspecialchars($buttonHref);
+        $backgroundStyle = $this->buildBackgroundStyle($backgroundImage);
 
         return <<<HTML
-    <section data-bs-version="{$bsVersion}" class="header14 {$cidClass}" id="{$id}">
+    <section data-bs-version="{$bsVersion}" class="header14 {$cidClass}" id="{$id}"{$backgroundStyle}>
         <div class="container">
             <div class="row justify-content-center">
                 <div class="card col-12 col-md-12 col-lg-10">

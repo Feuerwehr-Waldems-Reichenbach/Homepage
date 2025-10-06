@@ -26,7 +26,8 @@ $page->addContent($page->renderFullscreenHero(
     0.8, // Jarallax Speed
     0.5, // Overlay Opacity
     'rgb(0, 0, 0)', // Overlay Color
-    'btn-white-outline' // Button Class
+    'btn-white-outline', // Button Class
+    backgroundImage: '/assets/images/img-20210913.webp'
 ));
 
 // --- Text/Bild Block 1: Unsere Einsatzabteilung ---
@@ -56,7 +57,8 @@ $page->addContent($page->renderCallToActionBanner(
     '/Mitmachen', // Button Link
     'Jetzt mitmachen', // Button Text
     'CTA-Einsatzabteilung', // CID Suffix
-    'btn-primary' // Button Class
+    'btn-primary', // Button Class
+    backgroundImage: '/assets/images/img20240812195457.webp'
 ));
 
 // --- Text/Bild Block 3: Spezialisierte Fortbildung ---

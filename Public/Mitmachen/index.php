@@ -20,7 +20,8 @@ $page->addContent($page->renderFullscreenHero(
     jarallaxSpeed: 0.8,
     overlayOpacity: 0.5,
     overlayColor: 'rgb(0, 0, 0)',
-    btnClass: 'btn-white-outline' // Passe die Button-Klasse an
+    btnClass: 'btn-white-outline', // Passe die Button-Klasse an
+    backgroundImage: '/assets/images/a5ar3-lq538.webp'
 ));
 
 // Füge den Features Abschnitt (Einsatz-, Jugend-, Kinderfeuerwehr) hinzu
