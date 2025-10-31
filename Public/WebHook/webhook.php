@@ -41,6 +41,12 @@ $params = [
 // Einige Parameter aufbereiten
 $params['einheit'] = $params['alarmgruppen'];
 $params['stichwort'] = !empty($params['stichwortuebersetzung']) ? $params['stichwortuebersetzung'] : $params['stichwort'];
+$isVoraushelfer = isVoraushelferEinsatz($params, $_GET ?? []);
+$genericMedicalText = 'Medizinischer Notfall';
+if ($isVoraushelfer) {
+    $params['sachverhalt'] = $genericMedicalText;
+    $params['stichwort'] = $genericMedicalText;
+}
 // Ausgabe starten
 echo "Webhook empfangen: ";
 // Parameter validieren
@@ -96,7 +102,11 @@ if (empty($params['einheit'])) {
     $params['einheit'] = "Feuerwehr Reichenbach";
 }
 // Kategorie ermitteln
-$params['kategorie'] = getKategorie($params['sachverhalt'], $params['stichwort']);
+if ($isVoraushelfer) {
+    $params['kategorie'] = 'Medizinisch';
+} else {
+    $params['kategorie'] = getKategorie($params['sachverhalt'], $params['stichwort']);
+}
 try {
     // Prüfen, ob der Einsatz bereits existiert
     $exists = einsatzExistiert($conn, $params['einsatzID']);
