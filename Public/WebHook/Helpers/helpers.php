@@ -71,6 +71,32 @@ function ermittleOrt(string $adresse, array $orte = [], string $defaultOrt = 'He
 }
 
 /**
+ * Erkennt, ob es sich um einen Voraushelfer-Einsatz handelt.
+ */
+function isVoraushelferEinsatz(array ...$sources): bool
+{
+    $fieldsToCheck = [
+        'stichwort',
+        'stichwortuebersetzung',
+        'sachverhalt',
+        'kategorie',
+        'alarmgruppen'
+    ];
+
+    $combined = '';
+
+    foreach ($sources as $source) {
+        foreach ($fieldsToCheck as $field) {
+            if (isset($source[$field]) && is_string($source[$field])) {
+                $combined .= ' ' . $source[$field];
+            }
+        }
+    }
+
+    return mb_stripos($combined, 'voraushelfer') !== false;
+}
+
+/**
  * Ermittelt die Kategorie anhand Sachverhalt + Stichwort.
  *
  * Logik:

@@ -198,6 +198,27 @@ class WebHookTest extends TestCase
         // Aufräumen
         $this->cleanupDatabase();
     }
+
+    public function testVoraushelferEinsatzWirdAnonymisiert()
+    {
+        fwrite(STDOUT, "\n📡 Überprüfe Anonymisierung für Voraushelfer-Einsatz...");
+        $this->cleanupDatabase();
+        $this->sendVoraushelferWebhook();
+
+        $db = Database::getInstance();
+        $conn = $db->getConnection();
+        $stmt = $conn->prepare("SELECT `Sachverhalt`, `Stichwort`, `Kategorie` FROM `einsatz` WHERE `EinsatzID` = ?");
+        $stmt->execute([$this->einsatzID]);
+        $data = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        $this->assertNotFalse($data, "\n❌ Fehler: Voraushelfer-Einsatz wurde nicht gespeichert!\n");
+        $this->assertEquals('Medizinischer Notfall', $data['Sachverhalt'], "\n❌ Fehler: Der Sachverhalt wurde nicht anonymisiert!\n");
+        $this->assertEquals('Medizinischer Notfall', $data['Stichwort'], "\n❌ Fehler: Das Stichwort wurde nicht anonymisiert!\n");
+        $this->assertEquals('Medizinisch', $data['Kategorie'], "\n❌ Fehler: Die Kategorie wurde nicht auf 'Medizinisch' gesetzt!\n");
+
+        fwrite(STDOUT, "\n✅ Voraushelfer-Einsatz wurde korrekt anonymisiert.\n");
+        $this->cleanupDatabase();
+    }
     // Tests für die Authentifizierung
     public function testWebhookMissingAuthKey()
     {
@@ -368,6 +389,27 @@ class WebHookTest extends TestCase
             "einsatzID" => $this->einsatzID,
             "ric" => "Test 1-46-1, Test 1-30-1, Test 1-11-1",
             "alarmgruppen" => "Alarmgruppe 1, Alarmgruppe 2",
+            "infogruppen" => "Infogruppe 1, Infogruppe 2",
+            "fahrzeuge" => "Musterstadt 1-46-1, Musterstadt 1-30-1"
+        ];
+        $response = $this->sendRequest($testData);
+        fwrite(STDOUT, "\n ☐ Webhook-Antwort: $response");
+        return $response;
+    }
+
+    private function sendVoraushelferWebhook()
+    {
+        $testData = [
+            "auth_key" => $this->authKey,
+            "kategorie" => "Medizinisch",
+            "stichwort" => "RD Voraushelfer",
+            "stichwortuebersetzung" => "Voraushelfer - Patient mit Brustschmerzen",
+            "standort" => "Feuerwehr Musterstadt",
+            "sachverhalt" => "Bewusstlose Person mit detaillierten Angaben",
+            "adresse" => "Musterstraße 1, 12345 Musterstadt - Musterstadtteil",
+            "einsatzID" => $this->einsatzID,
+            "ric" => "Test 1-46-1, Test 1-30-1, Test 1-11-1",
+            "alarmgruppen" => "Alarmgruppe 1, Voraushelfer-Team",
             "infogruppen" => "Infogruppe 1, Infogruppe 2",
             "fahrzeuge" => "Musterstadt 1-46-1, Musterstadt 1-30-1"
         ];
