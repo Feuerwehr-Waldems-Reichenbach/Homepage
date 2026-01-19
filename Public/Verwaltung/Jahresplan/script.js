@@ -173,15 +173,19 @@ function renderCalendar() {
     const theadRow = document.getElementById('monthHeaderRow');
     const tbody = document.getElementById('calendarBody');
 
+    // Clear existing
     theadRow.innerHTML = '<th style="width: 40px; background:#e9ecef;">Tag</th>';
     tbody.innerHTML = '';
 
     const months = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'];
+    const monthFull = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
 
     // Render Month Headers
-    months.forEach((m) => {
+    months.forEach((m, i) => {
         const th = document.createElement('th');
         th.textContent = m;
+        // Optional: Add full name as title
+        th.title = monthFull[i];
         theadRow.appendChild(th);
     });
 
@@ -204,15 +208,16 @@ function renderCalendar() {
             // Add date attribute for Drag & Drop
             td.dataset.date = dateString;
 
-            // Check validity (e.g. Feb 30)
+            // Check if valid date (e.g. Feb 30 is invalid)
             if (date.getMonth() !== m) {
-                td.style.backgroundColor = '#ddd';
+                td.style.backgroundColor = '#ddd'; // Invalid date
                 td.classList.add('invalid-date');
                 tr.appendChild(td);
                 continue;
             }
 
             const dayOfWeek = date.getDay();
+            const dayName = getDayShortName(dayOfWeek);
 
             // Weekend highlighting
             if (dayOfWeek === 0 || dayOfWeek === 6) {
@@ -223,35 +228,56 @@ function renderCalendar() {
                 td.style.backgroundColor = '#f1f3f5';
             }
 
-            // Render events
+            // Cell Content Container
+            const cellContent = document.createElement('div');
+            cellContent.className = 'cell-content';
+
+            // Date Label
+            const dateLabel = document.createElement('div');
+            dateLabel.className = 'cell-date';
+            dateLabel.textContent = dayName;
+            cellContent.appendChild(dateLabel);
+
+            // Container for Events
+            const eventContainer = document.createElement('div');
+            eventContainer.className = 'event-container';
+
+            // --- RENDER EVENTS ---
             const events = state.generatedEvents.filter(e => e.date === dateString);
 
+            // Render events in flex container
             if (events.length > 0) {
-                td.innerHTML = '';
                 events.forEach(ev => {
                     const el = document.createElement('div');
                     el.className = 'event-marker';
 
+                    // Get group color
                     const group = state.groups.find(g => g.id === ev.groupId);
                     const color = group ? group.color : '#333';
 
                     el.style.backgroundColor = color;
-                    // Only show title if special event, otherwise color block is enough or small tooltip
                     el.title = ev.title + (group ? ` (${group.name})` : '');
                     el.textContent = ev.isHoliday ? '!' : '';
 
                     el.setAttribute('draggable', 'true');
                     el.dataset.id = ev.id;
 
-                    // Interaction
+                    // Interaction: Click to edit/delete
                     el.onclick = (e) => {
                         e.stopPropagation();
-                        editEvent(ev.id); // Simple delete/edit confirm
+                        editEvent(ev.id);
                     };
 
-                    td.appendChild(el);
+                    eventContainer.appendChild(el);
                 });
             }
+
+            cellContent.appendChild(eventContainer);
+            td.appendChild(cellContent);
+
+            // Drop zone for dragging
+            td.ondragover = (e) => e.preventDefault();
+            td.ondrop = (e) => handleDrop(e); // Removing dateString arg, handleDrop uses dataset
 
             tr.appendChild(td);
         }
@@ -637,6 +663,11 @@ function getRhythmName(r) {
 
 function getDayName(num) {
     const days = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];
+    return days[parseInt(num)];
+}
+
+function getDayShortName(num) {
+    const days = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
     return days[parseInt(num)];
 }
 

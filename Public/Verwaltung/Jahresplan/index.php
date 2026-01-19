@@ -6,8 +6,8 @@ require_once dirname(__DIR__) . '/includes/Security.php';
 
 // Check if user is logged in (handled in header, but good practice to have here too if standalone)
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['is_admin']) || !$_SESSION['is_admin']) {
-header('Location: ' . BASE_URL . '/index.php');
-exit;
+    header('Location: ' . BASE_URL . '/index.php');
+    exit;
 }
 
 $pageTitle = "Jahresplanung Generator";
@@ -235,8 +235,8 @@ include dirname(__DIR__) . '/templates/header.php';
 </div>
 
 <!-- Libraries for export -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="<?php echo $ADMIN_ROOT; ?>/assets/js/libs/html2canvas.min.js"></script>
+<script src="<?php echo $ADMIN_ROOT; ?>/assets/js/libs/jspdf.umd.min.js"></script>
 
 <!-- Application Logic -->
 <script src="script.js"></script>

@@ -9,7 +9,8 @@
 
 #calendarContainer {
     font-family: 'Inter Tight', sans-serif;
-    background-color: white !important; /* Ensure white background for export */
+    background-color: white !important;
+    /* Ensure white background for export */
     color: #000 !important;
 }
 
@@ -21,20 +22,78 @@
 
 #annualPlanTable td {
     font-size: 0.8rem;
-    height: 30px; /* Uniform height */
+    height: 40px;
+    /* Increased height for content */
     padding: 2px;
-    vertical-align: middle;
+    vertical-align: top;
+    /* Align to top for date position */
+    position: relative;
+    min-width: 40px;
 }
 
 /* Day number column */
 #annualPlanTable td:first-child {
     font-weight: bold;
     background-color: #eee;
+    vertical-align: middle;
+    text-align: center;
 }
 
 /* Weekend styling */
 .weekend-row {
     background-color: #f0f0f0;
+}
+
+.cell-content {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.cell-date {
+    font-size: 0.65rem;
+    color: #888;
+    margin-bottom: 2px;
+    text-align: left;
+    padding-left: 2px;
+    line-height: 1;
+}
+
+.event-container {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    /* Side by side */
+    gap: 2px;
+    width: 100%;
+    min-height: 15px;
+}
+
+/* Event marker styles */
+.event-marker {
+    flex: 1;
+    /* Distribute space evenly */
+    border-radius: 2px;
+    color: white;
+    font-weight: bold;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 10px;
+    min-width: 5px;
+    /* Ensure visible even if many */
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.event-marker:hover {
+    opacity: 0.9;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+    position: relative;
+    /* specific hover effect */
 }
 
 /* Legend items */
@@ -50,41 +109,4 @@
     margin-right: 8px;
     border: 1px solid #ddd;
     border-radius: 4px;
-}
-
-/* Printable area adjustments */
-@media print {
-    body * {
-        visibility: hidden;
-    }
-    #calendarContainer, #calendarContainer * {
-        visibility: visible;
-    }
-    #calendarContainer {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-    }
-}
-
-/* Event marker styles */
-.event-marker {
-    display: block;
-    width: 100%;
-    height: 100%;
-    border-radius: 2px;
-    color: white; /* Default text color for contrast */
-    font-weight: bold;
-    text-shadow: 0 0 2px rgba(0,0,0,0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    font-size: 10px;
-}
-
-.event-marker:hover {
-    opacity: 0.9;
-    box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
 }
