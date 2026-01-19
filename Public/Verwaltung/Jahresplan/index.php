@@ -36,7 +36,7 @@ include dirname(__DIR__) . '/templates/header.php';
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" id="special-tab" data-bs-toggle="tab" data-bs-target="#special"
-                            type="button" role="tab">Spezial</button>
+                            type="button" role="tab">Termine</button>
                     </li>
                 </ul>
 
@@ -147,10 +147,14 @@ include dirname(__DIR__) . '/templates/header.php';
                                     hervorheben</label>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Gruppe (Optional)</label>
-                                <select class="form-select" id="specialGroupSelect">
-                                    <option value="">-- Keine / Allgemein --</option>
-                                </select>
+                                <label class="form-label">Gruppe (Optional) oder Eigene Farbe</label>
+                                <div class="input-group">
+                                    <select class="form-select" id="specialGroupSelect">
+                                        <option value="">-- Keine / Eigene Farbe --</option>
+                                    </select>
+                                    <input type="color" class="form-control form-control-color" id="specialColor"
+                                        value="#333333" title="Farbe wählen">
+                                </div>
                             </div>
                             <button type="submit" class="btn btn-warning w-100 text-dark">Termin Hinzufügen</button>
                         </form>

@@ -41,14 +41,105 @@ function init() {
         state.groups = [...defaultGroups];
     }
 
+    // Fetch Holidays (Hessen)
+    fetchHolidays(state.year);
+
     // Initial Render
     renderGroupsUI();
     renderGroupSelects();
     renderCalendar();
-
     // Event Listeners
     setupEventListeners();
 }
+
+// Holiday Data Store
+let holidays = [];
+
+function fetchHolidays(year) {
+    // Using feiertage-api.de
+    const url = `https://get.api-feiertage.de?years=${year}&states=he`;
+
+    // Since we need to avoid cross-origin issues or rely on external API availability...
+    // Let's use a static calculation for common holidays or a public JSON API if CORS permits.
+    // 'feiertage-api.de' is good but requires API key? No.
+    // 'ferien-api.de' is for vacations.
+
+    // Let's use a simple static calculator for German holidays (Gaussian Easter) for robustness without external deps.
+    holidays = calculateHolidays(year);
+    renderCalendar();
+}
+
+function calculateHolidays(year) {
+    // Easter calculation (Gaussian)
+    const a = year % 19;
+    const b = Math.floor(year / 100);
+    const c = year % 100;
+    const d = Math.floor(b / 4);
+    const e = b % 4;
+    const f = Math.floor((b + 8) / 25);
+    const g = Math.floor((b - f + 1) / 3);
+    const h = (19 * a + b - d - g + 15) % 30;
+    const i = Math.floor(c / 4);
+    const k = c % 4;
+    const l = (32 + 2 * e + 2 * i - h - k) % 7;
+    const m = Math.floor((a + 11 * h + 22 * l) / 451);
+
+    const easterMonth = Math.floor((h + l - 7 * m + 114) / 31) - 1;
+    const easterDay = ((h + l - 7 * m + 114) % 31) + 1;
+    const easterDate = new Date(year, easterMonth, easterDay);
+
+    const addDays = (date, days) => {
+        const result = new Date(date);
+        result.setDate(result.getDate() + days);
+        return result;
+    };
+
+    const list = [
+        { date: `${year}-01-01`, name: 'Neujahr' },
+        { date: `${year}-05-01`, name: 'Tag der Arbeit' },
+        { date: `${year}-10-03`, name: 'Tag der Deutschen Einheit' },
+        { date: `${year}-12-25`, name: '1. Weihnachtstag' },
+        { date: `${year}-12-26`, name: '2. Weihnachtstag' },
+
+        { date: formatDateISO(addDays(easterDate, -2)), name: 'Karfreitag' },
+        { date: formatDateISO(addDays(easterDate, 1)), name: 'Ostermontag' },
+        { date: formatDateISO(addDays(easterDate, 39)), name: 'Christi Himmelfahrt' },
+        { date: formatDateISO(addDays(easterDate, 50)), name: 'Pfingstmontag' },
+        { date: formatDateISO(addDays(easterDate, 60)), name: 'Fronleichnam' }
+    ];
+
+    return list;
+}
+
+function getVacations(year) {
+    // Static data for Hessen School Vacations (Ferien)
+    // Format: start (inclusive), end (inclusive), name
+    const data = {
+        2024: [
+            { start: '2024-01-01', end: '2024-01-13', name: 'Weihnachtsferien' },
+            { start: '2024-03-25', end: '2024-04-13', name: 'Osterferien' },
+            { start: '2024-07-15', end: '2024-08-23', name: 'Sommerferien' },
+            { start: '2024-10-14', end: '2024-10-25', name: 'Herbstferien' },
+            { start: '2024-12-23', end: '2024-12-31', name: 'Weihnachtsferien' }
+        ],
+        2025: [
+            { start: '2025-01-01', end: '2025-01-10', name: 'Weihnachtsferien' },
+            { start: '2025-04-07', end: '2025-04-21', name: 'Osterferien' },
+            { start: '2025-07-07', end: '2025-08-15', name: 'Sommerferien' },
+            { start: '2025-10-06', end: '2025-10-18', name: 'Herbstferien' },
+            { start: '2025-12-22', end: '2025-12-31', name: 'Weihnachtsferien' }
+        ],
+        2026: [
+            { start: '2026-01-01', end: '2026-01-09', name: 'Weihnachtsferien' },
+            { start: '2026-03-30', end: '2026-04-18', name: 'Osterferien' },
+            { start: '2026-06-29', end: '2026-08-07', name: 'Sommerferien' },
+            { start: '2026-10-05', end: '2026-10-17', name: 'Herbstferien' },
+            { start: '2026-12-23', end: '2026-12-31', name: 'Weihnachtsferien' }
+        ]
+    };
+    return data[year] || [];
+}
+
 
 function setupEventListeners() {
     // Config Panel
@@ -228,14 +319,50 @@ function renderCalendar() {
                 td.style.backgroundColor = '#f1f3f5';
             }
 
+            // Holiday highlighting
+            const holiday = holidays.find(h => h.date === dateString);
+            if (holiday) {
+                td.style.backgroundColor = '#fff0f0'; // Light red background for holidays
+                td.title = holiday.name;
+            }
+
+            // Vacation highlighting overrides/mixes?
+            // User requirement: "subtil markieren".
+            // Let's create a list of vacations for this year if not already
+            const vacations = getVacations(state.year);
+            const vac = vacations.find(v => {
+                // Check range. Strings are ISO "YYYY-MM-DD", comparable lexicographically
+                return dateString >= v.start && dateString <= v.end;
+            });
+
+            if (vac && !holiday) {
+                td.style.backgroundColor = '#f0f8ff'; // AliceBlue, very subtle blue for vacations
+                td.title = vac.name;
+            }
+            // If both vacation and holiday (e.g. Christmas), Holiday red takes precedence usually, 
+            // or we use a mix? Let's keep Holiday Red as it's a "Free" day off work typically.
+            // But we should append the vacation name to title
+            if (vac && holiday) {
+                td.title = `${holiday.name} (${vac.name})`;
+            }
+
+
             // Cell Content Container
             const cellContent = document.createElement('div');
             cellContent.className = 'cell-content';
 
-            // Date Label
+            // Date Label with Holiday Name / Vacation Indicator
             const dateLabel = document.createElement('div');
             dateLabel.className = 'cell-date';
-            dateLabel.textContent = dayName;
+
+            let infoText = '';
+            if (holiday) {
+                infoText = `<span style="color:#d63384; font-size:0.6rem;">${holiday.name}</span>`;
+            } else if (vac) {
+                infoText = `<span style="color:#0dcaf0; font-size:0.6rem;">(F)</span>`; // (F) for Ferien
+            }
+
+            dateLabel.innerHTML = `${dayName} ${infoText}`;
             cellContent.appendChild(dateLabel);
 
             // Container for Events
@@ -251,13 +378,26 @@ function renderCalendar() {
                     const el = document.createElement('div');
                     el.className = 'event-marker';
 
-                    // Get group color
-                    const group = state.groups.find(g => g.id === ev.groupId);
-                    const color = group ? group.color : '#333';
+                    // Get group color OR custom color
+                    let color = '#333';
+                    if (ev.groupId) {
+                        const group = state.groups.find(g => g.id === ev.groupId);
+                        if (group) color = group.color;
+                    } else if (ev.customColor) {
+                        color = ev.customColor;
+                    }
 
                     el.style.backgroundColor = color;
-                    el.title = ev.title + (group ? ` (${group.name})` : '');
+                    // Only show title if special event, otherwise color block is enough or small tooltip
+                    // For "Termine" (special), we probably want to see the title?
+                    // Let's modify: Always show short title or icon? 
+                    // User said "eigene termine...".
+                    // Let's show truncated title if space permits.
+                    el.title = ev.title;
                     el.textContent = ev.isHoliday ? '!' : '';
+
+                    // If it's a "Termin" (special), maybe show a dot or small text?
+                    // For now, keep it simple blocks.
 
                     el.setAttribute('draggable', 'true');
                     el.dataset.id = ev.id;
@@ -413,34 +553,61 @@ function getNextSeriesDate(currentDate, serie) {
     } else if (rhythm === 'biweekly') {
         next.setDate(next.getDate() + 14);
     } else if (rhythm === 'monthly') {
-        // Monthly by weekday (e.g. "Every 1st Monday")
-        // NOTE: The user selected 'weekday' in the form.
-        // Ideally we should adhere to "Nth instance of Weekday in Month".
-        // But for "monthly" simple, assume same day-of-month or 4 weeks?
-        // User request says "alle 4 wochen montags" -> That is actually 4-weekly, not monthly.
-        // But let's assume "monthly" option means calendar month. 
-        // For fire departments, often it is "First Monday of Month".
-        // Let's implement: Add 1 month, then set to Nth weekday? 
-        // No, simplest is usually: Add 28 days (4 weeks). 
-        // "Alle 4 Wochen" != "Monatlich". 
-        // My UI has "Weekly", "BiWeekly", "Monthly".
-        // Let's treat 'monthly' as "+1 Month" for date-based, or special logic for day-based.
-        // Given the inputs 'Rhythm' + 'Start Date', we can just follow the cycle.
-        // If "Alle 4 Wochen" is desired, I should have added that option. 
-        // I'll stick to basic interpretation:
-        // Weekly = +7
-        // Biweekly = +14
-        // Monthly (Date) = same day next month
+        // "Monatlich (Wochentag)" -> Same Nth weekday next month
+        // 1. Determine which occurrence of the weekday the current date represents
+        // Actually, we should stick to the SERIES defined pattern.
+        // It's safer to calculate from the StartDate every time or preserve "Nth" info.
+        // But since we are iterating step-by-step:
 
-        next.setMonth(next.getMonth() + 1);
-        // If date was 31st and next month has 30, JS auto-rolls to 1st. Fix?
-        // Let's assume standard JS behavior is acceptable or user configures start date.
+        let targetMonth = next.getMonth() + 1; // Next month
+        let targetYear = next.getFullYear();
+        if (targetMonth > 11) {
+            targetMonth = 0;
+            targetYear++;
+        }
+
+        // Find Nth occurrence of weekday in target month
+        // We know 'serie.weekday' is the target day (0-6)
+        // We need to know 'N' from the start date?
+        // Let's calculate 'N' from the start date ONCE.
+        if (!serie.nthOccurrence) {
+            serie.nthOccurrence = getNthOccurrence(new Date(serie.startDate));
+        }
+
+        next = getNthWeekdayOfMonth(targetYear, targetMonth, serie.weekday, serie.nthOccurrence);
 
     } else if (rhythm === 'monthly_date') {
         next.setMonth(next.getMonth() + 1);
     }
 
     return next;
+}
+
+function getNthOccurrence(date) {
+    // Returns 1 for 1st instance, 2 for 2nd... 5 for 5th (or last?)
+    // Simple calculation: (Day - 1) / 7 + 1
+    return Math.ceil(date.getDate() / 7);
+}
+
+function getNthWeekdayOfMonth(year, month, weekday, n) {
+    let date = new Date(year, month, 1);
+    // Find first instance of weekday
+    while (date.getDay() != weekday) {
+        date.setDate(date.getDate() + 1);
+    }
+    // Now add (n-1) weeks
+    date.setDate(date.getDate() + (n - 1) * 7);
+
+    // Check if we overflowed the month (e.g. asking for 5th Monday but there are only 4)
+    // If overflow, what to do? User requirement ambiguous. Standard is usually "last" or skip?
+    // Let's clip to previous week if overflow? Or skip month?
+    // Usually if 5th doesn't exist, it might mean "Last".
+    if (date.getMonth() !== month) {
+        // Fallback: Return the 4th? Or simply skip?
+        // Let's return the last available instance for now
+        date.setDate(date.getDate() - 7);
+    }
+    return date;
 }
 
 function isDateInWinter(date, startISO, endISO) {
@@ -586,26 +753,28 @@ function addSpecialEvent(e) {
     const date = document.getElementById('specialDate').value;
     const isHoliday = document.getElementById('isHoliday').checked;
     const groupId = document.getElementById('specialGroupSelect').value;
+    const customColor = document.getElementById('specialColor').value;
 
     if (!title || !date) return;
 
-    // Add to specific special events config list
+    // Logic: If groupId is chosen, use that. Else use customColor.
+    // Store both for flexibility
+
     state.specialEvents.push({
         title,
         date,
         isHoliday,
-        groupId
+        groupId,
+        customColor: !groupId ? customColor : null
     });
 
-    // Also Immediately add to generated events if we want to see it instantly without 'Generate'
-    // But 'Generate' rewrites everything. 
-    // Best UX: Add to generated events immediately if generated events exist.
     if (state.generatedEvents.length > 0) {
         state.generatedEvents.push({
             id: 'spec_' + Date.now(),
             date,
             title,
             groupId,
+            customColor: !groupId ? customColor : null,
             type: 'special',
             isHoliday
         });
