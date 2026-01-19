@@ -36,6 +36,7 @@ if ($verwaltungPos !== false) {
 ?>
 <!DOCTYPE html>
 <html lang="de">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -54,6 +55,7 @@ if ($verwaltungPos !== false) {
     <!-- CKEditor -->
     <script src="/assets/ckeditor/ckeditor.js"></script>
 </head>
+
 <body>
     <header>
         <nav class="navbar navbar-expand-lg navbar-dark">
@@ -61,7 +63,8 @@ if ($verwaltungPos !== false) {
                 <a class="navbar-brand" href="<?php echo $ADMIN_ROOT; ?>/dashboard.php">
                     <i class="fas fa-fire me-2"></i>Verwaltungssystem
                 </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
@@ -72,18 +75,27 @@ if ($verwaltungPos !== false) {
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link <?php echo basename($_SERVER['PHP_SELF']) === 'dashboard.php' ? 'active' : ''; ?>" href="<?php echo $ADMIN_ROOT; ?>/dashboard.php">
+                            <a class="nav-link <?php echo basename($_SERVER['PHP_SELF']) === 'dashboard.php' ? 'active' : ''; ?>"
+                                href="<?php echo $ADMIN_ROOT; ?>/dashboard.php">
                                 <i class="fas fa-tachometer-alt me-1"></i> Dashboard
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link <?php echo strpos($_SERVER['REQUEST_URI'], '/einsatz/') !== false ? 'active' : ''; ?>" href="<?php echo $ADMIN_ROOT; ?>/einsatz/list.php">
+                            <a class="nav-link <?php echo strpos($_SERVER['REQUEST_URI'], '/einsatz/') !== false ? 'active' : ''; ?>"
+                                href="<?php echo $ADMIN_ROOT; ?>/einsatz/list.php">
                                 <i class="fas fa-fire-extinguisher me-1"></i> Einsätze
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link <?php echo strpos($_SERVER['REQUEST_URI'], '/neuigkeiten/') !== false ? 'active' : ''; ?>" href="<?php echo $ADMIN_ROOT; ?>/neuigkeiten/list.php">
+                            <a class="nav-link <?php echo strpos($_SERVER['REQUEST_URI'], '/neuigkeiten/') !== false ? 'active' : ''; ?>"
+                                href="<?php echo $ADMIN_ROOT; ?>/neuigkeiten/list.php">
                                 <i class="fas fa-newspaper me-1"></i> Neuigkeiten
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link <?php echo strpos($_SERVER['REQUEST_URI'], '/Jahresplan/') !== false ? 'active' : ''; ?>"
+                                href="<?php echo $ADMIN_ROOT; ?>/Jahresplan/index.php">
+                                <i class="fas fa-calendar-alt me-1"></i> Jahresplanung
                             </a>
                         </li>
                         <li class="nav-item">
@@ -92,30 +104,54 @@ if ($verwaltungPos !== false) {
                             </a>
                         </li>
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle <?php echo (strpos($_SERVER['REQUEST_URI'], '/auth-schluessel/') !== false || strpos($_SERVER['REQUEST_URI'], '/users/') !== false) ? 'active' : ''; ?>" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <a class="nav-link dropdown-toggle <?php echo (strpos($_SERVER['REQUEST_URI'], '/auth-schluessel/') !== false || strpos($_SERVER['REQUEST_URI'], '/users/') !== false) ? 'active' : ''; ?>"
+                                href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">
                                 <i class="fas fa-cog me-1"></i> Verwaltung
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="adminDropdown">
-                                <li><h6 class="dropdown-header"><i class="fas fa-users me-1"></i> Benutzer</h6></li>
-                                <li><a class="dropdown-item" href="<?php echo $ADMIN_ROOT; ?>/users/list.php">Alle Benutzer</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><h6 class="dropdown-header"><i class="fas fa-key me-1"></i> Auth-Schlüssel</h6></li>
-                                <li><a class="dropdown-item" href="<?php echo $ADMIN_ROOT; ?>/auth-schluessel/list.php">Alle Schlüssel</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><h6 class="dropdown-header"><i class="fas fa-shield-alt me-1"></i> Benachrichtigungen</h6></li>
-                                <li><a class="dropdown-item" href="<?php echo $ADMIN_ROOT; ?>/datenschutz-benachrichtigung.php">Datenschutz-Update</a></li>
+                                <li>
+                                    <h6 class="dropdown-header"><i class="fas fa-users me-1"></i> Benutzer</h6>
+                                </li>
+                                <li><a class="dropdown-item" href="<?php echo $ADMIN_ROOT; ?>/users/list.php">Alle
+                                        Benutzer</a></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li>
+                                    <h6 class="dropdown-header"><i class="fas fa-key me-1"></i> Auth-Schlüssel</h6>
+                                </li>
+                                <li><a class="dropdown-item"
+                                        href="<?php echo $ADMIN_ROOT; ?>/auth-schluessel/list.php">Alle Schlüssel</a>
+                                </li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li>
+                                    <h6 class="dropdown-header"><i class="fas fa-shield-alt me-1"></i>
+                                        Benachrichtigungen</h6>
+                                </li>
+                                <li><a class="dropdown-item"
+                                        href="<?php echo $ADMIN_ROOT; ?>/datenschutz-benachrichtigung.php">Datenschutz-Update</a>
+                                </li>
                             </ul>
                         </li>
                     </ul>
                     <ul class="navbar-nav">
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-user-circle me-1"></i> <?php echo htmlspecialchars($_SESSION['first_name'] . ' ' . $_SESSION['last_name']); ?>
+                            <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user-circle me-1"></i>
+                                <?php echo htmlspecialchars($_SESSION['first_name'] . ' ' . $_SESSION['last_name']); ?>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
-                                <li><a class="dropdown-item" href="<?php echo $ADMIN_ROOT; ?>/users/profile.php"><i class="fas fa-id-card me-1"></i> Profil</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="<?php echo $ADMIN_ROOT; ?>/auth/logout.php"><i class="fas fa-sign-out-alt me-1"></i> Abmelden</a></li>
+                                <li><a class="dropdown-item" href="<?php echo $ADMIN_ROOT; ?>/users/profile.php"><i
+                                            class="fas fa-id-card me-1"></i> Profil</a></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li><a class="dropdown-item" href="<?php echo $ADMIN_ROOT; ?>/auth/logout.php"><i
+                                            class="fas fa-sign-out-alt me-1"></i> Abmelden</a></li>
                             </ul>
                         </li>
                     </ul>
@@ -123,28 +159,28 @@ if ($verwaltungPos !== false) {
             </div>
         </nav>
     </header>
-    
+
     <main class="container mt-4">
         <?php if (isset($_SESSION['error'])): ?>
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
                 <i class="fas fa-exclamation-circle me-2"></i>
-                <?php 
-                    echo $_SESSION['error']; 
-                    unset($_SESSION['error']);
+                <?php
+                echo $_SESSION['error'];
+                unset($_SESSION['error']);
                 ?>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         <?php endif; ?>
-        
+
         <?php if (isset($_SESSION['success'])): ?>
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 <i class="fas fa-check-circle me-2"></i>
-                <?php 
-                    echo $_SESSION['success']; 
-                    unset($_SESSION['success']);
+                <?php
+                echo $_SESSION['success'];
+                unset($_SESSION['success']);
                 ?>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         <?php endif; ?>
-        
-        <h1 class="mb-4 text-white text-shadow"><?php echo $pageTitle ?? 'Verwaltungssystem'; ?></h1> 
+
+        <h1 class="mb-4 text-white text-shadow"><?php echo $pageTitle ?? 'Verwaltungssystem'; ?></h1>

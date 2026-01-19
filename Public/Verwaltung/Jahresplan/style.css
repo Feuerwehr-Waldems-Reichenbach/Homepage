@@ -1,0 +1,90 @@
+/* Custom styles for Jahresplan */
+
+.glass-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+}
+
+#calendarContainer {
+    font-family: 'Inter Tight', sans-serif;
+    background-color: white !important; /* Ensure white background for export */
+    color: #000 !important;
+}
+
+#annualPlanTable th {
+    background-color: #f8f9fa;
+    font-weight: 700;
+    font-size: 0.85rem;
+}
+
+#annualPlanTable td {
+    font-size: 0.8rem;
+    height: 30px; /* Uniform height */
+    padding: 2px;
+    vertical-align: middle;
+}
+
+/* Day number column */
+#annualPlanTable td:first-child {
+    font-weight: bold;
+    background-color: #eee;
+}
+
+/* Weekend styling */
+.weekend-row {
+    background-color: #f0f0f0;
+}
+
+/* Legend items */
+.legend-item {
+    display: flex;
+    align-items: center;
+    font-size: 0.85rem;
+}
+
+.legend-color {
+    width: 20px;
+    height: 20px;
+    margin-right: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+/* Printable area adjustments */
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    #calendarContainer, #calendarContainer * {
+        visibility: visible;
+    }
+    #calendarContainer {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+    }
+}
+
+/* Event marker styles */
+.event-marker {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 2px;
+    color: white; /* Default text color for contrast */
+    font-weight: bold;
+    text-shadow: 0 0 2px rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 10px;
+}
+
+.event-marker:hover {
+    opacity: 0.9;
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+}
