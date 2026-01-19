@@ -1,12 +1,13 @@
 <?php
 // Include required files
-require_once dirname(__DIR__, 2) . '/includes/config.php';
+require_once dirname(__DIR__, 3) . '/Private/Database/Database.php';
+require_once dirname(__DIR__) . '/includes/config.php';
 require_once dirname(__DIR__) . '/includes/Security.php';
 
 // Check if user is logged in (handled in header, but good practice to have here too if standalone)
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['is_admin']) || !$_SESSION['is_admin']) {
-    header('Location: ' . BASE_URL . '/index.php');
-    exit;
+header('Location: ' . BASE_URL . '/index.php');
+exit;
 }
 
 $pageTitle = "Jahresplanung Generator";
