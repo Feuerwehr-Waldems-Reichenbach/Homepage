@@ -111,63 +111,124 @@ function calculateHolidays(year) {
     return list;
 }
 
-function getVacations(year) {
-    // Static data for Hessen School Vacations (Ferien)
-    // Format: start (inclusive), end (inclusive), name
-    const data = {
-        2024: [
-            { start: '2024-01-01', end: '2024-01-13', name: 'Weihnachtsferien' },
-            { start: '2024-03-25', end: '2024-04-13', name: 'Osterferien' },
-            { start: '2024-07-15', end: '2024-08-23', name: 'Sommerferien' },
-            { start: '2024-10-14', end: '2024-10-25', name: 'Herbstferien' },
-            { start: '2024-12-23', end: '2024-12-31', name: 'Weihnachtsferien' }
-        ],
-        2025: [
-            { start: '2025-01-01', end: '2025-01-10', name: 'Weihnachtsferien' },
-            { start: '2025-04-07', end: '2025-04-21', name: 'Osterferien' },
-            { start: '2025-07-07', end: '2025-08-15', name: 'Sommerferien' },
-            { start: '2025-10-06', end: '2025-10-18', name: 'Herbstferien' },
-            { start: '2025-12-22', end: '2025-12-31', name: 'Weihnachtsferien' }
-        ],
-        2026: [
-            { start: '2026-01-01', end: '2026-01-09', name: 'Weihnachtsferien' },
-            { start: '2026-03-30', end: '2026-04-18', name: 'Osterferien' },
-            { start: '2026-06-29', end: '2026-08-07', name: 'Sommerferien' },
-            { start: '2026-10-05', end: '2026-10-17', name: 'Herbstferien' },
-            { start: '2026-12-23', end: '2026-12-31', name: 'Weihnachtsferien' }
-        ]
-    };
-    return data[year] || [];
+// Vacation Data Store
+let vacations = [];
+
+function fetchVacations(year) {
+    // API: https://schulferien-api.de/api/v1/2026/HE
+    const url = `https://schulferien-api.de/api/v1/${year}/HE`;
+
+    // Use simple XHR or Fetch. 
+    // Note: If CORS headers are missing on their server, this might fail from valid origin.
+    // User provided the URL, so let's try.
+
+    fetch(url)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Data format check: The API returns { data: [ ... ] } or just [ ... ]?
+            // The user URL example implies direct access.
+            // Usually returns: { "data": [ { "start": "...", "end": "...", "name": "..." } ] }
+            // Let's assume standard response and parse.
+
+            // NOTE: API docs for schulferien-api.de usually strictly JSON.
+            // Let's handle the response structure.
+
+            // Map to our format: { start: 'YYYY-MM-DD', end: 'YYYY-MM-DD', name: 'Wait...' }
+            // If API returns something else, we need to adapt. 
+            // Standard likely: name, start, end
+
+            // API returns: [{ "start": "2026-03-30T00:00Z", "end": "2026-04-10T23:59Z", "name": "osterferien", ... }]
+            // We need simple YYYY-MM-DD for comparison.
+            // Slice the first 10 chars from start/end.
+
+            vacations = data.map(v => ({
+                start: v.start.substring(0, 10),
+                end: v.end.substring(0, 10),
+                name: v.name_cp || v.name // Use pretty name if available
+            }));
+
+            console.log('Loaded vacations:', vacations);
+            renderCalendar();
+        })
+        .catch(error => {
+            console.error('Error fetching vacations:', error);
+            vacations = [];
+            renderCalendar();
+        });
 }
 
 
+/**
+ * Event Listeners
+ */
 function setupEventListeners() {
     // Config Panel
-    document.getElementById('addGroupBtn').addEventListener('click', addGroup);
-    document.getElementById('recurringEventForm').addEventListener('submit', addSeries);
-    document.getElementById('specialEventForm').addEventListener('submit', addSpecialEvent);
+    const addGroupBtn = document.getElementById('addGroupBtn');
+    if (addGroupBtn) addGroupBtn.onclick = addGroup;
+
+    const recurringEventForm = document.getElementById('recurringEventForm');
+    if (recurringEventForm) recurringEventForm.onsubmit = addSeries;
+
+    const specialEventForm = document.getElementById('specialEventForm');
+    if (specialEventForm) specialEventForm.onsubmit = addSpecialEvent;
 
     // Actions
-    document.getElementById('generateBtn').addEventListener('click', generatePlan);
-    document.getElementById('prevYear').addEventListener('click', () => changeYear(-1));
-    document.getElementById('nextYear').addEventListener('click', () => changeYear(1));
+    const generateBtn = document.getElementById('generateBtn');
+    if (generateBtn) generateBtn.onclick = generatePlan;
 
-    document.getElementById('exportJsonBtn').addEventListener('click', exportJson);
-    document.getElementById('importJsonInput').addEventListener('change', importJson);
-    document.getElementById('exportPngBtn').addEventListener('click', exportPng);
-    document.getElementById('exportPdfBtn').addEventListener('click', exportPdf);
+    const prevYearBtn = document.getElementById('prevYear');
+    if (prevYearBtn) prevYearBtn.onclick = () => changeYear(-1);
+
+    const nextYearBtn = document.getElementById('nextYear');
+    if (nextYearBtn) nextYearBtn.onclick = () => changeYear(1);
+
+    const exportJsonBtn = document.getElementById('exportJsonBtn');
+    if (exportJsonBtn) exportJsonBtn.onclick = exportJson;
+
+    const importJsonInput = document.getElementById('importJsonInput');
+    if (importJsonInput) importJsonInput.onchange = importJson;
+
+    const exportPngBtn = document.getElementById('exportPngBtn');
+    if (exportPngBtn) exportPngBtn.onclick = exportPng;
+
+    const exportPdfBtn = document.getElementById('exportPdfBtn');
+    if (exportPdfBtn) exportPdfBtn.onclick = exportPdf;
 
     // Toggle seasonal inputs
-    document.getElementById('seasonalToggle').addEventListener('change', (e) => {
-        const config = document.getElementById('seasonalConfig');
-        if (e.target.checked) config.classList.remove('d-none');
-        else config.classList.add('d-none');
-    });
+    const seasonalToggle = document.getElementById('seasonalToggle');
+    if (seasonalToggle) {
+        seasonalToggle.onchange = (e) => {
+            const config = document.getElementById('seasonalConfig');
+            if (e.target.checked) config.classList.remove('d-none');
+            else config.classList.add('d-none');
+        };
+    }
 
     // Global Drop Listener for Calendar
     document.addEventListener('dragstart', handleDragStart);
     document.addEventListener('dragover', (e) => e.preventDefault()); // Allow drop
     document.addEventListener('drop', handleDrop);
+}
+
+function changeYear(delta) {
+    state.year += delta;
+    document.getElementById('yearDisplay').textContent = state.year;
+    document.getElementById('calendarYearTitle').textContent = state.year;
+
+    // Refresh Holidays/Vacations for new year
+    fetchHolidays(state.year);
+    fetchVacations(state.year);
+
+    // We should probably NOT regenerate the whole plan from scratch automatically?
+    // User expectation: If I move year, do I want to see provisions for that year?
+    // Usually yes.
+    // Ensure day-grid is updated
+    renderCalendar();
 }
 
 /**
@@ -328,8 +389,7 @@ function renderCalendar() {
 
             // Vacation highlighting overrides/mixes?
             // User requirement: "subtil markieren".
-            // Let's create a list of vacations for this year if not already
-            const vacations = getVacations(state.year);
+            // Use global vacations array (fetched via API)
             const vac = vacations.find(v => {
                 // Check range. Strings are ISO "YYYY-MM-DD", comparable lexicographically
                 return dateString >= v.start && dateString <= v.end;

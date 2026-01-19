@@ -14,8 +14,21 @@
     color: #000 !important;
 }
 
+#annualPlanTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    table-layout: fixed;
+    /* Ensures equal column widths */
+}
+
 #annualPlanTable th {
     background-color: #f8f9fa;
+    text-align: center;
+    padding: 8px;
+    border: 1px solid #dee2e6;
+    width: 8.33%;
+    /* 100% / 12 months roughly, plus small first col override below */
     font-weight: 700;
     font-size: 0.85rem;
 }
