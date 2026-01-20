@@ -43,6 +43,7 @@ function init() {
 
     // Fetch Holidays (Hessen)
     fetchHolidays(state.year);
+    fetchVacations(state.year);
 
     // Initial Render
     renderGroupsUI();
@@ -130,10 +131,8 @@ function fetchVacations(year) {
             return response.json();
         })
         .then(data => {
-            // Data format check: The API returns { data: [ ... ] } or just [ ... ]?
-            // The user URL example implies direct access.
-            // Usually returns: { "data": [ { "start": "...", "end": "...", "name": "..." } ] }
-            // Let's assume standard response and parse.
+            // Data format check: The API returns [ ... ] in practice, but some docs
+            // show { data: [ ... ] }. Normalize both.
 
             // NOTE: API docs for schulferien-api.de usually strictly JSON.
             // Let's handle the response structure.
@@ -146,7 +145,12 @@ function fetchVacations(year) {
             // We need simple YYYY-MM-DD for comparison.
             // Slice the first 10 chars from start/end.
 
-            vacations = data.map(v => ({
+            const items = Array.isArray(data) ? data : data?.data;
+            if (!Array.isArray(items)) {
+                throw new Error('Unexpected vacation data format');
+            }
+
+            vacations = items.map(v => ({
                 start: v.start.substring(0, 10),
                 end: v.end.substring(0, 10),
                 name: v.name_cp || v.name // Use pretty name if available
@@ -950,4 +954,3 @@ function exportPdf() {
         pdf.save('jahresplan_' + state.year + '.pdf');
     });
 }
-
