@@ -199,7 +199,7 @@ include dirname(__DIR__) . '/templates/header.php';
             </div>
             <div class="card-body p-0 overflow-auto bg-white" style="min-height: 600px;">
                 <div id="calendarContainer" class="p-4 bg-white text-dark">
-                    <h2 class="text-center mb-4 fw-bold">Jahresdienstplan Feuerwehr Reichenbach <span
+                    <h2 class="text-center mb-4 fw-bold">Jahreskalender Feuerwehr Reichenbach <span
                             id="calendarYearTitle">2026</span></h2>
 
                     <div class="table-responsive">
