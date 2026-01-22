@@ -10,7 +10,7 @@ class Security {
      */
     public static function setSecurityHeaders() {
         // Set Content Security Policy
-        header("Content-Security-Policy: default-src 'self'; connect-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:;");
+        header("Content-Security-Policy: default-src 'self'; connect-src 'self' https://schulferien-api.de; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:;");
         
         // Prevent MIME type sniffing
         header("X-Content-Type-Options: nosniff");
