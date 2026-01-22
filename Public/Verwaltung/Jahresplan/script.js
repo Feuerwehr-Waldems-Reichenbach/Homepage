@@ -14,10 +14,10 @@ let state = {
 // Default Groups (Example)
 const defaultGroups = [
     { id: 'g1', name: 'Einsatzabteilung', color: '#ff0000' },
-    { id: 'g2', name: 'Jugendfeuerwehr', color: '#0000ff' },
-    { id: 'g3', name: 'Kinderfeuerwehr', color: '#ffa500' },
-    { id: 'g4', name: 'Voraushelfer', color: '#008000' },
-    { id: 'g5', name: 'Führungskräfte', color: '#800080' }
+    { id: 'g2', name: 'Voraushelfer', color: '#0000ff' },
+    { id: 'g3', name: 'Gruppen- / Zugführer', color: '#008000' },
+    { id: 'g4', name: 'Jugendfeuerwehr', color: '#ff7500' },
+    { id: 'g5', name: 'Kinderfeuerwehr', color: '#f0d500' }
 ];
 
 document.addEventListener('DOMContentLoaded', () => {
