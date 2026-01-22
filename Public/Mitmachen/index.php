@@ -6,7 +6,7 @@ $page = new PageBuilder(
     title: 'Mach mit | Feuerwehr Reichenbach',
     description: 'Engagiere dich bei der Freiwilligen Feuerwehr Reichenbach! Informiere dich über Möglichkeiten in der Einsatzabteilung, Jugend- oder Kinderfeuerwehr und lade unseren Übungsplan herunter.',
     keywords: 'Mitmachen Feuerwehr, Feuerwehr Reichenbach beitreten, Ehrenamt Waldems, Freiwillige Feuerwehr Waldems, Einsatzabteilung Mitmachen, Jugendfeuerwehr Mitmachen, Kinderfeuerwehr Mitmachen, Feuerwehr Training Waldems, Übungsplan Feuerwehr, Reichenbach Waldems',
-    canonicalUrl: 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],  
+    canonicalUrl: 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
 );
 
 // Füge den Fullscreen Hero Abschnitt hinzu
@@ -59,32 +59,85 @@ $page->addContent($page->renderTextArticle(
     text: 'Wenn du neugierig bist und mehr über unsere Arbeit erfahren möchtest, bist du herzlich eingeladen, zu einem unserer Termine vorbeizukommen. Ob Einsatzabteilung, Jugendfeuerwehr oder Kinderfeuerwehr – schau einfach vorbei, lerne uns kennen und finde heraus, wie spannend und erfüllend das Engagement bei der Feuerwehr sein kann!',
 ));
 
-// Füge den Bildabschnitt hinzu
-$page->addContent($page->renderImageSection(
-    id: 'image04-1l',
-    cidSuffix: 'Inage-Full-Size',
-    imageSrc: '/assets/files/Jahreskalender Feuerwehr Reichenbach.jpg',
-    imageAlt: 'Kalender'
-));
+// Füge den Interaktiven Jahresplan hinzu
+$page->addContent(<<<HTML
+<section id="calendar-section" class="py-5 bg-light">
+    <div class="container" style="max-width: 95%;">
+        <div class="row justify-content-center">
+            <div class="col-12">
+                <div class="text-center mb-4">
+                    <h2 class="fw-bold">Unser Übungsplan</h2>
+                    <p class="text-muted">Hier findest du unseren aktuellen Jahresdienstplan. Du kannst ihn interaktiv ansehen oder herunterladen.</p>
+                </div>
+                
+                <!-- Calendar Container (Similar to Admin) -->
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                        <span class="fw-bold"><i class="fas fa-calendar-alt me-2"></i>Dienstplan <span id="yearDisplay"></span></span>
+                        <div class="btn-group">
+                            <button class="btn btn-sm btn-outline-light" id="exportPngBtn"><i class="fas fa-file-image me-1"></i> PNG</button>
+                            <button class="btn btn-sm btn-outline-light" id="exportPdfBtn"><i class="fas fa-file-pdf me-1"></i> PDF</button>
+                        </div>
+                    </div>
+                    <div class="card-body p-0 bg-white overflow-auto" style="min-height: 600px;">
+                        <!-- The Calendar DOM Structure -->
+                        <div id="calendarContainer" class="p-4 bg-white text-dark">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <h2 class="text-center fw-bold m-0 flex-grow-1">Jahresdienstplan Feuerwehr Reichenbach <span id="calendarYearTitle"></span></h2>
+                            </div>
 
-// Füge den Header mit Download-Buttons hinzu
-$page->addContent($page->renderDownloadHeaderWithButtons(
-    id: 'header14-1n',
-    cidSuffix: 'Download-header-With-Buttons',
-    title: 'Hier gibt\'s unseren Übungsplan',
-    buttons: [
-        [
-            'label' => 'PDF herunterladen',
-            'href' => '/assets/files/Jahreskalender Feuerwehr Reichenbach final.pdf',
-            'class' => 'btn-primary',
-        ],
-        [
-            'label' => 'Bild herunterladen',
-            'href' => '/assets/files/Jahreskalender Feuerwehr Reichenbach.jpg',
-            'class' => 'btn-primary',
-        ],
-    ]
-));
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-sm text-center align-middle" id="annualPlanTable">
+                                    <thead>
+                                        <tr id="monthHeaderRow">
+                                            <!-- JS generated -->
+                                        </tr>
+                                    </thead>
+                                    <tbody id="calendarBody">
+                                        <!-- JS generated -->
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="mt-4 row" id="calendarFooter">
+                                <div class="col-md-3">
+                                    <h5>Legende</h5>
+                                    <div id="legendContainer"></div>
+                                </div>
+                                <div class="col-md-3">
+                                    <h5>Termine</h5>
+                                    <ul class="list-unstyled small" id="specialEventsFooter"></ul>
+                                </div>
+                                <div class="col-md-3">
+                                    <h5>Ferien</h5>
+                                    <ul class="list-unstyled small" id="vacationsFooter"></ul>
+                                </div>
+                                <div class="col-md-3">
+                                    <h5>Feiertage</h5>
+                                    <ul class="list-unstyled small" id="holidaysFooter"></ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Flag for Read-Only Mode -->
+<script>
+    window.calendarReadOnly = true;
+</script>
+<!-- Dependencies -->
+<script src="/assets/js/libs/html2canvas.min.js"></script>
+<script src="/assets/js/libs/jspdf.umd.min.js"></script>
+<!-- Shared Logic -->
+<script src="/assets/js/calendar.js"></script>
+<!-- CSS for Calendar -->
+<link rel="stylesheet" href="/Verwaltung/Jahresplan/style.css">
+HTML
+);
 
 // Rendere die vollständige Seite inklusive Head, Includes und Scripts
 echo $page->renderFullPage();
