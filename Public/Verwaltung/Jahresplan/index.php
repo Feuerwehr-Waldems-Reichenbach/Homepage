@@ -39,6 +39,10 @@ include dirname(__DIR__) . '/templates/header.php';
                         <button class="nav-link" id="special-tab" data-bs-toggle="tab" data-bs-target="#special"
                             type="button" role="tab">Termine</button>
                     </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="manual-tab" data-bs-toggle="tab" data-bs-target="#manual"
+                            type="button" role="tab">Abweichungen</button>
+                    </li>
                 </ul>
 
                 <div class="tab-content mt-3" id="configTabsContent">
@@ -159,7 +163,33 @@ include dirname(__DIR__) . '/templates/header.php';
                             </div>
                             <button type="submit" class="btn btn-warning w-100 text-dark">Termin Hinzufügen</button>
                         </form>
-                        <div id="specialList" class="list-group mt-3 small"></div>
+                        <hr>
+                        <h6>Manuelle Termine / Feiertage</h6>
+                        <div id="specialList" class="list-group small"></div>
+                    </div>
+
+                    <!-- Manual Group Events Tab -->
+                    <div class="tab-pane fade" id="manual" role="tabpanel">
+                        <div class="mb-3">
+                            <label class="form-label">Neuer Zusatztermin / Abweichung</label>
+                            <p class="small text-muted">Hier können einzelne Termine einer Gruppe hinzugefügt
+                                werden, die nicht in den Serienrhythmus passen. Diese erscheinen nicht in der
+                                allgemeinen Terminliste im Footer.</p>
+                            <div class="mb-2">
+                                <label class="small text-muted">Gruppe</label>
+                                <select class="form-select mb-2" id="manualEventGroupSelect"></select>
+
+                                <label class="small text-muted">Datum</label>
+                                <input type="date" class="form-control mb-2" id="manualEventDate">
+
+                                <button class="btn btn-success w-100" id="addManualEventBtn"><i
+                                        class="fas fa-plus me-2"></i>Hinzufügen</button>
+                            </div>
+                        </div>
+                        <label class="form-label mt-3">Geplante Zusatztermine</label>
+                        <div id="manualEventsList" class="list-group" style="max-height: 300px; overflow-y: auto;">
+                            <!-- Items added dynamically -->
+                        </div>
                     </div>
                 </div>
             </div>

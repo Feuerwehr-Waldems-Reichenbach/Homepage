@@ -92,7 +92,7 @@
                 backgroundColor: '#ffffff'
             }).then(canvas => {
                 const link = document.createElement('a');
-                link.download = `Feuerwehr_Jahresplan_${state.year}.png`;
+                link.download = `Feuerwehr_Reichenbach_Jahresplan_${state.year}.png`;
                 link.href = canvas.toDataURL('image/png');
                 link.click();
             }).catch(err => console.error(err));
@@ -117,7 +117,7 @@
                 const pageHeight = 210;
                 
                 pdf.addImage(imgData, 'PNG', 0, 0, pageWidth, pageHeight);
-                pdf.save(`Feuerwehr_Jahresplan_${state.year}.pdf`);
+                pdf.save(`Feuerwehr_Reichenbach_Jahresplan_${state.year}.pdf`);
             }).catch(err => console.error(err));
         }
     };

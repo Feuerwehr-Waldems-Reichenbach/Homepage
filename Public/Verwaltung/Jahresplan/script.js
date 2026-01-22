@@ -7,6 +7,8 @@ let state = {
     groups: [],
     series: [], // Configuration for recurring events
     specialEvents: [], // Configuration for special events
+    manualEvents: [], // Single group events (Abweichende Termine)
+    hiddenEvents: [], // Keys of auto-generated events to suppress
     generatedEvents: [], // The actual calculated events {date: 'YYYY-MM-DD', groupId: '...', title: '...', id: '...'}
     year: new Date().getFullYear(),
 };
@@ -36,7 +38,11 @@ function init() {
 
 
     // Load presets or empty state
-    // In a real app, this might come from local storage or DB
+    if (!state.groups) state.groups = [];
+    if (!state.series) state.series = [];
+    if (!state.specialEvents) state.specialEvents = [];
+    if (!state.manualEvents) state.manualEvents = [];
+
     if (state.groups.length === 0) {
         state.groups = [...defaultGroups];
     }
@@ -48,6 +54,7 @@ function init() {
     // Initial Render
     renderGroupsUI();
     renderGroupSelects();
+    renderManualEventsList();
     renderCalendar();
     // Event Listeners
     setupEventListeners();
@@ -99,6 +106,9 @@ function setupEventListeners() {
 
     const nextYearBtn = document.getElementById('nextYear');
     if (nextYearBtn) nextYearBtn.onclick = () => changeYear(1);
+
+    const addManualEventBtn = document.getElementById('addManualEventBtn');
+    if (addManualEventBtn) addManualEventBtn.onclick = addManualEvent;
 
     const exportJsonBtn = document.getElementById('exportJsonBtn');
     if (exportJsonBtn) exportJsonBtn.onclick = exportJson;
@@ -174,8 +184,13 @@ function renderGroupsUI() {
 }
 
 function renderGroupSelects() {
-    const selects = [document.getElementById('eventGroupSelect'), document.getElementById('specialGroupSelect')];
+    const selects = [
+        document.getElementById('eventGroupSelect'), 
+        document.getElementById('specialGroupSelect'),
+        document.getElementById('manualEventGroupSelect')
+    ];
     selects.forEach(select => {
+        if (!select) return;
         const hasNone = select.querySelector('option[value=""]');
         const selectedValue = select.value;
         select.innerHTML = '';
@@ -240,6 +255,54 @@ function renderSpecialList() {
 }
 
 /**
+ * Logic - Manual Events
+ */
+function addManualEvent() {
+    const groupId = document.getElementById('manualEventGroupSelect').value;
+    const date = document.getElementById('manualEventDate').value;
+    
+    if(!groupId || !date) {
+        alert('Bitte Gruppe und Datum angeben.');
+        return;
+    }
+    
+    state.manualEvents.push({
+        groupId: groupId,
+        date: date
+    });
+    
+    renderManualEventsList();
+}
+
+function removeManualEvent(index) {
+    state.manualEvents.splice(index, 1);
+    renderManualEventsList();
+}
+
+function renderManualEventsList() {
+    const container = document.getElementById('manualEventsList');
+    container.innerHTML = '';
+    
+    // Sort by date
+    state.manualEvents.sort((a,b) => new Date(a.date) - new Date(b.date));
+    
+    state.manualEvents.forEach((ev, index) => {
+        const group = state.groups.find(g => g.id === ev.groupId);
+        if(!group) return;
+        
+        const item = document.createElement('div');
+        item.className = 'list-group-item d-flex justify-content-between align-items-center p-1';
+        item.innerHTML = `
+            <div>
+                <strong>${new Date(ev.date).toLocaleDateString('de-DE')}</strong>: <span style="color:${group.color}">${group.name}</span>
+            </div>
+            <button class="btn btn-sm text-danger" onclick="removeManualEvent(${index})"><i class="fas fa-times"></i></button>
+        `;
+        container.appendChild(item);
+    });
+}
+
+/**
  * Calendar Rendering
  */
 function renderCalendar() {
@@ -299,6 +362,12 @@ function generatePlan() {
         });
     }
 
+    // 2. Clear generated
+    state.generatedEvents = [];
+
+    // 3. Process Series
+    // ... (existing series logic) ...
+
     let newEvents = [];
     let idCounter = 1;
 
@@ -328,6 +397,8 @@ function generatePlan() {
                 if (overrides.has(overrideKey)) {
                     // Use the existing modified event
                     newEvents.push(overrides.get(overrideKey));
+                } else if (state.hiddenEvents && state.hiddenEvents.includes(overrideKey)) {
+                    // Skip hidden events
                 } else {
                     // Create new event
                     newEvents.push({
@@ -359,6 +430,27 @@ function generatePlan() {
             });
         }
     });
+
+
+    // 3. Process Manual Events
+    if(state.manualEvents) {
+        state.manualEvents.forEach(ev => {
+            const group = state.groups.find(g => g.id === ev.groupId);
+            if(!group) return;
+            
+            // Check if year matches
+            if(new Date(ev.date).getFullYear() !== state.year) return;
+
+            newEvents.push({
+                id: 'man_' + Math.random().toString(36).substr(2, 9),
+                date: ev.date,
+                groupId: ev.groupId,
+                title: group.name,
+                type: 'manual', 
+                color: group.color
+            });
+        });
+    }
 
     state.generatedEvents = newEvents;
     renderCalendar();
@@ -500,29 +592,35 @@ function handleDrop(e) {
         const evIndex = state.generatedEvents.findIndex(ev => ev.id === draggedEventId);
         if (evIndex > -1) {
             const ev = state.generatedEvents[evIndex];
+            const oldDate = ev.date;
 
             // 1. Save original date if not yet saved (for Series preservation)
             if (!ev.originalDate) {
-                ev.originalDate = ev.date;
+                ev.originalDate = oldDate;
             }
 
-            // 2. Update date
+            // 2. Update generated event date
             ev.date = newDate;
             ev.modified = true;
 
-            // 3. Sync with Special Events Configuration if needed
+            // 3. Sync with Configuration
             if (ev.type === 'special') {
-                // Try to find by ID
                 const specIndex = state.specialEvents.findIndex(s => s.id === ev.id);
                 if (specIndex > -1) {
                     state.specialEvents[specIndex].date = newDate;
                 } else {
-                    // Fallback match by properties if ID missing (legacy)
                     const fallback = state.specialEvents.find(s => s.title === ev.title && s.date === ev.originalDate);
                     if (fallback) fallback.date = newDate;
                 }
-                // Update Special List List (UI)
                 renderSpecialList();
+            }
+
+            if (ev.type === 'manual') {
+                const manIndex = state.manualEvents.findIndex(m => m.date === oldDate && m.groupId === ev.groupId);
+                if (manIndex > -1) {
+                    state.manualEvents[manIndex].date = newDate;
+                }
+                renderManualEventsList();
             }
 
             renderCalendar();
@@ -537,6 +635,20 @@ function editEvent(id) {
     if (!ev) return;
 
     if (confirm(`Termin "${ev.title}" am ${ev.date} löschen?`)) {
+        if (ev.type === 'auto') {
+            const key = `${ev.originalDate || ev.date}_${ev.groupId}`;
+            if (!state.hiddenEvents) state.hiddenEvents = [];
+            state.hiddenEvents.push(key);
+        } else if (ev.type === 'special') {
+            state.specialEvents = state.specialEvents.filter(s => s.id !== ev.id);
+            renderSpecialList();
+        } else if (ev.type === 'manual') {
+            // Match manual event by date and group
+            const dateToMatch = ev.originalDate || ev.date;
+            state.manualEvents = state.manualEvents.filter(m => !(m.date === dateToMatch && m.groupId === ev.groupId));
+            renderManualEventsList();
+        }
+        
         state.generatedEvents = state.generatedEvents.filter(e => e.id !== id);
         renderCalendar();
     }
@@ -882,6 +994,8 @@ function loadPublishedPlan() {
                 if (!state.generatedEvents) state.generatedEvents = [];
                 if (!state.series) state.series = [];
                 if (!state.specialEvents) state.specialEvents = [];
+                if (!state.manualEvents) state.manualEvents = [];
+                if (!state.hiddenEvents) state.hiddenEvents = [];
                 if (!state.groups) state.groups = [];
 
                 // Re-render
@@ -891,6 +1005,7 @@ function loadPublishedPlan() {
                 renderGroupSelects();
                 renderSeriesList();
                 renderSpecialList();
+                renderManualEventsList();
                 renderCalendar();
                 alert('Plan erfolgreich geladen!');
             }
