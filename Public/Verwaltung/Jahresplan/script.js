@@ -1042,11 +1042,17 @@ function exportPdf() {
     renderPromise
         .then(canvas => {
             const imgData = canvas.toDataURL('image/png');
+            // Create PDF in Landscape, units mm, format A4
             const pdf = new jsPDF('l', 'mm', 'a4');
-            const width = pdf.internal.pageSize.getWidth() - 20;
-            const imgProps = pdf.getImageProperties(imgData);
-            const height = (imgProps.height * width) / imgProps.width;
-            pdf.addImage(imgData, 'PNG', 10, 10, width, height);
+            
+            // A4 Landscape dimensions
+            const pageWidth = 297;
+            const pageHeight = 210;
+
+            // Since the container is styled to be exactly A4 (297mm x 210mm) with internal padding,
+            // we place the image at 0,0 and stretch to full page width/height.
+            pdf.addImage(imgData, 'PNG', 0, 0, pageWidth, pageHeight);
+            
             pdf.save('jahresplan_' + state.year + '.pdf');
         })
         .catch(error => {

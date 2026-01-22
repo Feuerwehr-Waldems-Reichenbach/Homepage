@@ -7,41 +7,83 @@
     box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
 }
 
+/* Force A4 Landscape Dimensions for the Preview/Export Container */
 #calendarContainer {
     font-family: 'Inter Tight', sans-serif;
     background-color: white !important;
-    /* Ensure white background for export */
     color: #000 !important;
+
+    /* Responsive A4 Landscape */
+    width: 100%;
+    height: auto;
+    aspect-ratio: 297 / 210;
+
+    /* Center and simulate paper look */
+    margin: 0 auto;
+    padding: 2% !important;
+    /* Scalable padding */
+    box-sizing: border-box;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+
+    /* Layout: Flex Column */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    /* Strict no-overflow */
+}
+
+#calendarContainer h2 {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem !important;
+    margin-top: 0 !important;
+}
+
+/* 4/5 Split Calculation
+   Available height approx 190mm minus header (~10mm) = ~180mm.
+   Calendar: ~144mm
+   Footer: ~36mm
+*/
+
+.table-responsive {
+    flex: 1;
+    /* Takes available space */
+    overflow: hidden !important;
+    /* No scrollbars */
+    margin-bottom: 5px;
 }
 
 #annualPlanTable {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
     table-layout: fixed;
-    /* Ensures equal column widths */
+    height: 100%;
+    /* Force full height usage */
 }
 
 #annualPlanTable th {
     background-color: #f8f9fa;
     text-align: center;
-    padding: 8px;
-    border: 1px solid #dee2e6;
-    width: 8.33%;
-    /* 100% / 12 months roughly, plus small first col override below */
+    padding: 2px;
+    border: 1px solid #777;
+    /* Darker border for print contrast */
     font-weight: 700;
-    font-size: 0.85rem;
+    font-size: 0.7rem;
+    height: 15px;
 }
 
 #annualPlanTable td {
-    font-size: 0.8rem;
-    height: 40px;
-    /* Increased height for content */
-    padding: 2px;
+    font-size: 0.6rem;
+    /* Very small text */
+    height: 1.8%;
+    /* approx 100% / 32 rows ~ 3%. reducing to leave space */
+    /* Alternatively fixed pixel height if we want precision */
+    /* Using percentage to fit container */
+    padding: 0 1px;
     vertical-align: top;
-    /* Align to top for date position */
     position: relative;
-    min-width: 40px;
+    border: 1px solid #ccc;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 /* Day number column */
@@ -50,6 +92,7 @@
     background-color: #eee;
     vertical-align: middle;
     text-align: center;
+    width: 25px;
 }
 
 /* Weekend styling */
@@ -60,15 +103,19 @@
 .cell-content {
     height: 100%;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    /* Horizontal layout for date + events */
+    align-items: center;
+    gap: 2px;
 }
 
 .cell-date {
-    font-size: 0.65rem;
-    color: #888;
-    margin-bottom: 2px;
-    text-align: left;
-    padding-left: 2px;
+    font-size: 0.55rem;
+    color: #666;
+    margin-right: 2px;
+    min-width: 15px;
+    /* ensure date is visible */
+    text-align: right;
     line-height: 1;
 }
 
@@ -76,50 +123,90 @@
     flex: 1;
     display: flex;
     flex-direction: row;
-    /* Side by side */
-    gap: 2px;
-    width: 100%;
-    min-height: 15px;
+    gap: 1px;
+    height: 100%;
+    align-items: center;
+    overflow: hidden;
 }
 
 /* Event marker styles */
 .event-marker {
     flex: 1;
-    /* Distribute space evenly */
-    border-radius: 2px;
+    border-radius: 1px;
     color: white;
     font-weight: bold;
-    text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+    text-shadow: none;
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
-    font-size: 10px;
-    min-width: 5px;
-    /* Ensure visible even if many */
+    font-size: 0.5rem;
+    /* Tiny font */
+    height: 80%;
+    /* Almost full cell height */
     overflow: hidden;
     white-space: nowrap;
+    padding: 0 2px;
+    line-height: 1;
 }
 
 .event-marker:hover {
-    opacity: 0.9;
-    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+    flex: 5;
+    /* Expand on hover */
     z-index: 10;
-    position: relative;
-    /* specific hover effect */
+}
+
+/* Footer Section */
+#calendarFooter {
+    /* Fixed height section or flex ratio */
+    height: auto;
+    min-height: 35mm;
+    border-top: 1px solid #000;
+    padding-top: 5px;
+    font-size: 0.65rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+#calendarFooter h5 {
+    font-size: 0.8rem;
+    font-weight: bold;
+    margin-bottom: 3px;
+    text-transform: uppercase;
+    border-bottom: 1px solid #eee;
+}
+
+#calendarFooter ul {
+    margin: 0;
+    padding: 0;
+}
+
+#calendarFooter li {
+    margin-bottom: 1px;
+    line-height: 1.1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* Legend items */
 .legend-item {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    font-size: 0.85rem;
+    font-size: 0.6rem;
+    margin-right: 8px;
+    margin-bottom: 2px;
 }
 
 .legend-color {
-    width: 20px;
-    height: 20px;
-    margin-right: 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    width: 10px;
+    height: 10px;
+    margin-right: 4px;
+    border: 1px solid #999;
+    border-radius: 2px;
+}
+
+/* Hide stand line for print */
+#calendarContainer>div.text-center.mt-3 {
+    display: none;
 }

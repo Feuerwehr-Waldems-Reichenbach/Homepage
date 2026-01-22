@@ -160,7 +160,7 @@ if ($verwaltungPos !== false) {
         </nav>
     </header>
 
-    <main class="container mt-4">
+    <main class="<?php echo isset($useFluidContainer) && $useFluidContainer ? 'container-fluid' : 'container'; ?> mt-4">
         <?php if (isset($_SESSION['error'])): ?>
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
                 <i class="fas fa-exclamation-circle me-2"></i>

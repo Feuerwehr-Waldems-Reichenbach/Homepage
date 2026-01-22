@@ -11,6 +11,7 @@ if (!isset($_SESSION['user_id']) || !isset($_SESSION['is_admin']) || !$_SESSION[
 }
 
 $pageTitle = "Jahresplanung Generator";
+$useFluidContainer = true;
 include dirname(__DIR__) . '/templates/header.php';
 ?>
 
@@ -19,7 +20,7 @@ include dirname(__DIR__) . '/templates/header.php';
 
 <div class="row">
     <!-- Configuration Panel -->
-    <div class="col-lg-4 mb-4">
+    <div class="col-lg-3 mb-4">
         <div class="card glass-card h-100">
             <div class="card-header bg-primary text-white">
                 <h5 class="m-0"><i class="fas fa-cogs me-2"></i>Konfiguration</h5>
@@ -180,7 +181,7 @@ include dirname(__DIR__) . '/templates/header.php';
     </div>
 
     <!-- Preview Panel -->
-    <div class="col-lg-8">
+    <div class="col-lg-9">
         <div class="card glass-card">
             <div class="card-header d-flex justify-content-between align-items-center bg-dark text-white">
                 <h5 class="m-0"><i class="fas fa-calendar-alt me-2"></i>Vorschau: <span id="yearDisplay">2026</span>
