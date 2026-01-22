@@ -60,7 +60,7 @@ $page->addContent($page->renderTextArticle(
 ));
 
 // Füge den Interaktiven Jahresplan hinzu
-$page->addContent(<<<HTML
+$calendarHtml = <<<HTML
 <section id="calendar-section" class="py-5 bg-light">
     <div class="container" style="max-width: 95%;">
         <div class="row justify-content-center">
@@ -136,8 +136,9 @@ $page->addContent(<<<HTML
 <script src="/assets/js/calendar.js"></script>
 <!-- CSS for Calendar -->
 <link rel="stylesheet" href="/Verwaltung/Jahresplan/style.css">
-HTML
-);
+HTML;
+
+$page->addContent($calendarHtml);
 
 // Rendere die vollständige Seite inklusive Head, Includes und Scripts
 echo $page->renderFullPage();
