@@ -272,22 +272,53 @@ function changeYear(delta) {
 function publishPlan() {
     if (!confirm('Möchten Sie den aktuellen Dienstplan wirklich veröffentlichen? Dies überschreibt den öffentlichen Plan.')) return;
     
+    console.log('Publishing plan...', state);
+    
+    // Show loading indicator
+    const publishBtn = document.getElementById('publishBtn');
+    const originalText = publishBtn ? publishBtn.innerHTML : '';
+    if (publishBtn) {
+        publishBtn.disabled = true;
+        publishBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Speichere...';
+    }
+    
     fetch('save_plan.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(state)
     })
-    .then(r => r.json())
+    .then(r => {
+        console.log('Response status:', r.status, r.statusText);
+        if (!r.ok) {
+            return r.text().then(text => {
+                console.error('Error response:', text);
+                try {
+                    return JSON.parse(text);
+                } catch (e) {
+                    throw new Error('Server error: ' + r.status + ' ' + r.statusText + ' - ' + text.substring(0, 200));
+                }
+            });
+        }
+        return r.json();
+    })
     .then(data => {
+        console.log('Response data:', data);
         if(data.success) {
-            alert('Plan erfolgreich veröffentlicht!');
+            alert('Plan erfolgreich veröffentlicht!' + (data.fileSize ? ' (Größe: ' + data.fileSize + ' Bytes)' : ''));
         } else {
-            alert('Fehler: ' + (data.error || 'Unbekannt'));
+            alert('Fehler: ' + (data.error || 'Unbekannter Fehler'));
+            console.error('Error details:', data);
         }
     })
     .catch(e => {
-        console.error(e);
-        alert('Netzwerkfehler beim Speichern.');
+        console.error('Fetch error:', e);
+        alert('Netzwerkfehler beim Speichern: ' + e.message);
+    })
+    .finally(() => {
+        if (publishBtn) {
+            publishBtn.disabled = false;
+            publishBtn.innerHTML = originalText;
+        }
     });
 }
 

@@ -1,12 +1,29 @@
 <?php
+// Enable error reporting temporarily for debugging
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
 
-require_once $_SERVER['DOCUMENT_ROOT'] . '/assets/includes/PageBuilder.php';
+// Log that the script started
+error_log("=== Mitmachen index.php STARTED ===");
+
+try {
+    require_once dirname(__DIR__) . '/assets/includes/PageBuilder.php';
+    error_log("PageBuilder loaded successfully");
+} catch (Exception $e) {
+    error_log("ERROR loading PageBuilder: " . $e->getMessage());
+    http_response_code(500);
+    die("Fehler beim Laden der Seite. Bitte versuchen Sie es später erneut.");
+}
+
+// Build canonical URL safely
+$canonicalUrl = 'https://' . (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '') . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '/Mitmachen/');
 
 $page = new PageBuilder(
     title: 'Mach mit | Feuerwehr Reichenbach',
     description: 'Engagiere dich bei der Freiwilligen Feuerwehr Reichenbach! Informiere dich über Möglichkeiten in der Einsatzabteilung, Jugend- oder Kinderfeuerwehr und lade unseren Übungsplan herunter.',
     keywords: 'Mitmachen Feuerwehr, Feuerwehr Reichenbach beitreten, Ehrenamt Waldems, Freiwillige Feuerwehr Waldems, Einsatzabteilung Mitmachen, Jugendfeuerwehr Mitmachen, Kinderfeuerwehr Mitmachen, Feuerwehr Training Waldems, Übungsplan Feuerwehr, Reichenbach Waldems',
-    canonicalUrl: 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
+    canonicalUrl: $canonicalUrl,
 );
 
 // Füge den Fullscreen Hero Abschnitt hinzu
@@ -138,9 +155,18 @@ $calendarHtml = <<<HTML
 <link rel="stylesheet" href="/Verwaltung/Jahresplan/style.css">
 HTML;
 
-$page->addContent($calendarHtml);
-
-// Rendere die vollständige Seite inklusive Head, Includes und Scripts
-echo $page->renderFullPage();
+try {
+    $page->addContent($calendarHtml);
+    error_log("Calendar HTML added to page");
+    
+    // Rendere die vollständige Seite inklusive Head, Includes und Scripts
+    echo $page->renderFullPage();
+    error_log("=== Mitmachen index.php COMPLETED SUCCESSFULLY ===");
+} catch (Exception $e) {
+    error_log("ERROR in Mitmachen page: " . $e->getMessage());
+    error_log("Stack trace: " . $e->getTraceAsString());
+    http_response_code(500);
+    die("Fehler beim Rendern der Seite: " . htmlspecialchars($e->getMessage()));
+}
 
 ?>
