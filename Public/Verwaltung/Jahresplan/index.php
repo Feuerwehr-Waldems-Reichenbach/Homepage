@@ -174,6 +174,9 @@ include dirname(__DIR__) . '/templates/header.php';
 
                 <div class="vr mx-2"></div>
 
+                <button class="btn btn-primary" id="generateBtn"><i class="fas fa-sync-alt me-2"></i>Vorschau
+                    aktualisieren</button>
+                <div class="vr mx-2"></div>
                 <button class="btn btn-success" id="publishBtn"><i class="fas fa-cloud-upload-alt me-2"></i>Plan
                     Veröffentlichen</button>
             </div>
@@ -197,54 +200,53 @@ include dirname(__DIR__) . '/templates/header.php';
                     </div>
                 </div>
             </div>
-            <div class="card-body p-0 overflow-auto bg-white" style="min-height: 600px;">
-                <div id="calendarContainer" class="p-4 bg-white text-dark">
-                    <div class="d-flex align-items-center justify-content-between mb-2">
-                        <h2 class="text-center fw-bold m-0 flex-grow-1">Jahresdienstplan Feuerwehr Reichenbach <span
-                                id="calendarYearTitle">2026</span></h2>
-                    </div>
-                    <table class="table table-bordered table-sm text-center align-middle" id="annualPlanTable">
-                        <thead>
-                            <tr id="monthHeaderRow">
-                                <th style="width: 40px;">Tag</th>
-                                <!-- Months will be generated here -->
-                            </tr>
-                        </thead>
-                        <tbody id="calendarBody">
-                            <!-- Days will be generated here -->
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="mt-4 row" id="calendarFooter">
-                    <div class="col-md-3">
-                        <h5>Legende</h5>
-                        <div id="legendContainer">
-                            <!-- Legend items -->
+            <div class="card-body p-0 bg-white" style="min-height: 600px;">
+                <div class="overflow-auto p-3">
+                    <div id="calendarContainer" class="bg-white text-dark">
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <h2 class="text-center fw-bold m-0 flex-grow-1">Jahresdienstplan Feuerwehr Reichenbach <span
+                                    id="calendarYearTitle">2026</span></h2>
                         </div>
-                        <!-- Removed (F) text here as it will be in legend or obvious -->
+                        <table class="table table-bordered table-sm text-center align-middle" id="annualPlanTable">
+                            <thead>
+                                <tr id="monthHeaderRow">
+                                    <th style="width: 40px;">Tag</th>
+                                    <!-- Months will be generated here -->
+                                </tr>
+                            </thead>
+                            <tbody id="calendarBody">
+                                <!-- Days will be generated here -->
+                            </tbody>
+                        </table>
+
+                        <div class="mt-4 row" id="calendarFooter">
+                            <div class="col-md-3">
+                                <h5>Legende</h5>
+                                <div id="legendContainer">
+                                    <!-- Legend items -->
+                                </div>
+                                <!-- Removed (F) text here as it will be in legend or obvious -->
+                            </div>
+                            <div class="col-md-3">
+                                <h5>Termine</h5>
+                                <ul class="list-unstyled small" id="specialEventsFooter">
+                                    <!-- Special events list -->
+                                </ul>
+                            </div>
+                            <div class="col-md-3">
+                                <h5>Ferien</h5>
+                                <ul class="list-unstyled small" id="vacationsFooter">
+                                    <!-- Vacations list -->
+                                </ul>
+                            </div>
+                            <div class="col-md-3">
+                                <h5>Feiertage</h5>
+                                <ul class="list-unstyled small" id="holidaysFooter">
+                                    <!-- Holidays list -->
+                                </ul>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-md-3">
-                        <h5>Termine</h5>
-                        <ul class="list-unstyled small" id="specialEventsFooter">
-                            <!-- Special events list -->
-                        </ul>
-                    </div>
-                    <div class="col-md-3">
-                        <h5>Ferien</h5>
-                        <ul class="list-unstyled small" id="vacationsFooter">
-                            <!-- Vacations list -->
-                        </ul>
-                    </div>
-                    <div class="col-md-3">
-                        <h5>Feiertage</h5>
-                        <ul class="list-unstyled small" id="holidaysFooter">
-                            <!-- Holidays list -->
-                        </ul>
-                    </div>
-                </div>
-                <div class="text-center mt-3 text-muted small">
-                    <p>Änderungen vorbehalten. Stand: <span id="currentDate"></span></p>
                 </div>
             </div>
         </div>

@@ -33,7 +33,7 @@ function init() {
 
     document.getElementById('yearDisplay').textContent = state.year;
     document.getElementById('calendarYearTitle').textContent = state.year;
-    document.getElementById('currentDate').textContent = new Date().toLocaleDateString('de-DE');
+
 
     // Load presets or empty state
     // In a real app, this might come from local storage or DB
@@ -590,10 +590,18 @@ function renderVacationsFooter() {
  * Logic - Generation
  */
 function generatePlan() {
-    // Keep manually modified events? 
-    // For this version: Clear 'auto' events, keep 'special' events.
-    // If a user moved an event, it's modified. Complexity is high to track "moved from original".
-    // Let's assume Generate overwrites series-based events.
+    // 1. Capture existing manual overrides from Series Events
+    // defined by: modified=true, type='auto', and having an originalDate
+    const overrides = new Map();
+    if (state.generatedEvents) {
+        state.generatedEvents.forEach(ev => {
+            if (ev.modified && ev.type === 'auto' && ev.originalDate && ev.groupId) {
+                // Key: originalDate + groupId
+                // This uniquely identifies a series instance on a specific day for a specific group
+                overrides.set(`${ev.originalDate}_${ev.groupId}`, ev);
+            }
+        });
+    }
 
     let newEvents = [];
     let idCounter = 1;
@@ -603,47 +611,53 @@ function generatePlan() {
         const group = state.groups.find(g => g.id === serie.groupId);
         if (!group) return;
 
-        // Determine start date. 
-        // Logic: Find first occurrence on or after Jan 1st of `state.year` that matches rhythm/weekday logic.
-        // Simplified: Start from `serie.startDate` and iterate.
-
         let patternDate = new Date(serie.startDate);
         patternDate.setHours(0, 0, 0, 0);
 
         let currentLoop = 0;
 
-        // Fast forward to year
+        // Fast forward to near year start
         while (patternDate.getFullYear() < state.year - 1 && currentLoop < 5000) {
-            // Jump years? No, safer to step through to maintain bi-weekly rhythm (odd/even weeks)
             patternDate = getNextSeriesDate(patternDate, serie);
             currentLoop++;
         }
 
         // Generate for selected year
         while (patternDate.getFullYear() <= state.year && currentLoop < 10000) {
+            // Only add if it falls in the current year
             if (patternDate.getFullYear() === state.year) {
-                newEvents.push({
-                    id: 'evt_' + (idCounter++),
-                    date: formatDateISO(patternDate),
-                    title: group.name,
-                    groupId: group.id,
-                    type: 'auto'
-                });
+                const dateStr = formatDateISO(patternDate);
+                const overrideKey = `${dateStr}_${group.id}`;
+
+                if (overrides.has(overrideKey)) {
+                    // Use the existing modified event
+                    newEvents.push(overrides.get(overrideKey));
+                } else {
+                    // Create new event
+                    newEvents.push({
+                        id: 'evt_' + (idCounter++),
+                        date: dateStr,
+                        title: group.name,
+                        groupId: group.id,
+                        type: 'auto'
+                    });
+                }
             }
             patternDate = getNextSeriesDate(patternDate, serie);
             currentLoop++;
         }
     });
 
-    // 2. Add Special Events that are manually defined as objects in `generatedEvents`? 
-    // No, special events are separate config, but we should visualize them on the grid too.
+    // 2. Add Special Events (from Config)
+    // If a special event was moved, 'state.specialEvents' should have been updated by handleDrop
     state.specialEvents.forEach(ev => {
         if (ev.date.startsWith(state.year)) {
             newEvents.push({
-                id: 'spec_' + (idCounter++),
+                id: ev.id || ('spec_' + (idCounter++)),
                 date: ev.date,
                 title: ev.title,
                 groupId: ev.groupId || null,
+                customColor: ev.customColor,
                 type: 'special',
                 isHoliday: ev.isHoliday
             });
@@ -789,8 +803,32 @@ function handleDrop(e) {
         // Update event in state
         const evIndex = state.generatedEvents.findIndex(ev => ev.id === draggedEventId);
         if (evIndex > -1) {
-            state.generatedEvents[evIndex].date = newDate;
-            state.generatedEvents[evIndex].modified = true; // Flag as manually modified
+            const ev = state.generatedEvents[evIndex];
+
+            // 1. Save original date if not yet saved (for Series preservation)
+            if (!ev.originalDate) {
+                ev.originalDate = ev.date;
+            }
+
+            // 2. Update date
+            ev.date = newDate;
+            ev.modified = true;
+
+            // 3. Sync with Special Events Configuration if needed
+            if (ev.type === 'special') {
+                // Try to find by ID
+                const specIndex = state.specialEvents.findIndex(s => s.id === ev.id);
+                if (specIndex > -1) {
+                    state.specialEvents[specIndex].date = newDate;
+                } else {
+                    // Fallback match by properties if ID missing (legacy)
+                    const fallback = state.specialEvents.find(s => s.title === ev.title && s.date === ev.originalDate);
+                    if (fallback) fallback.date = newDate;
+                }
+                // Update Special List List (UI)
+                renderSpecialList();
+            }
+
             renderCalendar();
         }
     }
@@ -879,8 +917,12 @@ function addSpecialEvent(e) {
 
     // Logic: If groupId is chosen, use that. Else use customColor.
     // Store both for flexibility
+    
+    // Generate ID for robust syncing
+    const id = 'spec_' + Date.now();
 
     state.specialEvents.push({
+        id,
         title,
         date,
         isHoliday,
@@ -890,7 +932,7 @@ function addSpecialEvent(e) {
 
     if (state.generatedEvents.length > 0) {
         state.generatedEvents.push({
-            id: 'spec_' + Date.now(),
+            id,
             date,
             title,
             groupId,
@@ -900,6 +942,7 @@ function addSpecialEvent(e) {
         });
         renderCalendar();
     }
+
 
     renderSpecialList();
     e.target.reset();
