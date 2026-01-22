@@ -966,26 +966,69 @@ function importJson(e) {
     reader.readAsText(file);
 }
 
-function exportPng() {
+function getExportCanvas() {
     const element = document.getElementById('calendarContainer');
-    html2canvas(element, { scale: 2 }).then(canvas => {
-        const link = document.createElement('a');
-        link.download = 'jahresplan_' + state.year + '.png';
-        link.href = canvas.toDataURL();
-        link.click();
-    });
+    if (!element) {
+        alert('Der Kalender konnte nicht gefunden werden.');
+        return null;
+    }
+
+    if (typeof window.html2canvas !== 'function') {
+        console.error('html2canvas konnte nicht geladen werden.');
+        alert('Export-Library fehlt. Bitte laden Sie die Seite neu.');
+        return null;
+    }
+
+    const renderPromise = window.html2canvas(element, { scale: 2 });
+    if (!renderPromise || typeof renderPromise.then !== 'function') {
+        console.error('html2canvas hat kein Promise zurückgegeben.');
+        alert('Export konnte nicht gestartet werden. Bitte laden Sie die Seite neu.');
+        return null;
+    }
+
+    return renderPromise;
+}
+
+function exportPng() {
+    const renderPromise = getExportCanvas();
+    if (!renderPromise) return;
+
+    renderPromise
+        .then(canvas => {
+            const link = document.createElement('a');
+            link.download = 'jahresplan_' + state.year + '.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        })
+        .catch(error => {
+            console.error(error);
+            alert('Fehler beim PNG-Export.');
+        });
 }
 
 function exportPdf() {
-    const { jsPDF } = window.jspdf;
-    const element = document.getElementById('calendarContainer');
-    html2canvas(element, { scale: 2 }).then(canvas => {
-        const imgData = canvas.toDataURL('image/png');
-        const pdf = new jsPDF('l', 'mm', 'a4');
-        const width = pdf.internal.pageSize.getWidth() - 20;
-        const imgProps = pdf.getImageProperties(imgData);
-        const height = (imgProps.height * width) / imgProps.width;
-        pdf.addImage(imgData, 'PNG', 10, 10, width, height);
-        pdf.save('jahresplan_' + state.year + '.pdf');
-    });
+    const renderPromise = getExportCanvas();
+    if (!renderPromise) return;
+
+    const jsPDF = window.jspdf?.jsPDF;
+    if (!jsPDF) {
+        console.error('jsPDF konnte nicht geladen werden.');
+        alert('PDF-Library fehlt. Bitte laden Sie die Seite neu.');
+        return;
+    }
+
+    renderPromise
+        .then(canvas => {
+            const imgData = canvas.toDataURL('image/png');
+            const pdf = new jsPDF('l', 'mm', 'a4');
+            const width = pdf.internal.pageSize.getWidth() - 20;
+            const imgProps = pdf.getImageProperties(imgData);
+            const height = (imgProps.height * width) / imgProps.width;
+            pdf.addImage(imgData, 'PNG', 10, 10, width, height);
+            pdf.save('jahresplan_' + state.year + '.pdf');
+        })
+        .catch(error => {
+            console.error(error);
+            alert('Fehler beim PDF-Export.');
+        });
 }
