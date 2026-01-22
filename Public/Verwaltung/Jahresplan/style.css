@@ -189,21 +189,53 @@
     text-overflow: ellipsis;
 }
 
-/* Legend items */
+/* Legend items - Compact Grid */
+#legendContainer {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    /* 2 Columns compact */
+    gap: 2px 8px;
+}
+
 .legend-item {
-    display: inline-flex;
+    display: flex;
     align-items: center;
     font-size: 0.6rem;
-    margin-right: 8px;
-    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .legend-color {
-    width: 10px;
-    height: 10px;
+    width: 8px;
+    height: 8px;
+    min-width: 8px;
     margin-right: 4px;
     border: 1px solid #999;
     border-radius: 2px;
+}
+
+/* Vacation / Holiday Styles */
+.vacation-bg {
+    background-color: #e0f7fa !important;
+    /* Light Cyan */
+}
+
+.holiday-bg {
+    background-color: #ffebee !important;
+    /* Light Red */
+}
+
+/* Overlap: Holiday takes precedence in background, or mix? */
+/* User wants "Holiday" to be the main indicator if overlap. */
+/* We will handle class priority in JS or CSS order. CSS: last defined wins if equal specificity. */
+
+/* Small Holiday Indicator Text */
+.holiday-indicator {
+    color: #d63384;
+    font-weight: bold;
+    font-size: 0.5rem;
+    margin-left: 2px;
 }
 
 /* Hide stand line for print */

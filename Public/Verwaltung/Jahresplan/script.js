@@ -116,46 +116,23 @@ function calculateHolidays(year) {
 let vacations = [];
 
 function fetchVacations(year) {
-    // API: https://schulferien-api.de/api/v1/2026/HE
-    const url = `https://schulferien-api.de/api/v1/${year}/HE`;
-
-    // Use simple XHR or Fetch. 
-    // Note: If CORS headers are missing on their server, this might fail from valid origin.
-    // User provided the URL, so let's try.
-
-    fetch(url)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            // Data format check: The API returns [ ... ] in practice, but some docs
-            // show { data: [ ... ] }. Normalize both.
-
-            // NOTE: API docs for schulferien-api.de usually strictly JSON.
-            // Let's handle the response structure.
-
-            // Map to our format: { start: 'YYYY-MM-DD', end: 'YYYY-MM-DD', name: 'Wait...' }
-            // If API returns something else, we need to adapt. 
-            // Standard likely: name, start, end
-
-            // API returns: [{ "start": "2026-03-30T00:00Z", "end": "2026-04-10T23:59Z", "name": "osterferien", ... }]
-            // We need simple YYYY-MM-DD for comparison.
-            // Slice the first 10 chars from start/end.
-
-            const items = Array.isArray(data) ? data : data?.data;
-            if (!Array.isArray(items)) {
-                throw new Error('Unexpected vacation data format');
-            }
-
-            vacations = items.map(v => ({
-                start: v.start.substring(0, 10),
-                end: v.end.substring(0, 10),
-                name: v.name_cp || v.name // Use pretty name if available
-            }));
-
+    // Fetch vacations for current year AND previous year (to catch winter vacations starting in Dec)
+    const years = [year - 1, year];
+    
+    Promise.all(years.map(y => fetch(`https://schulferien-api.de/api/v1/${y}/HE`).then(r => r.ok ? r.json() : [])))
+        .then(results => {
+            let allVacations = [];
+            results.forEach(data => {
+                const items = Array.isArray(data) ? data : data?.data;
+                if (Array.isArray(items)) {
+                    allVacations = allVacations.concat(items.map(v => ({
+                        start: v.start.substring(0, 10),
+                        end: v.end.substring(0, 10),
+                        name: v.name_cp || v.name
+                    })));
+                }
+            });
+            vacations = allVacations;
             console.log('Loaded vacations:', vacations);
             renderCalendar();
         })
@@ -384,49 +361,41 @@ function renderCalendar() {
                 td.style.backgroundColor = '#f1f3f5';
             }
 
-            // Holiday highlighting
+            // Holiday highlighting override with CSS classes
             const holiday = holidays.find(h => h.date === dateString);
-            if (holiday) {
-                td.style.backgroundColor = '#fff0f0'; // Light red background for holidays
-                td.title = holiday.name;
-            }
+            const vac = vacations.find(v => dateString >= v.start && dateString <= v.end);
 
-            // Vacation highlighting overrides/mixes?
-            // User requirement: "subtil markieren".
-            // Use global vacations array (fetched via API)
-            const vac = vacations.find(v => {
-                // Check range. Strings are ISO "YYYY-MM-DD", comparable lexicographically
-                return dateString >= v.start && dateString <= v.end;
-            });
-
-            if (vac && !holiday) {
-                td.style.backgroundColor = '#f0f8ff'; // AliceBlue, very subtle blue for vacations
+            if (vac) {
+                td.classList.add('vacation-bg');
                 td.title = vac.name;
             }
-            // If both vacation and holiday (e.g. Christmas), Holiday red takes precedence usually, 
-            // or we use a mix? Let's keep Holiday Red as it's a "Free" day off work typically.
-            // But we should append the vacation name to title
+            if (holiday) {
+                td.classList.add('holiday-bg'); // Red takes precedence via CSS if needed
+                td.title = holiday.name;
+            }
             if (vac && holiday) {
                 td.title = `${holiday.name} (${vac.name})`;
             }
-
 
             // Cell Content Container
             const cellContent = document.createElement('div');
             cellContent.className = 'cell-content';
 
-            // Date Label with Holiday Name / Vacation Indicator
+            // Date Label
             const dateLabel = document.createElement('div');
             dateLabel.className = 'cell-date';
+            
+            // Format: "Mo 01."
+            // Pad Zero
+            const dayNum = String(day).padStart(2, '0');
+            let labelText = `${dayName} ${dayNum}.`;
 
-            let infoText = '';
+            let infoIndicator = '';
             if (holiday) {
-                infoText = `<span style="color:#d63384; font-size:0.6rem;">${holiday.name}</span>`;
-            } else if (vac) {
-                infoText = `<span style="color:#0dcaf0; font-size:0.6rem;">(F)</span>`; // (F) for Ferien
+                infoIndicator = '<span class="holiday-indicator" title="' + holiday.name + '">FT</span>';
             }
 
-            dateLabel.innerHTML = `${dayName} ${infoText}`;
+            dateLabel.innerHTML = `${labelText} ${infoIndicator}`;
             cellContent.appendChild(dateLabel);
 
             // Container for Events
@@ -491,15 +460,35 @@ function renderCalendar() {
     renderLegend();
     renderSpecialEventsFooter();
     renderVacationsFooter();
+    renderHolidaysFooter();
 }
 
 function renderLegend() {
     const container = document.getElementById('legendContainer');
     container.innerHTML = '';
+    
+    // Add (F) = Ferien manually to legend? 
+    // User requested lighter/compact legend. 
+    // Let's add standard items plus Ferien/Holiday status
+    
+    const extras = [
+        {name: 'Ferien', color: '#e0f7fa'},
+        {name: 'Feiertag', color: '#ffebee'}
+    ];
+    
+    // Render custom groups
     state.groups.forEach(group => {
         const div = document.createElement('div');
         div.className = 'legend-item';
         div.innerHTML = `<span class="legend-color" style="background:${group.color}"></span> ${group.name}`;
+        container.appendChild(div);
+    });
+    
+    // Render status colors
+    extras.forEach(ex => {
+        const div = document.createElement('div');
+        div.className = 'legend-item';
+        div.innerHTML = `<span class="legend-color" style="background:${ex.color}; border:1px solid #ccc;"></span> ${ex.name}`;
         container.appendChild(div);
     });
 }
@@ -531,6 +520,26 @@ function renderSpecialEventsFooter() {
     });
 }
 
+/**
+ * Render Holidays Footer
+ */
+function renderHolidaysFooter() {
+    const ul = document.getElementById('holidaysFooter');
+    if(!ul) return;
+    ul.innerHTML = '';
+
+    // Filter for current year
+    const relevant = holidays.filter(h => h.date.startsWith(state.year));
+    
+    relevant.forEach(h => {
+        const li = document.createElement('li');
+        li.className = 'mb-1';
+        const date = new Date(h.date).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' });
+        li.innerHTML = `<strong>${date}</strong> <span style="color:#d63384;">${h.name}</span>`;
+        ul.appendChild(li);
+    });
+}
+
 function renderVacationsFooter() {
     const ul = document.getElementById('vacationsFooter');
     ul.innerHTML = '';
@@ -544,24 +553,36 @@ function renderVacationsFooter() {
     }
 
     // Sort chronologically by start date
-    const sorted = [...vacations].sort((a, b) => a.start.localeCompare(b.start));
+    // Filter out vacations that ended before this year or start after this year?
+    // User wants "this year's vacations". 
+    // If a vacation started in Prev Year but overlaps Jan 1st of Current Year, it is relevant.
+    // If a vacation starts in Current Year, it is relevant.
+    
+    const relevant = vacations.filter(v => {
+        // Overlap logic: Start <= EndYear AND End >= StartYear
+        const vStart = v.start;
+        const vEnd = v.end;
+        const yearStart = `${state.year}-01-01`;
+        const yearEnd = `${state.year}-12-31`;
+        
+        return vStart <= yearEnd && vEnd >= yearStart;
+    });
+
+    const sorted = relevant.sort((a, b) => a.start.localeCompare(b.start));
 
     sorted.forEach(vac => {
-        // Only show for current selected year
-        if (vac.start.startsWith(state.year)) {
-            const li = document.createElement('li');
-            li.className = 'mb-1';
-            
-            // Format dates
-            const startDate = new Date(vac.start + 'T00:00:00').toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' });
-            const endDate = new Date(vac.end + 'T00:00:00').toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' });
-            
-            // Format vacation name (capitalize first letter)
-            const vacName = vac.name.charAt(0).toUpperCase() + vac.name.slice(1).replace(/_/g, ' ');
-            
-            li.innerHTML = `<strong>${startDate} - ${endDate}</strong><br><span style="color:#0dcaf0;">${vacName}</span>`;
-            ul.appendChild(li);
-        }
+        const li = document.createElement('li');
+        li.className = 'mb-1';
+        
+        // Format dates
+        const startDate = new Date(vac.start + 'T00:00:00').toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year:'2-digit' });
+        const endDate = new Date(vac.end + 'T00:00:00').toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year:'2-digit' });
+        
+        // Format vacation name (capitalize first letter)
+        const vacName = vac.name.charAt(0).toUpperCase() + vac.name.slice(1).replace(/_/g, ' ');
+        
+        li.innerHTML = `<strong>${startDate}-${endDate}</strong><br><span style="color:#0dcaf0;">${vacName}</span>`;
+        ul.appendChild(li);
     });
 }
 

@@ -217,25 +217,29 @@ include dirname(__DIR__) . '/templates/header.php';
                     </div>
 
                     <div class="mt-4 row" id="calendarFooter">
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <h5>Legende</h5>
-                            <div class="d-flex flex-wrap gap-3" id="legendContainer">
+                            <div id="legendContainer">
                                 <!-- Legend items -->
                             </div>
-                            <div class="mt-2 small text-muted">
-                                <span style="color:#0dcaf0;">(F)</span> = Ferien
-                            </div>
+                            <!-- Removed (F) text here as it will be in legend or obvious -->
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <h5>Termine</h5>
                             <ul class="list-unstyled small" id="specialEventsFooter">
                                 <!-- Special events list -->
                             </ul>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <h5>Ferien</h5>
                             <ul class="list-unstyled small" id="vacationsFooter">
                                 <!-- Vacations list -->
+                            </ul>
+                        </div>
+                        <div class="col-md-3">
+                            <h5>Feiertage</h5>
+                            <ul class="list-unstyled small" id="holidaysFooter">
+                                <!-- Holidays list -->
                             </ul>
                         </div>
                     </div>
