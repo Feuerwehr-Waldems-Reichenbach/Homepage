@@ -37,12 +37,12 @@ $dokumente = [
     [
         'title' => 'Jahreskalender (PDF)',
         'description' => 'Jahreskalender der Feuerwehr Reichenbach als PDF-Dokument',
-        'href' => '/assets/files/Jahreskalender%20Feuerwehr%20Reichenbach%20final.pdf'
+        'href' => '/Mitmachen/jahresplan.pdf'
     ],
     [
-        'title' => 'Jahreskalender (JPG)',
+        'title' => 'Jahreskalender (PNG)',
         'description' => 'Jahreskalender der Feuerwehr Reichenbach als Bild-Datei',
-        'href' => '/assets/files/Jahreskalender%20Feuerwehr%20Reichenbach.jpg'
+        'href' => '/Mitmachen/jahresplan.png'
     ],
     [
         'title' => 'Satzung Feuerwehr Waldems',

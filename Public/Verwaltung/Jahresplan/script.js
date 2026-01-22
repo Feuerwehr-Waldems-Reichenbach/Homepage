@@ -954,24 +954,150 @@ function publishPlan() {
     .then(data => {
         console.log('Response data:', data);
         if(data.success) {
-            alert('Plan erfolgreich veröffentlicht!' + (data.fileSize ? ' (Größe: ' + data.fileSize + ' Bytes)' : ''));
-            if (data.debug) {
-                console.log('Debug info:', data.debug);
+            // Update button text to show file generation progress
+            if (publishBtn) {
+                publishBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Generiere Dateien...';
             }
+            
+            // Generate and upload PNG/PDF files
+            generateAndUploadFiles()
+                .then(uploadResult => {
+                    if (uploadResult.success) {
+                        let message = 'Plan erfolgreich veröffentlicht!';
+                        if (uploadResult.results) {
+                            const files = [];
+                            if (uploadResult.results.png) files.push('PNG');
+                            if (uploadResult.results.pdf) files.push('PDF');
+                            if (files.length > 0) {
+                                message += '\nDateien generiert: ' + files.join(', ');
+                            }
+                        }
+                        alert(message);
+                    } else {
+                        alert('Plan veröffentlicht, aber Fehler beim Generieren der Dateien: ' + 
+                              (uploadResult.errors ? uploadResult.errors.join(', ') : 'Unbekannter Fehler'));
+                    }
+                })
+                .catch(err => {
+                    console.error('Error generating files:', err);
+                    alert('Plan veröffentlicht, aber Fehler beim Generieren der Dateien: ' + err.message);
+                })
+                .finally(() => {
+                    if (publishBtn) {
+                        publishBtn.disabled = false;
+                        publishBtn.innerHTML = originalText;
+                    }
+                });
         } else {
             alert('Fehler: ' + (data.error || 'Unbekannter Fehler'));
             console.error('Error details:', data);
+            if (publishBtn) {
+                publishBtn.disabled = false;
+                publishBtn.innerHTML = originalText;
+            }
         }
     })
     .catch(e => {
         console.error('Fetch error:', e);
         alert('Netzwerkfehler beim Speichern: ' + e.message);
-    })
-    .finally(() => {
         if (publishBtn) {
             publishBtn.disabled = false;
             publishBtn.innerHTML = originalText;
         }
+    });
+}
+
+/**
+ * Generate PNG and PDF files and upload them to the server
+ */
+function generateAndUploadFiles() {
+    return new Promise((resolve, reject) => {
+        const renderPromise = getExportCanvas();
+        if (!renderPromise) {
+            reject(new Error('Canvas konnte nicht generiert werden.'));
+            return;
+        }
+
+        renderPromise
+            .then(canvas => {
+                // Generate PNG data
+                const pngData = canvas.toDataURL('image/png');
+                
+                // Generate PDF
+                const jsPDF = window.jspdf?.jsPDF;
+                if (!jsPDF) {
+                    reject(new Error('jsPDF konnte nicht geladen werden.'));
+                    return;
+                }
+
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new jsPDF('l', 'mm', 'a4');
+                const pageWidth = 297;
+                const pageHeight = 210;
+                pdf.addImage(imgData, 'PNG', 0, 0, pageWidth, pageHeight);
+                
+                // Get PDF as base64 string
+                // Try different output methods for compatibility
+                let pdfBase64;
+                try {
+                    // Method 1: Direct base64 output
+                    pdfBase64 = pdf.output('base64');
+                    console.log('PDF base64 generated via output("base64"). Length:', pdfBase64.length);
+                } catch (e) {
+                    console.warn('base64 output failed, trying arraybuffer:', e);
+                    try {
+                        // Method 2: ArrayBuffer to base64
+                        const arrayBuffer = pdf.output('arraybuffer');
+                        const bytes = new Uint8Array(arrayBuffer);
+                        let binary = '';
+                        for (let i = 0; i < bytes.length; i++) {
+                            binary += String.fromCharCode(bytes[i]);
+                        }
+                        pdfBase64 = btoa(binary);
+                        console.log('PDF base64 generated via arraybuffer. Length:', pdfBase64.length);
+                    } catch (e2) {
+                        console.error('All PDF output methods failed:', e2);
+                        reject(new Error('PDF konnte nicht generiert werden.'));
+                        return;
+                    }
+                }
+                
+                const pdfData = 'data:application/pdf;base64,' + pdfBase64;
+                console.log('PDF data URI created. Total length:', pdfData.length, 'Base64 length:', pdfBase64.length);
+                
+                // Upload both files
+                const formData = new FormData();
+                formData.append('png_data', pngData);
+                formData.append('pdf_data', pdfData);
+                console.log('FormData created. PNG length:', pngData.length, 'PDF length:', pdfData.length);
+                
+                return fetch('upload_plan_files.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.text().then(text => {
+                            try {
+                                return JSON.parse(text);
+                            } catch (e) {
+                                throw new Error('Server error: ' + response.status + ' ' + response.statusText);
+                            }
+                        });
+                    }
+                    return response.json();
+                });
+            })
+            .then(result => {
+                if (result.success) {
+                    resolve(result);
+                } else {
+                    reject(new Error(result.errors ? result.errors.join(', ') : 'Upload fehlgeschlagen'));
+                }
+            })
+            .catch(error => {
+                reject(error);
+            });
     });
 }
 

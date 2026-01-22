@@ -194,23 +194,29 @@ include dirname(__DIR__) . '/templates/header.php';
                 </div>
             </div>
 
-            <div class="card-footer bg-white border-top-0 d-flex justify-content-end gap-2 flex-wrap">
-                <button class="btn btn-secondary btn-sm" id="exportJsonBtn"><i class="fas fa-file-code me-2"></i>Backup
-                    Speichern</button>
-                <input type="file" id="importJsonInput" accept=".json" style="display:none">
-                <button class="btn btn-outline-secondary btn-sm"
-                    onclick="document.getElementById('importJsonInput').click()"><i
-                        class="fas fa-file-upload me-2"></i>Backup Laden</button>
-                <button class="btn btn-outline-dark btn-sm" id="loadServerBtn"><i
-                        class="fas fa-cloud-download-alt me-2"></i>Aktuellen Plan Laden</button>
-
-                <div class="vr mx-2"></div>
-
-                <button class="btn btn-primary btn-sm" id="generateBtn"><i class="fas fa-sync-alt me-2"></i>Vorschau
-                    aktualisieren</button>
-                <div class="vr mx-2"></div>
-                <button class="btn btn-success btn-sm" id="publishBtn"><i class="fas fa-cloud-upload-alt me-2"></i>Plan
-                    Veröffentlichen</button>
+            <div class="card-footer bg-white border-top-0">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <div class="d-flex gap-2 flex-wrap">
+                        <button class="btn btn-secondary btn-sm" id="exportJsonBtn" style="white-space: nowrap;">
+                            <i class="fas fa-file-code me-2"></i>Backup Speichern
+                        </button>
+                        <input type="file" id="importJsonInput" accept=".json" style="display:none">
+                        <button class="btn btn-outline-secondary btn-sm" onclick="document.getElementById('importJsonInput').click()" style="white-space: nowrap;">
+                            <i class="fas fa-file-upload me-2"></i>Backup Laden
+                        </button>
+                        <button class="btn btn-outline-dark btn-sm" id="loadServerBtn" style="white-space: nowrap;">
+                            <i class="fas fa-cloud-download-alt me-2"></i>Aktuellen Plan Laden
+                        </button>
+                    </div>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <button class="btn btn-primary btn-sm" id="generateBtn" style="white-space: nowrap;">
+                            <i class="fas fa-sync-alt me-2"></i>Vorschau aktualisieren
+                        </button>
+                        <button class="btn btn-success btn-sm" id="publishBtn" style="white-space: nowrap;">
+                            <i class="fas fa-cloud-upload-alt me-2"></i>Plan Veröffentlichen
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

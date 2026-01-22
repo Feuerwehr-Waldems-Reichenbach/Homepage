@@ -103,12 +103,12 @@ $page->addContent($page->renderDownloadHeaderWithButtons(
     [
         [
             'label' => 'PDF herunterladen',
-            'href' => 'javascript:publicCalendar.exportPdf()',
+            'href' => '/Mitmachen/jahresplan.pdf',
             'class' => 'btn-primary',
         ],
         [
             'label' => 'Bild herunterladen',
-            'href' => 'javascript:publicCalendar.exportPng()',
+            'href' => '/Mitmachen/jahresplan.png',
             'class' => 'btn-primary',
         ],
     ],
