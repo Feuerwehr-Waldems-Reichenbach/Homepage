@@ -11,25 +11,24 @@ $page = new PageBuilder(
 
 // Füge den Fullscreen Hero Abschnitt hinzu
 $page->addContent($page->renderFullscreenHero(
-    id: 'header17-1i',
-    cidSuffix: 'Hero-Mitmachen',
-    title: 'Mach mit!',
-    subtitle: '', // Kein Untertitel im ursprünglichen Header
-    buttonText: 'Erfahre mehr!',
-    buttonHref: '#features019-1j', // Link zum ersten Inhaltsblock
-    jarallaxSpeed: 0.8,
-    overlayOpacity: 0.5,
-    overlayColor: 'rgb(0, 0, 0)',
-    btnClass: 'btn-white-outline', // Passe die Button-Klasse an
-    backgroundImage: '/assets/images/a5ar3-lq538.webp'
+    'header17-1i',
+    'Mach mit!',
+    '', // Kein Untertitel im ursprünglichen Header
+    'Erfahre mehr!',
+    '#features019-1j', // Link zum ersten Inhaltsblock
+    'Hero-Mitmachen',
+    0.8,
+    0.5,
+    'rgb(0, 0, 0)',
+    'btn-white-outline',
+    '/assets/images/a5ar3-lq538.webp'
 ));
 
 // Füge den Features Abschnitt (Einsatz-, Jugend-, Kinderfeuerwehr) hinzu
 $page->addContent($page->renderFeatureCardsWithImages(
-    id: 'features019-1j',
-    cidSuffix: 'Feature-Cards-With-Images',
-    title: '', // Kein Titel oberhalb der Karten im Original
-    features: [
+    'features019-1j',
+    '', // Kein Titel oberhalb der Karten im Original
+    [
         [
             'img' => '../assets/images/1024d6e5-9a7b-4004-9dc4-8b416865dfe1.webp',
             'alt' => 'Einsatzabteilung',
@@ -48,31 +47,31 @@ $page->addContent($page->renderFeatureCardsWithImages(
             'title' => 'Kinderfeuerwehr',
             'text' => 'Die Kinderfeuerwehr trifft sich alle vier Wochen montags. Hier werden die Kinder spielerisch an die Aufgaben der Feuerwehr herangeführt und nehmen an altersgerechten Übungen und Aktivitäten teil.',
         ],
-    ]
+    ],
+    'Feature-Cards-With-Images'
 ));
 
 // Füge den Textabschnitt "Interessiert?" hinzu
 $page->addContent($page->renderTextArticle(
-    id: 'article13-4s',
-    cidSuffix: 'Text-Article',
-    title: 'Interessiert?',
-    text: 'Wenn du neugierig bist und mehr über unsere Arbeit erfahren möchtest, bist du herzlich eingeladen, zu einem unserer Termine vorbeizukommen. Ob Einsatzabteilung, Jugendfeuerwehr oder Kinderfeuerwehr – schau einfach vorbei, lerne uns kennen und finde heraus, wie spannend und erfüllend das Engagement bei der Feuerwehr sein kann!',
+    'article13-4s',
+    'Interessiert?',
+    'Wenn du neugierig bist und mehr über unsere Arbeit erfahren möchtest, bist du herzlich eingeladen, zu einem unserer Termine vorbeizukommen. Ob Einsatzabteilung, Jugendfeuerwehr oder Kinderfeuerwehr – schau einfach vorbei, lerne uns kennen und finde heraus, wie spannend und erfüllend das Engagement bei der Feuerwehr sein kann!',
+    'Text-Article'
 ));
 
 // Füge den Bildabschnitt hinzu
 $page->addContent($page->renderImageSection(
-    id: 'image04-1l',
-    cidSuffix: 'Inage-Full-Size',
-    imageSrc: '/assets/files/Jahreskalender Feuerwehr Reichenbach.jpg',
-    imageAlt: 'Kalender'
+    'image04-1l',
+    '/assets/files/Jahreskalender Feuerwehr Reichenbach.jpg',
+    'Kalender',
+    'Inage-Full-Size'
 ));
 
 // Füge den Header mit Download-Buttons hinzu
 $page->addContent($page->renderDownloadHeaderWithButtons(
-    id: 'header14-1n',
-    cidSuffix: 'Download-header-With-Buttons',
-    title: 'Hier gibt\'s unseren Übungsplan',
-    buttons: [
+    'header14-1n',
+    'Hier gibt\'s unseren Übungsplan',
+    [
         [
             'label' => 'PDF herunterladen',
             'href' => '/assets/files/Jahreskalender Feuerwehr Reichenbach final.pdf',
@@ -83,7 +82,8 @@ $page->addContent($page->renderDownloadHeaderWithButtons(
             'href' => '/assets/files/Jahreskalender Feuerwehr Reichenbach.jpg',
             'class' => 'btn-primary',
         ],
-    ]
+    ],
+    'Download-header-With-Buttons'
 ));
 
 // Rendere die vollständige Seite inklusive Head, Includes und Scripts
