@@ -73,21 +73,23 @@ $calendarHtml = '
 <div class="section-calendar cid-Calendar ffr-content-center" id="calendar-section">
     <div class="container-fluid">
         <div class="row justify-content-center">
-             <div class="col-auto">
-                  <div id="publicCalendarContainer">
-                        <h2 class="text-center">Jahresplan Feuerwehr Reichenbach <span id="publicYearTitle"></span></h2>
-                        <div class="table-responsive">
-                            <table class="table table-bordered table-sm text-center align-middle" id="publicCalendarTable">
-                                 <thead><tr id="publicMonthHeader"></tr></thead>
-                                 <tbody id="publicCalendarBody"></tbody>
-                            </table>
-                        </div>
-                        <div id="publicCalendarFooter">
-                             <div style="width: 25%; padding-right:5px;"><h5>Legende</h5><div id="publicLegendContainer"></div></div>
-                             <div style="width: 25%; padding-right:5px;"><h5>Termine</h5><ul class="list-unstyled small" id="publicSpecialFooter"></ul></div>
-                             <div style="width: 25%; padding-right:5px;"><h5>Ferien</h5><ul class="list-unstyled small" id="publicVacationFooter"></ul></div>
-                             <div style="width: 25%;"><h5>Feiertage</h5><ul class="list-unstyled small" id="publicHolidayFooter"></ul></div>
-                        </div>
+             <div class="col-12">
+                  <div class="calendar-scroll-wrapper">
+                      <div id="publicCalendarContainer">
+                            <h2 class="text-center">Jahresplan Feuerwehr Reichenbach <span id="publicYearTitle"></span></h2>
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-sm text-center align-middle" id="publicCalendarTable">
+                                     <thead><tr id="publicMonthHeader"></tr></thead>
+                                     <tbody id="publicCalendarBody"></tbody>
+                                </table>
+                            </div>
+                            <div id="publicCalendarFooter">
+                                 <div style="width: 25%; padding-right:5px;"><h5>Legende</h5><div id="publicLegendContainer"></div></div>
+                                 <div style="width: 25%; padding-right:5px;"><h5>Termine</h5><ul class="list-unstyled small" id="publicSpecialFooter"></ul></div>
+                                 <div style="width: 25%; padding-right:5px;"><h5>Ferien</h5><ul class="list-unstyled small" id="publicVacationFooter"></ul></div>
+                                 <div style="width: 25%;"><h5>Feiertage</h5><ul class="list-unstyled small" id="publicHolidayFooter"></ul></div>
+                            </div>
+                      </div>
                   </div>
              </div>
         </div>

@@ -7,6 +7,24 @@
     box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
 }
 
+/* Scroll Wrapper for Mobile Devices */
+.calendar-scroll-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: visible;
+    -webkit-overflow-scrolling: touch;
+    /* Smooth scrolling on iOS */
+}
+
+/* Desktop: Center the wrapper */
+@media (min-width: 992px) {
+    .calendar-scroll-wrapper {
+        display: flex;
+        justify-content: center;
+        overflow-x: visible;
+    }
+}
+
 /* Force A4 Landscape Dimensions for the Preview/Export Container */
 #calendarContainer,
 #publicCalendarContainer {
@@ -14,8 +32,9 @@
     background-color: white !important;
     color: #000 !important;
 
-    /* Fixed A4 Landscape */
+    /* Fixed A4 Landscape on Desktop */
     width: 297mm;
+    min-width: 297mm;
     height: 210mm;
 
     /* Center and simulate paper look */
@@ -30,6 +49,20 @@
     flex-direction: column;
     overflow: hidden;
     /* Strict no-overflow */
+}
+
+/* Mobile: Allow horizontal scrolling, maintain aspect ratio */
+@media (max-width: 991.98px) {
+    #publicCalendarContainer {
+        width: 297mm;
+        min-width: 297mm;
+        /* Keep A4 width for proper calendar display */
+        height: auto;
+        min-height: 210mm;
+        /* Maintain aspect ratio */
+        margin: 0;
+        /* Remove auto margin on mobile */
+    }
 }
 
 #calendarContainer h2,
@@ -148,6 +181,16 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    flex-wrap: nowrap;
+    /* Prevent wrapping to maintain layout */
+}
+
+/* Mobile: Adjust footer layout if needed */
+@media (max-width: 991.98px) {
+    #publicCalendarFooter {
+        min-width: 277mm;
+        /* Match container width minus padding */
+    }
 }
 
 #calendarFooter h5,
