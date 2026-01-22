@@ -490,6 +490,7 @@ function renderCalendar() {
 
     renderLegend();
     renderSpecialEventsFooter();
+    renderVacationsFooter();
 }
 
 function renderLegend() {
@@ -525,6 +526,40 @@ function renderSpecialEventsFooter() {
                 li.style.color = '#d63384';
                 li.style.fontWeight = 'bold';
             }
+            ul.appendChild(li);
+        }
+    });
+}
+
+function renderVacationsFooter() {
+    const ul = document.getElementById('vacationsFooter');
+    ul.innerHTML = '';
+
+    if (!vacations || vacations.length === 0) {
+        const li = document.createElement('li');
+        li.className = 'text-muted';
+        li.textContent = 'Keine Ferien geladen';
+        ul.appendChild(li);
+        return;
+    }
+
+    // Sort chronologically by start date
+    const sorted = [...vacations].sort((a, b) => a.start.localeCompare(b.start));
+
+    sorted.forEach(vac => {
+        // Only show for current selected year
+        if (vac.start.startsWith(state.year)) {
+            const li = document.createElement('li');
+            li.className = 'mb-1';
+            
+            // Format dates
+            const startDate = new Date(vac.start + 'T00:00:00').toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' });
+            const endDate = new Date(vac.end + 'T00:00:00').toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' });
+            
+            // Format vacation name (capitalize first letter)
+            const vacName = vac.name.charAt(0).toUpperCase() + vac.name.slice(1).replace(/_/g, ' ');
+            
+            li.innerHTML = `<strong>${startDate} - ${endDate}</strong><br><span style="color:#0dcaf0;">${vacName}</span>`;
             ul.appendChild(li);
         }
     });
