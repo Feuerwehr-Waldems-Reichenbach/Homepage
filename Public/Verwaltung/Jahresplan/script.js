@@ -57,90 +57,22 @@ function init() {
 let holidays = [];
 
 function fetchHolidays(year) {
-    // Using feiertage-api.de
-    const url = `https://get.api-feiertage.de?years=${year}&states=he`;
-
-    // Since we need to avoid cross-origin issues or rely on external API availability...
-    // Let's use a static calculation for common holidays or a public JSON API if CORS permits.
-    // 'feiertage-api.de' is good but requires API key? No.
-    // 'ferien-api.de' is for vacations.
-
-    // Let's use a simple static calculator for German holidays (Gaussian Easter) for robustness without external deps.
-    holidays = calculateHolidays(year);
+    holidays = CalendarRenderer.calculateHolidays(year);
     renderCalendar();
 }
 
-function calculateHolidays(year) {
-    // Easter calculation (Gaussian)
-    const a = year % 19;
-    const b = Math.floor(year / 100);
-    const c = year % 100;
-    const d = Math.floor(b / 4);
-    const e = b % 4;
-    const f = Math.floor((b + 8) / 25);
-    const g = Math.floor((b - f + 1) / 3);
-    const h = (19 * a + b - d - g + 15) % 30;
-    const i = Math.floor(c / 4);
-    const k = c % 4;
-    const l = (32 + 2 * e + 2 * i - h - k) % 7;
-    const m = Math.floor((a + 11 * h + 22 * l) / 451);
+// calculateHolidays moved to CalendarRenderer
 
-    const easterMonth = Math.floor((h + l - 7 * m + 114) / 31) - 1;
-    const easterDay = ((h + l - 7 * m + 114) % 31) + 1;
-    const easterDate = new Date(year, easterMonth, easterDay);
-
-    const addDays = (date, days) => {
-        const result = new Date(date);
-        result.setDate(result.getDate() + days);
-        return result;
-    };
-
-    const list = [
-        { date: `${year}-01-01`, name: 'Neujahr' },
-        { date: `${year}-05-01`, name: 'Tag der Arbeit' },
-        { date: `${year}-10-03`, name: 'Tag der Deutschen Einheit' },
-        { date: `${year}-12-25`, name: '1. Weihnachtstag' },
-        { date: `${year}-12-26`, name: '2. Weihnachtstag' },
-
-        { date: formatDateISO(addDays(easterDate, -2)), name: 'Karfreitag' },
-        { date: formatDateISO(addDays(easterDate, 1)), name: 'Ostermontag' },
-        { date: formatDateISO(addDays(easterDate, 39)), name: 'Christi Himmelfahrt' },
-        { date: formatDateISO(addDays(easterDate, 50)), name: 'Pfingstmontag' },
-        { date: formatDateISO(addDays(easterDate, 60)), name: 'Fronleichnam' }
-    ];
-
-    return list;
-}
 
 // Vacation Data Store
 let vacations = [];
 
 function fetchVacations(year) {
-    // Fetch vacations for current year AND previous year (to catch winter vacations starting in Dec)
-    const years = [year - 1, year];
-    
-    Promise.all(years.map(y => fetch(`https://schulferien-api.de/api/v1/${y}/HE`).then(r => r.ok ? r.json() : [])))
-        .then(results => {
-            let allVacations = [];
-            results.forEach(data => {
-                const items = Array.isArray(data) ? data : data?.data;
-                if (Array.isArray(items)) {
-                    allVacations = allVacations.concat(items.map(v => ({
-                        start: v.start.substring(0, 10),
-                        end: v.end.substring(0, 10),
-                        name: v.name_cp || v.name
-                    })));
-                }
-            });
-            vacations = allVacations;
-            console.log('Loaded vacations:', vacations);
-            renderCalendar();
-        })
-        .catch(error => {
-            console.error('Error fetching vacations:', error);
-            vacations = [];
-            renderCalendar();
-        });
+    CalendarRenderer.fetchVacations(year).then(data => {
+        vacations = data;
+        console.log('Loaded vacations:', vacations);
+        renderCalendar();
+    });
 }
 
 
@@ -183,6 +115,10 @@ function setupEventListeners() {
     // Publish button
     const publishBtn = document.getElementById('publishBtn');
     if (publishBtn) publishBtn.onclick = publishPlan;
+
+    // Load from Server button
+    const loadServerBtn = document.getElementById('loadServerBtn');
+    if (loadServerBtn) loadServerBtn.onclick = loadPublishedPlan;
 
     // Toggle seasonal inputs
     const seasonalToggle = document.getElementById('seasonalToggle');
@@ -307,159 +243,20 @@ function renderSpecialList() {
  * Calendar Rendering
  */
 function renderCalendar() {
-    const theadRow = document.getElementById('monthHeaderRow');
-    const tbody = document.getElementById('calendarBody');
-
-    // Clear existing
-    theadRow.innerHTML = '<th style="width: 40px; background:#e9ecef;">Tag</th>';
-    tbody.innerHTML = '';
-
-    const months = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'];
-    const monthFull = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
-
-    // Render Month Headers
-    months.forEach((m, i) => {
-        const th = document.createElement('th');
-        th.textContent = m;
-        // Optional: Add full name as title
-        th.title = monthFull[i];
-        theadRow.appendChild(th);
-    });
-
-    // Render Days (1-31)
-    for (let day = 1; day <= 31; day++) {
-        const tr = document.createElement('tr');
-
-        // Day Number Cell
-        const tdNum = document.createElement('td');
-        tdNum.textContent = day;
-        tdNum.className = 'fw-bold bg-light';
-        tr.appendChild(tdNum);
-
-        // Month Cells
-        for (let m = 0; m < 12; m++) {
-            const td = document.createElement('td');
-            const date = new Date(state.year, m, day);
-            const dateString = formatDateISO(date);
-
-            // Add date attribute for Drag & Drop
-            td.dataset.date = dateString;
-
-            // Check if valid date (e.g. Feb 30 is invalid)
-            if (date.getMonth() !== m) {
-                td.style.backgroundColor = '#ddd'; // Invalid date
-                td.classList.add('invalid-date');
-                tr.appendChild(td);
-                continue;
-            }
-
-            const dayOfWeek = date.getDay();
-            const dayName = getDayShortName(dayOfWeek);
-
-            // Weekend highlighting
-            if (dayOfWeek === 0 || dayOfWeek === 6) {
-                td.style.backgroundColor = '#f8f9fa';
-                td.classList.add('weekend-row');
-            }
-            if (dayOfWeek === 0) { // Sunday slightly darker
-                td.style.backgroundColor = '#f1f3f5';
-            }
-
-            // Holiday highlighting override with CSS classes
-            const holiday = holidays.find(h => h.date === dateString);
-            const vac = vacations.find(v => dateString >= v.start && dateString <= v.end);
-
-            if (vac) {
-                td.classList.add('vacation-bg');
-                td.title = vac.name;
-            }
-            if (holiday) {
-                td.classList.add('holiday-bg'); // Red takes precedence via CSS if needed
-                td.title = holiday.name;
-            }
-            if (vac && holiday) {
-                td.title = `${holiday.name} (${vac.name})`;
-            }
-
-            // Cell Content Container
-            const cellContent = document.createElement('div');
-            cellContent.className = 'cell-content';
-
-            // Date Label
-            const dateLabel = document.createElement('div');
-            dateLabel.className = 'cell-date';
-            
-            // Format: "Mo 01."
-            // Pad Zero
-            const dayNum = String(day).padStart(2, '0');
-            let labelText = `${dayName} ${dayNum}.`;
-
-            let infoIndicator = '';
-            if (holiday) {
-                infoIndicator = '<span class="holiday-indicator" title="' + holiday.name + '">FT</span>';
-            }
-
-            dateLabel.innerHTML = `${labelText} ${infoIndicator}`;
-            cellContent.appendChild(dateLabel);
-
-            // Container for Events
-            const eventContainer = document.createElement('div');
-            eventContainer.className = 'event-container';
-
-            // --- RENDER EVENTS ---
-            const events = state.generatedEvents.filter(e => e.date === dateString);
-
-            // Render events in flex container
-            if (events.length > 0) {
-                events.forEach(ev => {
-                    const el = document.createElement('div');
-                    el.className = 'event-marker';
-
-                    // Get group color OR custom color
-                    let color = '#333';
-                    if (ev.groupId) {
-                        const group = state.groups.find(g => g.id === ev.groupId);
-                        if (group) color = group.color;
-                    } else if (ev.customColor) {
-                        color = ev.customColor;
-                    }
-
-                    el.style.backgroundColor = color;
-                    // Only show title if special event, otherwise color block is enough or small tooltip
-                    // For "Termine" (special), we probably want to see the title?
-                    // Let's modify: Always show short title or icon? 
-                    // User said "eigene termine...".
-                    // Let's show truncated title if space permits.
-                    el.title = ev.title;
-                    el.textContent = ev.isHoliday ? '!' : '';
-
-                    // If it's a "Termin" (special), maybe show a dot or small text?
-                    // For now, keep it simple blocks.
-
-                    el.setAttribute('draggable', 'true');
-                    el.dataset.id = ev.id;
-
-                    // Interaction: Click to edit/delete
-                    el.onclick = (e) => {
-                        e.stopPropagation();
-                        editEvent(ev.id);
-                    };
-
-                    eventContainer.appendChild(el);
-                });
-            }
-
-            cellContent.appendChild(eventContainer);
-            td.appendChild(cellContent);
-
-            // Drop zone for dragging
-            td.ondragover = (e) => e.preventDefault();
-            td.ondrop = (e) => handleDrop(e); // Removing dateString arg, handleDrop uses dataset
-
-            tr.appendChild(td);
+    CalendarRenderer.render({
+        year: state.year,
+        containerId: 'calendarBody',
+        headerRowId: 'monthHeaderRow',
+        events: state.generatedEvents,
+        groups: state.groups,
+        holidays: holidays,
+        vacations: vacations,
+        options: {
+            readOnly: false,
+            onEventClick: editEvent,
+            onDrop: handleDrop
         }
-        tbody.appendChild(tr);
-    }
+    });
 
     renderLegend();
     renderSpecialEventsFooter();
@@ -468,127 +265,22 @@ function renderCalendar() {
 }
 
 function renderLegend() {
-    const container = document.getElementById('legendContainer');
-    container.innerHTML = '';
-    
-    // Add (F) = Ferien manually to legend? 
-    // User requested lighter/compact legend. 
-    // Let's add standard items plus Ferien/Holiday status
-    
-    const extras = [
-        {name: 'Ferien', color: '#e0f7fa'},
-        {name: 'Feiertag', color: '#ffebee'}
-    ];
-    
-    // Render custom groups
-    state.groups.forEach(group => {
-        const div = document.createElement('div');
-        div.className = 'legend-item';
-        div.innerHTML = `<span class="legend-color" style="background:${group.color}"></span> ${group.name}`;
-        container.appendChild(div);
-    });
-    
-    // Render status colors
-    extras.forEach(ex => {
-        const div = document.createElement('div');
-        div.className = 'legend-item';
-        div.innerHTML = `<span class="legend-color" style="background:${ex.color}; border:1px solid #ccc;"></span> ${ex.name}`;
-        container.appendChild(div);
-    });
+    CalendarRenderer.renderLegend('legendContainer', state.groups);
 }
 
 function renderSpecialEventsFooter() {
-    const ul = document.getElementById('specialEventsFooter');
-    ul.innerHTML = '';
-
-    // Mix custom special events AND Generated events that are marked 'special' logic?
-    // Actually, user wants "list special appointments separately".
-    // I should list all events that are defined in 'specialEvents' separate list.
-
-    // Sort chronologically
-    const sorted = [...state.specialEvents].sort((a, b) => new Date(a.date) - new Date(b.date));
-
-    sorted.forEach(ev => {
-        // Only show for current selected year
-        if (ev.date.startsWith(state.year)) {
-            const li = document.createElement('li');
-            li.className = 'mb-1';
-            const date = new Date(ev.date).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: '2-digit' });
-            li.innerHTML = `<strong>${date}</strong> ${ev.title}`;
-            if (ev.isHoliday) {
-                li.style.color = '#d63384';
-                li.style.fontWeight = 'bold';
-            }
-            ul.appendChild(li);
-        }
-    });
+    CalendarRenderer.renderSpecialEventsFooter('specialEventsFooter', state.specialEvents, state.year);
 }
 
-/**
- * Render Holidays Footer
- */
 function renderHolidaysFooter() {
-    const ul = document.getElementById('holidaysFooter');
-    if(!ul) return;
-    ul.innerHTML = '';
-
-    // Filter for current year
-    const relevant = holidays.filter(h => h.date.startsWith(state.year));
-    
-    relevant.forEach(h => {
-        const li = document.createElement('li');
-        li.className = 'mb-1';
-        const date = new Date(h.date).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' });
-        li.innerHTML = `<strong>${date}</strong> <span style="color:#d63384;">${h.name}</span>`;
-        ul.appendChild(li);
-    });
+    CalendarRenderer.renderHolidaysFooter('holidaysFooter', holidays, state.year);
 }
 
 function renderVacationsFooter() {
-    const ul = document.getElementById('vacationsFooter');
-    ul.innerHTML = '';
-
-    if (!vacations || vacations.length === 0) {
-        const li = document.createElement('li');
-        li.className = 'text-muted';
-        li.textContent = 'Keine Ferien geladen';
-        ul.appendChild(li);
-        return;
-    }
-
-    // Sort chronologically by start date
-    // Filter out vacations that ended before this year or start after this year?
-    // User wants "this year's vacations". 
-    // If a vacation started in Prev Year but overlaps Jan 1st of Current Year, it is relevant.
-    // If a vacation starts in Current Year, it is relevant.
-    
-    const relevant = vacations.filter(v => {
-        // Overlap logic: Start <= EndYear AND End >= StartYear
-        const vStart = v.start;
-        const vEnd = v.end;
-        const yearStart = `${state.year}-01-01`;
-        const yearEnd = `${state.year}-12-31`;
-        
-        return vStart <= yearEnd && vEnd >= yearStart;
-    });
-
-    const sorted = relevant.sort((a, b) => a.start.localeCompare(b.start));
-
-    sorted.forEach(vac => {
-        const li = document.createElement('li');
-        li.className = 'mb-1';
-        
-        // Format dates
-        const startDate = new Date(vac.start + 'T00:00:00').toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year:'2-digit' });
-        const endDate = new Date(vac.end + 'T00:00:00').toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year:'2-digit' });
-        
-        // Format vacation name (capitalize first letter)
-        const vacName = vac.name.charAt(0).toUpperCase() + vac.name.slice(1).replace(/_/g, ' ');
-        
-        li.innerHTML = `<strong>${startDate}-${endDate}</strong><br><span style="color:#0dcaf0;">${vacName}</span>`;
-        ul.appendChild(li);
-    });
+    CalendarRenderer.renderVacationsFooter('vacationsFooter', vacations, state.year);
 }
+
+
 
 /**
  * Logic - Generation
@@ -630,7 +322,7 @@ function generatePlan() {
         while (patternDate.getFullYear() <= state.year && currentLoop < 10000) {
             // Only add if it falls in the current year
             if (patternDate.getFullYear() === state.year) {
-                const dateStr = formatDateISO(patternDate);
+                const dateStr = CalendarRenderer.formatDateISO(patternDate);
                 const overrideKey = `${dateStr}_${group.id}`;
 
                 if (overrides.has(overrideKey)) {
@@ -975,18 +667,7 @@ window.removeSpecial = removeSpecial;
 /**
  * Export / Import / Helpers
  */
-function formatDateISO(date) {
-    const y = date.getFullYear();
-    const m = String(date.getMonth() + 1).padStart(2, '0');
-    const d = String(date.getDate()).padStart(2, '0');
-    return `${y}-${m}-${d}`;
-}
 
-function formatDateShort(iso) {
-    if (!iso) return '';
-    const [y, m, d] = iso.split('-');
-    return `${d}.${m}.`;
-}
 
 function getRhythmName(r) {
     const map = {
@@ -1002,10 +683,7 @@ function getDayName(num) {
     return days[parseInt(num)];
 }
 
-function getDayShortName(num) {
-    const days = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
-    return days[parseInt(num)];
-}
+
 
 function exportJson() {
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state));
@@ -1183,4 +861,42 @@ function publishPlan() {
             publishBtn.innerHTML = originalText;
         }
     });
+}
+
+function loadPublishedPlan() {
+    const jsonPath = '../../Mitmachen/jahresplan.json';
+    fetch(jsonPath + '?t=' + Date.now())
+        .then(response => {
+             if(!response.ok) throw new Error("Plan konnte nicht geladen werden.");
+             return response.json();
+        })
+        .then(data => {
+            if (data) {
+                // Ensure groups have ids if missing (legacy support)
+                if (data.groups) {
+                     data.groups.forEach((g, i) => { if(!g.id) g.id = 'g_' + i; });
+                }
+
+                state = data;
+                // Verify structure
+                if (!state.generatedEvents) state.generatedEvents = [];
+                if (!state.series) state.series = [];
+                if (!state.specialEvents) state.specialEvents = [];
+                if (!state.groups) state.groups = [];
+
+                // Re-render
+                document.getElementById('yearDisplay').textContent = state.year;
+                document.getElementById('calendarYearTitle').textContent = state.year;
+                renderGroupsUI();
+                renderGroupSelects();
+                renderSeriesList();
+                renderSpecialList();
+                renderCalendar();
+                alert('Plan erfolgreich geladen!');
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert('Fehler beim Laden des Plans: ' + err.message);
+        });
 }

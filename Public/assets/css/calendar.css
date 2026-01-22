@@ -1,0 +1,222 @@
+/* Custom styles for Public Calendar */
+
+.glass-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+}
+
+/* Force A4 Landscape Dimensions for the Preview/Export Container */
+#calendarContainer,
+#publicCalendarContainer {
+    font-family: 'Inter Tight', sans-serif;
+    background-color: white !important;
+    color: #000 !important;
+
+    /* Fixed A4 Landscape */
+    width: 297mm;
+    height: 210mm;
+
+    /* Center and simulate paper look */
+    margin: 0 auto;
+    padding: 10mm !important;
+    /* Fixed padding in mm for consistency */
+    box-sizing: border-box;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+
+    /* Layout: Flex Column */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    /* Strict no-overflow */
+}
+
+#calendarContainer h2,
+#publicCalendarContainer h2 {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem !important;
+    margin-top: 0 !important;
+}
+
+.table-responsive {
+    flex: 1;
+    overflow: hidden !important;
+    margin-bottom: 5px;
+}
+
+#annualPlanTable,
+#publicCalendarTable {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    height: 100%;
+}
+
+#annualPlanTable th,
+#publicCalendarTable th {
+    background-color: #f8f9fa;
+    text-align: center;
+    padding: 2px;
+    border: 1px solid #777;
+    font-weight: 700;
+    font-size: 0.7rem;
+    height: 15px;
+}
+
+#annualPlanTable td,
+#publicCalendarTable td {
+    font-size: 0.6rem;
+    height: 1.8%;
+    padding: 0 1px;
+    vertical-align: top;
+    position: relative;
+    border: 1px solid #ccc;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+#annualPlanTable td:first-child,
+#publicCalendarTable td:first-child {
+    font-weight: bold;
+    background-color: #eee;
+    vertical-align: middle;
+    text-align: center;
+    width: 25px;
+}
+
+.weekend-row {
+    background-color: #f0f0f0;
+}
+
+.cell-content {
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 2px;
+}
+
+.cell-date {
+    font-size: 0.55rem;
+    color: #666;
+    margin-right: 2px;
+    min-width: 15px;
+    text-align: right;
+    line-height: 1;
+}
+
+.event-container {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    gap: 1px;
+    height: 100%;
+    align-items: center;
+    overflow: hidden;
+}
+
+.event-marker {
+    flex: 1;
+    border-radius: 1px;
+    color: white;
+    font-weight: bold;
+    text-shadow: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.5rem;
+    height: 80%;
+    overflow: hidden;
+    white-space: nowrap;
+    padding: 0 2px;
+    line-height: 1;
+}
+
+.event-marker:hover {
+    flex: 5;
+    z-index: 10;
+}
+
+#calendarFooter,
+#publicCalendarFooter {
+    height: auto;
+    min-height: 35mm;
+    border-top: 1px solid #000;
+    padding-top: 5px;
+    font-size: 0.65rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+#calendarFooter h5,
+#publicCalendarFooter h5 {
+    font-size: 0.8rem;
+    font-weight: bold;
+    margin-bottom: 3px;
+    text-transform: uppercase;
+    border-bottom: 1px solid #eee;
+}
+
+#calendarFooter ul,
+#publicCalendarFooter ul {
+    margin: 0;
+    padding: 0;
+}
+
+#calendarFooter li,
+#publicCalendarFooter li {
+    margin-bottom: 1px;
+    line-height: 1.1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#legendContainer,
+#publicLegendContainer {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2px 8px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    font-size: 0.6rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.legend-color {
+    width: 8px;
+    height: 8px;
+    min-width: 8px;
+    margin-right: 4px;
+    border: 1px solid #999;
+    border-radius: 2px;
+}
+
+.vacation-bg {
+    background-color: #e0f7fa !important;
+}
+
+.holiday-bg {
+    background-color: #ffebee !important;
+}
+
+
+.holiday-indicator {
+    color: #d63384;
+    font-weight: bold;
+    font-size: 0.5rem;
+    margin-left: 2px;
+}
+
+/* Section Background to match site theme */
+#calendar-section {
+    background-color: #414141 !important;
+    padding: 2rem 0 !important;
+}

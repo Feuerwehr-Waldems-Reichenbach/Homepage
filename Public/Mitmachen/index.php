@@ -6,16 +6,25 @@ $page = new PageBuilder(
     title: 'Mach mit | Feuerwehr Reichenbach',
     description: 'Engagiere dich bei der Freiwilligen Feuerwehr Reichenbach! Informiere dich über Möglichkeiten in der Einsatzabteilung, Jugend- oder Kinderfeuerwehr und lade unseren Übungsplan herunter.',
     keywords: 'Mitmachen Feuerwehr, Feuerwehr Reichenbach beitreten, Ehrenamt Waldems, Freiwillige Feuerwehr Waldems, Einsatzabteilung Mitmachen, Jugendfeuerwehr Mitmachen, Kinderfeuerwehr Mitmachen, Feuerwehr Training Waldems, Übungsplan Feuerwehr, Reichenbach Waldems',
-    canonicalUrl: 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],  
+    canonicalUrl: 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
 );
+
+// CSS
+$page->addStyle('/assets/css/calendar.css');
+
+// Scripts
+$page->addScript('/assets/js/html2canvas.min.js');
+$page->addScript('/assets/js/jspdf.umd.min.js');
+$page->addScript('/assets/js/calendar-renderer.js');
+$page->addScript('/Mitmachen/public-calendar.js');
 
 // Füge den Fullscreen Hero Abschnitt hinzu
 $page->addContent($page->renderFullscreenHero(
     'header17-1i',
     'Mach mit!',
-    '', // Kein Untertitel im ursprünglichen Header
+    '',
     'Erfahre mehr!',
-    '#features019-1j', // Link zum ersten Inhaltsblock
+    '#features019-1j',
     'Hero-Mitmachen',
     0.8,
     0.5,
@@ -27,7 +36,7 @@ $page->addContent($page->renderFullscreenHero(
 // Füge den Features Abschnitt (Einsatz-, Jugend-, Kinderfeuerwehr) hinzu
 $page->addContent($page->renderFeatureCardsWithImages(
     'features019-1j',
-    '', // Kein Titel oberhalb der Karten im Original
+    '',
     [
         [
             'img' => '../assets/images/1024d6e5-9a7b-4004-9dc4-8b416865dfe1.webp',
@@ -59,13 +68,33 @@ $page->addContent($page->renderTextArticle(
     'Text-Article'
 ));
 
-// Füge den Bildabschnitt hinzu
-$page->addContent($page->renderImageSection(
-    'image04-1l',
-    '/assets/files/Jahreskalender Feuerwehr Reichenbach.jpg',
-    'Kalender',
-    'Inage-Full-Size'
-));
+// Calendar Section
+$calendarHtml = '
+<div class="section-calendar cid-Calendar ffr-content-center" id="calendar-section">
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+             <div class="col-auto">
+                  <div id="publicCalendarContainer">
+                        <h2 class="text-center">Jahresplan Feuerwehr Reichenbach <span id="publicYearTitle"></span></h2>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-sm text-center align-middle" id="publicCalendarTable">
+                                 <thead><tr id="publicMonthHeader"></tr></thead>
+                                 <tbody id="publicCalendarBody"></tbody>
+                            </table>
+                        </div>
+                        <div id="publicCalendarFooter">
+                             <div style="width: 25%; padding-right:5px;"><h5>Legende</h5><div id="publicLegendContainer"></div></div>
+                             <div style="width: 25%; padding-right:5px;"><h5>Termine</h5><ul class="list-unstyled small" id="publicSpecialFooter"></ul></div>
+                             <div style="width: 25%; padding-right:5px;"><h5>Ferien</h5><ul class="list-unstyled small" id="publicVacationFooter"></ul></div>
+                             <div style="width: 25%;"><h5>Feiertage</h5><ul class="list-unstyled small" id="publicHolidayFooter"></ul></div>
+                        </div>
+                  </div>
+             </div>
+        </div>
+    </div>
+</div>
+';
+$page->addContent($calendarHtml);
 
 // Füge den Header mit Download-Buttons hinzu
 $page->addContent($page->renderDownloadHeaderWithButtons(
@@ -74,12 +103,12 @@ $page->addContent($page->renderDownloadHeaderWithButtons(
     [
         [
             'label' => 'PDF herunterladen',
-            'href' => '/assets/files/Jahreskalender Feuerwehr Reichenbach final.pdf',
+            'href' => 'javascript:publicCalendar.exportPdf()',
             'class' => 'btn-primary',
         ],
         [
             'label' => 'Bild herunterladen',
-            'href' => '/assets/files/Jahreskalender Feuerwehr Reichenbach.jpg',
+            'href' => 'javascript:publicCalendar.exportPng()',
             'class' => 'btn-primary',
         ],
     ],

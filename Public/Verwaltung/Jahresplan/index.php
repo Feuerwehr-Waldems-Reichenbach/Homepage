@@ -164,20 +164,22 @@ include dirname(__DIR__) . '/templates/header.php';
                 </div>
             </div>
 
-            <div class="card-footer bg-white border-top-0 d-flex justify-content-end gap-2">
-                <button class="btn btn-secondary" id="exportJsonBtn"><i class="fas fa-file-code me-2"></i>Backup
+            <div class="card-footer bg-white border-top-0 d-flex justify-content-end gap-2 flex-wrap">
+                <button class="btn btn-secondary btn-sm" id="exportJsonBtn"><i class="fas fa-file-code me-2"></i>Backup
                     Speichern</button>
                 <input type="file" id="importJsonInput" accept=".json" style="display:none">
-                <button class="btn btn-outline-secondary"
+                <button class="btn btn-outline-secondary btn-sm"
                     onclick="document.getElementById('importJsonInput').click()"><i
                         class="fas fa-file-upload me-2"></i>Backup Laden</button>
+                <button class="btn btn-outline-dark btn-sm" id="loadServerBtn"><i
+                        class="fas fa-cloud-download-alt me-2"></i>Aktuellen Plan Laden</button>
 
                 <div class="vr mx-2"></div>
 
-                <button class="btn btn-primary" id="generateBtn"><i class="fas fa-sync-alt me-2"></i>Vorschau
+                <button class="btn btn-primary btn-sm" id="generateBtn"><i class="fas fa-sync-alt me-2"></i>Vorschau
                     aktualisieren</button>
                 <div class="vr mx-2"></div>
-                <button class="btn btn-success" id="publishBtn"><i class="fas fa-cloud-upload-alt me-2"></i>Plan
+                <button class="btn btn-success btn-sm" id="publishBtn"><i class="fas fa-cloud-upload-alt me-2"></i>Plan
                     Veröffentlichen</button>
             </div>
         </div>
@@ -204,7 +206,7 @@ include dirname(__DIR__) . '/templates/header.php';
                 <div class="overflow-auto p-3">
                     <div id="calendarContainer" class="bg-white text-dark">
                         <div class="d-flex align-items-center justify-content-between mb-2">
-                            <h2 class="text-center fw-bold m-0 flex-grow-1">Jahresdienstplan Feuerwehr Reichenbach <span
+                            <h2 class="text-center fw-bold m-0 flex-grow-1">Jahresplan Feuerwehr Reichenbach <span
                                     id="calendarYearTitle">2026</span></h2>
                         </div>
                         <table class="table table-bordered table-sm text-center align-middle" id="annualPlanTable">
@@ -257,6 +259,9 @@ include dirname(__DIR__) . '/templates/header.php';
 <!-- Libraries for export -->
 <script src="<?php echo $ADMIN_ROOT; ?>/assets/js/libs/html2canvas.min.js"></script>
 <script src="<?php echo $ADMIN_ROOT; ?>/assets/js/libs/jspdf.umd.min.js"></script>
+
+<!-- Shared Logic -->
+<script src="../../assets/js/calendar-renderer.js"></script>
 
 <!-- Application Logic -->
 <script src="script.js"></script>
