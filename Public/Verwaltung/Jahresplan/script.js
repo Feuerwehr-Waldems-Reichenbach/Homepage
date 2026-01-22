@@ -979,14 +979,36 @@ function getExportCanvas() {
         return null;
     }
 
-    const renderPromise = window.html2canvas(element, { scale: 2 });
-    if (!renderPromise || typeof renderPromise.then !== 'function') {
-        console.error('html2canvas hat kein Promise zurückgegeben.');
+    let legacyResolve;
+    const legacyPromise = new Promise(resolve => {
+        legacyResolve = resolve;
+    });
+    const options = { scale: 2, onrendered: legacyResolve };
+
+    let renderResult;
+    try {
+        renderResult = window.html2canvas(element, options);
+    } catch (error) {
+        console.error('html2canvas konnte nicht ausgeführt werden.', error);
         alert('Export konnte nicht gestartet werden. Bitte laden Sie die Seite neu.');
         return null;
     }
 
-    return renderPromise;
+    if (renderResult instanceof HTMLCanvasElement) {
+        return Promise.resolve(renderResult);
+    }
+
+    if (renderResult && typeof renderResult.then === 'function') {
+        return renderResult;
+    }
+
+    if (renderResult === undefined) {
+        return legacyPromise;
+    }
+
+    console.error('html2canvas hat kein Promise zurückgegeben.');
+    alert('Export konnte nicht gestartet werden. Bitte laden Sie die Seite neu.');
+    return null;
 }
 
 function exportPng() {
