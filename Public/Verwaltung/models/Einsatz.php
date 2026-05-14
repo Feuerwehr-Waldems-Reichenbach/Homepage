@@ -271,8 +271,8 @@ class Einsatz extends Model
                 e.Einheit
             FROM {$this->table} e
             WHERE e.Endzeit IS NULL
-               OR e.Endzeit = ''
-               OR e.Endzeit = '0000-00-00 00:00:00'
+               OR CAST(e.Endzeit AS CHAR(19)) = ''
+               OR CAST(e.Endzeit AS CHAR(19)) = '0000-00-00 00:00:00'
             ORDER BY e.Datum DESC
         ";
 

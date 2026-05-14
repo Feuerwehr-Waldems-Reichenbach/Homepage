@@ -1,6 +1,5 @@
 <?php
 require_once dirname(__DIR__, 3) . '/Private/Database/Database.php';
-require_once dirname(__DIR__) . '/models/AuthKey.php';
 require_once dirname(__DIR__) . '/models/Einsatz.php';
 
 header('Access-Control-Allow-Origin: *');
@@ -16,11 +15,40 @@ header('Content-Type: application/json; charset=utf-8');
  * @param array $data
  * @return void
  */
-function sendJsonResponse(int $statusCode, array $data): void
+function sendJsonResponse($statusCode, $data)
 {
     http_response_code($statusCode);
     echo json_encode($data, JSON_UNESCAPED_UNICODE);
     exit;
+}
+
+/**
+ * Normalize API key values copied from different clients/UI contexts.
+ *
+ * @param string $apiKey
+ * @return string
+ */
+function normalizeApiKey($apiKey)
+{
+    $normalized = html_entity_decode($apiKey, ENT_QUOTES, 'UTF-8');
+    $normalized = preg_replace('/\x{00A0}/u', ' ', $normalized);
+    $normalized = preg_replace('/[\x00-\x1F\x7F]/u', '', $normalized);
+    return trim((string) $normalized);
+}
+
+/**
+ * Validate auth key exactly like in webhook helpers.
+ *
+ * @param PDO $conn
+ * @param string $authKey
+ * @return bool
+ */
+function isValidApiAuthKey($conn, $authKey)
+{
+    $sql = "SELECT COUNT(*) FROM `authentifizierungsschluessel` WHERE `auth_key` = ? AND `active` = 1";
+    $stmt = $conn->prepare($sql);
+    $stmt->execute([$authKey]);
+    return $stmt->fetchColumn() > 0;
 }
 
 /**
@@ -29,7 +57,7 @@ function sendJsonResponse(int $statusCode, array $data): void
  * @param string $paramName
  * @return bool
  */
-function isTruthyQueryParam(string $paramName): bool
+function isTruthyQueryParam($paramName)
 {
     if (!isset($_GET[$paramName])) {
         return false;
@@ -49,7 +77,7 @@ function isTruthyQueryParam(string $paramName): bool
  *
  * @return string
  */
-function getApiKeyFromRequest(): string
+function getApiKeyFromRequest()
 {
     $apiKey = '';
 
@@ -77,7 +105,7 @@ function getApiKeyFromRequest(): string
         $apiKey = trim((string) $_GET['auth_key']);
     }
 
-    return $apiKey;
+    return normalizeApiKey($apiKey);
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
@@ -161,8 +189,10 @@ if ($apiKey === '') {
 }
 
 try {
-    $authKeyModel = new AuthKey();
-    if (!$authKeyModel->isValidKey($apiKey)) {
+    $db = Database::getInstance();
+    $conn = $db->getConnection();
+
+    if (!isValidApiAuthKey($conn, $apiKey)) {
         sendJsonResponse(401, [
             'success' => false,
             'message' => 'Invalid API key'
@@ -203,8 +233,8 @@ try {
             'generated_at' => date('c')
         ]
     ]);
-} catch (Throwable $e) {
-    error_log('Polling API error: ' . $e->getMessage());
+} catch (Exception $e) {
+    error_log('Polling API error: ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
 
     sendJsonResponse(500, [
         'success' => false,
