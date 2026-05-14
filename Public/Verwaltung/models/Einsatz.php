@@ -253,7 +253,8 @@ class Einsatz extends Model
     /**
      * Get all active incidents for polling clients.
      *
-     * An incident is considered active when Endzeit is missing.
+     * An incident is considered active when Endzeit is missing and
+     * the start time is recent enough for live polling.
      *
      * @return array Active incidents sorted by Datum descending
      */
@@ -270,9 +271,15 @@ class Einsatz extends Model
                 e.Ort,
                 e.Einheit
             FROM {$this->table} e
-            WHERE e.Endzeit IS NULL
-               OR CAST(e.Endzeit AS CHAR(19)) = ''
-               OR CAST(e.Endzeit AS CHAR(19)) = '0000-00-00 00:00:00'
+            WHERE (
+                e.Endzeit IS NULL
+                OR CAST(e.Endzeit AS CHAR(19)) = ''
+                OR CAST(e.Endzeit AS CHAR(19)) = '0000-00-00 00:00:00'
+            )
+            AND (
+                DATE(e.Datum) = CURDATE()
+                OR e.Datum >= (NOW() - INTERVAL 1 HOUR)
+            )
             ORDER BY e.Datum DESC
         ";
 

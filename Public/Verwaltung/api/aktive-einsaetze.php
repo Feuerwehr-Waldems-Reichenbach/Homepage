@@ -169,6 +169,7 @@ if (isTruthyQueryParam('docs') || isTruthyQueryParam('doku')) {
                 'Ort',
                 'Einheit'
             ],
+            'active_definition' => 'Endzeit fehlt und (Datum ist heute ODER Datum liegt maximal 1 Stunde in der Vergangenheit).',
             'status_codes' => [
                 '200' => 'Erfolgreiche Antwort (auch leeres active_incidents)',
                 '204' => 'OPTIONS / CORS preflight',

@@ -111,6 +111,31 @@ class PollingApiTest extends TestCase
         }
     }
 
+    public function testOldOpenIncidentOutsideTimeWindowIsNotReturned(): void
+    {
+        $einsatzId = 'poll-old-open-' . uniqid('', true);
+        $oldDate = date('Y-m-d H:i:s', strtotime('-26 hours'));
+        $this->insertIncident($einsatzId, null, $oldDate);
+
+        $response = $this->sendRequest('GET', [
+            'auth_key' => $this->validAuthKey
+        ]);
+
+        $payload = json_decode($response['body'], true);
+
+        $this->assertSame(200, $response['status']);
+        $this->assertIsArray($payload);
+        $this->assertTrue($payload['success']);
+
+        foreach ($payload['active_incidents'] as $incident) {
+            $this->assertNotSame(
+                $einsatzId,
+                $incident['EinsatzID'] ?? null,
+                'Old open incident outside time window must not be returned as active.'
+            );
+        }
+    }
+
     public function testMissingApiKeyReturns401(): void
     {
         $response = $this->sendRequest('GET');
@@ -222,8 +247,10 @@ class PollingApiTest extends TestCase
         return $key;
     }
 
-    private function insertIncident(string $einsatzId, ?string $endzeit): void
+    private function insertIncident(string $einsatzId, ?string $endzeit, ?string $datum = null): void
     {
+        $datum = $datum ?? date('Y-m-d H:i:s');
+
         $stmt = $this->conn->prepare(
             "INSERT INTO `einsatz` (`EinsatzID`, `Anzeigen`, `Datum`, `Endzeit`, `Sachverhalt`, `Stichwort`, `Ort`, `Einheit`, `Kategorie`)
              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
@@ -231,7 +258,7 @@ class PollingApiTest extends TestCase
 
         $stmt->bindValue(1, $einsatzId, PDO::PARAM_STR);
         $stmt->bindValue(2, $endzeit === null ? 0 : 1, PDO::PARAM_INT);
-        $stmt->bindValue(3, date('Y-m-d H:i:s'), PDO::PARAM_STR);
+        $stmt->bindValue(3, $datum, PDO::PARAM_STR);
         if ($endzeit === null) {
             $stmt->bindValue(4, null, PDO::PARAM_NULL);
         } else {
@@ -251,7 +278,15 @@ class PollingApiTest extends TestCase
     {
         $stmt = $this->conn->query(
             "SELECT COUNT(*) FROM `einsatz`
-             WHERE `Endzeit` IS NULL OR `Endzeit` = '' OR `Endzeit` = '0000-00-00 00:00:00'"
+             WHERE (
+                `Endzeit` IS NULL
+                OR CAST(`Endzeit` AS CHAR(19)) = ''
+                OR CAST(`Endzeit` AS CHAR(19)) = '0000-00-00 00:00:00'
+             )
+             AND (
+                DATE(`Datum`) = CURDATE()
+                OR `Datum` >= (NOW() - INTERVAL 1 HOUR)
+             )"
         );
 
         return (int) $stmt->fetchColumn();
