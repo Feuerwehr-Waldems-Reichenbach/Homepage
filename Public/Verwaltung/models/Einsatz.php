@@ -249,6 +249,38 @@ class Einsatz extends Model
         
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    /**
+     * Get all active incidents for polling clients.
+     *
+     * An incident is considered active when Endzeit is missing.
+     *
+     * @return array Active incidents sorted by Datum descending
+     */
+    public function getActiveEinsaetze()
+    {
+        $sql = "
+            SELECT
+                e.EinsatzID,
+                e.Datum,
+                e.Endzeit,
+                e.Stichwort,
+                e.Sachverhalt,
+                e.Kategorie,
+                e.Ort,
+                e.Einheit
+            FROM {$this->table} e
+            WHERE e.Endzeit IS NULL
+               OR e.Endzeit = ''
+               OR e.Endzeit = '0000-00-00 00:00:00'
+            ORDER BY e.Datum DESC
+        ";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
     
     /**
      * Generate a unique EinsatzID
