@@ -1,4 +1,15 @@
 <?php
+require_once '../includes/config.php';
+require_once '../includes/Reservation.php';
+$reservation = new Reservation();
+$infoKeys = [
+    'VerwaltungspersonVorname',
+    'VerwaltungspersonNachname',
+    'VerwaltungspersonEmail',
+    'VerwaltungspersonTelefon',
+    'SystemEmailProbleme',
+];
+$infoData = $reservation->getSystemInformation($infoKeys);
 require_once '../includes/header.php';
 ?>
 <div class="container my-5">
