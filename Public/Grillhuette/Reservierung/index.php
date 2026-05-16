@@ -283,7 +283,7 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
                         <p><?php echo $infoData['VerwaltungspersonVorname'] ?? 'Julia'; ?>
                             <?php echo $infoData['VerwaltungspersonNachname'] ?? 'Kitschmann'; ?></p>
                         <div class="mt-3">
-                            <p><strong>Kontakt zur Verwalterin:</strong></p>
+                            <p><strong>Kontakt zur Verwaltung:</strong></p>
                             <ul class="list-unstyled">
                                 <li><a href="javascript:void(0)" class="email-protect"
                                         data-encoded="<?php echo base64_encode($infoData['VerwaltungspersonEmail'] ?? 'julia@kitschmann.de'); ?>">E-Mail
@@ -640,7 +640,7 @@ $wichtigeHinweise = $reservation->getSystemInformation([], 'wichtige_hinweise');
                                     <div id="collapseFour" class="accordion-collapse collapse"
                                         data-bs-parent="#mobileInfoAccordion">
                                         <div class="accordion-body">
-                                            <p class="mb-2"><strong>Verwalterin:</strong>
+                                            <p class="mb-2"><strong>Verwaltung:</strong>
                                                 <?php echo $infoData['VerwaltungspersonVorname'] ?? 'Julia'; ?>
                                                 <?php echo $infoData['VerwaltungspersonNachname'] ?? 'Kitschmann'; ?>
                                             </p>

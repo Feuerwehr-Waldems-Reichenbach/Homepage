@@ -241,7 +241,7 @@ require_once '../includes/header.php';
                             <li>Übergabe- und Rückgabezeiten</li>
                             <li>Im Mietzins enthaltene Leistungen</li>
                             <li>Wichtige Hinweise zur Nutzung</li>
-                            <li>Kontaktdaten der Verwalterin</li>
+                            <li>Kontaktdaten der Verwaltung</li>
                         </ul>
                         <div class="d-grid gap-2 d-md-flex justify-content-md-start mt-4">
                             <a href="<?php echo getRelativePath('home'); ?>" class="btn btn-primary">
@@ -327,7 +327,7 @@ require_once '../includes/header.php';
                             Bei bestehenden Reservierungen können Sie:
                         </p>
                         <ul>
-                            <li>Nachrichten an die Verwalterin hinzufügen oder bearbeiten</li>
+                            <li>Nachrichten an die Verwaltung hinzufügen oder bearbeiten</li>
                             <li>Öffentliche Veranstaltungen bearbeiten (Name und Anzeigedatum ändern)</li>
                             <li>Reservierungen stornieren</li>
                             <li>Vergangene oder stornierte Reservierungen löschen</li>
@@ -413,13 +413,13 @@ require_once '../includes/header.php';
                         </p>
                         <h5 class="mt-4">Kontaktdaten</h5>
                         <ul>
-                            <li>Verwalterin: <?php echo $infoData['VerwaltungspersonVorname'] ?? 'Julia'; ?>
-                                <?php echo $infoData['VerwaltungspersonNachname'] ?? 'Kitschmann'; ?></li>
+                            <li>Verwaltung: <?php echo $infoData['VerwaltungspersonVorname'] ?? ''; ?>
+                                <?php echo $infoData['VerwaltungspersonNachname'] ?? ''; ?></li>
                             <li>E-Mail: <a href="javascript:void(0)" class="email-protect"
-                                    data-encoded="<?php echo base64_encode($infoData['VerwaltungspersonEmail'] ?? 'julia@kitschmann.de'); ?>">E-Mail
+                                    data-encoded="<?php echo base64_encode($infoData['VerwaltungspersonEmail'] ?? ''); ?>">E-Mail
                                     anzeigen</a></li>
                             <li>Telefon: <a href="javascript:void(0)" class="phone-protect"
-                                    data-encoded="<?php echo base64_encode($infoData['VerwaltungspersonTelefon'] ?? '0178/8829055'); ?>">Telefonnummer
+                                    data-encoded="<?php echo base64_encode($infoData['VerwaltungspersonTelefon'] ?? ''); ?>">Telefonnummer
                                     anzeigen</a></li>
                         </ul>
                         <h5 class="mt-4">Technischer Support</h5>
@@ -468,7 +468,7 @@ require_once '../includes/header.php';
                                 <div id="collapseThree" class="accordion-collapse collapse"
                                     aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
                                     <div class="accordion-body">
-                                        Nach Ihrer Anfrage erhalten Sie eine Bestätigungs-E-Mail. Die Verwalterin prüft
+                                        Nach Ihrer Anfrage erhalten Sie eine Bestätigungs-E-Mail. Die Verwaltung prüft
                                         Ihre
                                         Anfrage und bestätigt oder lehnt sie ab. Sie werden per E-Mail über die
                                         Entscheidung
@@ -493,7 +493,7 @@ require_once '../includes/header.php';
                                         der
                                         Zukunft liegt. Gehen Sie dazu zu "Meine Reservierungen" und klicken Sie auf
                                         "Reservierung stornieren".
-                                        Die Verwalterin wird automatisch per E-Mail über Ihre Stornierung informiert.
+                                        Die Verwaltung wird automatisch per E-Mail über Ihre Stornierung informiert.
                                     </div>
                                 </div>
                             </div>

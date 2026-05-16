@@ -389,7 +389,7 @@ require_once '../../includes/header.php';
                 <p><?php echo $systemInfos['VerwaltungspersonVorname'] ?? 'Julia'; ?>
                     <?php echo $systemInfos['VerwaltungspersonNachname'] ?? 'Kitschmann'; ?></p>
                 <div class="mt-3">
-                    <p><strong>Kontakt zur Verwalterin:</strong></p>
+                    <p><strong>Kontakt zur Verwaltung:</strong></p>
                     <ul class="list-unstyled">
                         <li><?php echo $systemInfos['VerwaltungspersonEmail'] ?? 'julia@kitschmann.de'; ?></li>
                         <li><?php echo $systemInfos['VerwaltungspersonTelefon'] ?? '0178/8829055'; ?></li>
